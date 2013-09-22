@@ -1,6 +1,6 @@
 using System;
 
-namespace displaydemo
+namespace example
 {
 	static public class MonoPicture
 	{
