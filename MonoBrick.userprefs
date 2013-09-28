@@ -1,16 +1,22 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="LcdExample/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="../../checkout/MonoBrick/EV3/Motor.cs">
     <Files>
-      <File FileName="LcdExample/Program.cs" Line="2" Column="7" />
-      <File FileName="MonoBrickFirmware/IO/Sensor.cs" Line="1" Column="1" />
-      <File FileName="MonoBrickFirmware/Native/Libc.cs" Line="1" Column="1" />
+      <File FileName="LcdExample/Program.cs" Line="11" Column="1" />
+      <File FileName="MonoBrickFirmware/IO/Sensor.cs" Line="7" Column="21" />
+      <File FileName="MonoBrickFirmware/IO/Motor.cs" Line="89" Column="33" />
+      <File FileName="../../checkout/MonoBrick/EV3/Commands.cs" Line="265" Column="25" />
+      <File FileName="../../checkout/MonoBrick/EV3/Motor.cs" Line="7" Column="22" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="LcdExample" expanded="True" />
-          <Node name="MonoBrickFirmware" expanded="True" selected="True" />
+          <Node name="MonoBrickFirmware" expanded="True">
+            <Node name="IO" expanded="True">
+              <Node name="Motor.cs" selected="True" />
+            </Node>
+          </Node>
         </State>
       </Pad>
     </Pads>
