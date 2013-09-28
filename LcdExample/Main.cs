@@ -1,5 +1,6 @@
 using System;
-using Lego.EV3;
+using MonoBrickFirmware.IO;
+using MonoBrickFirmware.Graphics;
 
 namespace example
 {
@@ -8,7 +9,7 @@ namespace example
 		public static void Main (string[] args)
 		{
 			Console.WriteLine ("Hello World!");
-			EV3Lcd lcd = new EV3Lcd();
+			Lcd lcd = new Lcd();
 			lcd.ShowPicture(MonoPicture.Picture);
 		}
 	}

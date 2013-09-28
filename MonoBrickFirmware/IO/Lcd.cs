@@ -1,9 +1,9 @@
-using System.Runtime.InteropServices;
 using System;
+using MonoBrickFirmware.Native;
 
-namespace Lego.EV3
-{	
-	class EV3Lcd
+namespace MonoBrickFirmware.IO
+{
+	public class Lcd : Ev3Device
 	{
 		public const int Width = 178;
 		public const int Height = 128;
@@ -24,14 +24,11 @@ namespace Lego.EV3
 					
 		}	
 		
-		UnixDevice lcdDev;
-		MemoryArea lcdMem;
 		byte[] hwBuffer = new byte[hwBufferSize];
 		
-		public EV3Lcd()
+		public Lcd() : base("/dev/fb0", hwBufferSize, 0)
 		{
-			lcdDev = new UnixDevice("/dev/fb0");
-			lcdMem = lcdDev.MMap(hwBufferSize, 0);
+		
 		}
 		
 		static byte[] convert = 
@@ -84,7 +81,7 @@ namespace Lego.EV3
 		        pixels >>= 3;
 		        hwBuffer[outOffset++] = convert[pixels & 0x7];
 		    } 
-			lcdMem.Write(0, hwBuffer);
+			this.Memory.Write(0,hwBuffer);
 		}
 		
 		public void ShowPicture(byte[] picture)
@@ -98,5 +95,5 @@ namespace Lego.EV3
 			Array.Clear(displayBuf, bytesPrLine*y, count*bytesPrLine);
 		}				
 	}
-
 }
+

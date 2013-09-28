@@ -1,0 +1,24 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="LcdExample/Program.cs">
+    <Files>
+      <File FileName="LcdExample/Program.cs" Line="2" Column="7" />
+      <File FileName="MonoBrickFirmware/IO/Sensor.cs" Line="1" Column="1" />
+      <File FileName="MonoBrickFirmware/Native/Libc.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="LcdExample" expanded="True" />
+          <Node name="MonoBrickFirmware" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/anderssoborg/Documents/GitHub/monoev3/LcdExample/Program.cs" line="11" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

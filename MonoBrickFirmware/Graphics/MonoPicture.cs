@@ -1,6 +1,6 @@
 using System;
 
-namespace example
+namespace MonoBrickFirmware.Graphics
 {
 	static public class MonoPicture
 	{

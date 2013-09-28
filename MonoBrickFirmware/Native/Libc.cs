@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Lego.EV3
+namespace MonoBrickFirmware.Native
 {
 	static public class Libc
 	{
@@ -47,7 +47,8 @@ namespace Lego.EV3
 		public UnixDevice(string name)
 		{			
 			
-			fd = Libc.open(encoding.GetBytes(name + Char.MinValue), Libc.OpenFlags.O_RDWR);
+
+						fd = Libc.open(encoding.GetBytes(name + Char.MinValue), Libc.OpenFlags.O_RDWR);
 			if (fd < 0)
 				throw new InvalidOperationException("Couldn't open device: " + name);
 		}

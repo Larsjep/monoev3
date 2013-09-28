@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LcdExample", "LcdExample\LcdExample.csproj", "{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoBrickFirmware", "MonoBrickFirmware\MonoBrickFirmware.csproj", "{67261E03-D263-4C42-A5AD-2A4820231B28}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67261E03-D263-4C42-A5AD-2A4820231B28}.Debug|x86.ActiveCfg = Debug|x86
+		{67261E03-D263-4C42-A5AD-2A4820231B28}.Debug|x86.Build.0 = Debug|x86
+		{67261E03-D263-4C42-A5AD-2A4820231B28}.Release|x86.ActiveCfg = Release|x86
+		{67261E03-D263-4C42-A5AD-2A4820231B28}.Release|x86.Build.0 = Release|x86
+		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Debug|x86.ActiveCfg = Debug|x86
+		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Debug|x86.Build.0 = Debug|x86
+		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.ActiveCfg = Release|x86
+		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = MonoBrickFirmware\MonoBrickFirmware.csproj
+		Policies = $0
+		$0.VersionControlPolicy = $1
+		$1.CommitMessageStyle = $2
+		$2.FirstFilePrefix = 
+		$2.FileSeparator = ", "
+		$2.LineAlign = 0
+		$2.InterMessageLines = 0
+		$2.Wrap = False
+		$1.inheritsSet = Mono
+		$0.ChangeLogPolicy = $3
+		$3.UpdateMode = None
+		$3.VcsIntegration = None
+		$3.MessageStyle = $4
+		$4.LineAlign = 0
+		$3.inheritsSet = Mono
+	EndGlobalSection
+EndGlobal
