@@ -3,52 +3,9 @@ using System.Diagnostics;
 
 namespace MonoBrickFirmware.Graphics
 {
-	public class BitStreamer
-	{
-		UInt32[] data;
-		int offset;
-		int bitOffset;
-		const int pixels_pr_word = 32;
-		public BitStreamer(UInt32 data, int offset = 0)
-		{
-			this.offset = offset;
-			this.data = data;
-			this.bitoffset = 0;
-		}
-			
-		public UInt32 GetBits(int count)
-		{
-			Debug.Assert(count <= pixels_pr_word);
-			int bitsLeft = pixels_pr_word-bitOffset;
-			int bitsToTake = Math.Min(count < bitsLeft);
-			UInt32 result = (data[offset] >> bitOffset) & (0xffffffff >> (pixels_pr_word-bitsToTake));
-			bitOffset += bitsToTake;
-			if (bitOffset >= pixels_pr_word)
-			{
-				bitOffset = 0;
-				offset++;
-			}
-			if (count > bitsToTake) // Do we need more bits than we got from the first word
-			{
-				result |= GetBits(count - bitsToTake) << bitsToTake;
-			}
-			return result;
-		}
-	}
 	
-	public class Bitmap
-	{
-		int width;
-		int height;
-		UInt32[] data;
-		const int pixels_pr_word = 32;
-		public Bitmap(int width, int height)
-		{
-			this.width = width;
-			this.height = height;
-			data = new UInt32[(width*height+pixels_pr_word-1)/pixels_pr_word];
-		}			
-	}
+	
+	
 	
 	static public class MonoPicture
 	{

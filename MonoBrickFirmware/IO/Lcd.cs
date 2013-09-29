@@ -1,8 +1,9 @@
 using System;
 using MonoBrickFirmware.Native;
+using MonoBrickFirmware.Graphics;
 
 namespace MonoBrickFirmware.IO
-{
+{	
 	public class Lcd : Ev3Device
 	{
 		public const int Width = 178;
@@ -93,7 +94,37 @@ namespace MonoBrickFirmware.IO
 		public void ClearLines(int y, int count)
 		{			
 			Array.Clear(displayBuf, bytesPrLine*y, count*bytesPrLine);
-		}				
+		}
+		
+		public void DrawBitmap(BitStreamer bs, int x, int y, uint xsize, uint ysize)
+		{
+			for (int yPos = y; yPos != y+ysize; yPos++)
+			{
+				int BufPos = bytesPrLine*yPos+x/8;
+				uint xBitsLeft = xsize;
+				int xPos = x;
+				
+				while (xBitsLeft > 0)
+				{
+					int bitPos = xPos & 0x7;					
+					uint bitsToWrite = Math.Min(xBitsLeft, (uint)(8-bitPos));
+					displayBuf[BufPos] |= (byte)(bs.GetBits(bitsToWrite) << bitPos);
+					xBitsLeft -= bitsToWrite;
+					BufPos++;
+				}
+				
+			}
+		}
+		
+		public void WriteText(Font f, int x, int y, string text)
+		{			
+			foreach(char c in text)
+			{
+				CharStreamer cs = f.getChar(c);
+				DrawBitmap(cs, x, y, cs.width, cs.height);		
+				x += (int)cs.width;				
+			}
+		}
 	}
 }
 
