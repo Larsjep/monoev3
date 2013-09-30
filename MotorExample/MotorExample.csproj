@@ -60,6 +60,12 @@
     <Compile Include="..\MonoBrickFirmware\Native\ByteCodes.cs">
       <Link>MonoBrickFirmware\Native\ByteCodes.cs</Link>
     </Compile>
+    <Compile Include="..\MonoBrickFirmware\Graphics\Font.cs">
+      <Link>MonoBrickFirmware\Graphics\Font.cs</Link>
+    </Compile>
+    <Compile Include="..\MonoBrickFirmware\Graphics\Bitmap.cs">
+      <Link>MonoBrickFirmware\Graphics\Bitmap.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

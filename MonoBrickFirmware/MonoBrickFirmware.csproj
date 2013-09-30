@@ -48,6 +48,8 @@
     <Compile Include="Native\Ev3Device.cs" />
     <Compile Include="Native\Commands.cs" />
     <Compile Include="Native\ByteCodes.cs" />
+    <Compile Include="Graphics\Font.cs" />
+    <Compile Include="Graphics\Bitmap.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
