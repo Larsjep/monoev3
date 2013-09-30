@@ -1,7 +1,12 @@
 using System;
+using System.Diagnostics;
 
 namespace MonoBrickFirmware.Graphics
 {
+	
+	
+	
+	
 	static public class MonoPicture
 	{
 		public static byte[] Picture = new byte [] { 

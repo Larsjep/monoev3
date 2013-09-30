@@ -1,18 +1,32 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="LcdExample/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="MonoBrickFirmware/Native/Ev3Device.cs">
     <Files>
-      <File FileName="LcdExample/Program.cs" Line="1" Column="1" />
-      <File FileName="../../checkout/MonoBrick/EV3/Motor.cs" Line="19" Column="3" />
+      <File FileName="MotorExample/Program.cs" Line="10" Column="1" />
+      <File FileName="MonoBrickFirmware/IO/Motor.cs" Line="57" Column="44" />
+      <File FileName="MonoBrickFirmware/Native/Ev3Device.cs" Line="16" Column="3" />
+      <File FileName="MonoBrickFirmware/Native/Libc.cs" Line="46" Column="9" />
+      <File FileName="MonoBrickFirmware/IO/Lcd.cs" Line="9" Column="3" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="LcdExample" expanded="True">
-            <Node name="Program.cs" selected="True" />
+            <Node name="MonoBrickFirmware" expanded="True">
+              <Node name="Native" expanded="True" />
+            </Node>
           </Node>
           <Node name="MonoBrickFirmware" expanded="True">
-            <Node name="IO" expanded="True" />
+            <Node name="IO" expanded="True">
+              <Node name="Sensor.cs" selected="True" />
+            </Node>
+            <Node name="Native" expanded="True" />
+          </Node>
+          <Node name="MotorExample" expanded="True">
+            <Node name="MonoBrickFirmware" expanded="True">
+              <Node name="IO" expanded="True" />
+              <Node name="Native" expanded="True" />
+            </Node>
           </Node>
         </State>
       </Pad>
@@ -21,6 +35,7 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/anderssoborg/Documents/GitHub/monoev3/LcdExample/Program.cs" line="11" column="1" />
+      <Breakpoint file="/Users/anderssoborg/Documents/GitHub/monoev3/MotorExample/Program.cs" line="9" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
