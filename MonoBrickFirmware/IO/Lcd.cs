@@ -110,6 +110,7 @@ namespace MonoBrickFirmware.IO
 					uint bitsToWrite = Math.Min(xBitsLeft, (uint)(8-bitPos));
 					displayBuf[BufPos] |= (byte)(bs.GetBits(bitsToWrite) << bitPos);
 					xBitsLeft -= bitsToWrite;
+					xPos += (int)bitsToWrite;
 					BufPos++;
 				}
 				

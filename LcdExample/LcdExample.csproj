@@ -36,27 +36,17 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\MonoBrickFirmware\Graphics\MonoPicture.cs">
-      <Link>MonoBrickFirmware\Graphics\MonoPicture.cs</Link>
-    </Compile>
-    <Compile Include="..\MonoBrickFirmware\IO\Lcd.cs">
-      <Link>MonoBrickFirmware\IO\Lcd.cs</Link>
-    </Compile>
-    <Compile Include="..\MonoBrickFirmware\IO\Motor.cs">
-      <Link>MonoBrickFirmware\IO\Motor.cs</Link>
-    </Compile>
-    <Compile Include="..\MonoBrickFirmware\IO\Sensor.cs">
-      <Link>MonoBrickFirmware\IO\Sensor.cs</Link>
-    </Compile>
-    <Compile Include="..\MonoBrickFirmware\Native\Libc.cs">
-      <Link>MonoBrickFirmware\Native\Libc.cs</Link>
-    </Compile>
-    <Compile Include="..\MonoBrickFirmware\Native\Ev3Device.cs">
-      <Link>MonoBrickFirmware\Native\Ev3Device.cs</Link>
-    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="MonoBrickFirmware\" />
+    <ProjectReference Include="..\MonoBrickFirmware\MonoBrickFirmware.csproj">
+      <Project>{67261E03-D263-4C42-A5AD-2A4820231B28}</Project>
+      <Name>MonoBrickFirmware</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="emulogic.bin">
+      <LogicalName>example.emulogicFont</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
