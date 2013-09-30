@@ -5,7 +5,7 @@ using MonoBrickFirmware.Native;
 namespace MonoBrickFirmware.IO
 {	
 	/// <summary>
-	/// Motor ports
+	/// Output bitfields
 	/// </summary>
 	[Flags]
 	public enum OutputBitfield  {
@@ -33,46 +33,18 @@ namespace MonoBrickFirmware.IO
 		#pragma warning restore
 	};
 
-	/// <summary>
-	/// Output byte codes.
-	/// </summary>
-	public enum OutputCodes{
-		#pragma warning disable
-		OutputGetType = 0xa0,
-		OutputSetType = 0xa1,         
-  		OutputReset = 0xa2,           
-  		OutputStop = 0xA3,
-		OutputPower = 0xA4,
-		OutputSpeed = 0xA5,
-		OutputStart	= 0xA6,
-		OutputPolarity = 0xA7,
-		OutputRead = 0xA8,
-		OutputTest = 0xA9,
-		OutputReady = 0xAA,
-		OutputPosition = 0xAB,
-		OutputStepPower = 0xAC,
-		OutputTimePower = 0xAD,
-		OutputStepSpeed = 0xAE,
-		OutputTimeSpeed = 0xAF,
-		OutputStepSync = 0xB0,
-		OutputTimeSync = 0xB1,
-		OutputClrCount = 0xB2,
-		OutputGetCount = 0xB3,
-		#pragma warning restore
-	}
+
+
 	
 	/// <summary>
 	/// Class for reading and writing a tacho value
 	/// </summary>
 	internal class Tacho : Ev3Device
 	{
-		private MotorPort port;
-		public Tacho (MotorPort port): base("/dev/lms_motor", 1000, 0)
+		public Tacho (): base("/dev/lms_motor", 1000, 0)
 		{	
-			this.port = port;
+		
 		}
-			
-	
 	}
 	
 	
@@ -81,12 +53,11 @@ namespace MonoBrickFirmware.IO
 	/// </summary>
 	internal class Output : Ev3Device
 	{
-		private MotorPort port;
 		Tacho tacho = null;
-		public Output (MotorPort port): base("/dev/lms_pwm", 1000, 0)
+		public Output (): base("/dev/lms_pwm", 10, 0)
 		{
-			this.port = port;
-			this.tacho = new Tacho(port);
+			this.tacho = new Tacho();
+			this.BitField = OutputBitfield.OutA;
 		}
 		
 		
@@ -97,151 +68,84 @@ namespace MonoBrickFirmware.IO
 		public OutputBitfield BitField{get;set;}
 		
 		/// <summary>
-		/// Sets the type of the output. I don't know what this is used for.
-		/// </summary>
-		/// <param name="port">Motor port to use.</param>
-		/// <param name="type">Type to use.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void SetType(MotorPort port, byte type, bool reply = false){
-			/*var command = new Command(0,0,200,reply);
-			command.Append(ByteCodes.OutputSetType);
-			command.Append(this.DaisyChainLayer);
-			command.Append(port);
-			command.Append(type, ParameterFormat.Short);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,200);
-			}*/	
-		}
-		
-		/// <summary>
 		/// Reset the output
 		/// </summary>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void Reset(bool reply = false){
-			/*var command = new Command(0,0,201,reply);
+		public void Reset(){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputReset);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,201);
-			}*/	
+			command.Append(BitField);
+			Write(command);
 		}
 		
 		/// <summary>
 		/// Stop the specified brake and reply.
 		/// </summary>
 		/// <param name="brake">If set to <c>true</c> the motor will brake and not coast</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void Stop(bool brake, bool reply = false){
-			/*var command = new Command(0,0,202,reply);
+		public void Stop(bool brake){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputStop);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
+			command.Append(BitField);
 			byte b  = 0;
 			if(brake){
 				b = 1;
 			}
-			command.Append(b, ParameterFormat.Short);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,202);
-			}*/
+			command.Append(b);
+			Write(command); 
 		}
 		
 		/// <summary>
 		/// Sets the speed.
 		/// </summary>
 		/// <param name="speed">Speed.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void SetSpeed(byte speed, bool reply = false){
-			/*var command = new Command(0,0,203,reply);
+		public void SetSpeed(sbyte speed){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputSpeed);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append(speed, ParameterFormat.Long);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,203);
-			}*/		
+			command.Append(BitField);
+			command.Append(speed);
+			Write(command);
 		}
 		
 		/// <summary>
 		/// Sets the power.
 		/// </summary>
 		/// <param name="power">Power.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void SetPower(byte power, bool reply = false){
-			/*var command = new Command(0,0,204,reply);
+		public void SetPower(byte power){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputPower);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append(power, ParameterFormat.Long);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,204);
-			}*/
+			command.Append(BitField);
+			command.Append(power);
+			Write(command);
 		}
 		
 		/// <summary>
 		/// Sets the absolute position from last reset
 		/// </summary>
 		/// <param name="position">Position to use</param>
-		/// <param name="reply">If set to <c>true</c> reply from the brick will be send</param>
-		public void SetPosition(Int32 position, bool reply = false){
-			/*var command = new Command(0,0,214,reply);
+		public void SetPosition(Int32 position){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputPosition);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append(position, ConstantParameterType.Value);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,214);
-			}*/
+			command.Append(BitField);
+			command.Append(position);
+			Write(command);
 		}
 		
 		/// <summary>
 		/// Start
 		/// </summary>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void Start(bool reply = false){
-			/*var command = new Command(0,0,205,reply);
+		public void Start(){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputStart);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,205);
-			}*/
+			command.Append(BitField);
+			Write(command);
 		}
 		
 		/// <summary>
 		/// Start with the specified speed
 		/// </summary>
 		/// <param name="speed">Speed.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void Start(sbyte speed, bool reply = false){
-			/*var command = new Command(0,0,215,reply);
-			command.Append(ByteCodes.OutputSpeed);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append(speed, ParameterFormat.Long);
-			command.Append(ByteCodes.OutputStart);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			connection.Send (command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,215);
-			}*/
+		public void Start(sbyte speed){
+			SetSpeed(speed);
+			Start();
 		}
 		
 		/// <summary>
@@ -250,16 +154,11 @@ namespace MonoBrickFirmware.IO
 		/// <param name="polarity">Polarity of the output</param>
 		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
 		public void SetPolarity(Polarity polarity, bool reply = false){
-			/*var command = new Command(0,0,206,reply);
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputPolarity);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append((sbyte) polarity, ParameterFormat.Short);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,206);
-			}*/
+			command.Append(BitField);
+			command.Append((sbyte) polarity);
+			Write(command);
 		}
 		
 		/// <summary>
@@ -525,19 +424,9 @@ namespace MonoBrickFirmware.IO
 	public class MotorBase{
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.MotorBase"/> class.
-		/// </summary>
-		/// <param name="port">Port.</param>
-		public MotorBase(MotorPort port){
-			Port = port;
-			output = new Output(port);
-		}
-		
-		
-		/// <summary>
 		/// The output.
 		/// </summary>
-		internal Output output = null;
+		internal Output output = new Output();
 		
 		/// <summary>
 		/// Gets or sets the motor port this is set by the bitfield. 
@@ -611,45 +500,17 @@ namespace MonoBrickFirmware.IO
 		}
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.EV3.Motor"/> class.
-		/// </summary>
-		public MotorBase ()
-		{
-			this.BitField = OutputBitfield.OutA;
-		}
-		
-		/// <summary>
 		/// Brake the motor (is still on but does not move)
 		/// </summary>
 		public void Brake(){
-			Brake (false);
-		}
-		
-		/// <summary>
-		/// Brake the motor (is still on but does not move)
-		/// </summary>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void Brake(bool reply){
-			output.Stop(true, reply);
+			output.Stop(true);
 		}
 		
 		/// <summary>
 		/// Turn the motor off
 		/// </summary>
 		public void Off(){
-			Off(false);
-		}
-	    
-		/// <summary>
-		/// Turn the motor off
-		/// </summary>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-	    public void Off(bool reply){
-			output.Stop (false,reply);
+			output.Stop (false);
 		}
 		
 		/// <summary>
@@ -657,16 +518,7 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <param name="power">Power to use.</param>
 		public void SetPower(byte power){
-			SetPower(power, false);
-		}
-		
-		/// <summary>
-		/// Sets the power of the motor.
-		/// </summary>
-		/// <param name="power">Power to use.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void SetPower(byte power, bool reply){
-			output.SetPower(power, reply);
+			output.SetPower(power);
 		}
 	}
 	
@@ -677,6 +529,14 @@ namespace MonoBrickFirmware.IO
 	/// </summary>
 	public class Motor :  MotorBase
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.Motor"/> class.
+		/// </summary>
+		/// <param name="port">Port.</param>
+		public Motor(MotorPort port){
+			this.BitField = MotorPortToBitfield(port);
+		}
+		
 		/// <summary>
 		/// The reverse value
 		/// </summary>
@@ -693,7 +553,6 @@ namespace MonoBrickFirmware.IO
 				return reverse;
 			} 
 			set {
-				//This does strange things and should not be used
 				reverse = value;
 				if(reverse){
 					output.SetPolarity(Polarity.Backward);
@@ -711,20 +570,7 @@ namespace MonoBrickFirmware.IO
 		/// Speed of the motor -100 to 100
 		/// </param>
 		public void On(sbyte speed){
-			On(speed,false);
-		}
-		
-		/// <summary>
-		/// Move the motor
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the motor -100 to 100
-		/// </param>
-		/// <param name='reply'>
-		/// If set to <c>true</c> brick will send a reply
-		/// </param>
-		public void On(sbyte speed, bool reply){
-			output.Start(speed, reply);
+			output.Start(speed);
 		}
 		
 		/// <summary>
@@ -740,25 +586,6 @@ namespace MonoBrickFirmware.IO
 		/// Set to <c>true</c> if the motor should brake when done
 		/// </param>
 		public void On(sbyte speed, UInt32 degrees, bool brake){
-			On(speed,degrees, brake,false);
-		}
-		
-		/// <summary>
-		/// Move the motor to a relative position
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the motor -100 to 100
-		/// </param>
-		/// <param name='degrees'>
-		/// The relative position of the motor
-		/// </param>
-		/// <param name='brake'>
-		/// Set to <c>true</c> if the motor should brake when done
-		/// </param>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void On(sbyte speed, UInt32 degrees, bool brake, bool reply){
 			UInt64 longDegrees = (UInt64)degrees;
 			UInt32 rampUpDownSteps =(UInt32) (15 *  longDegrees * 100)/10000;
 			UInt32 constantsSteps = (UInt32) (70 *  longDegrees * 100)/10000;
@@ -766,7 +593,7 @@ namespace MonoBrickFirmware.IO
 				rampUpDownSteps = 300;
 				constantsSteps = degrees - 2*rampUpDownSteps;
 			}
-			output.SetStepSpeed(speed,rampUpDownSteps,constantsSteps, rampUpDownSteps, brake,reply);
+			output.SetStepSpeed(speed,rampUpDownSteps,constantsSteps, rampUpDownSteps, brake);
 		}
 		
 		/// <summary>
@@ -782,25 +609,6 @@ namespace MonoBrickFirmware.IO
 		/// Set to <c>true</c> if the motor should brake when done
 		/// </param>
 		public void MoveTo(byte speed, Int32 position, bool brake){
-			MoveTo(speed,position, brake, false);	
-		}
-		
-		/// <summary>
-		/// Moves the motor to an absolute position
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the motor 0 to 100
-		/// </param>
-		/// <param name='position'>
-		/// Absolute position
-		/// </param>
-		/// <param name='brake'>
-		/// Set to <c>true</c> if the motor should brake when done
-		/// </param>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void MoveTo(byte speed, Int32 position, bool brake, bool reply){
 			Int32 currentPos = GetTachoCount();
 			UInt32 diff = 0;
 			sbyte motorSpeed =0;
@@ -819,7 +627,7 @@ namespace MonoBrickFirmware.IO
 			else{
 				motorSpeed = (sbyte)-speed;
 			}
-			this.On(motorSpeed, diff, reply);
+			this.On(motorSpeed, diff, brake);	
 		}
 		
 		/// <summary>
@@ -830,7 +638,6 @@ namespace MonoBrickFirmware.IO
 		/// <param name="constantSpeedSteps">Constant speed steps.</param>
 		/// <param name="rampDownSteps">Ramp down steps.</param>
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
 		public void SpeedProfileStep(sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool reply = false)
 		{
 			output.SetStepSpeed(speed, rampUpSteps, constantSpeedSteps,rampDownSteps, brake, reply);
@@ -844,10 +651,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name="constantSpeedTimeMs">Constant speed time ms.</param>
 		/// <param name="rampDownTimeMs">Ramp down time ms.</param>
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void SpeedProfileTime(sbyte speed, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool reply = false)
+		public void SpeedProfileTime(sbyte speed, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake)
 		{
-			output.SetTimeSpeed(speed, rampUpTimeMs, constantSpeedTimeMs, rampUpTimeMs, brake, reply);
+			output.SetTimeSpeed(speed, rampUpTimeMs, constantSpeedTimeMs, rampUpTimeMs, brake);
 		}
 		
 		/// <summary>
@@ -858,10 +664,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name="constantSpeedSteps">Constant speed steps.</param>
 		/// <param name="rampDownSteps">Ramp down steps.</param>
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void PowerProfileStep(sbyte power, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool reply = false)
+		public void PowerProfileStep(sbyte power, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake)
 		{
-			output.SetStepPower(power,rampUpSteps, constantSpeedSteps, rampDownSteps, brake, reply);
+			output.SetStepPower(power,rampUpSteps, constantSpeedSteps, rampDownSteps, brake);
 		}
 		
 		/// <summary>
@@ -872,10 +677,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name="constantSpeedTimeMs">Constant speed time ms.</param>
 		/// <param name="rampDownTimeMs">Ramp down time ms.</param>
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void PowerProfileTime (byte power, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool reply = false)
+		public void PowerProfileTime (byte power, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake)
 		{
-			output.SetTimePower(power, rampUpTimeMs,constantSpeedTimeMs,rampDownTimeMs, brake, reply);
+			output.SetTimePower(power, rampUpTimeMs,constantSpeedTimeMs,rampDownTimeMs, brake);
 		}
 		
 		/// <summary>
@@ -1220,35 +1024,15 @@ namespace MonoBrickFirmware.IO
 		/// <summary>
 		/// Stop moving the vehicle
 		/// </summary>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void Off(bool reply){
-			motorSync.Off(reply);
-		}
-	
-		/// <summary>
-		/// Stop moving the vehicle
-		/// </summary>
 		public void Off(){
-			Off(false);
+			motorSync.Off();
 		}
 	
 		/// <summary>
 		/// Brake the vehicle (the motor is still on but it does not move)
 		/// </summary>
 		public void Brake(){
-			Brake(false);
-		}
-	
-		/// <summary>
-		/// Brake the vehicle (the motor is still on but it does not move)
-		/// </summary>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void Brake(bool reply){
-			motorSync.Brake(reply);	
+			motorSync.Brake();
 		}
 	
 		/// <summary>

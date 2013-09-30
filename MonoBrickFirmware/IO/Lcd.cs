@@ -81,7 +81,7 @@ namespace MonoBrickFirmware.IO
 		        pixels >>= 3;
 		        hwBuffer[outOffset++] = convert[pixels & 0x7];
 		    } 
-			this.Memory.Write(0,hwBuffer);
+			Write(0,hwBuffer);
 		}
 		
 		public void ShowPicture(byte[] picture)
