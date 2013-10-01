@@ -45,11 +45,10 @@
     <Compile Include="IO\Sensor.cs" />
     <Compile Include="Graphics\MonoPicture.cs" />
     <Compile Include="Native\Libc.cs" />
-    <Compile Include="Native\Ev3Device.cs" />
-    <Compile Include="Native\Commands.cs" />
-    <Compile Include="Native\ByteCodes.cs" />
     <Compile Include="Graphics\Font.cs" />
     <Compile Include="Graphics\Bitmap.cs" />
+    <Compile Include="IO\ByteCodes.cs" />
+    <Compile Include="IO\Commands.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

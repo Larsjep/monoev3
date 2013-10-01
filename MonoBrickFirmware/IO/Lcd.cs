@@ -4,7 +4,7 @@ using MonoBrickFirmware.Graphics;
 
 namespace MonoBrickFirmware.IO
 {	
-	public class Lcd : Ev3Device
+	public class Lcd
 	{
 		public const int Width = 178;
 		public const int Height = 128;
@@ -12,7 +12,9 @@ namespace MonoBrickFirmware.IO
 		const int bufferSize = ((Width+7)/8)*Height;
 		const int hwBufferLineSize = 60;
 		const int hwBufferSize = hwBufferLineSize*Height;			
-		
+		private UnixDevice device;
+		private MemoryArea memory;
+
 		byte[] displayBuf = new byte[bufferSize];
 		public void SetPixel(int x, int y, bool color)
 		{
@@ -27,9 +29,10 @@ namespace MonoBrickFirmware.IO
 		
 		byte[] hwBuffer = new byte[hwBufferSize];
 		
-		public Lcd() : base("/dev/fb0", hwBufferSize, 0)
+		public Lcd()
 		{
-		
+			device = new UnixDevice("/dev/fb0");
+			memory =  device.MMap(hwBufferSize, 0);	
 		}
 		
 		static byte[] convert = 
@@ -82,7 +85,7 @@ namespace MonoBrickFirmware.IO
 		        pixels >>= 3;
 		        hwBuffer[outOffset++] = convert[pixels & 0x7];
 		    } 
-			Write(0,hwBuffer);
+			memory.Write(0,hwBuffer);
 		}
 		
 		public void ShowPicture(byte[] picture)

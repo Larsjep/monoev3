@@ -34,29 +34,18 @@ namespace MonoBrickFirmware.IO
 	};
 
 
-
-	
-	/// <summary>
-	/// Class for reading and writing a tacho value
-	/// </summary>
-	internal class Tacho : Ev3Device
-	{
-		public Tacho (): base("/dev/lms_motor", 1000, 0)
-		{	
-		
-		}
-	}
-	
-	
 	/// <summary>
 	/// Class for controlling the output port
 	/// </summary>
-	internal class Output : Ev3Device
+	internal class Output
 	{
-		Tacho tacho = null;
-		public Output (): base("/dev/lms_pwm", 10, 0)
+		private UnixDevice pwmDevice;
+		private UnixDevice tachoDevice;
+		public Output ()
 		{
-			this.tacho = new Tacho();
+			
+			pwmDevice = new UnixDevice("/dev/lms_pwm");
+			tachoDevice = new UnixDevice("/dev/lms_motor");
 			this.BitField = OutputBitfield.OutA;
 		}
 		
@@ -74,7 +63,7 @@ namespace MonoBrickFirmware.IO
 			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputReset);
 			command.Append(BitField);
-			Write(command);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -90,7 +79,7 @@ namespace MonoBrickFirmware.IO
 				b = 1;
 			}
 			command.Append(b);
-			Write(command); 
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -102,7 +91,7 @@ namespace MonoBrickFirmware.IO
 			command.Append(ByteCodes.OutputSpeed);
 			command.Append(BitField);
 			command.Append(speed);
-			Write(command);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -114,7 +103,7 @@ namespace MonoBrickFirmware.IO
 			command.Append(ByteCodes.OutputPower);
 			command.Append(BitField);
 			command.Append(power);
-			Write(command);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -126,7 +115,7 @@ namespace MonoBrickFirmware.IO
 			command.Append(ByteCodes.OutputPosition);
 			command.Append(BitField);
 			command.Append(position);
-			Write(command);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -136,7 +125,7 @@ namespace MonoBrickFirmware.IO
 			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputStart);
 			command.Append(BitField);
-			Write(command);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -158,7 +147,7 @@ namespace MonoBrickFirmware.IO
 			command.Append(ByteCodes.OutputPolarity);
 			command.Append(BitField);
 			command.Append((sbyte) polarity);
-			Write(command);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>

@@ -61,6 +61,25 @@ namespace MonoBrickFirmware.Native
 			return new MemoryArea(ptr, size);
 		}
 		
+		public void Write (byte[] data)
+		{
+		
+		
+		
+		}
+		
+		public byte[] Read ()
+		{
+			return Read(0);
+		}
+		
+		public byte[] Read (int offset)
+		{
+			return null;	
+		
+		} 
+		
+		
 		public void Dispose()
 		{			
 			Libc.close(fd);

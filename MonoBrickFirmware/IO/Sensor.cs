@@ -4,9 +4,9 @@ using MonoBrickFirmware.Native;
 
 namespace MonoBrickFirmware.IO
 {	
-	class Sensor : Ev3Device
+	class Sensor
 	{
-		public Sensor (): base("something",0,0)
+		public Sensor ()
 		{
 			
 		}
