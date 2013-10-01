@@ -45,7 +45,10 @@ namespace MonoBrickFirmware.Graphics
 		
 		public CharStreamer getChar(char c)
 		{
-			CharStreamer result = new CharStreamer(maxHeight, data, (int)(firstChar+(int)c*charWordSize));			
+			int index = (int)c - 32;
+			if (index < 0 || (index > 128-32))
+				index = 0;
+			CharStreamer result = new CharStreamer(maxHeight, data, (int)(firstChar+index*charWordSize));			
 			return result;
 		}		
 	}

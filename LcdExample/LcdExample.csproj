@@ -22,7 +22,7 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>full</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
@@ -43,5 +43,10 @@
       <Project>{67261E03-D263-4C42-A5AD-2A4820231B28}</Project>
       <Name>MonoBrickFirmware</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="info56_12.bin">
+      <LogicalName>font.info56_12</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
