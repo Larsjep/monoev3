@@ -37,6 +37,12 @@ namespace MonoBrickFirmware.Native
 		public static extern IntPtr mmap(IntPtr addr, uint len, ProtectionFlags prot, MMapFlags flags, int fd, int offset);
 		
 		[DllImport("libc.so.6")]
+		public static extern int write(int file, IntPtr buffer, uint count);
+		
+		[DllImport("libc.so.6")]
+		public static extern int read(int file, IntPtr buffer,uint length);
+		
+		[DllImport("libc.so.6")]
 		public static extern int close(int fd);
 	}
 	
@@ -63,20 +69,81 @@ namespace MonoBrickFirmware.Native
 		
 		public void Write (byte[] data)
 		{
-		
-		
-		
+			IntPtr pnt = IntPtr.Zero;
+			bool hasError = false;
+			Exception inner = null;
+			try {
+				int size = Marshal.SizeOf (data [0]) * data.Length;
+				pnt = Marshal.AllocHGlobal (size);
+				Marshal.Copy (data, 0, pnt, data.Length);
+				int bytesWritten = Libc.write (fd, pnt,(uint) size);
+				if (bytesWritten == -1)
+					hasError = true;
+			} 
+			catch (Exception e) {
+				hasError = true;
+				inner = e;
+			} 
+			finally {
+				if (pnt != IntPtr.Zero)    
+					Marshal.FreeHGlobal (pnt);
+			}
+			if (hasError) {
+				if (inner != null) {
+					throw inner;
+				} 
+				else 
+				{
+					throw new InvalidOperationException("Failed to write to Unix device");
+				}
+			}		
 		}
 		
-		public byte[] Read ()
+		public byte[] Read (int length)
 		{
-			return Read(0);
-		}
-		
-		public byte[] Read (int offset)
-		{
-			return null;	
-		
+			
+			byte[] reply = new byte[length];
+            Exception inner = null;
+            IntPtr pnt = IntPtr.Zero;
+            int bytesRead = 0;
+            bool hasError = false;
+            try{
+                pnt = Marshal.AllocHGlobal(Marshal.SizeOf(reply[0]) * length);
+                bytesRead =  Libc.read(fd, pnt, (uint) length);
+                if(bytesRead == -1)
+                {
+                	hasError = true;
+                	Marshal.FreeHGlobal(pnt);
+                    pnt = IntPtr.Zero;
+                }
+                else
+                {
+                	if(bytesRead != length)
+                		reply = new byte[bytesRead];
+                	Marshal.Copy(pnt, reply, 0, bytesRead);
+                	Marshal.FreeHGlobal(pnt);
+                    pnt = IntPtr.Zero;	
+                }
+            
+            }
+            catch(Exception e){
+            	hasError = true;
+				inner = e;    
+            }
+            finally{
+                if(pnt != IntPtr.Zero)
+                    Marshal.FreeHGlobal(pnt);    
+            }
+            if(hasError){
+            	if (inner != null) {
+					throw inner;
+				} 
+				else 
+				{
+					throw new InvalidOperationException("Failed to read from Unix device");
+				}    
+            }
+			return reply;		
 		} 
 		
 		
