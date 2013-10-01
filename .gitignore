@@ -2,9 +2,10 @@
 */bin
 */obj
  
-# Exclude temp nibs and swap files
+# Exclude temp nibs, swap files and MonoDevelop user preferences
 *~.nib
 *.swp
+*.userprefs
  
 # Exclude OS X folder attributes
 .DS_Store
