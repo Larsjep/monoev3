@@ -6,6 +6,7 @@
 *~.nib
 *.swp
 *.userprefs
+*.pidb
  
 # Exclude OS X folder attributes
 .DS_Store
