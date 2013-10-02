@@ -158,25 +158,19 @@ namespace MonoBrickFirmware.IO
 		/// <param name="constantSpeedSteps">Steps used for constant speed</param>
 		/// <param name="rampDownSteps">Steps used to ramp down</param>
 		/// <param name="brake">If set to <c>true</c> brake when done.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void SetStepPower(sbyte power, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool reply = false){
-			/*var command = new Command(0,0,207,reply);
+		public void SetStepPower(sbyte power, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputStepPower);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append(power, ConstantParameterType.Value);
-			command.Append(rampUpSteps, ConstantParameterType.Value);
-			command.Append(constantSpeedSteps, ConstantParameterType.Value);
-			command.Append(rampDownSteps, ConstantParameterType.Value);
+			command.Append(BitField);
+			command.Append(power);
+			command.Append(rampUpSteps);
+			command.Append(constantSpeedSteps);
+			command.Append(rampDownSteps);
 			byte b = 0;//coast
 			if(brake)
 				b = 1;
-			command.Append(b, ParameterFormat.Short);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,207);
-			}*/
+			command.Append(b);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -187,25 +181,19 @@ namespace MonoBrickFirmware.IO
 		/// <param name="constantSpeedTime">Time in ms for constant speed</param>
 		/// <param name="rampDownTime">Time in ms to ramp down</param>
 		/// <param name="brake">If set to <c>true</c> brake when done.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void SetTimePower(byte power, UInt32 rampUpTime, UInt32 constantSpeedTime, UInt32 rampDownTime, bool brake, bool reply = false){
-			/*var command = new Command(0,0,208,reply);
+		public void SetTimePower(byte power, UInt32 rampUpTime, UInt32 constantSpeedTime, UInt32 rampDownTime, bool brake){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputTimePower);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append(power, ParameterFormat.Short);
-			command.Append(rampUpTime, ConstantParameterType.Value);
-			command.Append(constantSpeedTime, ConstantParameterType.Value);
-			command.Append(rampDownTime, ConstantParameterType.Value);
+			command.Append(BitField);
+			command.Append(power);
+			command.Append(rampUpTime);
+			command.Append(constantSpeedTime);
+			command.Append(rampDownTime);
 			byte b = 0;//coast
 			if(brake)
 				b = 1;
-			command.Append(b, ParameterFormat.Short);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,208);
-			}*/
+			command.Append(b);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -216,25 +204,19 @@ namespace MonoBrickFirmware.IO
 		/// <param name="constantSpeedSteps">Steps used for constant speed</param>
 		/// <param name="rampDownSteps">Steps used to ramp down</param>
 		/// <param name="brake">If set to <c>true</c> brake when done.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void SetStepSpeed(sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool reply = false){
-			/*var command = new Command(0,0,209,reply);
+		public void SetStepSpeed(sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputStepSpeed);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append(speed, ConstantParameterType.Value);
-			command.Append(rampUpSteps, ConstantParameterType.Value);
-			command.Append(constantSpeedSteps, ConstantParameterType.Value);
-			command.Append(rampDownSteps, ConstantParameterType.Value);
+			command.Append(BitField);
+			command.Append(speed);
+			command.Append(rampUpSteps);
+			command.Append(constantSpeedSteps);
+			command.Append(rampDownSteps);
 			byte b = 0;//coast
 			if(brake)
 				b = 1;
-			command.Append(b, ParameterFormat.Short);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,209);
-			}*/		
+			command.Append(b);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -245,25 +227,19 @@ namespace MonoBrickFirmware.IO
 		/// <param name="constantSpeedTime">Time in ms for constant speed</param>
 		/// <param name="rampDownTime">Time in ms to ramp down</param>
 		/// <param name="brake">If set to <c>true</c> brake when done</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void SetTimeSpeed(sbyte speed, UInt32 rampUpTime, UInt32 constantSpeedTime, UInt32 rampDownTime, bool brake, bool reply = false){
-			/*var command = new Command(0,0,210,reply);
+		public void SetTimeSpeed(sbyte speed, UInt32 rampUpTime, UInt32 constantSpeedTime, UInt32 rampDownTime, bool brake){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputTimeSpeed);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append(speed, ConstantParameterType.Value);
-			command.Append(rampUpTime, ConstantParameterType.Value);
-			command.Append(constantSpeedTime, ConstantParameterType.Value);
-			command.Append(rampDownTime, ConstantParameterType.Value);
+			command.Append(BitField);
+			command.Append(speed);
+			command.Append(rampUpTime);
+			command.Append(constantSpeedTime);
+			command.Append(rampDownTime);
 			byte b = 0;//coast
 			if(brake)
 				b = 1;
-			command.Append(b, ParameterFormat.Short);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,210);
-			}*/
+			command.Append(b);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -273,24 +249,18 @@ namespace MonoBrickFirmware.IO
 		/// <param name="turnRatio">Turn ratio between two syncronized motors</param>
 		/// <param name="steps">Steps in degrees</param>
 		/// <param name="brake">If set to <c>true</c> brake.</param>
-		/// <param name="reply">If set to <c>true</c> reply.</param>
-		public void SetStepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake, bool reply = false){
-			/*var command = new Command(0,0,209,reply);
+		public void SetStepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputStepSync);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append(speed, ConstantParameterType.Value);
-			command.Append(turnRatio, ConstantParameterType.Value);
-			command.Append(steps, ConstantParameterType.Value);
+			command.Append(BitField);
+			command.Append(speed);
+			command.Append(turnRatio);
+			command.Append(steps);
 			byte b = 0;//coast
 			if(brake)
 				b = 1;
-			command.Append(b, ParameterFormat.Short);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,209);
-			}*/
+			command.Append(b);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -301,23 +271,18 @@ namespace MonoBrickFirmware.IO
 		/// <param name="timeInMs">Time in ms</param>
 		/// <param name="brake">If set to <c>true</c> brake.</param>
 		/// <param name="reply">If set to <c>true</c> reply.</param>
-		public void SetTimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake, bool reply = false){
-			/*var command = new Command(0,0,210,reply);
+		public void SetTimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake){
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputTimeSync);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			command.Append(speed, ConstantParameterType.Value);
-			command.Append(turnRatio, ConstantParameterType.Value);
-			command.Append(timeInMs, ConstantParameterType.Value);
+			command.Append(BitField);
+			command.Append(speed);
+			command.Append(turnRatio);
+			command.Append(timeInMs);
 			byte b = 0;//coast
 			if(brake)
 				b = 1;
-			command.Append(b, ParameterFormat.Short);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,210);
-			}*/
+			command.Append(b);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -325,15 +290,10 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
 		public void WaitForReady(bool reply = false){
-			/*var command = new Command(0,0,211,reply);
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputReady);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,211);
-			}*/	
+			command.Append(BitField);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -341,13 +301,10 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <returns><c>true</c> if this instance is ready; otherwise, <c>false</c>.</returns>
 		public bool IsReady(){
-			/*var command = new Command(1,0,212,true);
+			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputTest);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			var brickReply = connection.SendAndReceive(command);
-			Error.CheckForError(brickReply,212);
-			return ! Convert.ToBoolean(brickReply.GetByte(3));*/
+			command.Append(BitField);
+			pwmDevice.Write(command.Data);
 			return false;
 		}
 		
@@ -627,9 +584,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name="constantSpeedSteps">Constant speed steps.</param>
 		/// <param name="rampDownSteps">Ramp down steps.</param>
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
-		public void SpeedProfileStep(sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool reply = false)
+		public void SpeedProfileStep(sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake)
 		{
-			output.SetStepSpeed(speed, rampUpSteps, constantSpeedSteps,rampDownSteps, brake, reply);
+			output.SetStepSpeed(speed, rampUpSteps, constantSpeedSteps,rampDownSteps, brake);
 		}
 		
 		/// <summary>
@@ -740,8 +697,8 @@ namespace MonoBrickFirmware.IO
 		/// <param name="steps">Steps to move.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
 		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake, bool reply = false){
-			output.SetStepSync(speed, turnRatio, steps, brake, reply);
+		public void StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake){
+			output.SetStepSync(speed, turnRatio, steps, brake);
 		}
 		
 		/// <summary>
@@ -751,9 +708,8 @@ namespace MonoBrickFirmware.IO
 		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
 		/// <param name="timeInMs">Time in ms to move.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake, bool reply = false){
-			output.SetTimeSync(speed, turnRatio, timeInMs, brake, reply);
+		public void TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake){
+			output.SetTimeSync(speed, turnRatio, timeInMs, brake);
 		}
 		
 		/// <summary>
@@ -766,35 +722,14 @@ namespace MonoBrickFirmware.IO
 		}
 		
 		/// <summary>
-		/// Move both motors with the same speed
-		/// </summary>
-		/// <param name="speed">Speed of the motors.</param>
-		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void On(sbyte speed, Int16 turnRatio, bool reply){
-			StepSync(speed, turnRatio,0, reply);
-		}
-		
-		/// <summary>
 		/// Move both motors with the same speed a given number of steps
 		/// </summary>
 		/// <param name="speed">Speed of the motors.</param>
 		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
 		/// <param name="degrees">Degrees to move.</param>
-		public void On (sbyte speed, Int16 turnRatio, uint degrees){
-			On(speed,turnRatio,degrees, false);
-		}
-		
-		/// <summary>
-		/// Move both motors with the same speed a given number of steps
-		/// </summary>
-		/// <param name="speed">Speed of the motors.</param>
-		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
-		/// <param name="degrees">Degrees to move.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void On (sbyte speed, Int16 turnRatio, uint degrees, bool reply)
-		{
-			StepSync(speed,turnRatio,degrees, false, reply);
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void On (sbyte speed, Int16 turnRatio, uint degrees, bool brake){
+			On(speed,turnRatio,degrees, brake);
 		}
 	}
 	
