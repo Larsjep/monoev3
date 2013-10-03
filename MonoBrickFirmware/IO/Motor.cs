@@ -41,11 +41,13 @@ namespace MonoBrickFirmware.IO
 	{
 		private UnixDevice pwmDevice;
 		private UnixDevice tachoDevice;
+		private MemoryArea tachoMemory;
 		public Output ()
 		{
 			
 			pwmDevice = new UnixDevice("/dev/lms_pwm");
 			tachoDevice = new UnixDevice("/dev/lms_motor");
+			tachoMemory = tachoDevice.MMap(96,0);
 			this.BitField = OutputBitfield.OutA;
 		}
 		
@@ -67,7 +69,7 @@ namespace MonoBrickFirmware.IO
 		}
 		
 		/// <summary>
-		/// Stop the specified brake and reply.
+		/// Stop the output
 		/// </summary>
 		/// <param name="brake">If set to <c>true</c> the motor will brake and not coast</param>
 		public void Stop(bool brake){
@@ -141,8 +143,7 @@ namespace MonoBrickFirmware.IO
 		/// Sets the polarity.
 		/// </summary>
 		/// <param name="polarity">Polarity of the output</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void SetPolarity(Polarity polarity, bool reply = false){
+		public void SetPolarity(Polarity polarity){
 			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputPolarity);
 			command.Append(BitField);
@@ -270,7 +271,6 @@ namespace MonoBrickFirmware.IO
 		/// <param name="turnRatio">Turn ratio between two syncronized motors</param>
 		/// <param name="timeInMs">Time in ms</param>
 		/// <param name="brake">If set to <c>true</c> brake.</param>
-		/// <param name="reply">If set to <c>true</c> reply.</param>
 		public void SetTimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake){
 			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputTimeSync);
@@ -288,8 +288,7 @@ namespace MonoBrickFirmware.IO
 		/// <summary>
 		/// Wait for output ready (wait for completion)
 		/// </summary>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void WaitForReady(bool reply = false){
+		public void WaitForReady(){
 			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputReady);
 			command.Append(BitField);
@@ -311,17 +310,11 @@ namespace MonoBrickFirmware.IO
 		/// <summary>
 		/// Clearing tacho count when used as sensor 
 		/// </summary>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
-		public void ClearCount(bool reply = false){
-			/*var command = new Command(0,0,210,reply);
+		public void ClearCount(){
+			var command =  new DeviceCommand();
 			command.Append(ByteCodes.OutputClrCount);
-			command.Append(this.DaisyChainLayer);
-			command.Append(this.BitField);
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,210);
-			}*/
+			command.Append(BitField);
+			pwmDevice.Write(command.Data);
 		}
 		
 		/// <summary>
@@ -330,15 +323,8 @@ namespace MonoBrickFirmware.IO
 		/// <returns>The tacho count.</returns>
 		/// <param name="port">Motor port to use</param>
 		public Int32 GetCount(MotorPort port){
-			/*var command = new Command(4,0,212,true);
-			command.Append(ByteCodes.OutputGetCount);
-			command.Append(this.DaisyChainLayer);
-			command.Append(port);
-			command.Append((byte)0, VariableScope.Global);
-			var brickReply = connection.SendAndReceive(command);
-			Error.CheckForError(brickReply,212);
-			return brickReply.GetInt32(3);*/
-			return 0;
+			var reply = new DeviceReply(tachoMemory.Read(0,4));
+			return reply.GetInt32(0);
 		}
 		
 		/// <summary>
@@ -359,7 +345,6 @@ namespace MonoBrickFirmware.IO
 			//The tacho speed from outputRead does not work
 			// I have also tried to place the tacho reply in offset 1 (and with 5 global bytes in the reply) but get a error each time*/
 			return 0;
-			
 		}
 		
 	}
@@ -632,17 +617,7 @@ namespace MonoBrickFirmware.IO
 		/// Resets the tacho
 		/// </summary>
 		public void ResetTacho(){
-			ResetTacho(false);
-		}
-		
-		/// <summary>
-		/// Resets the tacho
-		/// </summary>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-	    public void ResetTacho(bool reply = false){
-			output.ClearCount(reply);
+			output.ClearCount();
 		}
 	
 		/// <summary>
@@ -696,7 +671,6 @@ namespace MonoBrickFirmware.IO
 		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
 		/// <param name="steps">Steps to move.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name="reply">If set to <c>true</c> reply from brick will be send.</param>
 		public void StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake){
 			output.SetStepSync(speed, turnRatio, steps, brake);
 		}
@@ -810,31 +784,19 @@ namespace MonoBrickFirmware.IO
 		/// <param name='speed'>
 		/// Speed of the vehicle -100 to 100
 		/// </param>
-		public void Backward(sbyte speed){
-			Move((sbyte)-speed,0,false);
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void Backward(sbyte speed, bool brake){
+			Backward((sbyte)-speed, 0, brake);
 		}
 	
-		/// <summary>
-		/// Run backwards
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the vehicle -100 to 100
-		/// </param>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void Backward(sbyte speed, bool reply){
-			Backward((sbyte)-speed,0,reply);
-		}
-		
 		/// <summary>
 		/// Run backwards
 		/// </summary>
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
-		/// <param name="reply">If set to <c>true</c> the brick will send a reply</param>
-		public void Backward(sbyte speed, UInt32 degrees, bool reply = false){
-			Move((sbyte)-speed,degrees,reply);
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void Backward(sbyte speed, UInt32 degrees, bool brake){
+			Move((sbyte)-speed,degrees, brake);
 		}
 	
 		/// <summary>
@@ -843,21 +805,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name='speed'>
 		/// Speed of the vehicle -100 to 100
 		/// </param>
-		public void Forward(sbyte speed){
-			Move(speed,0,false);
-		}
-	
-		/// <summary>
-		/// Run forward
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the vehicle -100 to 100
-		/// </param>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void Forward(sbyte speed, bool reply){
-			Forward(speed,0,reply);
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void Forward(sbyte speed, bool brake){
+			Forward(speed,0, brake);
 		}
 		
 		/// <summary>
@@ -865,28 +815,18 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
-		/// <param name="reply">If set to <c>true</c> reply will be send</param>
-		public void Forward(sbyte speed, UInt32 degrees, bool reply = false){
-			Move(speed,degrees,reply);
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void Forward(sbyte speed, UInt32 degrees, bool brake){
+			Move(speed,degrees, brake);
 		}
 	
-		/// <summary>
-		/// Spins the vehicle left.
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the vehicle -100 to 100
-		/// </param>
-		public void SpinLeft(sbyte speed){
-			SpinLeft(speed,false);
-		}
-		
 		/// <summary>
 		/// Spins the vehicle left.
 		/// </summary>
 		/// <param name="speed">Speed of the vehicle -100 to 100</param>
-		/// <param name="reply">If set to <c>true</c> reply will be send.</param>
-		public void SpinLeft(sbyte speed, bool reply){
-			SpinLeft(speed,0,reply);
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void SpinLeft(sbyte speed, bool brake){
+			SpinLeft(speed,0, brake);
 		}
 		
 		/// <summary>
@@ -894,40 +834,25 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
-		/// <param name="reply">If set to <c>true</c> reply will be send.</param>
-		public void SpinLeft(sbyte speed, UInt32 degrees, bool reply = false){
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void SpinLeft(sbyte speed, UInt32 degrees, bool brake){
 			if(leftPort < rightPort){
-				HandleSpinLeft(speed, degrees, reply);	
+				HandleSpinLeft(speed, degrees,  brake);	
 			}
 			else{
-				HandleSpinRight(speed, degrees, reply);	
+				HandleSpinRight(speed, degrees, brake);	
 			}
 		}
 		
-		
-	
-		/// <summary>
-		/// Spins the vehicle right
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the vehicle -100 to 100
-		/// </param>
-		public void SpinRight(sbyte speed){
-			SpinRight(speed,false);
-	
-		}
-	
 		/// <summary>
 		/// Spins the vehicle right
 		/// </summary>
 		/// <param name='speed'>
 		/// Speed -100 to 100
 		/// </param>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void SpinRight(sbyte speed, bool reply){
-			SpinRight(speed,0,reply);
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void SpinRight(sbyte speed, bool brake){
+			SpinRight(speed,0, brake);
 		}
 		
 		/// <summary>
@@ -935,13 +860,13 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
-		/// <param name="reply">If set to <c>true</c> reply will be send.</param>
-		public void SpinRight(sbyte speed, UInt32 degrees, bool reply = false){
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void SpinRight(sbyte speed, UInt32 degrees, bool brake){
 			if(leftPort < rightPort){
-				HandleSpinRight(speed, degrees, reply);	
+				HandleSpinRight(speed, degrees, brake);	
 			}
 			else{
-				HandleSpinLeft(speed, degrees, reply);	
+				HandleSpinLeft(speed, degrees, brake);	
 			}
 		}
 	
@@ -968,28 +893,13 @@ namespace MonoBrickFirmware.IO
 		/// <param name='turnPercent'>
 		/// Turn percent 
 		/// </param>
-		public void TurnRightForward(sbyte speed, sbyte turnPercent){
-			TurnRightForward(speed, turnPercent, false);
-		}
-	
-		/// <summary>
-		/// Turns the vehicle right
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the vehicle -100 to 100
-		/// </param>
-		/// <param name='turnPercent'>
-		/// Turn percent 
-		/// </param>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void TurnRightForward(sbyte speed, sbyte turnPercent, bool reply = false){
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void TurnRightForward(sbyte speed, sbyte turnPercent, bool brake){
 			if(leftPort < rightPort){
-				HandleRightForward(speed, turnPercent, 0, reply);	
+				HandleRightForward(speed, turnPercent, 0, brake);	
 			}
 			else{
-				HandleLeftForward(speed,turnPercent, 0, reply);	
+				HandleLeftForward(speed,turnPercent, 0, brake);	
 			}
 		}
 		
@@ -1000,13 +910,13 @@ namespace MonoBrickFirmware.IO
 		/// <param name="speed">Speed.</param>
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
-		/// <param name="reply">If set to <c>true</c> reply will be send.</param>
-		public void TurnRightForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool reply= false){
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void TurnRightForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			if(leftPort < rightPort){
-				HandleRightForward(speed, turnPercent, degrees, reply);	
+				HandleRightForward(speed, turnPercent, degrees, brake);	
 			}
 			else{
-				HandleLeftForward(speed,turnPercent, degrees, reply);	
+				HandleLeftForward(speed,turnPercent, degrees, brake);	
 			}
 		}
 	
@@ -1019,24 +929,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name='turnPercent'>
 		/// Turn percent.
 		/// </param>
-		public void TurnRightReverse(sbyte speed, sbyte turnPercent){
-			TurnRightReverse(speed, turnPercent, false);
-		}
-	
-		/// <summary>
-		/// Turns the vehicle right while moving backwards
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the vehicle -100 to 100
-		/// </param>
-		/// <param name='turnPercent'>
-		/// Turn percent.
-		/// </param>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void TurnRightReverse(sbyte speed, sbyte turnPercent, bool reply){
-			TurnRightReverse(speed,turnPercent,0,reply);
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void TurnRightReverse(sbyte speed, sbyte turnPercent, bool brake){
+			TurnRightReverse(speed,turnPercent,0, brake);
 	
 		}
 		
@@ -1046,13 +941,13 @@ namespace MonoBrickFirmware.IO
 		/// <param name="speed">Speed.</param>
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
-		/// <param name="reply">If set to <c>true</c> reply will be send.</param>
-		public void TurnRightReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool reply = false){
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void TurnRightReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			if(leftPort < rightPort){
-				HandleRightReverse(speed, turnPercent, degrees, reply);	
+				HandleRightReverse(speed, turnPercent, degrees, brake);	
 			}
 			else{
-				HandleLeftReverse(speed,turnPercent, degrees, reply);	
+				HandleLeftReverse(speed,turnPercent, degrees, brake);	
 			}
 		}
 	
@@ -1065,24 +960,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name='turnPercent'>
 		/// Turn percent.
 		/// </param>
-		public void TurnLeftForward(sbyte speed, sbyte turnPercent){
-			TurnLeftForward(speed, turnPercent, false);
-		}
-	
-		/// <summary>
-		/// Turns the vehicle left
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the vehicle -100 to 100
-		/// </param>
-		/// <param name='turnPercent'>
-		/// Turn percent.
-		/// </param>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void TurnLeftForward(sbyte speed, sbyte turnPercent, bool reply){
-			TurnLeftForward(speed,turnPercent, 0, reply);
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void TurnLeftForward(sbyte speed, sbyte turnPercent, bool brake){
+			TurnLeftForward(speed,turnPercent, 0, brake);
 		}
 		
 		
@@ -1092,13 +972,13 @@ namespace MonoBrickFirmware.IO
 		/// <param name="speed">Speed.</param>
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
-		/// <param name="reply">If set to <c>true</c> reply will be send.</param>
-		public void TurnLeftForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool reply = false){
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void TurnLeftForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			if(leftPort < rightPort){
-				HandleLeftForward(speed, turnPercent, degrees, reply);	
+				HandleLeftForward(speed, turnPercent, degrees, brake);	
 			}
 			else{
-				HandleRightForward(speed,turnPercent, degrees, reply);
+				HandleRightForward(speed,turnPercent, degrees, brake);
 			}
 		}
 	
@@ -1111,24 +991,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name='turnPercent'>
 		/// Turn percent.
 		/// </param>
-		public void TurnLeftReverse(sbyte speed, sbyte turnPercent){
-			TurnLeftReverse(speed, turnPercent, false);
-		}
-	
-		/// <summary>
-		/// Turns the vehicle left while moving backwards
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the vehicle -100 to 100
-		/// </param>
-		/// <param name='turnPercent'>
-		/// Turn percent.
-		/// </param>
-		/// <param name='reply'>
-		/// If set to <c>true</c> the brick will send a reply
-		/// </param>
-		public void TurnLeftReverse(sbyte speed, sbyte turnPercent, bool reply){
-			TurnLeftReverse(speed,turnPercent, 0, reply);
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void TurnLeftReverse(sbyte speed, sbyte turnPercent, bool brake){
+			TurnLeftReverse(speed,turnPercent, 0, brake);
 		}
 		
 		
@@ -1138,120 +1003,120 @@ namespace MonoBrickFirmware.IO
 		/// <param name="speed">Speed.</param>
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
-		/// <param name="reply">If set to <c>true</c> reply.</param>
-		public void TurnLeftReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool reply = false){
+		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
+		public void TurnLeftReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			if(leftPort < rightPort){
-				HandleLeftReverse(speed, turnPercent, degrees, reply);	
+				HandleLeftReverse(speed, turnPercent, degrees, brake);	
 			}
 			else{
-				HandleRightReverse(speed,turnPercent, degrees, reply);
+				HandleRightReverse(speed,turnPercent, degrees, brake);
 			}
 		}
 		
-		private void HandleLeftForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool reply){
+		private void HandleLeftForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On(speed, (short) -turnPercent, degrees, reply);
+				motorSync.On(speed, (short) -turnPercent, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, (short) ((short)-200+ (short)turnPercent), degrees, reply);
+				motorSync.On((sbyte)-speed, (short) ((short)-200+ (short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On(speed, (short) ((short)-200+(short)turnPercent), degrees, reply);
+				motorSync.On(speed, (short) ((short)-200+(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, (short) -turnPercent, degrees, reply);				
+				motorSync.On((sbyte)-speed, (short) -turnPercent, degrees, brake);				
 			}
 		}
 		
-		private void HandleRightForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool reply){
+		private void HandleRightForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On(speed, (short) turnPercent, reply);
+				motorSync.On(speed, (short) turnPercent, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On(speed, (short) ((short)200- (short)turnPercent), degrees, reply);
+				motorSync.On(speed, (short) ((short)200- (short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)-speed, (short) ((short)200-(short)turnPercent), degrees, reply);
+				motorSync.On((sbyte)-speed, (short) ((short)200-(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, (short) turnPercent, degrees, reply);				
+				motorSync.On((sbyte)-speed, (short) turnPercent, degrees, brake);				
 			}
 		}
 		
-		private void HandleLeftReverse (sbyte speed, sbyte turnPercent, UInt32 degrees, bool reply)
+		private void HandleLeftReverse (sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake)
 		{
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)-speed, (short) -turnPercent, degrees, reply);
+				motorSync.On((sbyte)-speed, (short) -turnPercent, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)speed,(short) ( (short)-200+(short)turnPercent), degrees, reply);
+				motorSync.On((sbyte)speed,(short) ( (short)-200+(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)-speed, (short) ( (short)-200+(short)turnPercent), degrees, reply);
+				motorSync.On((sbyte)-speed, (short) ( (short)-200+(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On(speed, (short) -turnPercent, degrees, reply);				
+				motorSync.On(speed, (short) -turnPercent, degrees, brake);				
 			}
 		}
 		
-		private void HandleRightReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool reply){
+		private void HandleRightReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)-speed, (short) turnPercent, degrees, reply);
+				motorSync.On((sbyte)-speed, (short) turnPercent, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed,(short) ( (short)200-(short)turnPercent), degrees, reply);
+				motorSync.On((sbyte)-speed,(short) ( (short)200-(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)speed, (short) ( (short)200-(short)turnPercent), degrees, reply);
+				motorSync.On((sbyte)speed, (short) ( (short)200-(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On(speed, (short) turnPercent, degrees, reply);				
+				motorSync.On(speed, (short) turnPercent, degrees, brake);				
 			}
 	
 		}
 		
-		private void HandleSpinRight(sbyte speed, UInt32 degrees, bool reply){
+		private void HandleSpinRight(sbyte speed, UInt32 degrees, bool brake){
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On(speed, 200, degrees, reply);
+				motorSync.On(speed, 200, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On(speed, (short) 0, degrees, reply);
+				motorSync.On(speed, (short) 0, degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)-speed, 0, degrees, reply);
+				motorSync.On((sbyte)-speed, 0, degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, 200, degrees, reply);				
+				motorSync.On((sbyte)-speed, 200, degrees, brake);				
 			}
 		}
 		
-		private void HandleSpinLeft(sbyte speed, UInt32 degrees, bool reply){
+		private void HandleSpinLeft(sbyte speed, UInt32 degrees, bool brake){
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On(speed, -200, degrees, reply);
+				motorSync.On(speed, -200, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, (short) 0, degrees, reply);
+				motorSync.On((sbyte)-speed, (short) 0, degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On(speed, 0, degrees, reply);
+				motorSync.On(speed, 0, degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, -200, degrees, reply);				
+				motorSync.On((sbyte)-speed, -200, degrees, brake);				
 			}
 		}
 		
-		private void Move(sbyte speed, UInt32 degrees, bool reply){
+		private void Move(sbyte speed, UInt32 degrees, bool brake){
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On(speed, 0, degrees,reply); 
+				motorSync.On(speed, 0, degrees, brake); 
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On(speed, (short) 200, degrees, reply);
+				motorSync.On(speed, (short) 200, degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On(speed, -200, degrees, reply);
+				motorSync.On(speed, -200, degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, 0, degrees, reply);				
+				motorSync.On((sbyte)-speed, 0, degrees, brake);				
 			}
 		}
 	}

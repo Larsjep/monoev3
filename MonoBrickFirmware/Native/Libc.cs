@@ -53,8 +53,7 @@ namespace MonoBrickFirmware.Native
 		public UnixDevice(string name)
 		{			
 			
-
-						fd = Libc.open(encoding.GetBytes(name + Char.MinValue), Libc.OpenFlags.O_RDWR);
+			fd = Libc.open(encoding.GetBytes(name + Char.MinValue), Libc.OpenFlags.O_RDWR);
 			if (fd < 0)
 				throw new InvalidOperationException("Couldn't open device: " + name);
 		}
@@ -178,6 +177,18 @@ namespace MonoBrickFirmware.Native
 				throw new IndexOutOfRangeException(string.Format("Out of range accessing index {0}, max {1}", offset+data.Length, size));
 			Marshal.Copy(data, offset, ptr, data.Length);
 		}
+		
+		public byte[] Read (int offset, int length)
+		{
+			
+			if (offset+length > size)
+				throw new IndexOutOfRangeException(string.Format("Out of range accessing index {0}, max {1}", offset+length, size));
+			byte[] reply = new byte[length];
+            Marshal.Copy(ptr, reply, offset, length);
+            return reply;	
+		}
+		
+		
 	}
 	
 }

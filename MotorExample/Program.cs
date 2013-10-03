@@ -8,6 +8,8 @@ namespace MotorExample
 		{
 			Console.WriteLine ("Running motor test");
 			Motor motorA = new Motor(MotorPort.OutA);
+			Console.WriteLine ("Reset motor tacho");
+			motorA.ResetTacho();
 			Console.WriteLine ("Running forward with 20");
 			motorA.On(20);
 			System.Threading.Thread.Sleep(5000);
@@ -25,8 +27,11 @@ namespace MotorExample
 			motorA.Off();
 			System.Threading.Thread.Sleep(3000);			
 			Console.WriteLine ("Move to zero");
+			Console.WriteLine (motorA.GetTachoCount());
 			motorA.MoveTo(10, 0, true);
 			Console.WriteLine ("done executing");
+			
+			
 		}
 	}
 }
