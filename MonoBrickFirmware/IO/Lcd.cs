@@ -99,6 +99,37 @@ namespace MonoBrickFirmware.IO
 			Array.Clear(displayBuf, bytesPrLine*y, count*bytesPrLine);
 		}
 		
+		public void SetHLine(Point startPoint, int length, bool setOrClear)
+		{
+			int bytePos = bytesPrLine*startPoint.y + startPoint.x/8;
+			int bitPos = startPoint.x & 0x7;
+			int bitsInFirstByte = Math.Min(8 - bitPos, length);			
+			byte bitMask = (byte)((0xff >> (8-bitsInFirstByte)) << bitPos);
+			
+			// Set/clear bits in first byte
+			if (setOrClear)
+				displayBuf[bytePos] |= bitMask;
+			else
+				displayBuf[bytePos] &= (byte)~bitMask;
+			length -= bitsInFirstByte;
+			bytePos++;
+			while (length >= 8) // Set/Clear all byte full bytes
+			{
+				displayBuf[bytePos] = setOrClear ? (byte)0xff : (byte)0;
+				bytePos++;
+				length -= 8;
+			}
+			// Set/clear bits in last byte
+			if (length > 0)
+			{
+				bitMask = (byte)(0xff << (8-length));
+				if (setOrClear)
+					displayBuf[bytePos] |= bitMask;
+				else
+					displayBuf[bytePos] &= (byte)~bitMask;				
+			}
+		}
+		
 		public void DrawBitmap(BitStreamer bs, int x, int y, uint xsize, uint ysize)
 		{
 			for (int yPos = y; yPos != y+ysize; yPos++)
