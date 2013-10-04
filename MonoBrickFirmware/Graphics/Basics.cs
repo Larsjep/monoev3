@@ -1,6 +1,6 @@
 using System;
 
-namespace MonoBrickFirmware
+namespace MonoBrickFirmware.Graphics
 {
 	public struct Point
 	{

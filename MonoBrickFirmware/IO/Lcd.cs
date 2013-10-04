@@ -99,7 +99,7 @@ namespace MonoBrickFirmware.IO
 			Array.Clear(displayBuf, bytesPrLine*y, count*bytesPrLine);
 		}
 		
-		public void SetHLine(Point startPoint, int length, bool setOrClear)
+		public void DrawHLine(Point startPoint, int length, bool setOrClear)
 		{
 			int bytePos = bytesPrLine*startPoint.y + startPoint.x/8;
 			int bitPos = startPoint.x & 0x7;
@@ -122,7 +122,7 @@ namespace MonoBrickFirmware.IO
 			// Set/clear bits in last byte
 			if (length > 0)
 			{
-				bitMask = (byte)(0xff << (8-length));
+				bitMask = (byte)(0xff >> (8-length));
 				if (setOrClear)
 					displayBuf[bytePos] |= bitMask;
 				else
@@ -130,19 +130,29 @@ namespace MonoBrickFirmware.IO
 			}
 		}
 		
-		public void DrawBitmap(BitStreamer bs, int x, int y, uint xsize, uint ysize)
+		public void DrawBox(Rect r, bool setOrClear)
 		{
-			for (int yPos = y; yPos != y+ysize; yPos++)
+			int length = r.p2.x - r.p1.x;
+			for (int y = r.p1.y; y <= r.p2.y; ++y)
+				DrawHLine(new Point(r.p1.x, y), length, setOrClear);
+		}
+		
+		public void DrawBitmap(BitStreamer bs, Point p, uint xsize, uint ysize, bool color)
+		{
+			for (int yPos = p.y; yPos != p.y+ysize; yPos++)
 			{
-				int BufPos = bytesPrLine*yPos+x/8;
+				int BufPos = bytesPrLine*yPos+p.x/8;
 				uint xBitsLeft = xsize;
-				int xPos = x;
+				int xPos = p.x;
 				
 				while (xBitsLeft > 0)
 				{
 					int bitPos = xPos & 0x7;					
 					uint bitsToWrite = Math.Min(xBitsLeft, (uint)(8-bitPos));
-					displayBuf[BufPos] |= (byte)(bs.GetBits(bitsToWrite) << bitPos);
+					if (color)
+						displayBuf[BufPos] |= (byte)(bs.GetBits(bitsToWrite) << bitPos);
+					else
+						displayBuf[BufPos] &= (byte)~(bs.GetBits(bitsToWrite) << bitPos);
 					xBitsLeft -= bitsToWrite;
 					xPos += (int)bitsToWrite;
 					BufPos++;
@@ -151,14 +161,20 @@ namespace MonoBrickFirmware.IO
 			}
 		}
 		
-		public void WriteText(Font f, int x, int y, string text)
+		public void WriteText(Font f, Point p, string text, bool color)
 		{			
 			foreach(char c in text)
 			{
 				CharStreamer cs = f.getChar(c);
-				DrawBitmap(cs, x, y, cs.width, cs.height);		
-				x += (int)cs.width;				
+				DrawBitmap(cs, p, cs.width, cs.height, color);		
+				p.x += (int)cs.width;				
 			}
+		}
+		
+		public void WriteTextBox(Font f, Rect r, string text, bool color)
+		{
+			DrawBox(r, !color); // Clear background
+			WriteText(f, r.p1, text, color);
 		}
 	}
 }
