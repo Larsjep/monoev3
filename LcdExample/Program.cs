@@ -13,7 +13,6 @@ namespace example
 			Lcd lcd = new Lcd();
 			lcd.ShowPicture(MonoPicture.Picture);
 			Font f = Font.FromResource(System.Reflection.Assembly.GetExecutingAssembly(), "font.info56_12");
-			//lcd.WriteText(f, 10,Lcd.Height-25, "Hello World!!");
 			Point offset = new Point(0,25);
 			Point p = new Point(10, Lcd.Height-75);
 			Point boxSize = new Point(100, 24);

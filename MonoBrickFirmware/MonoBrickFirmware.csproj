@@ -50,6 +50,7 @@
     <Compile Include="IO\ByteCodes.cs" />
     <Compile Include="IO\Commands.cs" />
     <Compile Include="Graphics\Basics.cs" />
+    <Compile Include="IO\Buttons.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
