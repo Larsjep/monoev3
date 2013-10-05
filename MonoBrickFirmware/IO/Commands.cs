@@ -446,6 +446,16 @@ namespace MonoBrickFirmware.Native
 			return BitConverter.ToSingle(dataArray,offset);
 		}
 		
+		
+		internal void Print ()
+		{
+			for (int i =0; i < Data.Length; i ++) {
+				Console.WriteLine ("Data[{0:X}]: {1:X}",i,Data[i]);
+			}	
+		
+		
+		}
+		
 	}
 }
 

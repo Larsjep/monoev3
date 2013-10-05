@@ -308,7 +308,7 @@ namespace MonoBrickFirmware.IO
 		}
 		
 		/// <summary>
-		/// Clearing tacho count when used as sensor 
+		/// Clearing tacho count
 		/// </summary>
 		public void ClearCount(){
 			var command =  new DeviceCommand();
@@ -321,10 +321,14 @@ namespace MonoBrickFirmware.IO
 		/// Gets the tacho count.
 		/// </summary>
 		/// <returns>The tacho count.</returns>
-		/// <param name="port">Motor port to use</param>
-		public Int32 GetCount(MotorPort port){
-			var reply = new DeviceReply(tachoMemory.Read(0,4));
-			return reply.GetInt32(0);
+		/// <param name="port">Motor port to read from</param>
+		public Int32 GetCount (MotorPort port)
+		{
+			byte[] data = tachoMemory.Read (0, 48);
+			var reply = new DeviceReply (data);
+			reply.Print ();
+			int index = (int)port * 12 + 8;
+			return reply.GetInt32(index);
 		}
 		
 		/// <summary>
@@ -333,18 +337,10 @@ namespace MonoBrickFirmware.IO
 		/// <returns>The speed.</returns>
 		/// <param name="port">Motor port to read</param>
 		public sbyte GetSpeed(MotorPort port){
-			/*var command = new Command(8,0,220,true);
-			command.Append(ByteCodes.OutputRead);
-			command.Append(this.DaisyChainLayer);
-			command.Append(port);
-			command.Append((byte)0, VariableScope.Global);
-			command.Append((byte)4, VariableScope.Global);
-			var brickReply = connection.SendAndReceive(command);
-			Error.CheckForError(brickReply,220);
-			return brickReply.GetSbyte(3);
-			//The tacho speed from outputRead does not work
-			// I have also tried to place the tacho reply in offset 1 (and with 5 global bytes in the reply) but get a error each time*/
-			return 0;
+			byte[] data = tachoMemory.Read (0, 48);
+			var reply = new DeviceReply (data);
+			int index = (int)port * 12 + 4;
+			return reply.GetSbyte(index);
 		}
 		
 	}
