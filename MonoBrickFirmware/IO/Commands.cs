@@ -450,7 +450,7 @@ namespace MonoBrickFirmware.Native
 		internal void Print ()
 		{
 			for (int i =0; i < Data.Length; i ++) {
-				Console.WriteLine ("Data[{0:X}]: {1:X}",i,Data[i]);
+				Console.WriteLine ("Data[{0}]: {1:X}",i,Data[i]);
 			}	
 		
 		
