@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoBrickFirmware", "MonoBr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MotorExample", "MotorExample\MotorExample.csproj", "{76DEED88-464B-42B7-8F82-0EB0249B05A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartupApp", "StartupApp\StartupApp.csproj", "{75E781D0-7313-445B-8430-DECB0AD3C96E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -17,6 +19,10 @@ Global
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Debug|x86.Build.0 = Debug|x86
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Release|x86.ActiveCfg = Release|x86
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Release|x86.Build.0 = Release|x86
+		{75E781D0-7313-445B-8430-DECB0AD3C96E}.Debug|x86.ActiveCfg = Debug|x86
+		{75E781D0-7313-445B-8430-DECB0AD3C96E}.Debug|x86.Build.0 = Debug|x86
+		{75E781D0-7313-445B-8430-DECB0AD3C96E}.Release|x86.ActiveCfg = Release|x86
+		{75E781D0-7313-445B-8430-DECB0AD3C96E}.Release|x86.Build.0 = Release|x86
 		{76DEED88-464B-42B7-8F82-0EB0249B05A7}.Debug|x86.ActiveCfg = Debug|x86
 		{76DEED88-464B-42B7-8F82-0EB0249B05A7}.Debug|x86.Build.0 = Debug|x86
 		{76DEED88-464B-42B7-8F82-0EB0249B05A7}.Release|x86.ActiveCfg = Release|x86

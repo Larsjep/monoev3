@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace MonoBrickFirmware
+namespace MonoBrickFirmware.Graphics
 {
 	public class BitStreamer
 	{
@@ -55,16 +55,47 @@ namespace MonoBrickFirmware
 	
 	public class Bitmap
 	{
-		int width;
-		int height;
+		static uint MagicCodeBitmap = 0x4D544942;
+		public uint Width { get; private set; }
+		public uint Height { get; private set; }
 		UInt32[] data;
 		const int pixels_pr_word = 32;
-		public Bitmap(int width, int height)
+		int dataOffset;
+		public Bitmap(uint width, uint height)
 		{
-			this.width = width;
-			this.height = height;
+			this.Width = width;
+			this.Height = height;
 			data = new UInt32[(width*height+pixels_pr_word-1)/pixels_pr_word];
-		}		
+			dataOffset = 0;
+		}	
+		
+		public Bitmap(UInt32[] data)
+		{
+			if (data[0] != MagicCodeBitmap)
+				throw new ArgumentException("Invalid value in bitmap data");
+			Width = data[1];
+			Height = data[2];
+			this.data = data;
+			dataOffset = 3;			
+		}
+		
+		public BitStreamer GetStream()
+		{
+			return new BitStreamer(data, dataOffset);
+		}
+		
+		static public Bitmap FromResouce(System.Reflection.Assembly asm, string resourceName)
+		{
+			System.IO.Stream s = asm.GetManifestResourceStream(resourceName);
+			byte[] bytedata = new byte[s.Length];
+			s.Read(bytedata, 0, (int)s.Length);
+			UInt32[] data = new UInt32[s.Length/4];
+			for (int i = 0; i != s.Length/4; ++i)
+				data[i] = BitConverter.ToUInt32(bytedata, i*4);
+			return new Bitmap(data);
+		}			
+			
 	}
 }
+
 

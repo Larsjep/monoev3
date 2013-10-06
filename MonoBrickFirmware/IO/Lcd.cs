@@ -99,6 +99,11 @@ namespace MonoBrickFirmware.IO
 			Array.Clear(displayBuf, bytesPrLine*y, count*bytesPrLine);
 		}
 		
+		public void Clear()
+		{
+			ClearLines(0, Height);
+		}
+		
 		public void DrawHLine(Point startPoint, int length, bool setOrClear)
 		{
 			int bytePos = bytesPrLine*startPoint.y + startPoint.x/8;
@@ -137,6 +142,11 @@ namespace MonoBrickFirmware.IO
 				DrawHLine(new Point(r.p1.x, y), length, setOrClear);
 		}
 		
+		public void DrawBitmap(Bitmap bm, Point p)
+		{
+			DrawBitmap(bm.GetStream(), p, bm.Width, bm.Height, true);
+		}
+		
 		public void DrawBitmap(BitStreamer bs, Point p, uint xsize, uint ysize, bool color)
 		{
 			for (int yPos = p.y; yPos != p.y+ysize; yPos++)
@@ -156,10 +166,9 @@ namespace MonoBrickFirmware.IO
 					xBitsLeft -= bitsToWrite;
 					xPos += (int)bitsToWrite;
 					BufPos++;
-				}
-				
+				}				
 			}
-		}
+		}				
 		
 		public void WriteText(Font f, Point p, string text, bool color)
 		{			

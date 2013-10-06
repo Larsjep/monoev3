@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{76DEED88-464B-42B7-8F82-0EB0249B05A7}</ProjectGuid>
+    <ProjectGuid>{75E781D0-7313-445B-8430-DECB0AD3C96E}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MotorExample</RootNamespace>
-    <AssemblyName>MotorExample</AssemblyName>
+    <RootNamespace>StartupApp</RootNamespace>
+    <AssemblyName>StartupApp</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -18,24 +18,24 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Externalconsole>true</Externalconsole>
     <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Externalconsole>true</Externalconsole>
     <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -43,5 +43,13 @@
       <Project>{67261E03-D263-4C42-A5AD-2A4820231B28}</Project>
       <Name>MonoBrickFirmware</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="info56_12.bin">
+      <LogicalName>info56_12.font</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="monologo.bin">
+      <LogicalName>monologo.bitmap</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

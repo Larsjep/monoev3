@@ -51,6 +51,17 @@ namespace MonoBrickFirmware.Graphics
 			CharStreamer result = new CharStreamer(maxHeight, data, (int)(firstChar+index*charWordSize));			
 			return result;
 		}		
+		
+		public Point TextSize(string text)
+		{
+			int width = 0;
+			foreach(char c in text)
+			{
+				CharStreamer cs = getChar(c);				
+				width += (int)cs.width;				
+			}
+			return new Point(width, (int)maxHeight);
+		}
 	}
 }
 
