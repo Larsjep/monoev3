@@ -7,9 +7,11 @@ namespace MotorExample
 		public static void Main (string[] args)
 		{
 			Console.WriteLine ("Running single motor test");
-			Motor motor = new Motor(MotorPort.OutA);
+			Motor motor = new Motor (MotorPort.OutA);
 			Console.WriteLine ("Reset motor tacho");
-			motor.ResetTacho();
+			motor.Brake ();
+			System.Threading.Thread.Sleep (2500);
+			motor.ResetTacho ();
 			Console.WriteLine ("Running forward with 20");
 			motor.On(20);
 			System.Threading.Thread.Sleep(2500);
@@ -28,13 +30,34 @@ namespace MotorExample
 			Console.WriteLine ("Off");
 			motor.Off();
 			System.Threading.Thread.Sleep(3000);			
+			
 			Console.WriteLine ("Move to zero");
-			Console.WriteLine (motor.GetTachoCount());
-			motor.MoveTo(10, 0, true);
+			motor.MoveTo(40, 0, true);
+			do{
+				System.Threading.Thread.Sleep(200);
+				Console.WriteLine("Tacho count: " + motor.GetTachoCount());
+				Console.WriteLine("Speed:" + motor.GetSpeed());
+			}while(motor.IsRunning());
+			Console.WriteLine("Motor at position: " + motor.GetTachoCount());
+			System.Threading.Thread.Sleep(2500);
+			
+			
+			
+			/*motor.Brake();
+			Console.WriteLine ("Start position:" + motor.GetTachoCount ());
+			System.Threading.Thread.Sleep(2500);
+			motor.SpeedProfileStep (10, 255, 255, 255, false);
+			System.Threading.Thread.Sleep (500);
+			while (motor.IsRunning()) {
+				System.Threading.Thread.Sleep (100);
+				Console.WriteLine("Tacho count:" + motor.GetTachoCount());
+				Console.WriteLine(motor.IsRunning());
+				Console.WriteLine("Speed:" + motor.GetSpeed());
+
+			}
+			Console.WriteLine ("End position:" + motor.GetTachoCount ());*/
+			
 			Console.WriteLine ("Done executing single motor test");
-			
-			
-			
 		}
 	}
 }

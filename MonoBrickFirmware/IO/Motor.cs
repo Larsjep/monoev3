@@ -164,6 +164,7 @@ namespace MonoBrickFirmware.IO
 			command.Append(ByteCodes.OutputStepPower);
 			command.Append(BitField);
 			command.Append(power);
+			command.Append((byte)0x00);//Align
 			command.Append(rampUpSteps);
 			command.Append(constantSpeedSteps);
 			command.Append(rampDownSteps);
@@ -187,6 +188,7 @@ namespace MonoBrickFirmware.IO
 			command.Append(ByteCodes.OutputTimePower);
 			command.Append(BitField);
 			command.Append(power);
+			command.Append((byte)0x00);//Align
 			command.Append(rampUpTime);
 			command.Append(constantSpeedTime);
 			command.Append(rampDownTime);
@@ -210,6 +212,7 @@ namespace MonoBrickFirmware.IO
 			command.Append(ByteCodes.OutputStepSpeed);
 			command.Append(BitField);
 			command.Append(speed);
+			command.Append((byte)0x00);//Align
 			command.Append(rampUpSteps);
 			command.Append(constantSpeedSteps);
 			command.Append(rampDownSteps);
@@ -233,6 +236,7 @@ namespace MonoBrickFirmware.IO
 			command.Append(ByteCodes.OutputTimeSpeed);
 			command.Append(BitField);
 			command.Append(speed);
+			command.Append((byte)0x00);//Align
 			command.Append(rampUpTime);
 			command.Append(constantSpeedTime);
 			command.Append(rampDownTime);
@@ -250,11 +254,12 @@ namespace MonoBrickFirmware.IO
 		/// <param name="turnRatio">Turn ratio between two syncronized motors</param>
 		/// <param name="steps">Steps in degrees</param>
 		/// <param name="brake">If set to <c>true</c> brake.</param>
-		public void SetStepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake){
+		public void SetStepSync(sbyte speed, Int32 turnRatio, UInt32 steps, bool brake){
 			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputStepSync);
 			command.Append(BitField);
 			command.Append(speed);
+			command.Append((byte)0x00);//Align
 			command.Append(turnRatio);
 			command.Append(steps);
 			byte b = 0;//coast
@@ -271,11 +276,12 @@ namespace MonoBrickFirmware.IO
 		/// <param name="turnRatio">Turn ratio between two syncronized motors</param>
 		/// <param name="timeInMs">Time in ms</param>
 		/// <param name="brake">If set to <c>true</c> brake.</param>
-		public void SetTimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake){
+		public void SetTimeSync(sbyte speed, Int32 turnRatio, UInt32 timeInMs, bool brake){
 			var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputTimeSync);
 			command.Append(BitField);
 			command.Append(speed);
+			command.Append((byte)0x00);//Align
 			command.Append(turnRatio);
 			command.Append(timeInMs);
 			byte b = 0;//coast
@@ -289,10 +295,11 @@ namespace MonoBrickFirmware.IO
 		/// Wait for output ready (wait for completion)
 		/// </summary>
 		public void WaitForReady(){
-			var command = new DeviceCommand();
+			throw new NotSupportedException ();
+			/*var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputReady);
 			command.Append(BitField);
-			pwmDevice.Write(command.Data);
+			pwmDevice.Write(command.Data);*/
 		}
 		
 		/// <summary>
@@ -300,11 +307,12 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <returns><c>true</c> if this instance is ready; otherwise, <c>false</c>.</returns>
 		public bool IsReady(){
-			var command = new DeviceCommand();
+			throw new NotSupportedException ();
+			/*var command = new DeviceCommand();
 			command.Append(ByteCodes.OutputTest);
 			command.Append(BitField);
 			pwmDevice.Write(command.Data);
-			return false;
+			return false;*/
 		}
 		
 		/// <summary>
@@ -326,7 +334,6 @@ namespace MonoBrickFirmware.IO
 		{
 			byte[] data = tachoMemory.Read (0, 48);
 			var reply = new DeviceReply (data);
-			reply.Print ();
 			int index = (int)port * 12 + 8;
 			return reply.GetInt32(index);
 		}

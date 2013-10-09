@@ -111,7 +111,8 @@ namespace MonoBrickFirmware.Native
 		/// The UInt32 to append
 		/// </param>
 		public void Append(UInt32 data){
-			Append(BitConverter.GetBytes(data));
+			byte[] bytes = BitConverter.GetBytes(data);
+			Append(bytes);
 		}
 		
 		/// <summary>
@@ -247,6 +248,15 @@ namespace MonoBrickFirmware.Native
 	            newText.Append(text[i]);
 	        }
 	        return newText.ToString();
+		}
+		
+		internal void Print ()
+		{
+			for (int i =0; i < Data.Length; i ++) {
+				Console.WriteLine ("Data[{0}]: {1:X}",i,Data[i]);
+			}	
+		
+		
 		}
 
 		
