@@ -27,7 +27,7 @@ namespace VehicleExample
 			
 			Thread.Sleep(3000);
 			Console.WriteLine("Make a soft turn to the left");
-			vehicle.TurnLeftForward (speed, 50, moveSteps, false); // make a soft turn to the left
+			vehicle.TurnLeftForward (speed, 50, moveSteps, false);
 			
 		}
 	}

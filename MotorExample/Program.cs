@@ -11,13 +11,11 @@ namespace MotorExample
 			
 			Console.WriteLine ("Running single motor test");
 			Console.WriteLine ("Reset motor tacho");
-			motor.Brake ();
-			System.Threading.Thread.Sleep (2500);
 			motor.ResetTacho ();
 			Console.WriteLine ("Running forward with 20");
 			motor.On(20);
 			System.Threading.Thread.Sleep(2500);
-			Console.WriteLine ("Motor speed: " + motor.GetSpeed());
+			Console.WriteLine ("Printing motor speed: " + motor.GetSpeed());
 			System.Threading.Thread.Sleep(2500);
 			Console.WriteLine ("Running backwards with 70");
 			motor.On(-70);
@@ -36,13 +34,13 @@ namespace MotorExample
 			Console.WriteLine ("Move to zero");
 			motor.MoveTo(40, 0, true);
 			Console.WriteLine("Motor at position: " + motor.GetTachoCount());
-			System.Threading.Thread.Sleep(1000);
+			System.Threading.Thread.Sleep(2000);
 			
 			Console.WriteLine ("Creating a step profile");
 			motor.SpeedProfileStep(40,100, 1500, 100, true);
 			motor.Off();
 			Console.WriteLine("Motor at position: " + motor.GetTachoCount());
-			System.Threading.Thread.Sleep(1000);
+			System.Threading.Thread.Sleep(2000);
 			
 			Console.WriteLine ("Motor " + motorSync.BitField + " synchronised forward for 2500 steps");
 			motorSync.On(50, 0, 2500, true);
