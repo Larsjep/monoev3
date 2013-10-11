@@ -39,7 +39,7 @@ namespace MotorExample
 			System.Threading.Thread.Sleep(1000);
 			
 			Console.WriteLine ("Creating a step profile");
-			motor.SpeedProfileStep(40,300, 500, 300, true);
+			motor.SpeedProfileStep(40,100, 1500, 100, true);
 			motor.Off();
 			Console.WriteLine("Motor at position: " + motor.GetTachoCount());
 			System.Threading.Thread.Sleep(1000);
