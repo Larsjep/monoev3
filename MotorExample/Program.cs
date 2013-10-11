@@ -47,8 +47,7 @@ namespace MotorExample
 			Console.WriteLine ("Motor " + motorSync.BitField + " synchronised forward for 2500 steps");
 			motorSync.On(50, 0, 2500, true);
 			motorSync.Off();
-			Console.WriteLine ("Mortor " + motorSync.BitField + " synchronised backwards for 2500 steps");
-			Console.WriteLine("Second motor moving at half speed");
+			Console.WriteLine ("Motor " + motorSync.BitField + " synchronised with second motor moving at half speed");
 			motorSync.On(-20,50,2500, false); //coast when done
 			
 			
