@@ -6,8 +6,10 @@ namespace MotorExample
 	{
 		public static void Main (string[] args)
 		{
-			Console.WriteLine ("Running single motor test");
 			Motor motor = new Motor (MotorPort.OutA);
+			MotorSync motorSync = new MotorSync(MotorPort.OutA, MotorPort.OutD);
+			
+			Console.WriteLine ("Running single motor test");
 			Console.WriteLine ("Reset motor tacho");
 			motor.Brake ();
 			System.Threading.Thread.Sleep (2500);
@@ -33,31 +35,25 @@ namespace MotorExample
 			
 			Console.WriteLine ("Move to zero");
 			motor.MoveTo(40, 0, true);
-			do{
-				System.Threading.Thread.Sleep(200);
-				Console.WriteLine("Tacho count: " + motor.GetTachoCount());
-				Console.WriteLine("Speed:" + motor.GetSpeed());
-			}while(motor.IsRunning());
 			Console.WriteLine("Motor at position: " + motor.GetTachoCount());
-			System.Threading.Thread.Sleep(2500);
+			System.Threading.Thread.Sleep(1000);
+			
+			Console.WriteLine ("Creating a step profile");
+			motor.SpeedProfileStep(40,300, 500, 300, true);
+			motor.Off();
+			Console.WriteLine("Motor at position: " + motor.GetTachoCount());
+			System.Threading.Thread.Sleep(1000);
+			
+			Console.WriteLine ("Motor " + motorSync.BitField + " synchronised forward for 2500 steps");
+			motorSync.On(50, 0, 2500, true);
+			motorSync.Off();
+			Console.WriteLine ("Mortor " + motorSync.BitField + " synchronised backwards for 2500 steps");
+			Console.WriteLine("Second motor moving at half speed");
+			motorSync.On(-20,50,2500, false); //coast when done
 			
 			
 			
-			/*motor.Brake();
-			Console.WriteLine ("Start position:" + motor.GetTachoCount ());
-			System.Threading.Thread.Sleep(2500);
-			motor.SpeedProfileStep (10, 255, 255, 255, false);
-			System.Threading.Thread.Sleep (500);
-			while (motor.IsRunning()) {
-				System.Threading.Thread.Sleep (100);
-				Console.WriteLine("Tacho count:" + motor.GetTachoCount());
-				Console.WriteLine(motor.IsRunning());
-				Console.WriteLine("Speed:" + motor.GetSpeed());
-
-			}
-			Console.WriteLine ("End position:" + motor.GetTachoCount ());*/
-			
-			Console.WriteLine ("Done executing single motor test");
+			Console.WriteLine ("Done executing motor test");
 		}
 	}
 }

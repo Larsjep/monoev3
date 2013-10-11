@@ -235,7 +235,7 @@ namespace MonoBrickFirmware.Native
 			get{return dataArr.Count;}
 		}
 		
-		internal static string AddSpacesToString(string text)
+		private static string AddSpacesToString(string text)
 		{
 	        if (string.IsNullOrEmpty(text))
 	           return "";
