@@ -43,7 +43,15 @@ namespace MonoBrickFirmware.Native
 		public static extern int read(int file, IntPtr buffer,uint length);
 		
 		[DllImport("libc.so.6")]
+		public static extern int ioctl(int fd, int cmd, IntPtr buffer);
+		
+		[DllImport("libc.so.6")]
 		public static extern int close(int fd);
+		
+		
+		
+		
+		
 	}
 	
 	public class UnixDevice : IDisposable
@@ -143,7 +151,41 @@ namespace MonoBrickFirmware.Native
 				}    
             }
 			return reply;		
-		} 
+		}
+		
+		public int IoCtl (int cmd, byte[] data)
+		{
+			IntPtr pnt = IntPtr.Zero;
+			bool hasError = false;
+			Exception inner = null;
+			int result = -1;
+			try {
+				int size = Marshal.SizeOf (data [0]) * data.Length;
+				pnt = Marshal.AllocHGlobal (size);
+				Marshal.Copy (data, 0, pnt, data.Length);
+				result = Libc.ioctl(fd, cmd, pnt);
+				if (result == -1)
+					hasError = true;
+			} 
+			catch (Exception e) {
+				hasError = true;
+				inner = e;
+			} 
+			finally {
+				if (pnt != IntPtr.Zero)    
+					Marshal.FreeHGlobal (pnt);
+			}
+			if (hasError) {
+				if (inner != null) {
+					throw inner;
+				} 
+				else 
+				{
+					throw new InvalidOperationException("Failed to write to Unix device");
+				}
+			}			
+			return result;
+		}
 		
 		
 		public void Dispose()

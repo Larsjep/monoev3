@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartupApp", "StartupApp\St
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleExample", "VehicleExample\VehicleExample.csproj", "{087D4242-7FC3-48C5-8F61-0C7329BBC5F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TouchSensorExample", "TouchSensorExample\TouchSensorExample.csproj", "{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -21,6 +23,10 @@ Global
 		{087D4242-7FC3-48C5-8F61-0C7329BBC5F4}.Debug|x86.Build.0 = Debug|x86
 		{087D4242-7FC3-48C5-8F61-0C7329BBC5F4}.Release|x86.ActiveCfg = Release|x86
 		{087D4242-7FC3-48C5-8F61-0C7329BBC5F4}.Release|x86.Build.0 = Release|x86
+		{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}.Debug|x86.ActiveCfg = Debug|x86
+		{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}.Debug|x86.Build.0 = Debug|x86
+		{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}.Release|x86.ActiveCfg = Release|x86
+		{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}.Release|x86.Build.0 = Release|x86
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Debug|x86.ActiveCfg = Debug|x86
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Debug|x86.Build.0 = Debug|x86
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Release|x86.ActiveCfg = Release|x86

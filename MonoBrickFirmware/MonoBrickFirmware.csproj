@@ -51,6 +51,10 @@
     <Compile Include="IO\Commands.cs" />
     <Compile Include="Graphics\Basics.cs" />
     <Compile Include="IO\Buttons.cs" />
+    <Compile Include="IO\Output.cs" />
+    <Compile Include="IO\Vehicle.cs" />
+    <Compile Include="IO\MotorSync.cs" />
+    <Compile Include="IO\MotorBase.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
