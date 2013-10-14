@@ -40,13 +40,21 @@ namespace MonoBrickFirmware.IO
 		private UnixDevice pwmDevice;
 		private UnixDevice tachoDevice;
 		private MemoryArea tachoMemory;
-		private const int deviceSize = 96;
+		
+		private const int TachoBufferSize = 12;
+		private const int NumberOfSensorPorts = 4;
+		private const int TachoMemorySize = TachoBufferSize * NumberOfSensorPorts;
+		
+		private const int UnknownDataOffset = 0; // I don't know what the first four bytes are used for
+		private const int SpeedDataOffset = 4; 
+		private const int TachoDataOffset = 8;
+		
 		public Output ()
 		{
 			
 			pwmDevice = new UnixDevice("/dev/lms_pwm");
 			tachoDevice = new UnixDevice("/dev/lms_motor");
-			tachoMemory = tachoDevice.MMap(deviceSize,0);
+			tachoMemory = tachoDevice.MMap(TachoMemorySize,0);
 			this.BitField = OutputBitfield.OutA;
 		}
 		
@@ -274,10 +282,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name="port">Motor port to read from</param>
 		public Int32 GetCount (MotorPort port)
 		{
-			byte[] data = tachoMemory.Read (0, 48);
+			byte[] data = tachoMemory.Read ((int)port * TachoBufferSize+ TachoDataOffset, 4);
 			var reply = new DeviceReply (data);
-			int index = (int)port * 12 + 8;
-			return reply.GetInt32(index);
+			return reply.GetInt32(0);
 		}
 		
 		/// <summary>
@@ -286,10 +293,9 @@ namespace MonoBrickFirmware.IO
 		/// <returns>The speed.</returns>
 		/// <param name="port">Motor port to read</param>
 		public sbyte GetSpeed(MotorPort port){
-			byte[] data = tachoMemory.Read (0, 48);
+			byte[] data = tachoMemory.Read ((int)port * TachoBufferSize + SpeedDataOffset, 1);
 			var reply = new DeviceReply (data);
-			int index = (int)port * 12 + 4;
-			return reply.GetSbyte(index);
+			return reply.GetSbyte(0);
 		}
 		
 		private void WriteProfile (ByteCodes code, sbyte speedOrPower, UInt32 rampUp, UInt32 constant, UInt32 rampDown, bool brake)

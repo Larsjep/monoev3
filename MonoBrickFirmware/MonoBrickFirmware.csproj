@@ -55,6 +55,7 @@
     <Compile Include="IO\Vehicle.cs" />
     <Compile Include="IO\MotorSync.cs" />
     <Compile Include="IO\MotorBase.cs" />
+    <Compile Include="IO\SensorManager.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -8,7 +8,7 @@ namespace MonoBrickFirmware.Native
 	/// <summary>
 	/// Class for creating a device command
 	/// </summary>
-	public class DeviceCommand
+	internal class DeviceCommand
 	{
 		
 		/// <summary>
@@ -250,13 +250,11 @@ namespace MonoBrickFirmware.Native
 	        return newText.ToString();
 		}
 		
-		internal void Print ()
+		public void Print ()
 		{
 			for (int i =0; i < Data.Length; i ++) {
 				Console.WriteLine ("Data[{0}]: {1:X}",i,Data[i]);
 			}	
-		
-		
 		}
 
 		
@@ -265,7 +263,7 @@ namespace MonoBrickFirmware.Native
 	/// <summary>
 	/// Class holding a reply from the device
 	/// </summary>
-	public class DeviceReply
+	internal class DeviceReply
 	{
 		
 		public DeviceReply(byte[] data){
@@ -457,7 +455,7 @@ namespace MonoBrickFirmware.Native
 		}
 		
 		
-		internal void Print ()
+		public void Print ()
 		{
 			for (int i =0; i < Data.Length; i ++) {
 				Console.WriteLine ("Data[{0}]: {1:X}",i,Data[i]);
