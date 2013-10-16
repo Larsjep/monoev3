@@ -169,22 +169,60 @@ namespace MonoBrickFirmware.IO
 				}				
 			}
 		}				
+
+		public int TextWidth(Font f, string text)
+		{
+			int width = 0;
+			foreach(char c in text)
+			{
+				CharStreamer cs = f.getChar(c);				
+				width += (int)cs.width;				
+			}
+			return width;
+		}
+
 		
 		public void WriteText(Font f, Point p, string text, bool color)
 		{			
 			foreach(char c in text)
 			{
 				CharStreamer cs = f.getChar(c);
+				if (p.x+cs.width > Lcd.Width)
+					break;
 				DrawBitmap(cs, p, cs.width, cs.height, color);		
 				p.x += (int)cs.width;				
 			}
 		}
 		
+		
+		public enum Alignment { Left, Center, Right };
 		public void WriteTextBox(Font f, Rect r, string text, bool color)
 		{
-			DrawBox(r, !color); // Clear background
-			WriteText(f, r.p1, text, color);
+			WriteTextBox(f, r, text, color, Alignment.Left);
 		}
+		
+		public void WriteTextBox(Font f, Rect r, string text, bool color, Alignment aln)
+		{
+			DrawBox(r, !color); // Clear background
+			int xpos = 0;
+			if (aln == Alignment.Left)
+			{
+			} 
+			else if (aln == Alignment.Center)
+			{
+				int width = TextWidth(f, text);
+				xpos = (r.p2.x-r.p1.x)/2-width/2;
+				if (xpos < 0) xpos = 0;
+			}
+			else 
+			{
+				int width = TextWidth(f, text);
+				xpos = (r.p2.x-r.p1.x)-width;
+				if (xpos < 0) xpos = 0;
+			}
+			WriteText(f, r.p1+new Point(xpos, 0) , text, color);
+		}			
+		
 	}
 }
 
