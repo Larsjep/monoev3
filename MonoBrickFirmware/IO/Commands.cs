@@ -2,8 +2,9 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using MonoBrickFirmware.IO;
+using MonoBrickFirmware.Native;
 
-namespace MonoBrickFirmware.Native
+namespace MonoBrickFirmware.IO
 {
 	/// <summary>
 	/// Class for creating a device command

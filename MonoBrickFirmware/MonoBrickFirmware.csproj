@@ -56,6 +56,8 @@
     <Compile Include="IO\MotorSync.cs" />
     <Compile Include="IO\MotorBase.cs" />
     <Compile Include="IO\Input.cs" />
+    <Compile Include="IO\AnalogSensor.cs" />
+    <Compile Include="IO\UARTSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

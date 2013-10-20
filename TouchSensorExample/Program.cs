@@ -21,7 +21,7 @@ namespace TouchSensorExample
 				Console.WriteLine("Pin5: " + sensor1.ReadPin5());
 				Console.WriteLine("Pin6: " + sensor1.ReadPin6());*/
 				sensor1.SetMode(SensorMode.Mode2);
-				Console.WriteLine("Raw float:" + sensor1.ReadFloat(0));
+				Console.WriteLine("Raw float:" + sensor1.ReadBytes(4));
 			};
 			buts.DownPressed += () => { 
 				Console.WriteLine("Connection type: " + sensor1.GetConnectionType());
