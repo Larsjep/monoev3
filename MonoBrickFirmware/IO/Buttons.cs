@@ -41,7 +41,7 @@ namespace MonoBrickFirmware.IO
 		ButtonStates ReadButtons()
 		{
 			ButtonStates bs = ButtonStates.None;
-			byte[] buttonData = buttonMem.Read(0, ButtonCount);
+			byte[] buttonData = buttonMem.Read();
 			int bitMask = 1;
 			foreach (byte butState in buttonData)
 			{

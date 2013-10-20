@@ -282,9 +282,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name="port">Motor port to read from</param>
 		public Int32 GetCount (MotorPort port)
 		{
-			byte[] data = tachoMemory.Read ((int)port * TachoBufferSize+ TachoDataOffset, 4);
+			byte[] data = tachoMemory.Read();
 			var reply = new DeviceReply (data);
-			return reply.GetInt32(0);
+			return reply.GetInt32((int)port * TachoBufferSize+ TachoDataOffset);
 		}
 		
 		/// <summary>
@@ -293,9 +293,9 @@ namespace MonoBrickFirmware.IO
 		/// <returns>The speed.</returns>
 		/// <param name="port">Motor port to read</param>
 		public sbyte GetSpeed(MotorPort port){
-			byte[] data = tachoMemory.Read ((int)port * TachoBufferSize + SpeedDataOffset, 1);
+			byte[] data = tachoMemory.Read ();
 			var reply = new DeviceReply (data);
-			return reply.GetSbyte(0);
+			return reply.GetSbyte((int)port * TachoBufferSize + SpeedDataOffset);
 		}
 		
 		private void WriteProfile (ByteCodes code, sbyte speedOrPower, UInt32 rampUp, UInt32 constant, UInt32 rampDown, bool brake)

@@ -168,8 +168,12 @@ namespace MonoBrickFirmware.Native
 					Marshal.Copy (data, 0, pnt, data.Length);
 				}
 				result = Libc.ioctl(fd, cmd, pnt);
-				if (result == -1)
+				if (result == -1){
 					hasError = true;
+				}
+				else{
+					Marshal.Copy(pnt, data, 0, data.Length);
+				}
 			} 
 			catch (Exception e) {
 				hasError = true;
@@ -185,7 +189,7 @@ namespace MonoBrickFirmware.Native
 				} 
 				else 
 				{
-					throw new InvalidOperationException("Failed to write to Unix device");
+					throw new InvalidOperationException("Failed to excute IO control command");
 				}
 			}			
 			return result;
@@ -217,20 +221,47 @@ namespace MonoBrickFirmware.Native
 			this.size = size;
 		}
 		
+		public void Write (byte[] data)
+		{
+			Marshal.Copy(data,0, ptr, data.Length);
+		}
+		
+		/// <summary>
+		/// Write a byte array to a memory area
+		/// </summary>
+		/// <param name="offset">Offset where to write the data to</param>
+		/// <param name="data">Data to write</param>
 		public void Write(int offset, byte[] data)
 		{
 			if (offset+data.Length > size)
 				throw new IndexOutOfRangeException(string.Format("Out of range accessing index {0}, max {1}", offset+data.Length, size));
-			Marshal.Copy(data, offset, ptr, data.Length);
+			byte[] currentData = Read();
+			Array.Copy(data,0, currentData, offset, data.Length);
+			Write(currentData);
 		}
 		
+		/// <summary>
+		/// Copy the memory area into a array and return it
+		/// </summary>
+		public byte[] Read ()
+		{
+			byte[] currentData = new byte[size];
+            Marshal.Copy(ptr, currentData, 0, (int)size);
+            return currentData;
+		}
+		
+		/// <summary>
+		/// Copy the memory area into a array and return it
+		/// </summary>
+		/// <param name="offset">Read offset</param>
+		/// <param name="length">Length of the bytes to read</param>
 		public byte[] Read (int offset, int length)
 		{
-			
 			if (offset+length > size)
 				throw new IndexOutOfRangeException(string.Format("Out of range accessing index {0}, max {1}", offset+length, size));
-			byte[] reply = new byte[length];
-            Marshal.Copy(ptr, reply, offset, length);
+			byte[] currentData = Read();
+            byte[] reply = new byte[length];
+            Array.Copy(currentData,offset, reply, 0, length);
             return reply;	
 		}
 		
