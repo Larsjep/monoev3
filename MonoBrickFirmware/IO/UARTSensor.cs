@@ -24,9 +24,9 @@ namespace MonoBrickFirmware.IO
     	protected const int UartActualOffset = 42592;
     	protected const int UartRawOffset = 4192;
     	
-    	protected const int UartRawDataSize = 32; //DevRawSize2
+    	protected const int UartRawDataSize = 32; 
 		protected const int UartRawBufferLength = 300;
-		protected const int UartRawBufferSize = UartRawDataSize * UartRawBufferLength;//DevRawSize1
+		protected const int UartRawBufferSize = UartRawDataSize * UartRawBufferLength;
     	
 		// IO control
 		protected const UInt32 UartIOSetConnection = 0xc00c7500;
@@ -45,24 +45,17 @@ namespace MonoBrickFirmware.IO
 		
 		private byte[] GetRawData ()
 		{
-			var data = new byte[NumberOfSenosrPorts * UartRawBufferSize]; 
-			Array.Copy(uartMemory.Read(), UartRawOffset, data, 0,NumberOfSenosrPorts * UartRawBufferSize);
-			return data;  
+			return uartMemory.Read(UartRawOffset, NumberOfSenosrPorts * UartRawBufferSize);
 		}
 		
 		private byte[] GetActualData ()
 		{
-			var data = new byte[NumberOfSenosrPorts * 2]; 
-			Array.Copy(uartMemory.Read(), UartActualOffset, data, 0,NumberOfSenosrPorts * 2);
-			return data; 	
-		
+			return uartMemory.Read(UartActualOffset, NumberOfSenosrPorts * 2); 
 		}
 		
 		private byte[] GetStatusData ()
 		{
-			var data = new byte[NumberOfSenosrPorts]; 
-			Array.Copy(uartMemory.Read(), UartStatusOffset, data, 0,NumberOfSenosrPorts);
-			return data; 	
+			return uartMemory.Read(UartStatusOffset, NumberOfSenosrPorts);
 		}
 		
 		

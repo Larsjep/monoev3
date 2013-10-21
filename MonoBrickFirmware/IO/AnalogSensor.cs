@@ -11,22 +11,22 @@ namespace MonoBrickFirmware.IO
 		
 		}
 		
-		public Int16 ReadPin1()
+		protected Int16 ReadPin1()
 		{
-		    DeviceReply reply = new DeviceReply(analogMemory.Read());
-		    return reply.GetInt16((int) port * 2 + PinOneOffset);
+		    DeviceReply reply = new DeviceReply(analogMemory.Read(PinOneOffset, NumberOfSenosrPorts*2));
+		    return reply.GetInt16((int) port * 2);
 		}
 		
-		public Int16 ReadPin6()
+		protected Int16 ReadPin6()
 		{
-		    DeviceReply reply = new DeviceReply(analogMemory.Read());
-		    return reply.GetInt16((int) port * 2 + PinSixOffset);
+		    DeviceReply reply = new DeviceReply(analogMemory.Read(PinSixOffset, NumberOfSenosrPorts*2));
+		    return reply.GetInt16((int) port * 2);
 		}
 		
-		public Int16 ReadPin5()
+		protected Int16 ReadPin5()
 		{
-		    DeviceReply reply = new DeviceReply(analogMemory.Read());
-		    return reply.GetInt16((int) port * 2 + PinFiveOffset);
+		    DeviceReply reply = new DeviceReply(analogMemory.Read( PinFiveOffset, NumberOfSenosrPorts*2));
+		    return reply.GetInt16((int) port * 2);
 		}
 	}
 }

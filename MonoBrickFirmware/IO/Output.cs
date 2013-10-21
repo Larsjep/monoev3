@@ -42,8 +42,8 @@ namespace MonoBrickFirmware.IO
 		private MemoryArea tachoMemory;
 		
 		private const int TachoBufferSize = 12;
-		private const int NumberOfSensorPorts = 4;
-		private const int TachoMemorySize = TachoBufferSize * NumberOfSensorPorts;
+		private const int NumberOfMotorPorts = 4;
+		private const int TachoMemorySize = TachoBufferSize * NumberOfMotorPorts;
 		
 		private const int UnknownDataOffset = 0; // I don't know what the first four bytes are used for
 		private const int SpeedDataOffset = 4; 
@@ -282,9 +282,7 @@ namespace MonoBrickFirmware.IO
 		/// <param name="port">Motor port to read from</param>
 		public Int32 GetCount (MotorPort port)
 		{
-			byte[] data = tachoMemory.Read();
-			var reply = new DeviceReply (data);
-			return reply.GetInt32((int)port * TachoBufferSize+ TachoDataOffset);
+			return  BitConverter.ToInt32(tachoMemory.Read((int)port * TachoBufferSize+ TachoDataOffset, 4),0);
 		}
 		
 		/// <summary>
@@ -293,9 +291,7 @@ namespace MonoBrickFirmware.IO
 		/// <returns>The speed.</returns>
 		/// <param name="port">Motor port to read</param>
 		public sbyte GetSpeed(MotorPort port){
-			byte[] data = tachoMemory.Read ();
-			var reply = new DeviceReply (data);
-			return reply.GetSbyte((int)port * TachoBufferSize + SpeedDataOffset);
+			return (sbyte) tachoMemory.Read ((int)port * TachoBufferSize + SpeedDataOffset,1)[0];
 		}
 		
 		private void WriteProfile (ByteCodes code, sbyte speedOrPower, UInt32 rampUp, UInt32 constant, UInt32 rampDown, bool brake)

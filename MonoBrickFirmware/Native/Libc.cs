@@ -221,52 +221,73 @@ namespace MonoBrickFirmware.Native
 			this.size = size;
 		}
 		
+		/// <summary>
+		/// Write a byte array to the memory map
+		/// </summary>
+		/// <param name="data">Data.</param>
 		public void Write (byte[] data)
 		{
-			Marshal.Copy(data,0, ptr, data.Length);
+			Write(0, data);
 		}
 		
 		/// <summary>
-		/// Write a byte array to a memory area
+		/// Write a byte array to the memory map
 		/// </summary>
-		/// <param name="offset">Offset where to write the data to</param>
+		/// <param name="offset">Memory map offset</param>
 		/// <param name="data">Data to write</param>
-		public void Write(int offset, byte[] data)
+		public void Write (int offset, byte[] data)
 		{
-			if (offset+data.Length > size)
-				throw new IndexOutOfRangeException(string.Format("Out of range accessing index {0}, max {1}", offset+data.Length, size));
-			byte[] currentData = Read();
-			Array.Copy(data,0, currentData, offset, data.Length);
-			Write(currentData);
+			if (offset + data.Length > size)
+				throw new IndexOutOfRangeException (string.Format ("Out of range accessing index {0}, max {1}", offset + data.Length, size));
+			if (offset != 0) {
+				Marshal.Copy (data, 0, ptr.Add (offset), data.Length);
+			} 
+			else 
+			{
+				Marshal.Copy (data, 0, ptr , data.Length);
+			}
 		}
 		
 		/// <summary>
-		/// Copy the memory area into a array and return it
+		/// Copy the whole memory map into an array and return it
 		/// </summary>
 		public byte[] Read ()
 		{
-			byte[] currentData = new byte[size];
-            Marshal.Copy(ptr, currentData, 0, (int)size);
-            return currentData;
+			return Read(0,(int)size);
 		}
 		
 		/// <summary>
-		/// Copy the memory area into a array and return it
+		/// Copy part of the memory map into an array and return it
 		/// </summary>
-		/// <param name="offset">Read offset</param>
-		/// <param name="length">Length of the bytes to read</param>
+		/// <param name="offset">Memory map offset</param>
+		/// <param name="length">Number of bytes to read</param>
 		public byte[] Read (int offset, int length)
 		{
-			if (offset+length > size)
-				throw new IndexOutOfRangeException(string.Format("Out of range accessing index {0}, max {1}", offset+length, size));
-			byte[] currentData = Read();
-            byte[] reply = new byte[length];
-            Array.Copy(currentData,offset, reply, 0, length);
-            return reply;	
+			if (offset + length > size)
+				throw new IndexOutOfRangeException (string.Format ("Out of range accessing index {0}, max {1}", offset + length, size));
+			byte[] reply = new byte[length];
+			if (offset != 0) {
+				Marshal.Copy (ptr.Add(offset), reply, 0, length);
+			} 
+			else 
+			{
+				Marshal.Copy (ptr, reply, 0, length);
+			}
+			return reply;	
 		}
-		
-		
 	}
 	
+    public static class IntPtrExtensions
+    {
+        /// <summary>
+        /// Add a value to a int pointer
+        /// </summary>
+        /// <param name="ptr">Pointer to add value to</param>
+        /// <param name="val">Value to add</param>
+        public static IntPtr Add(this IntPtr ptr, int val)
+        {
+            return new IntPtr(ptr.ToInt64() + val);
+        }
+    }   
 }
 

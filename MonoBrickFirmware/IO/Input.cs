@@ -44,7 +44,7 @@ namespace MonoBrickFirmware.IO
 		#pragma warning restore
 	};
 	
-	public class Input
+	public abstract class Input
 	{
 		private static byte [] sensorData = new byte[3*NumberOfSenosrPorts];
 		private static object setupLock = new object();
@@ -81,8 +81,6 @@ namespace MonoBrickFirmware.IO
 			managerDevice =  new UnixDevice("/dev/lms_dcm");
 			analogDevice = new UnixDevice("/dev/lms_analog");
 			analogMemory = analogDevice.MMap(AnalogMemorySize,0);
-			//connectionMemory = analogDevice.MMap(ConnectionMemorySize,ConnectionOffset);
-			//typeMemory = analogDevice.MMap(TypeOffset,TypeMemorySize);
 			this.port = port; 
 		}
 		
@@ -96,7 +94,7 @@ namespace MonoBrickFirmware.IO
 			}
     	}
 		
-		public void SetSensorMode(SensorMode mode)
+		protected void SetSensorMode(SensorMode mode)
 	    {
 	        byte [] modes = new byte[NumberOfSenosrPorts];
 	        for(int i = 0; i < modes.Length; i++)
@@ -105,13 +103,13 @@ namespace MonoBrickFirmware.IO
 	        managerDevice.Write(modes);
 	    }
 	    
-	    public SensorType GetAnalogSensorType ()
+	    protected SensorType GetAnalogSensorType ()
 		{
-			return (SensorType) analogMemory.Read()[(int) port + TypeOffset];
+			return (SensorType) analogMemory.Read(TypeOffset, NumberOfSenosrPorts)[(int) port];
 		}
 		
-		public ConnectionType GetConnectionType (){
-			return (ConnectionType) analogMemory.Read()[(int) port+ ConnectionOffset]; 
+		protected ConnectionType GetConnectionType (){
+			return (ConnectionType) analogMemory.Read(ConnectionOffset,NumberOfSenosrPorts )[(int) port]; 
 		}
 	}
 	

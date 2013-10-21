@@ -24,8 +24,8 @@ namespace TouchSensorExample
 				Console.WriteLine("Raw float:" + sensor1.ReadBytes(4));
 			};
 			buts.DownPressed += () => { 
-				Console.WriteLine("Connection type: " + sensor1.GetConnectionType());
-				Console.WriteLine("Sensor type: " + sensor1.GetAnalogSensorType());
+				//Console.WriteLine("Connection type: " + sensor1.GetConnectionType());
+				//Console.WriteLine("Sensor type: " + sensor1.GetAnalogSensorType());
 			};  
 			while (run) {
 				System.Threading.Thread.Sleep(50);

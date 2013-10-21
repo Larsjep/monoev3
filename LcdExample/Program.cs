@@ -26,7 +26,7 @@ namespace example
 			
 			Buttons buts = new Buttons();
 			int val = 7;
-			/*buts.EnterPressed += () =>
+			buts.EnterPressed += () =>
 			{ 
 				lcd.WriteTextBox(f, box, "Value = " + val.ToString(), true);
 				lcd.Update (); 				
@@ -36,7 +36,7 @@ namespace example
 			buts.LeftPressed += () => stopped.Set();
 			
 			stopped.WaitOne();
-			*/
+			
 		}
 	}
 }
