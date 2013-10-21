@@ -19,23 +19,23 @@ namespace MonoBrickFirmware.IO
 			All			= 0xff,
 		}		
 		public const int ButtonCount = 6;
-		/*public event Action UpPressed = delegate {};
+		public event Action UpPressed = delegate {};
 		public event Action EnterPressed = delegate {};
 		public event Action DownPressed = delegate {};
 		public event Action RightPressed = delegate {};
 		public event Action LeftPressed = delegate {};
-		public event Action EscapePressed = delegate {};*/
+		public event Action EscapePressed = delegate {};
 		
 		UnixDevice dev;
 		MemoryArea buttonMem;
-		//EventWaitHandle stopPolling = new ManualResetEvent(false);
+		EventWaitHandle stopPolling = new ManualResetEvent(false);
 		const int pollTime = 50;
 		const int debounceTime = 10;
 		public Buttons ()
 		{
 			dev = new UnixDevice("/dev/lms_ui");
 			buttonMem = dev.MMap(ButtonCount, 0);
-			//new Thread(ButtonPollThread).Start();
+			new Thread(ButtonPollThread).Start();
 		}
 				
 		ButtonStates ReadButtons()
@@ -81,7 +81,7 @@ namespace MonoBrickFirmware.IO
 			} while (bs == ButtonStates.None);
 			return bs;
 		}
-		/*
+		
 		void ButtonPollThread()
 		{	
 			Thread.CurrentThread.IsBackground = true;
@@ -106,7 +106,7 @@ namespace MonoBrickFirmware.IO
 				
 			}
 		}
-		 */
+		
 		#region IDisposable implementation
 		void IDisposable.Dispose ()
 		{
