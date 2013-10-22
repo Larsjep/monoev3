@@ -58,6 +58,8 @@
     <Compile Include="IO\Input.cs" />
     <Compile Include="IO\AnalogSensor.cs" />
     <Compile Include="IO\UARTSensor.cs" />
+    <Compile Include="IO\TouchSensor.cs" />
+    <Compile Include="IO\ISensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
