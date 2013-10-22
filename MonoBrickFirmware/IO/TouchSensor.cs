@@ -115,10 +115,8 @@ namespace MonoBrickFirmware.IO
 		/// Gets or sets the mode.
 		/// </summary>
 		/// <value>The mode.</value>
-		public TouchMode Mode {
-			get{return (TouchMode) this.mode;}
-			set{this.mode = (SensorMode)value;}
-		}
+		public TouchMode Mode {get; set;}
+		
 	}
 }
 

@@ -3,13 +3,38 @@ using MonoBrickFirmware.Native;
 
 namespace MonoBrickFirmware.IO
 {
-	public class AnalogSensor: Input{
 	
+	/// <summary>
+	/// Analog commands
+	/// </summary>
+	[Flags]
+	public enum AnalogMode  {
+		#pragma warning disable 
+		None = (byte)'-', Float = (byte)'f', Set = (byte)'0', ColorFull = 0x0D, ColorRed = 0x0E, 
+		ColorGreen = 0x0F, ColorBlue = 0x10, ColorNone = 0x11, ColorExit = 0x12, Pin1 = 0x01, Pin5 = 0x02
+		#pragma warning restore
+	};
+	
+	public class AnalogSensor: Input{
+		protected AnalogMode mode;
+		
 		public AnalogSensor (SensorPort port):base(port)
 		{
 			
 		
 		}
+		
+		protected bool SetMode(AnalogMode mode)
+	    {
+	        this.mode = mode;
+	        byte [] modes = new byte[NumberOfSenosrPorts];
+	        for(int i = 0; i < modes.Length; i++)
+	            modes[i] = (byte)AnalogMode.None;
+	        modes[(int)port] = (byte)mode;
+	        deviceManager.Write(modes);
+	        return true;
+	    }
+		
 		
 		protected Int16 ReadPin1()
 		{

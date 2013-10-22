@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="IO\Lcd.cs" />
     <Compile Include="IO\Motor.cs" />
-    <Compile Include="IO\Sensor.cs" />
     <Compile Include="Graphics\MonoPicture.cs" />
     <Compile Include="Native\Libc.cs" />
     <Compile Include="Graphics\Font.cs" />
@@ -60,6 +59,7 @@
     <Compile Include="IO\UARTSensor.cs" />
     <Compile Include="IO\TouchSensor.cs" />
     <Compile Include="IO\ISensor.cs" />
+    <Compile Include="IO\LightSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -1,29 +1,29 @@
 using System;
 using MonoBrickFirmware.IO;
-namespace TouchSensorExample
+namespace LightSensorExample
 {
 	class MainClass
 	{
 		public static void Main (string[] args)
 		{
 			bool run = true;
-			var touchSensor = new TouchSensor(SensorPort.In1);
+			var lightSensor = new LightSensor(SensorPort.In1);
 			Buttons buts = new Buttons ();
-			touchSensor.Initialize();
+			lightSensor.Initialize();
 			buts.EnterPressed += () => { 
 				run  = false;
 			};
 			buts.UpPressed += () => { 
-				Console.WriteLine("Sensor value:" + touchSensor.ReadAsString());
+				Console.WriteLine("Sensor value:" + lightSensor.ReadAsString());
 			};
 			buts.DownPressed += () => { 
-				if(touchSensor.Mode == TouchMode.Boolean){
-					touchSensor.Mode = TouchMode.Raw;
+				if(lightSensor.Mode == LightMode.Ambient){
+					lightSensor.Mode = LightMode.Relection;
 				}
 				else{
-					touchSensor.Mode = TouchMode.Boolean;
+					lightSensor.Mode = LightMode.Ambient;
 				}
-				Console.WriteLine("Sensor mode is now: " + touchSensor.Mode);
+				Console.WriteLine("Sensor mode is now: " + lightSensor.Mode);
 			};  
 			while (run) {
 				System.Threading.Thread.Sleep(50);

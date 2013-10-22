@@ -67,7 +67,7 @@ namespace MonoBrickFirmware.IO
 	        return false;
 	    }
 	    
-		protected override bool SetMode(SensorMode mode)
+		protected bool SetMode(SensorMode mode)
 	    {
 	        
 	        SetOperatingMode(mode);

@@ -75,7 +75,6 @@ namespace MonoBrickFirmware.IO
     	protected const int ConnectionOffset = 5160;
 		
 		protected SensorPort port;
-		protected SensorMode mode;
 		
 		public Input (SensorPort port)
 		{
@@ -83,7 +82,7 @@ namespace MonoBrickFirmware.IO
 			analogDevice = new UnixDevice("/dev/lms_analog");
 			analogMemory = analogDevice.MMap(AnalogMemorySize,0);
 			this.port = port;
-			this.mode = SensorMode.Mode0; 
+			 
 		}
 		
 		protected static byte[] SetupCommand(SensorPort sensorPort, ConnectionType conn, SensorType type, SensorMode mode)
@@ -96,18 +95,7 @@ namespace MonoBrickFirmware.IO
 			}
     	}
 		
-		protected virtual bool SetMode(SensorMode mode)
-	    {
-	        this.mode = mode;
-	        byte [] modes = new byte[NumberOfSenosrPorts];
-	        for(int i = 0; i < modes.Length; i++)
-	            modes[i] = (byte)'-';
-	        modes[(int)port] = (byte)mode;
-	        deviceManager.Write(modes);
-	        return true;
-	    }
-	    
-	    protected SensorType GetSensorType ()
+		protected SensorType GetSensorType ()
 		{
 			return (SensorType) analogMemory.Read(TypeOffset, NumberOfSenosrPorts)[(int) port];
 		}
