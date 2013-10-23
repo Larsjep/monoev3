@@ -71,22 +71,11 @@ namespace MonoBrickFirmware.IO
 		}
 		
 		/// <summary>
-		/// Read this instance.
+		/// Read the sensor value as percent
 		/// </summary>
 		public int Read()
 		{
-			return 0;
-			/*int value = 0;
-			switch (mode)
-			{
-			    case (SensorMode)LightMode.Ambient:
-			        value = GetRead();
-			        break;
-			   case (SensorMode)LightMode.Relection:
-			        value = GetRead();
-			        break;
-			}
-			return value;*/			
+			return (int)this.ReadPin1AsPct();
 		}
 		
 		/// <summary>
@@ -95,7 +84,7 @@ namespace MonoBrickFirmware.IO
 		/// <returns>The raw sensor value.</returns>
 		public int ReadRaw ()
 		{
-			return 0;
+			return (int)this.ReadPin1();
 		}
 		
 	}

@@ -17,13 +17,7 @@ namespace TouchSensorExample
 				Console.WriteLine("Sensor value:" + touchSensor.ReadAsString());
 			};
 			buts.DownPressed += () => { 
-				if(touchSensor.Mode == TouchMode.Boolean){
-					touchSensor.Mode = TouchMode.Raw;
-				}
-				else{
-					touchSensor.Mode = TouchMode.Boolean;
-				}
-				Console.WriteLine("Sensor mode is now: " + touchSensor.Mode);
+				Console.WriteLine("Raw sensor value: " + touchSensor.ReadRaw());
 			};  
 			while (run) {
 				System.Threading.Thread.Sleep(50);

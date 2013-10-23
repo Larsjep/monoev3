@@ -16,8 +16,8 @@ namespace MonoBrickFirmware.IO
 	};
 	
 	public class AnalogSensor: Input{
+		protected const int BitResolution = 4095;//12-bit
 		protected AnalogMode mode;
-		
 		public AnalogSensor (SensorPort port):base(port)
 		{
 			
@@ -35,10 +35,32 @@ namespace MonoBrickFirmware.IO
 	        return true;
 	    }
 		
+		protected Int16 ReadPin1AsPct ()
+		{
+			return (Int16)((ReadPin1()*100)/BitResolution);
+		
+		}
+		
+		protected Int16 ReadPin5AsPct ()
+		{
+			return (Int16)((ReadPin5()*100)/BitResolution);
+		
+		}
+		
+		protected Int16 ReadPin6AsPct ()
+		{
+			return (Int16)((ReadPin6()*100)/BitResolution);
+		}
 		
 		protected Int16 ReadPin1()
 		{
 		    DeviceReply reply = new DeviceReply(analogMemory.Read(PinOneOffset, NumberOfSenosrPorts*2));
+		    return reply.GetInt16((int) port * 2);
+		}
+		
+		protected Int16 ReadPin5()
+		{
+		    DeviceReply reply = new DeviceReply(analogMemory.Read( PinFiveOffset, NumberOfSenosrPorts*2));
 		    return reply.GetInt16((int) port * 2);
 		}
 		
@@ -48,11 +70,7 @@ namespace MonoBrickFirmware.IO
 		    return reply.GetInt16((int) port * 2);
 		}
 		
-		protected Int16 ReadPin5()
-		{
-		    DeviceReply reply = new DeviceReply(analogMemory.Read( PinFiveOffset, NumberOfSenosrPorts*2));
-		    return reply.GetInt16((int) port * 2);
-		}
+		
 	}
 }
 

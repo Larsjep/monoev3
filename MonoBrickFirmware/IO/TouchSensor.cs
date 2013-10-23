@@ -3,21 +3,6 @@ using System;
 namespace MonoBrickFirmware.IO
 {
 	/// <summary>
-	/// Sensor mode when using a touch sensor
-    /// </summary>
-    public enum TouchMode { 
-		/// <summary>
-		/// On or off mode
-		/// </summary>
-		Boolean = SensorMode.Mode0, 
-		
-		/// <summary>
-		/// Raw mode
-		/// </summary>
-		Raw = SensorMode.Mode1
-	};
-    
-	/// <summary>
 	/// Class used for touch sensor. Works with both EV3 and NXT
 	/// </summary>
 	public class TouchSensor : AnalogSensor, ISensor{
@@ -26,21 +11,10 @@ namespace MonoBrickFirmware.IO
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.TouchSensor"/> class in boolean mode
 		/// </summary>
-		public TouchSensor (SensorPort port) : this(port,TouchMode.Boolean)
+		public TouchSensor (SensorPort port) : base(port)
 		{
 			
 		}
-		
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.TouchSensor"/> class.
-		/// </summary>
-		/// <param name="port">Port.</param>
-		/// <param name="mode">Mode.</param>
-		public TouchSensor (SensorPort port, TouchMode mode) : base(port)
-		{
-			Mode = mode;
-		}
-		
 		
 		/// <summary>
 		/// Initilize the sensor.
@@ -58,21 +32,20 @@ namespace MonoBrickFirmware.IO
 		public string ReadAsString ()
 		{
 			string s = "";
-			if (Mode == TouchMode.Boolean) {
-				if (IsPressed()) {
-					s = "On";
-				} 
-				else {
-					s = "Off";
-				}
+			if (IsPressed()) {
+				s = "On";
 			} 
 			else {
-				s = Read().ToString();
+				s = "Off";
 			}
 			return s;
 		}
 		
-		private short ReadRaw(){
+		/// <summary>
+		/// Reads the raw sensor value
+		/// </summary>
+		/// <returns>The raw.</returns>
+		public int ReadRaw(){
 			nxtConnected = (GetSensorType() == SensorType.NXTTouch);
 			if(nxtConnected)
 				return ReadPin1();//NXT
@@ -85,7 +58,7 @@ namespace MonoBrickFirmware.IO
 		/// <returns><c>true</c> if the sensor is pressed; otherwise, <c>false</c>.</returns>
 		public bool IsPressed ()
 		{
-			short rawValue = ReadRaw();
+			short rawValue = (short)ReadRaw();
 			if (nxtConnected) {
 				if(rawValue < boolCutOff)
 					return true;
@@ -100,23 +73,12 @@ namespace MonoBrickFirmware.IO
 		
 		
 		/// <summary>
-		/// Read the value. In bool mode this will return 1 or 0
+		/// Read the value. Will return 1 or 0
 		/// </summary>
 		public int Read()
 		{
-			short rawValue = ReadRaw();
-			if (Mode == TouchMode.Boolean) {
-				Convert.ToInt32(IsPressed());
-			}
-			return (int) rawValue;
+			return Convert.ToInt32(IsPressed());
 		}
-		
-		/// <summary>
-		/// Gets or sets the mode.
-		/// </summary>
-		/// <value>The mode.</value>
-		public TouchMode Mode {get; set;}
-		
 	}
 }
 
