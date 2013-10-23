@@ -16,7 +16,7 @@ namespace MonoBrickFirmware.IO
 	};
 	
 	public class AnalogSensor: Input{
-		protected const int BitResolution = 4095;//12-bit
+		protected const int ADCResolution = 4095;//12-bit
 		protected AnalogMode mode;
 		public AnalogSensor (SensorPort port):base(port)
 		{
@@ -37,19 +37,12 @@ namespace MonoBrickFirmware.IO
 		
 		protected Int16 ReadPin1AsPct ()
 		{
-			return (Int16)((ReadPin1()*100)/BitResolution);
-		
-		}
-		
-		protected Int16 ReadPin5AsPct ()
-		{
-			return (Int16)((ReadPin5()*100)/BitResolution);
-		
+			return (Int16)((ReadPin1()*100)/ADCResolution);
 		}
 		
 		protected Int16 ReadPin6AsPct ()
 		{
-			return (Int16)((ReadPin6()*100)/BitResolution);
+			return (Int16)((ReadPin6()*100)/ADCResolution);
 		}
 		
 		protected Int16 ReadPin1()

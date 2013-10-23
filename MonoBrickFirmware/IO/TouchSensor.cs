@@ -7,7 +7,8 @@ namespace MonoBrickFirmware.IO
 	/// </summary>
 	public class TouchSensor : AnalogSensor, ISensor{
 		private bool nxtConnected;
-		private const int boolCutOff = 2000;
+		private const int boolCutOff = ADCResolution/2;
+		
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.TouchSensor"/> class in boolean mode
 		/// </summary>
