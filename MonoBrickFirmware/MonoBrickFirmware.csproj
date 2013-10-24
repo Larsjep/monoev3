@@ -60,6 +60,7 @@
     <Compile Include="IO\TouchSensor.cs" />
     <Compile Include="IO\ISensor.cs" />
     <Compile Include="IO\LightSensor.cs" />
+    <Compile Include="IO\ColorSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

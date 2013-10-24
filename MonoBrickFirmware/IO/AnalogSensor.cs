@@ -16,17 +16,30 @@ namespace MonoBrickFirmware.IO
 	};
 	
 	public class AnalogSensor: Input{
+		private UnixDevice deviceManager;
+		
+		
 		protected const int ADCResolution = 4095;//12-bit
-		protected AnalogMode mode;
+		protected AnalogMode analogMode;
+		
+		//Analog memory offsets
+    	private const int PinOneOffset = 0;
+    	private const int PinSixOffset = 8;
+    	private const int PinFiveOffset = 16;
+    	private const int BatteryTempOffset = 24;
+    	private const int MotorCurrentOffset = 26;
+   	 	private const int BatteryCurrentOffset = 28;
+    	private const int BatteryVoltageOffset = 30;
+    	
+		
 		public AnalogSensor (SensorPort port):base(port)
 		{
-			
-		
+			deviceManager =  new UnixDevice("/dev/lms_dcm");
 		}
 		
 		protected bool SetMode(AnalogMode mode)
 	    {
-	        this.mode = mode;
+	        this.analogMode = mode;
 	        byte [] modes = new byte[NumberOfSenosrPorts];
 	        for(int i = 0; i < modes.Length; i++)
 	            modes[i] = (byte)AnalogMode.None;

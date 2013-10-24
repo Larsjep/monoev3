@@ -8,11 +8,6 @@ namespace MonoBrickFirmware.IO
     public interface ISensor
 	{
 		/// <summary>
-		/// Initialize this sensor
-		/// </summary>
-		void Initialize();
-
-		/// <summary>
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>

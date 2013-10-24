@@ -8,7 +8,7 @@ namespace MonoBrickFirmware.IO
 		/// <summary>
 	/// Class for reading and writing data to a UART port
 	/// </summary>
-	public class Uart: Input
+	public class UartSensor: Input
 	{
 		protected UnixDevice uartDevice;
 		protected MemoryArea uartMemory;
@@ -37,7 +37,7 @@ namespace MonoBrickFirmware.IO
     	protected const byte UartPortChanged = 1;
     	protected const byte UartDataReady = 8;
 		
-		public Uart (SensorPort port):base(port)
+		public UartSensor (SensorPort port):base(port)
 		{
 			uartDevice = new UnixDevice("/dev/lms_uart");
 			uartMemory = uartDevice.MMap(UartMemorySize,0);

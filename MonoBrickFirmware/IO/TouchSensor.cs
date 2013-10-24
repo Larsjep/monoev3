@@ -18,15 +18,6 @@ namespace MonoBrickFirmware.IO
 		}
 		
 		/// <summary>
-		/// Initilize the sensor.
-		/// </summary>
-		public void Initialize ()
-		{
-			Read();
-		}
-		
-		
-		/// <summary>
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>

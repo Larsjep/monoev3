@@ -42,13 +42,13 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <value>The mode.</value>
 		public LightMode Mode {
-			get{return (LightMode) this.mode;}
+			get{return (LightMode) this.analogMode;}
 			set{SetMode((AnalogMode) value);}
 		}
 		
 		public void Initialize ()
 		{
-			SetMode(mode);
+			SetMode(analogMode);
 		}
 
 		/// <summary>
@@ -58,7 +58,7 @@ namespace MonoBrickFirmware.IO
 		public string ReadAsString ()
 		{
 			string s = "";
-			switch (mode)
+			switch (analogMode)
 			{
 			    case (AnalogMode)LightMode.Ambient:
 			        s = Read().ToString();

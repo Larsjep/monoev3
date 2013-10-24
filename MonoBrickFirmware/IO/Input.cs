@@ -49,36 +49,18 @@ namespace MonoBrickFirmware.IO
 		private static byte [] sensorData = new byte[3*NumberOfSenosrPorts];
 		private static object setupLock = new object();
 		
-		protected const int NumberOfSenosrPorts = 4;
-		
-		protected UnixDevice deviceManager;
-		protected UnixDevice analogDevice;
-		
-		protected MemoryArea analogMemory;
-		protected MemoryArea connectionMemory;
-		protected MemoryArea typeMemory;
-		
+		//Analog memory offsets
+		private const int TypeOffset = 5156;
+    	private const int ConnectionOffset = 5160;
 		
 		protected const int AnalogMemorySize = 5172;
-		protected const int ConnectionMemorySize = NumberOfSenosrPorts;
-		protected const int TypeMemorySize =  NumberOfSenosrPorts;
-    	
-    	//Analog constants 
-    	protected const int PinOneOffset = 0;
-    	protected const int PinSixOffset = 8;
-    	protected const int PinFiveOffset = 16;
-    	protected const int BatteryTempOffset = 24;
-    	protected const int MotorCurrentOffset = 26;
-   	 	protected const int BatteryCurrentOffset = 28;
-    	protected const int BatteryVoltageOffset = 30;
-    	protected const int TypeOffset = 5156;
-    	protected const int ConnectionOffset = 5160;
-		
+		protected const int NumberOfSenosrPorts = 4;
+		protected UnixDevice analogDevice;
+		protected MemoryArea analogMemory;
 		protected SensorPort port;
 		
 		public Input (SensorPort port)
 		{
-			deviceManager =  new UnixDevice("/dev/lms_dcm");
 			analogDevice = new UnixDevice("/dev/lms_analog");
 			analogMemory = analogDevice.MMap(AnalogMemorySize,0);
 			this.port = port;
