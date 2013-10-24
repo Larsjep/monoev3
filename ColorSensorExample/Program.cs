@@ -12,7 +12,7 @@ namespace ColorSensorExample
 			int modeIdx = 0;
 			bool run = true;
 			var colorSensor = new NXTColorSensor(SensorPort.In1);
-			Buttons buts = new Buttons ();
+			ButtonEvents buts = new ButtonEvents ();
 			colorSensor.Mode = modes[modeIdx];
 			buts.EnterPressed += () => { 
 				run  = false;

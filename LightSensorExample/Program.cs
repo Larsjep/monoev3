@@ -8,7 +8,7 @@ namespace LightSensorExample
 		{
 			bool run = true;
 			var lightSensor = new LightSensor(SensorPort.In1);
-			Buttons buts = new Buttons ();
+			ButtonEvents buts = new ButtonEvents ();
 			lightSensor.Initialize();
 			buts.EnterPressed += () => { 
 				run  = false;

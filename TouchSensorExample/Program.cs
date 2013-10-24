@@ -8,7 +8,7 @@ namespace TouchSensorExample
 		{
 			bool run = true;
 			var touchSensor = new TouchSensor(SensorPort.In1);
-			Buttons buts = new Buttons ();
+			ButtonEvents buts = new ButtonEvents ();
 			buts.EnterPressed += () => { 
 				run  = false;
 			};

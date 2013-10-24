@@ -19,23 +19,16 @@ namespace MonoBrickFirmware.IO
 			All			= 0xff,
 		}		
 		public const int ButtonCount = 6;
-		public event Action UpPressed = delegate {};
-		public event Action EnterPressed = delegate {};
-		public event Action DownPressed = delegate {};
-		public event Action RightPressed = delegate {};
-		public event Action LeftPressed = delegate {};
-		public event Action EscapePressed = delegate {};
+		
 		
 		UnixDevice dev;
 		MemoryArea buttonMem;
-		EventWaitHandle stopPolling = new ManualResetEvent(false);
-		const int pollTime = 50;
 		const int debounceTime = 10;
+		const int pollTime = 50;
 		public Buttons ()
 		{
 			dev = new UnixDevice("/dev/lms_ui");
-			buttonMem = dev.MMap(ButtonCount, 0);
-			new Thread(ButtonPollThread).Start();
+			buttonMem = dev.MMap(ButtonCount, 0);			
 		}
 				
 		ButtonStates ReadButtons()
@@ -52,7 +45,7 @@ namespace MonoBrickFirmware.IO
 			return bs;
 		}
 		
-		ButtonStates GetDebounced()
+		internal ButtonStates GetDebounced()
 		{
 			
 			ButtonStates s2 = ButtonStates.None;
@@ -80,26 +73,70 @@ namespace MonoBrickFirmware.IO
 				bs = GetDebounced();
 			} while (bs == ButtonStates.None);
 			return bs;
+		}			
+		
+		#region IDisposable implementation
+		void IDisposable.Dispose ()
+		{
+			dev.Dispose();
 		}
+		#endregion
+	}
+	
+	public class ButtonEvents : IDisposable
+	{
+		EventWaitHandle stopPolling = new ManualResetEvent(false);
+		const int pollTime = 50;
+		Buttons btns = new Buttons();
+		
+		public ButtonEvents()
+		{
+			new Thread(ButtonPollThread).Start();
+		}
+		
+		public event Action UpPressed = delegate {};
+		public event Action EnterPressed = delegate {};
+		public event Action DownPressed = delegate {};
+		public event Action RightPressed = delegate {};
+		public event Action LeftPressed = delegate {};
+		public event Action EscapePressed = delegate {};
+		
+		public event Action UpReleased = delegate {};
+		public event Action EnterReleased = delegate {};
+		public event Action DownReleased = delegate {};
+		public event Action RightReleased = delegate {};
+		public event Action LeftReleased = delegate {};
+		public event Action EscapeReleased = delegate {};		
 		
 		void ButtonPollThread()
 		{	
 			Thread.CurrentThread.IsBackground = true;
-			ButtonStates lastState = GetDebounced();
+			Buttons.ButtonStates lastState = btns.GetDebounced();
 			while (!stopPolling.WaitOne(pollTime))
 			{
-				ButtonStates bs = GetDebounced();
+				Buttons.ButtonStates bs = btns.GetDebounced();
 				if (bs != lastState)
 				{
-					ButtonStates pressed = (bs ^ lastState) & (~lastState);
+					Buttons.ButtonStates pressed = (bs ^ lastState) & (~lastState);
 					switch (pressed)
 					{
-						case ButtonStates.Down:		DownPressed(); break;
-						case ButtonStates.Enter:	EnterPressed(); break;
-						case ButtonStates.Escape:	EscapePressed(); break;
-						case ButtonStates.Left:		LeftPressed(); break;
-						case ButtonStates.Right:	RightPressed(); break;
-						case ButtonStates.Up:		UpPressed(); break;
+						case Buttons.ButtonStates.Down:		DownPressed(); break;
+						case Buttons.ButtonStates.Enter:	EnterPressed(); break;
+						case Buttons.ButtonStates.Escape:	EscapePressed(); break;
+						case Buttons.ButtonStates.Left:		LeftPressed(); break;
+						case Buttons.ButtonStates.Right:	RightPressed(); break;
+						case Buttons.ButtonStates.Up:		UpPressed(); break;
+					}
+					
+					Buttons.ButtonStates released = (bs ^ lastState) & lastState;
+					switch (released)
+					{
+						case Buttons.ButtonStates.Down:		DownReleased(); break;
+						case Buttons.ButtonStates.Enter:	EnterReleased(); break;
+						case Buttons.ButtonStates.Escape:	EscapeReleased(); break;
+						case Buttons.ButtonStates.Left:		LeftReleased(); break;
+						case Buttons.ButtonStates.Right:	RightReleased(); break;
+						case Buttons.ButtonStates.Up:		UpReleased(); break;
 					}
 					lastState = bs;
 				}
@@ -110,7 +147,7 @@ namespace MonoBrickFirmware.IO
 		#region IDisposable implementation
 		void IDisposable.Dispose ()
 		{
-			dev.Dispose();
+			((IDisposable)btns).Dispose();
 		}
 		#endregion
 	}

@@ -24,7 +24,7 @@ namespace example
 			lcd.WriteTextBox(f, box + offset*2, "Hello World!!", true);						
 			lcd.Update();
 			
-			Buttons buts = new Buttons();
+			ButtonEvents buts = new ButtonEvents();
 			int val = 7;
 			buts.EnterPressed += () =>
 			{ 
