@@ -5,7 +5,7 @@ using MonoBrickFirmware.Native;
 
 namespace MonoBrickFirmware.IO
 {
-		/// <summary>
+	/// <summary>
 	/// Class for reading and writing data to a UART port
 	/// </summary>
 	public class UartSensor: Input
@@ -37,6 +37,8 @@ namespace MonoBrickFirmware.IO
     	protected const byte UartPortChanged = 1;
     	protected const byte UartDataReady = 8;
 		
+		protected SensorMode mode = SensorMode.Mode0;
+		
 		public UartSensor (SensorPort port):base(port)
 		{
 			uartDevice = new UnixDevice("/dev/lms_uart");
@@ -47,7 +49,8 @@ namespace MonoBrickFirmware.IO
 	    {
 	        unchecked {
 				uartDevice.IoCtl ((Int32)UartIOSetConnection, SetupCommand (this.port, ConnectionType.None, SensorType.None, SensorMode.Mode0));
-			} 
+			}
+			mode = SensorMode.Mode0; 
 	        WaitZeroStatus(WaitTimout);
 	    }
 		
@@ -174,7 +177,8 @@ namespace MonoBrickFirmware.IO
 		{
 			unchecked {
 				uartDevice.IoCtl ((Int32)UartIOSetConnection, SetupCommand (port, ConnectionType.UART, SensorType.None, mode));
-			} 
+			}
+			this.mode = mode;  
 	    }
 		
 		private void ClearPortChanged()
@@ -183,6 +187,7 @@ namespace MonoBrickFirmware.IO
 				uartDevice.IoCtl ((Int32)UartIOClearChanges, SetupCommand (port, ConnectionType.UART, SensorType.None, SensorMode.Mode0));
 				uartMemory.Write (UartStatusOffset, new byte[] { (byte)(uartMemory.Read ((int)port, 1) [0] & ~UartPortChanged) });
 			}
+			this.mode = SensorMode.Mode0;
 	    }
 		
 	    private bool InitUart(SensorMode mode)

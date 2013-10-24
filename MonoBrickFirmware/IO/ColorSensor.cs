@@ -111,13 +111,160 @@ namespace MonoBrickFirmware.IO
 		/// <param name="mode">Mode.</param>
 		public EV3ColorSensor (SensorPort port, ColorMode mode) :  base(port)
 		{
-			
+					
 		}
 	
+		/// <summary>
+		/// Gets or sets the color mode.
+		/// </summary>
+		/// <value>The color mode.</value>
+		public ColorMode Mode {
+			get{return SensorModeToColorMode(base.mode);}
+			set{
+				SetMode(ColorModeToSensorMode(value) );
+			}
+		}
+		
+		/// <summary>
+		/// Reads the sensor value as a string.
+		/// </summary>
+		/// <returns>The value as a string</returns>
 		public string ReadAsString ()
 		{
-			return "";
+			string s = "";
+			switch (Mode)
+			{
+			    case ColorMode.Ambient:
+			        s = Read().ToString();
+			        break;
+			   case ColorMode.Color:
+			        s = ReadColor().ToString();
+			        break;
+			   case ColorMode.Reflection:
+			        s = Read().ToString();
+			        break;
+			   default:
+			   		s = Read().ToString();
+			   		break;
+			}
+			return s;
 		}
+		
+		/// <summary>
+		/// Read the raw value of the reflected light. In color mode the color index is returned
+		/// </summary>
+		/// <returns>The raw value</returns>
+		public int ReadRaw ()
+		{
+			int value = 0;
+			switch (Mode)
+			{
+			    case ColorMode.Ambient:
+			        //value = CalculateRawAverage ();
+			        break;
+			   	case ColorMode.Color:
+			        value = (int)ReadColor();
+			        break;
+			   	case ColorMode.Reflection:
+			        //value = CalculateRawAverage ();
+			        break;
+			   	default:
+			   		//value = CalculateRawAverage ();
+			   		break;
+			}
+			return value;
+		
+		
+		}
+		
+		/// <summary>
+		/// Reads the color of the RGB.
+		/// </summary>
+		/// <returns>The RGB color.</returns>
+		public RGBColor ReadRGBColor ()
+		{
+			return new RGBColor((byte)0,(byte)0,(byte)0);
+		}
+		
+		/// <summary>
+		/// Read the intensity of the reflected light in percent. In color mode the color index is returned
+		/// </summary>
+		public int Read()
+		{
+			int value = 0;
+			switch (Mode)
+			{
+			    case ColorMode.Ambient:
+			        //value = CalculateRawAverageAsPct ();
+			        break;
+			   	case ColorMode.Color:
+			        //value = (int)ReadColor();
+			        break;
+			   	case ColorMode.Reflection:
+			        //value = CalculateRawAverageAsPct ();
+			        break;
+			   	default:
+			   		//value = CalculateRawAverageAsPct ();
+			   		break;
+			}
+			return value;
+		}
+		
+		/// <summary>
+		/// Reads the color.
+		/// </summary>
+		/// <returns>The color.</returns>
+		public Color ReadColor()
+		{
+			Color color = Color.None;
+			if (Mode == ColorMode.Color) {
+				//color = CalculateColor();
+			}
+			return color;
+		}
+		
+		
+		private SensorMode ColorModeToSensorMode (ColorMode mode)
+		{
+			SensorMode sensorMode = SensorMode.Mode0;
+			switch (mode) {
+				case ColorMode.Ambient:
+					sensorMode = SensorMode.Mode1;
+					break;
+				case ColorMode.Color:
+					sensorMode = SensorMode.Mode2;
+					break;
+				case ColorMode.NXTBlue:
+					sensorMode = SensorMode.Mode0;//not supported by the EV3 use relection
+					break;
+				case ColorMode.NXTGreen:
+					sensorMode = SensorMode.Mode0;//not supported by the EV3 use relection
+					break;
+				case ColorMode.Reflection:
+					sensorMode = SensorMode.Mode0;
+					break;
+			}
+			return sensorMode;
+		}
+		
+		
+		private ColorMode SensorModeToColorMode (SensorMode mode)
+		{
+			ColorMode colorMode = ColorMode.Reflection;
+			switch (mode) {
+				case SensorMode.Mode1:
+					colorMode = ColorMode.Ambient;
+					break;
+				case SensorMode.Mode2:
+					colorMode = ColorMode.Color;
+					break;
+				case SensorMode.Mode0:
+					colorMode = ColorMode.Reflection;
+					break;
+			}
+			return colorMode;
+		}
+		
 	}
 	
 	
