@@ -1,16 +1,15 @@
 using System;
-using MonoBrickFirmware;
 using MonoBrickFirmware.IO;
-namespace NXTColorSensorExample
+namespace EV3ColorSensorExample
 {
 	class MainClass
 	{
 		public static void Main (string[] args)
 		{
-			NXTColorMode[] modes = {NXTColorMode.Color, NXTColorMode.Reflection, NXTColorMode.Ambient, NXTColorMode.Blue, NXTColorMode.Green};
+			EV3ColorMode[] modes = {EV3ColorMode.Color, EV3ColorMode.Reflection, EV3ColorMode.Ambient};
 			int modeIdx = 0;
 			bool run = true;
-			var colorSensor = new NXTColorSensor(SensorPort.In1);
+			var colorSensor = new EV3ColorSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			
 			buts.EnterPressed += () => { 
@@ -18,15 +17,6 @@ namespace NXTColorSensorExample
 			};
 			buts.UpPressed += () => { 
 				Console.WriteLine("Sensor value: " + colorSensor.ReadAsString());
-			};
-			buts.LeftPressed += () => { 
-				Console.WriteLine("Raw sensor value: " + colorSensor.ReadRaw());
-			};
-			buts.RightPressed += () => { 
-				RGBColor RGB = colorSensor.ReadRGBColor();
-				Console.WriteLine("Red value  : " + RGB.Red);
-				Console.WriteLine("Green value: " + RGB.Green);
-				Console.WriteLine("Blue value : " + RGB.Blue);
 			};
 			buts.DownPressed += () => { 
 				modeIdx = (modeIdx+1)%modes.Length;
