@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TouchSensorExample", "Touch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightSensorExample", "LightSensorExample\LightSensorExample.csproj", "{610E902C-B188-4C05-BDEB-1CDB38893F89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorSensorExample", "ColorSensorExample\ColorSensorExample.csproj", "{CFE397E2-F479-4B7D-BB02-11BC2859F00B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NXTColorSensorExample", "NXTColorSensorExample\NXTColorSensorExample.csproj", "{CFE397E2-F479-4B7D-BB02-11BC2859F00B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,7 +57,7 @@ Global
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = ColorSensorExample\ColorSensorExample.csproj
+		StartupItem = LcdExample\LcdExample.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2

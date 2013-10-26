@@ -62,9 +62,9 @@ namespace MonoBrickFirmware.IO
     }
 	
 	/// <summary>
-	/// Sensor mode when using a NXT or EV3 color sensor
+	/// Sensor mode when using a NXT color sensor
     /// </summary>
-    public enum ColorMode { 
+    public enum NXTColorMode { 
 		/// <summary>
 		/// Use the color sensor to read reflected light
 		/// </summary>
@@ -83,22 +83,45 @@ namespace MonoBrickFirmware.IO
 		/// <summary>
 		/// Activate the green light on the color sensor. Only works with the NXT Color sensor 
 		/// </summary>
-		NXTGreen = AnalogMode.ColorGreen, // not supported on the EV3
+		Green = AnalogMode.ColorGreen, // not supported on the EV3
 		
 		/// <summary>
 		/// Activate the green blue on the color sensor. Only works with the NXT Color sensor 
 		/// </summary>
-		NXTBlue = AnalogMode.ColorBlue,// not supported on the EV3
+		Blue = AnalogMode.ColorBlue,// not supported on the EV3
 	};
 	
-	public class EV3ColorSensor : UartSensor, ISensor{
+	
+	/// <summary>
+	/// Sensor mode when using a EV3 color sensor
+    /// </summary>
+    public enum EV3ColorMode { 
+		/// <summary>
+		/// Use the color sensor to read reflected light
+		/// </summary>
+		Reflection = SensorMode.Mode0, //mode0 for EV3
 		
-		private const int Resolution = 1023;
+		/// <summary>
+		/// Use the color sensor to detect the light intensity
+		/// </summary>
+		Ambient  = SensorMode.Mode1, //mode1 for EV3
+		
+		/// <summary>
+		/// Use the color sensor to distinguish between eight different colors
+		/// </summary>
+		Color  = SensorMode.Mode2, //mode2 for EV3
+	};
+	
+	
+	
+	
+	
+	public class EV3ColorSensor : UartSensor, ISensor{
 		
 		/// <summary>
 		/// Initializes a new instance of the NXTColorSensor class in color mode
 		/// </summary>
-		public EV3ColorSensor (SensorPort port) : this(port, ColorMode.Color)
+		public EV3ColorSensor (SensorPort port) : this(port, EV3ColorMode.Color)
 		{
 			
 		}
@@ -107,7 +130,7 @@ namespace MonoBrickFirmware.IO
 		/// Initializes a new instance of the NXTColorSensor class.
 		/// </summary>
 		/// <param name="mode">Mode.</param>
-		public EV3ColorSensor (SensorPort port, ColorMode mode) :  base(port)
+		public EV3ColorSensor (SensorPort port, EV3ColorMode mode) :  base(port)
 		{
 			base.Initialise(base.UARTMode);
 			Mode = mode;
@@ -118,10 +141,10 @@ namespace MonoBrickFirmware.IO
 		/// Gets or sets the color mode.
 		/// </summary>
 		/// <value>The color mode.</value>
-		public ColorMode Mode {
-			get{return SensorModeToColorMode(base.UARTMode);}
+		public EV3ColorMode Mode {
+			get{return (EV3ColorMode) base.UARTMode;}
 			set{
-				SetMode(ColorModeToSensorMode(value) );
+				base.SetMode((SensorMode) value);
 			}
 		}
 		
@@ -134,13 +157,13 @@ namespace MonoBrickFirmware.IO
 			string s = "";
 			switch (Mode)
 			{
-			    case ColorMode.Ambient:
+			    case EV3ColorMode.Ambient:
 			        s = Read().ToString();
 			        break;
-			   case ColorMode.Color:
+			   case EV3ColorMode.Color:
 			        s = ReadColor().ToString();
 			        break;
-			   case ColorMode.Reflection:
+			   case EV3ColorMode.Reflection:
 			        s = Read().ToString();
 			        break;
 			   default:
@@ -151,60 +174,24 @@ namespace MonoBrickFirmware.IO
 		}
 		
 		/// <summary>
-		/// Read the raw value of the reflected light. In color mode the color index is returned
-		/// </summary>
-		/// <returns>The raw value</returns>
-		public int ReadRaw ()
-		{
-			int value = 0;
-			switch (Mode)
-			{
-			    case ColorMode.Ambient:
-			        value = CalculateRawAverage ();
-			        break;
-			   	case ColorMode.Color:
-			        value = (int)ReadColor();
-			        break;
-			   	case ColorMode.Reflection:
-			        value = CalculateRawAverage ();
-			        break;
-			   	default:
-			   		value = CalculateRawAverage ();
-			   		break;
-			}
-			return value;
-		
-		
-		}
-		
-		/// <summary>
-		/// Reads the color of the RGB.
-		/// </summary>
-		/// <returns>The RGB color.</returns>
-		public RGBColor ReadRGBColor ()
-		{
-			return new RGBColor((byte)0,(byte)0,(byte)0);
-		}
-		
-		/// <summary>
-		/// Read the intensity of the reflected light in percent. In color mode the color index is returned
+		/// Read the intensity of the reflected or ambient light in percent. In color mode the color index is returned
 		/// </summary>
 		public int Read()
 		{
 			int value = 0;
 			switch (Mode)
 			{
-			    case ColorMode.Ambient:
-			        value = CalculateRawAverageAsPct ();
+			    case EV3ColorMode.Ambient:
+			        value = CalculateRawAverageAsPct();
 			        break;
-			   	case ColorMode.Color:
+			   	case EV3ColorMode.Color:
 			        value = (int)ReadColor();
 			        break;
-			   	case ColorMode.Reflection:
-			        value = CalculateRawAverageAsPct ();
+			   	case EV3ColorMode.Reflection:
+			        value = CalculateRawAverageAsPct();
 			        break;
 			   	default:
-			   		value = CalculateRawAverageAsPct ();
+			   		value = CalculateRawAverageAsPct();
 			   		break;
 			}
 			return value;
@@ -217,63 +204,16 @@ namespace MonoBrickFirmware.IO
 		public Color ReadColor()
 		{
 			Color color = Color.None;
-			if (Mode == ColorMode.Color) {
+			if (Mode == EV3ColorMode.Color) {
 				color = (Color) (base.ReadByte());
 			}
 			return color;
 		}
 		
-		protected int CalculateRawAverage ()
-		{
-			return BitConverter.ToInt32(base.ReadBytes(4),0);
-		}
-		
 		protected int CalculateRawAverageAsPct ()
 		{
-			return (CalculateRawAverage () * 100)/Resolution;
+			return(int) base.ReadByte();
 		}
-		
-		private SensorMode ColorModeToSensorMode (ColorMode mode)
-		{
-			SensorMode sensorMode = SensorMode.Mode0;
-			switch (mode) {
-				case ColorMode.Ambient:
-					sensorMode = SensorMode.Mode1;
-					break;
-				case ColorMode.Color:
-					sensorMode = SensorMode.Mode2;
-					break;
-				case ColorMode.NXTBlue:
-					sensorMode = SensorMode.Mode2;//not supported by the EV3 use color
-					break;
-				case ColorMode.NXTGreen:
-					sensorMode = SensorMode.Mode2;//not supported by the EV3 use color
-					break;
-				case ColorMode.Reflection:
-					sensorMode = SensorMode.Mode0;
-					break;
-			}
-			return sensorMode;
-		}
-		
-		
-		private ColorMode SensorModeToColorMode (SensorMode mode)
-		{
-			ColorMode colorMode = ColorMode.Color;
-			switch (mode) {
-				case SensorMode.Mode1:
-					colorMode = ColorMode.Ambient;
-					break;
-				case SensorMode.Mode2:
-					colorMode = ColorMode.Color;
-					break;
-				case SensorMode.Mode0:
-					colorMode = ColorMode.Reflection;
-					break;
-			}
-			return colorMode;
-		}
-		
 	}
 	
 	
@@ -304,7 +244,7 @@ namespace MonoBrickFirmware.IO
 		/// <summary>
 		/// Initializes a new instance of the NXTColorSensor class in color mode
 		/// </summary>
-		public NXTColorSensor (SensorPort port) : this(port, ColorMode.Color)
+		public NXTColorSensor (SensorPort port) : this(port, NXTColorMode.Color)
 		{
 			
 		}
@@ -313,18 +253,18 @@ namespace MonoBrickFirmware.IO
 		/// Initializes a new instance of the NXTColorSensor class.
 		/// </summary>
 		/// <param name="mode">Mode.</param>
-		public NXTColorSensor (SensorPort port, ColorMode mode) :  base(port)
+		public NXTColorSensor (SensorPort port, NXTColorMode mode) :  base(port)
 		{
 			GetColorData();
-			SetMode(analogMode);	
+			SetMode(AnalogMode);	
 		}
 		
 		/// <summary>
 		/// Gets or sets the color mode.
 		/// </summary>
 		/// <value>The color mode.</value>
-		public ColorMode Mode {
-			get{return (ColorMode) this.analogMode;}
+		public NXTColorMode Mode {
+			get{return (NXTColorMode) this.AnalogMode;}
 			set{
 				//GetColorData();
 				SetMode((AnalogMode) value);
@@ -340,13 +280,13 @@ namespace MonoBrickFirmware.IO
 			string s = "";
 			switch (Mode)
 			{
-			    case ColorMode.Ambient:
+			    case NXTColorMode.Ambient:
 			        s = Read().ToString();
 			        break;
-			   case ColorMode.Color:
+			   case NXTColorMode.Color:
 			        s = ReadColor().ToString();
 			        break;
-			   case ColorMode.Reflection:
+			   case NXTColorMode.Reflection:
 			        s = Read().ToString();
 			        break;
 			   default:
@@ -357,7 +297,7 @@ namespace MonoBrickFirmware.IO
 		}
 		
 		/// <summary>
-		/// Read the raw value of the reflected light. In color mode the color index is returned
+		/// Read the raw value of the reflected or ambient light. In color mode the color index is returned
 		/// </summary>
 		/// <returns>The raw value</returns>
 		public int ReadRaw ()
@@ -365,13 +305,13 @@ namespace MonoBrickFirmware.IO
 			int value = 0;
 			switch (Mode)
 			{
-			    case ColorMode.Ambient:
+			    case NXTColorMode.Ambient:
 			        value = CalculateRawAverage ();
 			        break;
-			   	case ColorMode.Color:
+			   	case NXTColorMode.Color:
 			        value = (int)ReadColor();
 			        break;
-			   	case ColorMode.Reflection:
+			   	case NXTColorMode.Reflection:
 			        value = CalculateRawAverage ();
 			        break;
 			   	default:
@@ -404,20 +344,20 @@ namespace MonoBrickFirmware.IO
 		}
 		
 		/// <summary>
-		/// Read the intensity of the reflected light in percent. In color mode the color index is returned
+		/// Read the intensity of the reflected or ambient light in percent. In color mode the color index is returned
 		/// </summary>
 		public int Read()
 		{
 			int value = 0;
 			switch (Mode)
 			{
-			    case ColorMode.Ambient:
+			    case NXTColorMode.Ambient:
 			        value = CalculateRawAverageAsPct ();
 			        break;
-			   	case ColorMode.Color:
+			   	case NXTColorMode.Color:
 			        value = (int)ReadColor();
 			        break;
-			   	case ColorMode.Reflection:
+			   	case NXTColorMode.Reflection:
 			        value = CalculateRawAverageAsPct ();
 			        break;
 			   	default:
@@ -434,7 +374,7 @@ namespace MonoBrickFirmware.IO
 		public Color ReadColor()
 		{
 			Color color = Color.None;
-			if (Mode == ColorMode.Color) {
+			if (Mode == NXTColorMode.Color) {
 				color = CalculateColor();
 			}
 			return color;

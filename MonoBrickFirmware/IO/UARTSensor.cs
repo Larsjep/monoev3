@@ -6,9 +6,18 @@ using MonoBrickFirmware.Native;
 namespace MonoBrickFirmware.IO
 {
 	/// <summary>
+	/// Sensor modes
+	/// </summary>
+	public enum SensorMode {
+		#pragma warning disable 
+		Mode0 = 0, Mode1 = 1, Mode2 = 2, Mode3 = 3, Mode4 = 4, Mode5 = 5, Mode6 = 6, Mode7 = 7	
+		#pragma warning restore
+	};
+	
+	/// <summary>
 	/// Class for reading and writing data to a UART port
 	/// </summary>
-	public class UartSensor: Input
+	public abstract class UartSensor: Input
 	{
 		protected UnixDevice uartDevice;
 		protected MemoryArea uartMemory;
@@ -38,7 +47,7 @@ namespace MonoBrickFirmware.IO
     	protected const byte UartPortChanged = 1;
     	protected const byte UartDataReady = 8;
 		
-		protected SensorMode UARTMode = SensorMode.Mode0;
+		protected SensorMode UARTMode{get; private set;}
 		
 		public UartSensor (SensorPort port):base(port)
 		{
@@ -71,7 +80,7 @@ namespace MonoBrickFirmware.IO
 	        return false;
 	    }
 	    
-		protected bool SetMode(SensorMode mode)
+		public bool SetMode(SensorMode mode)
 	    {
 	        
 	        SetOperatingMode(mode);
@@ -85,7 +94,7 @@ namespace MonoBrickFirmware.IO
 	    }
 	
 	   	
-	    public byte ReadByte()
+	    protected byte ReadByte()
 	    {
 	        CheckSensor();
 	        return GetRawData(CalcRawOffset(), 1)[0];  

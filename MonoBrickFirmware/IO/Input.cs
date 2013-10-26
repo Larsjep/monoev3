@@ -24,18 +24,8 @@ namespace MonoBrickFirmware.IO
 		#pragma warning restore
 	};
 	
-	
 	/// <summary>
-	/// Sensor modes
-	/// </summary>
-	public enum SensorMode {
-		#pragma warning disable 
-		Mode0 = 0, Mode1 = 1, Mode2 = 2, Mode3 = 3, Mode4 = 4, Mode5 = 5, Mode6 = 6, Mode7 = 7	
-		#pragma warning restore
-	};
-	
-	/// <summary>
-	/// Sensor modes
+	/// Connection modes
 	/// </summary>
 	public enum ConnectionType {
 		#pragma warning disable 

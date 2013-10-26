@@ -7,10 +7,10 @@ namespace ColorSensorExample
 	{
 		public static void Main (string[] args)
 		{
-			ColorMode[] modes = {ColorMode.Color, ColorMode.Reflection, ColorMode.Ambient, ColorMode.NXTBlue, ColorMode.NXTGreen};
+			NXTColorMode[] modes = {NXTColorMode.Color, NXTColorMode.Reflection, NXTColorMode.Ambient, NXTColorMode.Blue, NXTColorMode.Green};
 			int modeIdx = 0;
 			bool run = true;
-			var colorSensor = new EV3ColorSensor(SensorPort.In1);
+			var colorSensor = new NXTColorSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			
 			buts.EnterPressed += () => { 

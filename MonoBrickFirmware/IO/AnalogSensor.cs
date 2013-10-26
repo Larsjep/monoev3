@@ -15,12 +15,12 @@ namespace MonoBrickFirmware.IO
 		#pragma warning restore
 	};
 	
-	public class AnalogSensor: Input{
+	public abstract class AnalogSensor: Input{
 		private UnixDevice deviceManager;
 		
 		
 		protected const int ADCResolution = 4095;//12-bit
-		protected AnalogMode analogMode;
+		protected AnalogMode AnalogMode{get;private set;}
 		
 		//Analog memory offsets
     	private const int PinOneOffset = 0;
@@ -39,7 +39,7 @@ namespace MonoBrickFirmware.IO
 		
 		protected bool SetMode(AnalogMode mode)
 	    {
-	        this.analogMode = mode;
+	        this.AnalogMode = mode;
 	        byte [] modes = new byte[NumberOfSenosrPorts];
 	        for(int i = 0; i < modes.Length; i++)
 	            modes[i] = (byte)AnalogMode.None;
