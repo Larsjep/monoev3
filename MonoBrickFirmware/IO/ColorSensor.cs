@@ -61,10 +61,6 @@ namespace MonoBrickFirmware.IO
 		public byte Blue { get { return blue; } }
     }
 	
-	
-	
-	
-	
 	/// <summary>
 	/// Sensor mode when using a NXT or EV3 color sensor
     /// </summary>
@@ -97,6 +93,8 @@ namespace MonoBrickFirmware.IO
 	
 	public class EV3ColorSensor : UartSensor, ISensor{
 		
+		private const int Resolution = 1023;
+		
 		/// <summary>
 		/// Initializes a new instance of the NXTColorSensor class in color mode
 		/// </summary>
@@ -111,7 +109,9 @@ namespace MonoBrickFirmware.IO
 		/// <param name="mode">Mode.</param>
 		public EV3ColorSensor (SensorPort port, ColorMode mode) :  base(port)
 		{
-					
+			base.Initialise(base.UARTMode);
+			Mode = mode;
+						
 		}
 	
 		/// <summary>
@@ -119,7 +119,7 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <value>The color mode.</value>
 		public ColorMode Mode {
-			get{return SensorModeToColorMode(base.mode);}
+			get{return SensorModeToColorMode(base.UARTMode);}
 			set{
 				SetMode(ColorModeToSensorMode(value) );
 			}
@@ -160,16 +160,16 @@ namespace MonoBrickFirmware.IO
 			switch (Mode)
 			{
 			    case ColorMode.Ambient:
-			        //value = CalculateRawAverage ();
+			        value = CalculateRawAverage ();
 			        break;
 			   	case ColorMode.Color:
 			        value = (int)ReadColor();
 			        break;
 			   	case ColorMode.Reflection:
-			        //value = CalculateRawAverage ();
+			        value = CalculateRawAverage ();
 			        break;
 			   	default:
-			   		//value = CalculateRawAverage ();
+			   		value = CalculateRawAverage ();
 			   		break;
 			}
 			return value;
@@ -195,16 +195,16 @@ namespace MonoBrickFirmware.IO
 			switch (Mode)
 			{
 			    case ColorMode.Ambient:
-			        //value = CalculateRawAverageAsPct ();
+			        value = CalculateRawAverageAsPct ();
 			        break;
 			   	case ColorMode.Color:
-			        //value = (int)ReadColor();
+			        value = (int)ReadColor();
 			        break;
 			   	case ColorMode.Reflection:
-			        //value = CalculateRawAverageAsPct ();
+			        value = CalculateRawAverageAsPct ();
 			        break;
 			   	default:
-			   		//value = CalculateRawAverageAsPct ();
+			   		value = CalculateRawAverageAsPct ();
 			   		break;
 			}
 			return value;
@@ -218,11 +218,20 @@ namespace MonoBrickFirmware.IO
 		{
 			Color color = Color.None;
 			if (Mode == ColorMode.Color) {
-				//color = CalculateColor();
+				color = (Color) (base.ReadByte());
 			}
 			return color;
 		}
 		
+		protected int CalculateRawAverage ()
+		{
+			return BitConverter.ToInt32(base.ReadBytes(4),0);
+		}
+		
+		protected int CalculateRawAverageAsPct ()
+		{
+			return (CalculateRawAverage () * 100)/Resolution;
+		}
 		
 		private SensorMode ColorModeToSensorMode (ColorMode mode)
 		{
@@ -235,10 +244,10 @@ namespace MonoBrickFirmware.IO
 					sensorMode = SensorMode.Mode2;
 					break;
 				case ColorMode.NXTBlue:
-					sensorMode = SensorMode.Mode0;//not supported by the EV3 use relection
+					sensorMode = SensorMode.Mode2;//not supported by the EV3 use color
 					break;
 				case ColorMode.NXTGreen:
-					sensorMode = SensorMode.Mode0;//not supported by the EV3 use relection
+					sensorMode = SensorMode.Mode2;//not supported by the EV3 use color
 					break;
 				case ColorMode.Reflection:
 					sensorMode = SensorMode.Mode0;
@@ -250,7 +259,7 @@ namespace MonoBrickFirmware.IO
 		
 		private ColorMode SensorModeToColorMode (SensorMode mode)
 		{
-			ColorMode colorMode = ColorMode.Reflection;
+			ColorMode colorMode = ColorMode.Color;
 			switch (mode) {
 				case SensorMode.Mode1:
 					colorMode = ColorMode.Ambient;
@@ -370,8 +379,17 @@ namespace MonoBrickFirmware.IO
 			   		break;
 			}
 			return value;
+		}
 		
+		protected int CalculateRawAverage ()
+		{
+			GetRawValues();
+			return (int)(rawValues[RedIndex] + rawValues[BlueIndex] + rawValues[GreenIndex])/3;
+		}
 		
+		protected int CalculateRawAverageAsPct ()
+		{
+			return (CalculateRawAverage () * 100)/ADCResolution;
 		}
 		
 		/// <summary>
@@ -422,20 +440,6 @@ namespace MonoBrickFirmware.IO
 			return color;
 		}
 		
-		
-		
-		
-		
-		protected int CalculateRawAverage ()
-		{
-			GetRawValues();
-			return (int)(rawValues[RedIndex] + rawValues[BlueIndex] + rawValues[GreenIndex])/3;
-		}
-		
-		protected int CalculateRawAverageAsPct ()
-		{
-			return (CalculateRawAverage () * 100)/ADCResolution;
-		}
 		
 		protected void GetRawValues()
     	{
@@ -538,7 +542,7 @@ namespace MonoBrickFirmware.IO
 	                vals[col] = (Int16) (((rawValues[col] - blankVal) * calibrationValues[calTab,col]) >> 16);
 	            else
 	                vals[col] = 0;
-	        // finally adjust the blank value
+	        // finally adjust the background value
 	        if (blankVal > MinumumBackGroundValue)
 	            blankVal -= MinumumBackGroundValue;
 	        else
