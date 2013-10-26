@@ -7,10 +7,10 @@ namespace NXTColorSensorExample
 	{
 		public static void Main (string[] args)
 		{
-			NXTColorMode[] modes = {NXTColorMode.Color, NXTColorMode.Reflection, NXTColorMode.Ambient, NXTColorMode.Blue, NXTColorMode.Green};
+			ColorMode[] modes = {ColorMode.Color, ColorMode.Reflection, ColorMode.Ambient, ColorMode.Blue, ColorMode.Green};
 			int modeIdx = 0;
 			bool run = true;
-			var colorSensor = new NXTColorSensor(SensorPort.In1);
+			var colorSensor = new ColorSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			
 			buts.EnterPressed += () => { 
@@ -31,7 +31,7 @@ namespace NXTColorSensorExample
 			buts.DownPressed += () => { 
 				modeIdx = (modeIdx+1)%modes.Length;
 				colorSensor.Mode = modes[modeIdx];
-				Console.WriteLine("Sensor mode is now: " + colorSensor.Mode);
+				Console.WriteLine("Sensor mode is set to: " + modes[modeIdx]);
 			};  
 			while (run) {
 				System.Threading.Thread.Sleep(50);
