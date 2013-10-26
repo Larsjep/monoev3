@@ -164,8 +164,6 @@ namespace MonoBrickFirmware.IO
 				mode = colorSensor.Mode;
 				
 			if (this.GetConnectionType () == ConnectionType.NXTColor) {
-				colorSensor = new EV3ColorSensor(this.port);
-				((EV3ColorSensor)colorSensor).Reset();
 				colorSensor = new NXTColorSensor(this.port);
 			
 			} 
