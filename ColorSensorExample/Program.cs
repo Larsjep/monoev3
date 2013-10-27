@@ -1,19 +1,18 @@
 using System;
 using MonoBrickFirmware;
 using MonoBrickFirmware.IO;
-namespace ColorSensorExample
+namespace NXTColorSensorExample
 {
 	class MainClass
 	{
 		public static void Main (string[] args)
 		{
-			ColorMode[] modes = {ColorMode.Ambient,ColorMode.Color, ColorMode.NXTBlue, 
-								ColorMode.NXTGreen, ColorMode.Reflection};
+			ColorMode[] modes = {ColorMode.Color, ColorMode.Reflection, ColorMode.Ambient, ColorMode.Blue, ColorMode.Green};
 			int modeIdx = 0;
 			bool run = true;
-			var colorSensor = new NXTColorSensor(SensorPort.In1);
+			var colorSensor = new ColorSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
-			colorSensor.Mode = modes[modeIdx];
+			
 			buts.EnterPressed += () => { 
 				run  = false;
 			};
@@ -30,9 +29,9 @@ namespace ColorSensorExample
 				Console.WriteLine("Blue value : " + RGB.Blue);
 			};
 			buts.DownPressed += () => { 
-				colorSensor.Mode = modes[(modeIdx+1)%modes.Length];
 				modeIdx = (modeIdx+1)%modes.Length;
-				Console.WriteLine("Sensor mode is now: " + colorSensor.Mode);
+				colorSensor.Mode = modes[modeIdx];
+				Console.WriteLine("Sensor mode is set to: " + modes[modeIdx]);
 			};  
 			while (run) {
 				System.Threading.Thread.Sleep(50);
