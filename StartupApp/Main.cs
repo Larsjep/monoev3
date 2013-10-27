@@ -65,8 +65,16 @@ namespace StartupApp
 			lcd.Clear();
 			lcd.WriteText(font, new Point(0,0), "Shutting down...", true);
 			lcd.Update();
+			
 			UnixDevice dev = new UnixDevice("/dev/lms_power");
-			dev.IoCtl(0, new byte[0]);			
+			dev.IoCtl(0, new byte[0]);
+			btns.LedPattern(2);
+			System.Diagnostics.Process proc = new System.Diagnostics.Process();
+			proc.EnableRaisingEvents=false; 
+			proc.StartInfo.FileName = "poweroff";
+			proc.StartInfo.Arguments = "-f";
+			proc.Start();
+			proc.WaitForExit();
 			for (;;); // The system should now shutdown.
 		}
 		
