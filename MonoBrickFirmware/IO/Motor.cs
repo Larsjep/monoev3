@@ -74,8 +74,8 @@ namespace MonoBrickFirmware.IO
 			UInt64 longDegrees = (UInt64)degrees;
 			UInt32 rampUpDownSteps =(UInt32) (15 *  longDegrees * 100)/10000;
 			UInt32 constantsSteps = (UInt32) (70 *  longDegrees * 100)/10000;
-			if(rampUpDownSteps > 300){//To make sure ramp up is not too long
-				rampUpDownSteps = 300;
+			if(rampUpDownSteps > 200){//To make sure ramp up is not too long
+				rampUpDownSteps = 200;
 				constantsSteps = degrees - 2*rampUpDownSteps;
 			}
 			output.SetStepSpeed(speed,rampUpDownSteps,constantsSteps, rampUpDownSteps, brake);
