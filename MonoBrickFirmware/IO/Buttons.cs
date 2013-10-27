@@ -75,6 +75,13 @@ namespace MonoBrickFirmware.IO
 			return bs;
 		}			
 		
+		public void LedPattern(int pattern)
+		{
+			byte[] cmd = new byte[2];
+			cmd[0] = (byte)('0' + pattern);
+			dev.Write(cmd);
+		}
+		
 		#region IDisposable implementation
 		void IDisposable.Dispose ()
 		{
