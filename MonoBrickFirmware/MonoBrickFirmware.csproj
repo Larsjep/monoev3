@@ -54,13 +54,13 @@
     <Compile Include="IO\Vehicle.cs" />
     <Compile Include="IO\MotorSync.cs" />
     <Compile Include="IO\MotorBase.cs" />
-    <Compile Include="IO\Input.cs" />
     <Compile Include="IO\AnalogSensor.cs" />
     <Compile Include="IO\UARTSensor.cs" />
     <Compile Include="IO\TouchSensor.cs" />
     <Compile Include="IO\ISensor.cs" />
     <Compile Include="IO\LightSensor.cs" />
     <Compile Include="IO\ColorSensor.cs" />
+    <Compile Include="IO\SensorManager.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -136,9 +136,9 @@ namespace MonoBrickFirmware.IO
 	/// <summary>
 	/// Class for color sensor that works with both the EV3 and NXT color sensor.
 	/// </summary>
-	public class ColorSensor : Input, IColorSensor, ISensor{
+	public class ColorSensor : IColorSensor, ISensor{
 		private IColorSensor colorSensor;
-		
+		private SensorPort port;
 		/// <summary>
 		/// Initializes a new instance of the NXTColorSensor class in color mode
 		/// </summary>
@@ -151,10 +151,11 @@ namespace MonoBrickFirmware.IO
 		/// Initializes a new instance of the NXTColorSensor class.
 		/// </summary>
 		/// <param name="mode">Mode.</param>
-		public ColorSensor (SensorPort port, ColorMode mode) :  base(port)
+		public ColorSensor (SensorPort port, ColorMode mode)
 		{
 			Initialize();
 			colorSensor.Mode = mode;
+			this.port = port;
 		}
 		
 		public void Initialize ()
@@ -163,7 +164,7 @@ namespace MonoBrickFirmware.IO
 			if(colorSensor != null)
 				mode = colorSensor.Mode;
 				
-			if (this.GetConnectionType () == ConnectionType.NXTColor) {
+			if (SensorManager.Instance.GetConnectionType (this.port) == ConnectionType.NXTColor) {
 				colorSensor = new NXTColorSensor(this.port);
 			
 			} 
@@ -346,41 +347,41 @@ namespace MonoBrickFirmware.IO
 			return(int) base.ReadByte();
 		}
 		
-		private SensorMode ColorModeToSensorMode (ColorMode mode)
+		private UARTMode ColorModeToSensorMode (ColorMode mode)
 		{
-			SensorMode sensorMode = SensorMode.Mode0;
+			UARTMode sensorMode = UARTMode.Mode0;
 			switch (mode) {
 				case ColorMode.Ambient:
-					sensorMode = SensorMode.Mode1;
+					sensorMode = UARTMode.Mode1;
 					break;
 				case ColorMode.Color:
-					sensorMode = SensorMode.Mode2;
+					sensorMode = UARTMode.Mode2;
 					break;
 				case ColorMode.Blue:
-					sensorMode = SensorMode.Mode1;
+					sensorMode = UARTMode.Mode1;
 					break;
 				case ColorMode.Green:
-					sensorMode = SensorMode.Mode0;//not supported by the EV3 use relection
+					sensorMode = UARTMode.Mode0;//not supported by the EV3 use relection
 					break;
 				case ColorMode.Reflection:
-					sensorMode = SensorMode.Mode0;
+					sensorMode = UARTMode.Mode0;
 					break;
 			}
 			return sensorMode;
 		}
 		
 		
-		private ColorMode SensorModeToColorMode (SensorMode mode)
+		private ColorMode SensorModeToColorMode (UARTMode mode)
 		{
 			ColorMode colorMode = ColorMode.Reflection;
 			switch (mode) {
-				case SensorMode.Mode1:
+				case UARTMode.Mode1:
 					colorMode = ColorMode.Ambient;
 					break;
-				case SensorMode.Mode2:
+				case UARTMode.Mode2:
 					colorMode = ColorMode.Color;
 					break;
-				case SensorMode.Mode0:
+				case UARTMode.Mode0:
 					colorMode = ColorMode.Reflection;
 					break;
 			}
@@ -557,7 +558,7 @@ namespace MonoBrickFirmware.IO
     	{
         	int first = ColorOffset + (int)port * ColorBufferSize + ColorRawOffset;
         	for(int i = 0; i < rawValues.Length; i++)
-            	rawValues[i] =  BitConverter.ToInt16(analogMemory.Read(first + i*2, 2),0); 
+            	rawValues[i] =  BitConverter.ToInt16(ReadBytes(first + i*2, 2),0); 
         
     	}
     	
@@ -568,13 +569,13 @@ namespace MonoBrickFirmware.IO
 			int offset = ColorOffset + (int)port * ColorBufferSize;
 			for (int i = 0; i < calibrationValues.GetLength(0); i++) {
 				for (int j = 0; j < calibrationValues.GetLength(1); j++) {
-					calibrationValues [i,j] = BitConverter.ToInt32( analogMemory.Read (offset, 4),0);
+					calibrationValues [i,j] = BitConverter.ToInt32(ReadBytes(offset, 4),0);
 					offset += 4;
 				}
 			}
 	        for(int i = 0; i < calibrationLimits.Length; i++)
 	        {
-	            calibrationLimits[i] = BitConverter.ToInt16(analogMemory.Read (offset, 2),0);
+	            calibrationLimits[i] = BitConverter.ToInt16(ReadBytes(offset, 2),0);
 	            offset += 2;
 	        }
 	    }

@@ -8,7 +8,7 @@ namespace MonoBrickFirmware.IO
 	/// <summary>
 	/// Sensor modes
 	/// </summary>
-	public enum SensorMode {
+	public enum UARTMode {
 		#pragma warning disable 
 		Mode0 = 0, Mode1 = 1, Mode2 = 2, Mode3 = 3, Mode4 = 4, Mode5 = 5, Mode6 = 6, Mode7 = 7	
 		#pragma warning restore
@@ -17,12 +17,10 @@ namespace MonoBrickFirmware.IO
 	/// <summary>
 	/// Class for reading and writing data to a UART port
 	/// </summary>
-	public abstract class UartSensor: Input
+	public abstract class UartSensor
 	{
-		protected UnixDevice uartDevice;
-		protected MemoryArea uartMemory;
-		
-		private const int UartMemorySize = 42744;
+		private UnixDevice uartDevice;
+		private MemoryArea uartMemory;
 		
 		private const int WaitTimout = 100;
 		private const int WaitFrequency = 100;
@@ -30,46 +28,50 @@ namespace MonoBrickFirmware.IO
 		private const int InitDelay = 5;
 		private const int InitRetry = 100;
 		
-		protected const int UartStatusOffset = 42608;
-    	protected const int UartActualOffset = 42592;
-    	protected const int UartRawOffset = 4192;
+		
+		
+		private const int UartStatusOffset = 42608;
+    	private const int UartActualOffset = 42592;
+    	private const int UartRawOffset = 4192;
     	
-    	protected const int UartRawDataSize = 32; 
-		protected const int UartRawBufferLength = 300;
-		protected const int UartRawBufferSize = UartRawDataSize * UartRawBufferLength;
+    	private const int UartRawDataSize = 32; 
+		private const int UartRawBufferLength = 300;
+		private const int UartRawBufferSize = UartRawDataSize * UartRawBufferLength;
     	
 		// IO control
-		protected const UInt32 UartIOSetConnection = 0xc00c7500;
-		protected const UInt32 UartIOReadModeInfo = 0xc03c7501;
-    	protected const UInt32 UartIONackModeInfo = 0xc03c7502;
-    	protected const UInt32 UartIOClearChanges = 0xc03c7503;
+		private const UInt32 UartIOSetConnection = 0xc00c7500;
+		private const UInt32 UartIOReadModeInfo = 0xc03c7501;
+    	private const UInt32 UartIONackModeInfo = 0xc03c7502;
+    	private const UInt32 UartIOClearChanges = 0xc03c7503;
     
-    	protected const byte UartPortChanged = 1;
-    	protected const byte UartDataReady = 8;
+    	private const byte UartPortChanged = 1;
+    	private const byte UartDataReady = 8;
 		
-		protected SensorMode UARTMode{get; private set;}
 		
-		public UartSensor (SensorPort port):base(port)
+		protected const int NumberOfSenosrPorts = SensorManager.NumberOfSenosrPorts;
+		protected SensorPort port;
+		protected UARTMode UARTMode{get; private set;}
+		
+		public UartSensor (SensorPort port)
 		{
-			uartDevice = new UnixDevice("/dev/lms_uart");
-			uartMemory = uartDevice.MMap(UartMemorySize,0);
+			this.port = port;
+			uartDevice = SensorManager.Instance.UartDevice;
+			uartMemory = SensorManager.Instance.UartMemory;
 		}
 		
 		protected void Reset()
 	    {
-	        unchecked {
-				uartDevice.IoCtl ((Int32)UartIOSetConnection, SetupCommand (this.port, ConnectionType.None, SensorType.None, SensorMode.Mode0));
-			}
-			UARTMode = SensorMode.Mode0; 
+	        SensorManager.Instance.ResetUart(this.port);
+			UARTMode = UARTMode.Mode0; 
 	        WaitZeroStatus(WaitTimout);
 	    }
 		
 		
-	    protected bool Initialise(SensorMode mode)
+	    protected bool Initialise(UARTMode mode)
 	    {
 	        for(int i = 0; i < InitRetry; i++)
 	        {
-	            if (GetConnectionType() != ConnectionType.UART)
+	            if (SensorManager.Instance.GetConnectionType(this.port) != ConnectionType.UART)
 	                return false;
 	            if (InitUart(mode))
 	            {
@@ -80,7 +82,7 @@ namespace MonoBrickFirmware.IO
 	        return false;
 	    }
 	    
-		public bool SetMode(SensorMode mode)
+		public bool SetMode(UARTMode mode)
 	    {
 	        
 	        SetOperatingMode(mode);
@@ -125,7 +127,7 @@ namespace MonoBrickFirmware.IO
 		
 		private void CheckSensor()
     	{
-	        if(GetConnectionType() != ConnectionType.UART)
+	        if(SensorManager.Instance.GetConnectionType(this.port) != ConnectionType.UART)
 	        	throw new Exception("UART sensor is not connected");
     	}
 	    
@@ -148,7 +150,7 @@ namespace MonoBrickFirmware.IO
 			while (time < target) {
 				System.Threading.Thread.Sleep(WaitFrequency);
 				status = GetStatus();
-				if(status != 0 || GetConnectionType() != ConnectionType.UART)
+				if(status != 0 ||  SensorManager.Instance.GetConnectionType(this.port) != ConnectionType.UART)
 					break;
 				time = time + WaitFrequency;
 			}
@@ -165,7 +167,7 @@ namespace MonoBrickFirmware.IO
 	        {
 	            if (status == 0)
 	                return status;
-	            if (GetConnectionType() !=  ConnectionType.UART)
+	            if ( SensorManager.Instance.GetConnectionType(this.port) !=  ConnectionType.UART)
 	                return status;
 	            System.Threading.Thread.Sleep(WaitFrequency);
 	            timeout = timeout + WaitFrequency;
@@ -175,10 +177,10 @@ namespace MonoBrickFirmware.IO
 	    }
 
 	    
-		protected void SetOperatingMode (SensorMode mode)
+		protected void SetOperatingMode (UARTMode mode)
 		{
 			unchecked {
-				uartDevice.IoCtl ((Int32)UartIOSetConnection, SetupCommand (port, ConnectionType.UART, SensorType.None, mode));
+				uartDevice.IoCtl ((Int32)UartIOSetConnection,  SensorManager.Instance.SetupCommand (port, ConnectionType.UART, SensorType.None, mode));
 			}
 			this.UARTMode = mode;  
 	    }
@@ -186,17 +188,17 @@ namespace MonoBrickFirmware.IO
 		private void ClearPortChanged()
 		{
 			unchecked {
-				uartDevice.IoCtl ((Int32)UartIOClearChanges, SetupCommand (port, ConnectionType.UART, SensorType.None, SensorMode.Mode0));
+				uartDevice.IoCtl ((Int32)UartIOClearChanges,  SensorManager.Instance.SetupCommand (port, ConnectionType.UART, SensorType.None, UARTMode.Mode0));
 				uartMemory.Write (UartStatusOffset, new byte[] { (byte)(uartMemory.Read ((int)port, 1) [0] & ~UartPortChanged) });
 			}
-			this.UARTMode = SensorMode.Mode0;
+			this.UARTMode = UARTMode.Mode0;
 	    }
 		
-	    private bool InitUart (SensorMode mode)
+	    private bool InitUart (UARTMode mode)
 		{
 			for (int i = 0; i <  SetUpRetry; i++) {
 				byte status;
-				if (GetConnectionType () != ConnectionType.UART)
+				if ( SensorManager.Instance.GetConnectionType (this.port) != ConnectionType.UART)
 					return false;
 				// now try and configure as a UART
 	        
@@ -204,7 +206,7 @@ namespace MonoBrickFirmware.IO
 				status = WaitNonZeroStatus (WaitTimout);
 				while ((status & UartPortChanged) != 0) {
 					//something change wait for it to become ready
-					if (GetConnectionType () != ConnectionType.UART)
+					if ( SensorManager.Instance.GetConnectionType (this.port) != ConnectionType.UART)
 						return false;
 					ClearPortChanged ();
 					System.Threading.Thread.Sleep (InitDelay);

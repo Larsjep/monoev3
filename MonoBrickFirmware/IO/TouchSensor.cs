@@ -38,7 +38,7 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <returns>The raw.</returns>
 		public int ReadRaw(){
-			nxtConnected = (GetSensorType() == SensorType.NXTTouch);
+			nxtConnected = ( SensorManager.Instance.GetSensorType(this.port) == SensorType.NXTTouch);
 			if(nxtConnected)
 				return ReadPin1();//NXT
 			return ReadPin6();//EV3

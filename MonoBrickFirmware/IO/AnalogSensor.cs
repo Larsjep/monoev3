@@ -15,12 +15,16 @@ namespace MonoBrickFirmware.IO
 		#pragma warning restore
 	};
 	
-	public abstract class AnalogSensor: Input{
+	public abstract class AnalogSensor{
 		private UnixDevice deviceManager;
+		private MemoryArea analogMemory;
 		
 		
 		protected const int ADCResolution = 4095;//12-bit
 		protected AnalogMode AnalogMode{get;private set;}
+		protected const int NumberOfSenosrPorts = SensorManager.NumberOfSenosrPorts;
+		protected SensorPort port;
+		
 		
 		//Analog memory offsets
     	private const int PinOneOffset = 0;
@@ -32,15 +36,18 @@ namespace MonoBrickFirmware.IO
     	private const int BatteryVoltageOffset = 30;
     	
 		
-		public AnalogSensor (SensorPort port):base(port)
+		public AnalogSensor (SensorPort port)
 		{
-			deviceManager =  new UnixDevice("/dev/lms_dcm");
+			this.port = port;
+			SensorManager.Instance.ResetUart(this.port);
+			analogMemory = SensorManager.Instance.AnalogMemory;
+			deviceManager =  SensorManager.Instance.DeviceManager;
 		}
 		
 		protected bool SetMode(AnalogMode mode)
 	    {
 	        this.AnalogMode = mode;
-	        byte [] modes = new byte[NumberOfSenosrPorts];
+	        byte [] modes = new byte[SensorManager.NumberOfSenosrPorts];
 	        for(int i = 0; i < modes.Length; i++)
 	            modes[i] = (byte)AnalogMode.None;
 	        modes[(int)port] = (byte)mode;
@@ -74,6 +81,11 @@ namespace MonoBrickFirmware.IO
 		{
 		    DeviceReply reply = new DeviceReply(analogMemory.Read(PinSixOffset, NumberOfSenosrPorts*2));
 		    return reply.GetInt16((int) port * 2);
+		}
+		
+		protected byte[] ReadBytes (int offset, int length)
+		{
+			return analogMemory.Read(offset, length);
 		}
 		
 		
