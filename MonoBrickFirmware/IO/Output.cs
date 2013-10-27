@@ -296,7 +296,8 @@ namespace MonoBrickFirmware.IO
 		
 		private void WriteProfile (ByteCodes code, sbyte speedOrPower, UInt32 rampUp, UInt32 constant, UInt32 rampDown, bool brake)
 		{
-			SetSpeed(0);
+			Start(0);
+			System.Threading.Thread.Sleep(50);
 			var command = new DeviceCommand();
 			command.Append(code);
 			command.Append(BitField);
