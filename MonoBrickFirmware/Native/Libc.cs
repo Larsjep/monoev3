@@ -159,14 +159,10 @@ namespace MonoBrickFirmware.Native
 			bool hasError = false;
 			Exception inner = null;
 			int result = -1;
-			try {
-				
-				if (data.Length > 0)
-				{
-					int size = Marshal.SizeOf(typeof(byte));
-					pnt = Marshal.AllocHGlobal (size);
-					Marshal.Copy (data, 0, pnt, data.Length);
-				}
+			try {				
+				int size = Marshal.SizeOf(typeof(byte));
+				pnt = Marshal.AllocHGlobal (size);
+				Marshal.Copy (data, 0, pnt, data.Length);
 				result = Libc.ioctl(fd, cmd, pnt);
 				if (result == -1){
 					hasError = true;
