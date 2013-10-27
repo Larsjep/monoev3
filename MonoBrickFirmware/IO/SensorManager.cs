@@ -34,6 +34,9 @@ namespace MonoBrickFirmware.IO
 		#pragma warning restore
 	};
 	
+	/// <summary>
+	/// Class used to share sensor functions and informations between sensor instances
+	/// </summary>
 	internal sealed class SensorManager
 	{
 		private static byte [] sensorData = new byte[3*NumberOfSenosrPorts];
@@ -97,7 +100,7 @@ namespace MonoBrickFirmware.IO
 		public void ResetUart (SensorPort port)
 		{
 			unchecked {
-				UartDevice.IoCtl ((Int32)UartIOSetConnection, SensorManager.Instance.SetupCommand (port, ConnectionType.None, SensorType.None, UARTMode.Mode0));
+				UartDevice.IoCtl ((Int32)UartIOSetConnection, SetupCommand (port, ConnectionType.None, SensorType.None, UARTMode.Mode0));
 			}
 		}
 		

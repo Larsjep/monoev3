@@ -39,7 +39,7 @@ namespace MonoBrickFirmware.IO
 		private const int UartRawBufferSize = UartRawDataSize * UartRawBufferLength;
     	
 		// IO control
-		private const UInt32 UartIOSetConnection = 0xc00c7500;
+		private const UInt32 UartIOSetConnection = 0xc00c7500;//This number can also be found in sensormanager.cs
 		private const UInt32 UartIOReadModeInfo = 0xc03c7501;
     	private const UInt32 UartIONackModeInfo = 0xc03c7502;
     	private const UInt32 UartIOClearChanges = 0xc03c7503;
