@@ -9,7 +9,7 @@ namespace StartupApp
 	public struct MenuItem
 	{
 		public string text;
-		public Action action;
+		public Func<bool> action;
 	}
 	
 	public class Menu
@@ -94,7 +94,10 @@ namespace StartupApp
 					  exit = true;
 					break;
 					case Buttons.ButtonStates.Enter:
-					  items[scrollPos+cursorPos].action();
+						if (items[scrollPos+cursorPos].action())
+				   		{
+					    	exit = true;
+						}
 					break;
 				}
 			}

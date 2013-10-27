@@ -8,6 +8,7 @@ using MonoBrickFirmware.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using MonoBrickFirmware.Native;
+using System.Linq;
 
 namespace StartupApp
 {
@@ -17,6 +18,7 @@ namespace StartupApp
 	{
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		static Font font = Font.FromResource(Assembly.GetExecutingAssembly(), "info56_12.font");
+		static string AppToStart = null;
 		
 		public static string GetIpAddress()
 		{
@@ -32,7 +34,7 @@ namespace StartupApp
 			return "Unknown";
 		}
 		
-		static void Information(Lcd lcd, Buttons btns)
+		static bool Information(Lcd lcd, Buttons btns)
 		{
 			string monoVersion = "Unknown";
 			Type type = Type.GetType("Mono.Runtime");
@@ -54,13 +56,41 @@ namespace StartupApp
 			lcd.WriteText(font, startPos+offset*4, "Mono CLR:" + monoCLR, true);			
 			lcd.Update();
 			btns.GetKeypress();
+			return false;
 		}
 		
-		static void RunPrograms()
+		static bool StartApp(string filename)
 		{
+			AppToStart = filename;
+			return true;
 		}
 		
-		static void Shutdown(Lcd lcd, Buttons btns)
+		static string GetFileNameWithoutExt(string fullname)
+		{
+			string filename = new FileInfo(fullname).Name;
+			return filename.Substring(0, filename.Length-4);
+		}
+		
+		static bool RunPrograms(Lcd lcd, Buttons btns)
+		{
+			IEnumerable<MenuItem> items = Directory.EnumerateFiles("/home/root/apps/", "*.exe")
+				.Select( (filename) => new MenuItem() { text = GetFileNameWithoutExt(filename), action = () => StartApp(filename) } );
+			Menu m = new Menu(font, lcd, "Run program:", items);
+			m.ShowMenu(btns);
+			return true;
+		}
+		
+		static void RunAndWaitForProgram(string filename, string arguments = "")
+		{
+			System.Diagnostics.Process proc = new System.Diagnostics.Process();
+			proc.EnableRaisingEvents=false; 
+			proc.StartInfo.FileName = filename;
+			proc.StartInfo.Arguments = arguments;
+			proc.Start();
+			proc.WaitForExit();
+		}
+		
+		static bool Shutdown(Lcd lcd, Buttons btns)
 		{
 			lcd.Clear();
 			lcd.WriteText(font, new Point(0,0), "Shutting down...", true);
@@ -69,13 +99,8 @@ namespace StartupApp
 			UnixDevice dev = new UnixDevice("/dev/lms_power");
 			dev.IoCtl(0, new byte[0]);
 			btns.LedPattern(2);
-			System.Diagnostics.Process proc = new System.Diagnostics.Process();
-			proc.EnableRaisingEvents=false; 
-			proc.StartInfo.FileName = "poweroff";
-			proc.StartInfo.Arguments = "-f";
-			proc.Start();
-			proc.WaitForExit();
-			for (;;); // The system should now shutdown.
+			RunAndWaitForProgram("poweroff", "-f");
+			for (;;); // The system should now shutdown.			
 		}
 		
 		static void ShowMainMenu(Lcd lcd, Buttons btns)
@@ -83,7 +108,7 @@ namespace StartupApp
 			
 			List<MenuItem> items = new List<MenuItem>();
 			items.Add (new MenuItem() { text = "Information", action = () => Information(lcd, btns) });
-			items.Add (new MenuItem() { text = "Run programs", action = RunPrograms });
+			items.Add (new MenuItem() { text = "Run programs", action = () => RunPrograms(lcd, btns) });
 			items.Add (new MenuItem() { text = "Shutdown", action = () => Shutdown(lcd,btns) });			
 			
 			Menu m = new Menu(font, lcd, "Main menu", items);
@@ -93,17 +118,31 @@ namespace StartupApp
 		public static void Main (string[] args)
 		{
 			Console.WriteLine ("Hello World!");
-			Lcd lcd = new Lcd();						
-			lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,0));
-			
-			string iptext = "IP: " + GetIpAddress();
-			Point textPos = new Point((Lcd.Width-font.TextSize(iptext).x)/2, Lcd.Height-23);
-			lcd.WriteText(font, textPos, iptext , true);
-			lcd.Update();						
-			Buttons btns = new Buttons();
-			btns.GetKeypress();
+			using (Lcd lcd = new Lcd())
+				using (Buttons btns = new Buttons())
+				{					
+					lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,0));					
+					string iptext = "IP: " + GetIpAddress();
+					Point textPos = new Point((Lcd.Width-font.TextSize(iptext).x)/2, Lcd.Height-23);
+					lcd.WriteText(font, textPos, iptext , true);
+					lcd.Update();						
+					btns.GetKeypress();
+				}
 			for (;;)
-				ShowMainMenu(lcd, btns);			
+			{
+				using (Lcd lcd = new Lcd())
+					using (Buttons btns = new Buttons())
+					{
+						ShowMainMenu(lcd, btns);					
+					}			
+				if (AppToStart != null)
+				{
+					Console.WriteLine("Starting application: " + AppToStart);
+					RunAndWaitForProgram("mono", AppToStart);					
+					Console.WriteLine ("Done running application");
+					AppToStart = null;
+				}
+			}
 		}
 	}		
 }

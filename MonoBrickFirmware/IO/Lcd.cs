@@ -4,7 +4,7 @@ using MonoBrickFirmware.Graphics;
 
 namespace MonoBrickFirmware.IO
 {	
-	public class Lcd
+	public class Lcd : IDisposable
 	{
 		public const int Width = 178;
 		public const int Height = 128;
@@ -222,7 +222,13 @@ namespace MonoBrickFirmware.IO
 			}
 			WriteText(f, r.p1+new Point(xpos, 0) , text, color);
 		}			
-		
+	
+		#region IDisposable implementation
+		void IDisposable.Dispose ()
+		{
+			device.Dispose();
+		}
+		#endregion
 	}
 }
 
