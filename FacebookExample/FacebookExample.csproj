@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Facebook">
-      <HintPath>..\..\..\..\FacebookTest\FacebookTest\Facebook.dll</HintPath>
+      <HintPath>Facebook.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
