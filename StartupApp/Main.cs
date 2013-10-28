@@ -18,7 +18,7 @@ namespace StartupApp
 	{
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		static Font font = Font.FromResource(Assembly.GetExecutingAssembly(), "info56_12.font");
-		static string AppToStart = null;
+		static Action MenuAction = null;
 		
 		public static string GetIpAddress()
 		{
@@ -61,7 +61,7 @@ namespace StartupApp
 		
 		static bool StartApp(string filename)
 		{
-			AppToStart = filename;
+			MenuAction = () => RunAndWaitForProgram("mono", filename);
 			return true;
 		}
 		
@@ -96,11 +96,13 @@ namespace StartupApp
 			lcd.WriteText(font, new Point(0,0), "Shutting down...", true);
 			lcd.Update();
 			
-			UnixDevice dev = new UnixDevice("/dev/lms_power");
-			dev.IoCtl(0, new byte[0]);
+			using (UnixDevice dev = new UnixDevice("/dev/lms_power"))
+			{
+				dev.IoCtl(0, new byte[0]);
+			}
 			btns.LedPattern(2);
-			RunAndWaitForProgram("poweroff", "-f");
-			for (;;); // The system should now shutdown.			
+			MenuAction = () => RunAndWaitForProgram("/lejos/bin/exit", "");			
+			return true;
 		}
 		
 		static void ShowMainMenu(Lcd lcd, Buttons btns)
@@ -135,12 +137,12 @@ namespace StartupApp
 					{
 						ShowMainMenu(lcd, btns);					
 					}			
-				if (AppToStart != null)
+				if (MenuAction != null)
 				{
-					Console.WriteLine("Starting application: " + AppToStart);
-					RunAndWaitForProgram("mono", AppToStart);					
+					Console.WriteLine("Starting application");
+					MenuAction();					
 					Console.WriteLine ("Done running application");
-					AppToStart = null;
+					MenuAction = null;
 				}
 			}
 		}
