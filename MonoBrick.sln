@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorSensorExample", "Color
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacebookExample", "FacebookExample\FacebookExample.csproj", "{B5086CF6-F415-44FB-8543-E912A7D28D05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenDumpExample", "ScreenDumpExample\ScreenDumpExample.csproj", "{FDE35390-90C3-479F-B3B8-B743B585227E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -61,9 +63,13 @@ Global
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Debug|x86.Build.0 = Debug|x86
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.ActiveCfg = Release|x86
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.Build.0 = Release|x86
+		{FDE35390-90C3-479F-B3B8-B743B585227E}.Debug|x86.ActiveCfg = Debug|x86
+		{FDE35390-90C3-479F-B3B8-B743B585227E}.Debug|x86.Build.0 = Debug|x86
+		{FDE35390-90C3-479F-B3B8-B743B585227E}.Release|x86.ActiveCfg = Release|x86
+		{FDE35390-90C3-479F-B3B8-B743B585227E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = StartupApp\StartupApp.csproj
+		StartupItem = ScreenDumpExample\ScreenDumpExample.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2

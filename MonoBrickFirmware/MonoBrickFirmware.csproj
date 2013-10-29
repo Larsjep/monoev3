@@ -61,6 +61,7 @@
     <Compile Include="IO\LightSensor.cs" />
     <Compile Include="IO\ColorSensor.cs" />
     <Compile Include="IO\SensorManager.cs" />
+    <Compile Include="Graphics\BmpCreator.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
