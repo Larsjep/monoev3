@@ -48,5 +48,8 @@
     <EmbeddedResource Include="info56_12.bin">
       <LogicalName>font.info56_12</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="monologo.bin">
+      <LogicalName>monologo.bitmap</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
