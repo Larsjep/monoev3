@@ -301,11 +301,6 @@ namespace MonoBrickFirmware.IO
 		
 		private void WriteProfile (ByteCodes code, sbyte speedOrPower, UInt32 rampUp, UInt32 constant, UInt32 rampDown, bool brake)
 		{
-			MotorPort? port = this.BitFieldToMotorPort (this.BitField);
-			if (port.HasValue) {
-				Start (GetSpeed (port.Value));
-				System.Threading.Thread.Sleep (50);
-			}
 			var command = new DeviceCommand();
 			command.Append(code);
 			command.Append(BitField);
@@ -320,29 +315,6 @@ namespace MonoBrickFirmware.IO
 			command.Append(b);
 			pwmDevice.Write(command.Data);	
 		}
-		
-		private MotorPort? BitFieldToMotorPort(OutputBitfield bitField){
-			MotorPort? port = new MotorPort?();	
-			if( ( (bitField & OutputBitfield.OutA) == OutputBitfield.OutA) || 
-					( (bitField  & OutputBitfield.OutB) == OutputBitfield.OutB) || 
-					( (bitField  & OutputBitfield.OutC) == OutputBitfield.OutC) || 
-					( (bitField  & OutputBitfield.OutD) == OutputBitfield.OutD)){
-						if((bitField  & OutputBitfield.OutA) == OutputBitfield.OutA){
-							port = new MotorPort?(MotorPort.OutA);
-						}
-						if((bitField  & OutputBitfield.OutB) == OutputBitfield.OutB){
-							port = new MotorPort?(MotorPort.OutB);
-						}
-						if((bitField  & OutputBitfield.OutC) == OutputBitfield.OutC){
-							port = new MotorPort?(MotorPort.OutC);
-						}
-						if((bitField  & OutputBitfield.OutD) == OutputBitfield.OutD){
-							port = new MotorPort?(MotorPort.OutD);
-						}
-					}
-					return port;
-		}
-		
 	}
 }
 
