@@ -44,4 +44,9 @@
       <Name>MonoBrickFirmware</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="monologo.bin">
+      <LogicalName>monologo.bitmap</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

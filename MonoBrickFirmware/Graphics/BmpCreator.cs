@@ -9,6 +9,7 @@ namespace MonoBrickFirmware.Graphics
 {
 	
 	public enum ColorDepth { TrueColor = 24, LowColor = 8, GrayScaleColor = 9 };
+	
 	public class RGB{
 		public byte Red;
 		public byte Green;
@@ -35,7 +36,7 @@ namespace MonoBrickFirmware.Graphics
 		/// Appends a pixel to the file
 		/// </summary>
 		/// <param name="pixel">Pixel.</param>
-		public void AppendPixel (RGB pixel)
+		public void AppendRGB (RGB pixel)
 		{
 			Write (pixel);
 			appendIndexHorizontal++;

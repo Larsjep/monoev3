@@ -9,30 +9,42 @@ namespace MonoBrickFirmware.IO
 		public const int Width = 178;
 		public const int Height = 128;
 		const int bytesPrLine = (Width+7)/8;
-		const int bufferSize = ((Width+7)/8)*Height;
+		const int bufferSize = bytesPrLine * Height;
 		const int hwBufferLineSize = 60;
 		const int hwBufferSize = hwBufferLineSize*Height;			
 		private UnixDevice device;
 		private MemoryArea memory;
-
+		private BmpImage bmpImage = new BmpImage(bytesPrLine * 8 , Height, ColorDepth.GrayScaleColor);
+		
 		byte[] displayBuf = new byte[bufferSize];
+		
 		public void SetPixel(int x, int y, bool color)
 		{
-			int index = (x/8)+y*23;
+			int index = (x/8)+ y * bytesPrLine;
 			int bit = x & 0x7;
 			if (color)
 				displayBuf[index] |= (byte)(1 << bit);
 			else
 				displayBuf[index] &= (byte)~(1 << bit);
 					
-		}	
+		}
+		
+		public bool IsPixelSet (int x, int y)
+		{
+			int index = (x / 8) + y * 23;
+			int bit = x & 0x7;
+			return (displayBuf[index] & (1 << bit)) != 0;
+		}
+				
 		
 		byte[] hwBuffer = new byte[hwBufferSize];
 		
 		public Lcd()
 		{
 			device = new UnixDevice("/dev/fb0");
-			memory =  device.MMap(hwBufferSize, 0);	
+			memory =  device.MMap(hwBufferSize, 0);
+			Clear();
+			Update();	
 		}
 		
 		static byte[] convert = 
@@ -93,6 +105,29 @@ namespace MonoBrickFirmware.IO
 			Array.Copy(picture, displayBuf, picture.Length);
 			Update();
 		}
+		
+		public void TakeScreenShot (string directory = "")
+		{
+			bmpImage.Clear ();
+			RGB color = new RGB ();
+			for (int y = Height -1; y >= 0; y--) {
+				for (int x = 0; x < bytesPrLine * 8; x++) {
+					if (IsPixelSet (x, y)) {
+						color.Blue = 0x00;
+						color.Green = 0x00;
+						color.Red = 0x00;	
+					} 
+					else {
+						color.Blue = 0xff;
+						color.Green = 0xff;
+						color.Red = 0xff;
+					}
+					bmpImage.AppendRGB(color);
+				}
+			}
+			bmpImage.WriteToFile(System.IO.Path.Combine(directory,"ScreenShot") + string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}",DateTime.Now)+ ".bmp");
+		}
+		
 		
 		public void ClearLines(int y, int count)
 		{			
@@ -227,6 +262,7 @@ namespace MonoBrickFirmware.IO
 		void IDisposable.Dispose ()
 		{
 			device.Dispose();
+			bmpImage.Dispose();
 		}
 		#endregion
 	}
