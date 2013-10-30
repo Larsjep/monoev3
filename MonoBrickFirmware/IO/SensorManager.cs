@@ -34,6 +34,7 @@ namespace MonoBrickFirmware.IO
 		#pragma warning restore
 	};
 	
+	
 	/// <summary>
 	/// Class used to share sensor functions and informations between sensor instances
 	/// </summary>
@@ -50,17 +51,23 @@ namespace MonoBrickFirmware.IO
 		
 		private const uint analogMemorySize = 5172;  
 		private const uint UartMemorySize = 42744; 
-		private const UInt32 UartIOSetConnection = 0xc00c7500;//This number can also be found in UARTSensor.cs
 		
-		
-		public UnixDevice DeviceManager{get; private set;}
+		// UART IO control
+		private const UInt32 UartIOSetConnection = 0xc00c7500;//This number can also be found in sensormanager.cs
+		private const UInt32 UartIOReadModeInfo = 0xc03c7501;
+    	private const UInt32 UartIONackModeInfo = 0xc03c7502;
+    	private const UInt32 UartIOClearChanges = 0xc03c7503;
 		
 		public const int NumberOfSenosrPorts = 4;
-		public MemoryArea AnalogMemory{get; private set;}
-		public UnixDevice AnalogDevice{get;private set;}
 		
-		public UnixDevice UartDevice{get; private set;}
-		public MemoryArea UartMemory{get; private set;}
+		private UnixDevice DeviceManager{get; set;}
+		
+		private UnixDevice AnalogDevice{get;set;}
+		public MemoryArea AnalogMemory{get; private set;}
+		
+		private UnixDevice UartDevice{get; set;}
+		public MemoryArea UartMemory{get; set;}
+		
 		private SensorManager ()
 		{
 			DeviceManager =  new UnixDevice("/dev/lms_dcm");
@@ -78,7 +85,7 @@ namespace MonoBrickFirmware.IO
 		}
 		
 		
-		public 	byte[] SetupCommand(SensorPort sensorPort, ConnectionType conn, SensorType type, UARTMode mode)
+		private byte[] SetupCommand(SensorPort sensorPort, ConnectionType conn, SensorType type, UARTMode mode)
 		{
         	lock (setupLock) {
 				sensorData [(int)sensorPort] = (byte)conn;
@@ -103,6 +110,31 @@ namespace MonoBrickFirmware.IO
 				UartDevice.IoCtl ((Int32)UartIOSetConnection, SetupCommand (port, ConnectionType.None, SensorType.None, UARTMode.Mode0));
 			}
 		}
+		
+		public void SetUartOperatingMode (UARTMode mode, SensorPort port)
+		{
+			unchecked {
+				UartDevice.IoCtl ((Int32)UartIOSetConnection,  SensorManager.Instance.SetupCommand (port, ConnectionType.UART, SensorType.None, mode));
+			}
+	    }
+	    
+	    public void ClearUartPortChanged(SensorPort port)
+		{
+			unchecked {
+				UartDevice.IoCtl ((Int32)UartIOClearChanges,  SensorManager.Instance.SetupCommand (port, ConnectionType.UART, SensorType.None, UARTMode.Mode0));
+			}
+	    }
+	    
+	    
+	    public void SetAnalogMode(AnalogMode mode, SensorPort port)
+	    {
+	        byte [] modes = new byte[SensorManager.NumberOfSenosrPorts];
+	        for(int i = 0; i < modes.Length; i++)
+	            modes[i] = (byte)AnalogMode.None;
+	        modes[(int)port] = (byte)mode;
+	        DeviceManager.Write(modes);
+	    }
+		
 		
 	}
 	

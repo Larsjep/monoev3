@@ -248,7 +248,7 @@ namespace MonoBrickFirmware.IO
 		/// <param name="mode">Mode.</param>
 		public EV3ColorSensor (SensorPort port, ColorMode mode) :  base(port)
 		{
-			base.Initialise(base.UARTMode);
+			base.Initialise(base.uartMode);
 			Mode = mode;
 						
 		}
@@ -267,7 +267,7 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <value>The color mode.</value>
 		public ColorMode Mode {
-			get{return SensorModeToColorMode(base.UARTMode);}
+			get{return SensorModeToColorMode(base.uartMode);}
 			set{
 				base.SetMode(ColorModeToSensorMode(value));
 			}

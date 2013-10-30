@@ -16,7 +16,6 @@ namespace MonoBrickFirmware.IO
 	};
 	
 	public abstract class AnalogSensor{
-		private UnixDevice deviceManager;
 		private MemoryArea analogMemory;
 		
 		
@@ -41,18 +40,12 @@ namespace MonoBrickFirmware.IO
 			this.port = port;
 			SensorManager.Instance.ResetUart(this.port);
 			analogMemory = SensorManager.Instance.AnalogMemory;
-			deviceManager =  SensorManager.Instance.DeviceManager;
 		}
 		
-		protected bool SetMode(AnalogMode mode)
+		protected void SetMode(AnalogMode mode)
 	    {
 	        this.AnalogMode = mode;
-	        byte [] modes = new byte[SensorManager.NumberOfSenosrPorts];
-	        for(int i = 0; i < modes.Length; i++)
-	            modes[i] = (byte)AnalogMode.None;
-	        modes[(int)port] = (byte)mode;
-	        deviceManager.Write(modes);
-	        return true;
+	        SensorManager.Instance.SetAnalogMode(mode,port);
 	    }
 		
 		protected Int16 ReadPin1AsPct ()
@@ -67,25 +60,27 @@ namespace MonoBrickFirmware.IO
 		
 		protected Int16 ReadPin1()
 		{
-		    DeviceReply reply = new DeviceReply(analogMemory.Read(PinOneOffset, NumberOfSenosrPorts*2));
-		    return reply.GetInt16((int) port * 2);
+		    return ReadInt16 (PinOneOffset);
 		}
 		
 		protected Int16 ReadPin5()
 		{
-		    DeviceReply reply = new DeviceReply(analogMemory.Read( PinFiveOffset, NumberOfSenosrPorts*2));
-		    return reply.GetInt16((int) port * 2);
+		    return ReadInt16 (PinFiveOffset);
 		}
 		
 		protected Int16 ReadPin6()
 		{
-		    DeviceReply reply = new DeviceReply(analogMemory.Read(PinSixOffset, NumberOfSenosrPorts*2));
-		    return reply.GetInt16((int) port * 2);
+		    return ReadInt16 (PinSixOffset); 
 		}
 		
 		protected byte[] ReadBytes (int offset, int length)
 		{
 			return analogMemory.Read(offset, length);
+		}
+		
+		private Int16 ReadInt16 (int offset)
+		{
+			 return BitConverter.ToInt16(analogMemory.Read(offset, NumberOfSenosrPorts*2),(int) port * 2);
 		}
 		
 		
