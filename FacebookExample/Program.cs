@@ -10,7 +10,7 @@ namespace FacebookExample
 	class MainClass
 	{
 		
-		
+		// /usr/bin# mozroots --import --sync
 		public static void Main (string[] args)
 		{
 			//var fb = new FacebookClient(args[0]);
