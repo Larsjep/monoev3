@@ -38,6 +38,7 @@ namespace MonoBrickFirmware.IO
 		public AnalogSensor (SensorPort port)
 		{
 			this.port = port;
+			SensorManager.Instance.ResetI2C(this.port);
 			SensorManager.Instance.ResetUart(this.port);
 			analogMemory = SensorManager.Instance.AnalogMemory;
 		}

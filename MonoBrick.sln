@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacebookExample", "Facebook
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRSensorExample", "IRSensorExample\IRSensorExample.csproj", "{826357C7-2F1F-46CD-8786-5987E6E26767}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "I2CExample", "I2CExample\I2CExample.csproj", "{ED35A35F-224C-4700-8CB5-745B518623F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -67,9 +69,13 @@ Global
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Debug|x86.Build.0 = Debug|x86
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.ActiveCfg = Release|x86
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.Build.0 = Release|x86
+		{ED35A35F-224C-4700-8CB5-745B518623F2}.Debug|x86.ActiveCfg = Debug|x86
+		{ED35A35F-224C-4700-8CB5-745B518623F2}.Debug|x86.Build.0 = Debug|x86
+		{ED35A35F-224C-4700-8CB5-745B518623F2}.Release|x86.ActiveCfg = Release|x86
+		{ED35A35F-224C-4700-8CB5-745B518623F2}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = IRSensorExample\IRSensorExample.csproj
+		StartupItem = I2CExample\I2CExample.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2

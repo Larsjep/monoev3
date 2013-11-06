@@ -110,36 +110,32 @@ namespace MonoBrickFirmware.Native
 		{
 			
 			byte[] reply = new byte[length];
-            Exception inner = null;
-            IntPtr pnt = IntPtr.Zero;
-            int bytesRead = 0;
-            bool hasError = false;
-            try{
-                pnt = Marshal.AllocHGlobal(Marshal.SizeOf(reply[0]) * length);
-                bytesRead =  Libc.read(fd, pnt, (uint) length);
-                if(bytesRead == -1)
-                {
-                	hasError = true;
-                	Marshal.FreeHGlobal(pnt);
-                    pnt = IntPtr.Zero;
-                }
-                else
-                {
-                	if(bytesRead != length)
-                		reply = new byte[bytesRead];
-                	Marshal.Copy(pnt, reply, 0, bytesRead);
-                	Marshal.FreeHGlobal(pnt);
-                    pnt = IntPtr.Zero;	
-                }
+			Exception inner = null;
+			IntPtr pnt = IntPtr.Zero;
+			int bytesRead = 0;
+			bool hasError = false;
+			try {
+				pnt = Marshal.AllocHGlobal (Marshal.SizeOf (reply [0]) * length);
+				bytesRead = Libc.read (fd, pnt, (uint)length);
+				if (bytesRead == -1) {
+					hasError = true;
+					Marshal.FreeHGlobal (pnt);
+					pnt = IntPtr.Zero;
+				} else {
+					if (bytesRead != length)
+						reply = new byte[bytesRead];
+					Marshal.Copy (pnt, reply, 0, bytesRead);
+					Marshal.FreeHGlobal (pnt);
+					pnt = IntPtr.Zero;	
+				}
             
-            }
-            catch(Exception e){
-            	hasError = true;
+			} catch (Exception e) {
+				hasError = true;
 				inner = e;    
-            }
-            finally{
-                if(pnt != IntPtr.Zero)
-                    Marshal.FreeHGlobal(pnt);    
+			} finally {
+				if (pnt != IntPtr.Zero) {
+					Marshal.FreeHGlobal(pnt);
+				}    
             }
             if(hasError){
             	if (inner != null) {
@@ -153,31 +149,36 @@ namespace MonoBrickFirmware.Native
 			return reply;		
 		}
 		
-		public int IoCtl (int cmd, byte[] data)
+		public int IoCrl (int cmd, IntPtr args)
+		{
+			return Libc.ioctl(fd, cmd, args);
+		}
+		
+		
+		
+		public int IoCtl (int cmd, byte[] args)
 		{
 			IntPtr pnt = IntPtr.Zero;
 			bool hasError = false;
 			Exception inner = null;
 			int result = -1;
 			try {				
-				int size = Marshal.SizeOf(typeof(byte));
+				int size = Marshal.SizeOf (typeof(byte))* args.Length;
 				pnt = Marshal.AllocHGlobal (size);
-				Marshal.Copy (data, 0, pnt, data.Length);
-				result = Libc.ioctl(fd, cmd, pnt);
-				if (result == -1){
+				Marshal.Copy (args, 0, pnt, args.Length);
+				result = Libc.ioctl (fd, cmd, pnt);
+				if (result == -1) {
 					hasError = true;
+				} else {
+					Marshal.Copy (pnt, args, 0, args.Length);
 				}
-				else{
-					Marshal.Copy(pnt, data, 0, data.Length);
-				}
-			} 
-			catch (Exception e) {
+			} catch (Exception e) {
 				hasError = true;
 				inner = e;
-			} 
-			finally {
-				if (pnt != IntPtr.Zero)    
+			} finally {
+				if (pnt != IntPtr.Zero) {    
 					Marshal.FreeHGlobal (pnt);
+				}
 			}
 			if (hasError) {
 				if (inner != null) {

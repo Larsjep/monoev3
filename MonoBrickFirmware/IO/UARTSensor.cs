@@ -15,7 +15,7 @@ namespace MonoBrickFirmware.IO
 	};
 	
 	/// <summary>
-	/// Class for reading and writing data to a UART port
+	/// Class for reading and writing data to a UART sensor
 	/// </summary>
 	public abstract class UartSensor
 	{
