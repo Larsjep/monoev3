@@ -64,6 +64,7 @@
     <Compile Include="Graphics\BmpCreator.cs" />
     <Compile Include="IO\IRSensor.cs" />
     <Compile Include="IO\I2C.cs" />
+    <Compile Include="IO\HTCompassSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

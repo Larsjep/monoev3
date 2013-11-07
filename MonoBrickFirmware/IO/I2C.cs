@@ -21,7 +21,7 @@ namespace MonoBrickFirmware.IO
 		//private MemoryArea I2CMemory;
 		
 		private const int InitDelay = 100;
-		private const int DataLength = 30;
+		public const int BufferSize = 30;
 		
 		//I2C control 
 		private const UInt32 I2CIOSetup = 0xc04c6905;
@@ -38,7 +38,6 @@ namespace MonoBrickFirmware.IO
 		{
 			this.port = port;
 			this.I2CAddress = address;
-			//I2CMemory = SensorManager.Instance.I2CMemory;
 			I2CDevice = SensorManager.Instance.I2CDevice;
 			this.mode = mode;
 			SensorManager.Instance.SetAnalogMode((AnalogMode)mode, port);
@@ -95,7 +94,6 @@ namespace MonoBrickFirmware.IO
 		/// </param>
   		protected byte[] ReadRegister(byte register, byte rxLength)
         {
-           	//byte[] command = { I2CAddress, register };
            	byte[] command = {};
            	return WriteAndRead(register, command, rxLength);
         }
@@ -116,7 +114,6 @@ namespace MonoBrickFirmware.IO
         }
         
         protected void WriteRegister(byte register, byte[] data) {
-            //byte[] command = { I2CAddress, register, data};
             WriteAndRead(register, data, 0);
         }
         
@@ -130,9 +127,14 @@ namespace MonoBrickFirmware.IO
 		/// <param name="rxLength">Length of the expected reply</param>
         protected byte[] WriteAndRead (byte register, byte[] data, int rxLength)
 		{
+			if (rxLength > BufferSize)
+				throw new ArgumentOutOfRangeException("I2C Receive Buffer only holds " + BufferSize + " bytes");
+			if (data.Length > BufferSize) {
+				throw new ArgumentOutOfRangeException("I2C Write Buffer only holds " + BufferSize + " bytes");
+			}
 			bool dataReady = false;
 			int replyIndex = 0;
-			byte[] writeData = new byte[DataLength];//32
+			byte[] writeData = new byte[BufferSize];//30
 			Array.Copy (data, 0, writeData, 0, data.Length);
 			DeviceCommand command = new DeviceCommand ();
 			command.Append ((int)-1);
@@ -145,7 +147,7 @@ namespace MonoBrickFirmware.IO
 			command.Append(writeData);
 			command.Append ((byte)-rxLength);
 			replyIndex = command.Data.Length;
-			command.Append (new byte[DataLength]);//make room for reply
+			command.Append (new byte[BufferSize]);//make room for reply
 			byte[] i2cData = command.Data;
 			while (!dataReady) {
 				unchecked {

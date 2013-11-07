@@ -149,29 +149,75 @@ namespace MonoBrickFirmware.Native
 			return reply;		
 		}
 		
-		public int IoCrl (int cmd, IntPtr args)
-		{
-			return Libc.ioctl(fd, cmd, args);
-		}
-		
-		
-		
-		public int IoCtl (int cmd, byte[] args)
+		/// <summary>
+		/// IO control command that copies to the IO output to a buffer
+		/// </summary>
+		/// <returns>Zero if successful</returns>
+		/// <param name="cmd">IoCtl request code</param>
+		/// <param name="input">Input arguments</param>
+		/// <param name="output">Output buffer</param>
+		/// <param name="ioOutputIndex">IO start index to copy to output buffer</param>
+		public int IoCtl (int cmd, byte[] input, byte[] output, int indexToOutput)
 		{
 			IntPtr pnt = IntPtr.Zero;
 			bool hasError = false;
 			Exception inner = null;
 			int result = -1;
 			try {				
-				int size = Marshal.SizeOf (typeof(byte))* args.Length;
+				int size = Marshal.SizeOf (typeof(byte))* input.Length;
 				pnt = Marshal.AllocHGlobal (size);
-				Marshal.Copy (args, 0, pnt, args.Length);
+				Marshal.Copy (input, 0, pnt, input.Length);
 				result = Libc.ioctl (fd, cmd, pnt);
 				if (result == -1) {
 					hasError = true;
 				} else {
-					Marshal.Copy (pnt, args, 0, args.Length);
+					output = new byte[input.Length - indexToOutput];
+					Marshal.Copy (pnt, output, indexToOutput, input.Length - indexToOutput);
 				}
+			} catch (Exception e) {
+				hasError = true;
+				inner = e;
+			} finally {
+				if (pnt != IntPtr.Zero) {    
+					Marshal.FreeHGlobal (pnt);
+				}
+			}
+			if (hasError) {
+				if (inner != null) {
+					throw inner;
+				} 
+				else 
+				{
+					throw new InvalidOperationException("Failed to excute IO control command");
+				}
+			}			
+			return result;
+		}
+		
+		
+		/// <summary>
+		/// IO control command. Output is copied back to buffer
+		/// </summary>
+		/// <returns>Zero if successful</returns>
+		/// <param name="requestCode">IoCtl request code</param>
+		/// <param name="arguments">IO arguments</param>
+		public int IoCtl (int requestCode, byte[] arguments)
+		{
+			IntPtr pnt = IntPtr.Zero;
+			bool hasError = false;
+			Exception inner = null;
+			int result = -1;
+			try {				
+				int size = Marshal.SizeOf (typeof(byte))* arguments.Length;
+				pnt = Marshal.AllocHGlobal (size);
+				Marshal.Copy (arguments, 0, pnt, arguments.Length);
+				result = Libc.ioctl (fd, requestCode, pnt);
+				if (result == -1) {
+					hasError = true;
+				}
+				else{
+					Marshal.Copy (pnt, arguments, 0, arguments.Length);
+				} 
 			} catch (Exception e) {
 				hasError = true;
 				inner = e;

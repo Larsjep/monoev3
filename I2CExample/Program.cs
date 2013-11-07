@@ -25,28 +25,21 @@ namespace I2CExample
 				terminateProgram.Set();
 			};
 			buts.UpPressed += () => { 
-				Console.WriteLine("Sonar sensor On");
+				Console.WriteLine("Write 0x02 to register 0x41");
 				sensor.WriteRegister(0x41,0x02);
 			};
 			buts.DownPressed += () => { 
-				Console.WriteLine("Sonar sensor Off");
-				sensor.WriteRegister(0x41,0x00);//off	 
-			};
-			buts.LeftPressed += () => { 
-				
+				Console.WriteLine("Write zero to register 0x41");
+				sensor.WriteRegister(0x41,0x00);	 
 			};
 			buts.RightPressed += () => { 
 				Console.WriteLine("Read type");
-				byte[] i2cData = sensor.ReadRegister(0x42,8);
+				byte[] i2cData = sensor.ReadRegister(0x00,I2CAbstraction.BufferSize);
 				for(int i = 0; i < i2cData.Length;i++) {
 						Console.WriteLine ("Data[{0}]: {1:X} Char: " + Convert.ToChar(i2cData[i]),i,i2cData[i]);
 				}
 			};
-			
-			
 			terminateProgram.WaitOne();  
-			
-		    		
 		}
 		
 		
