@@ -14,16 +14,25 @@ namespace HiTechnicI2CExample
 			ManualResetEvent terminateProgram = new ManualResetEvent (false);
 			ButtonEvents buts = new ButtonEvents ();
 			HiTecCompass compass = new HiTecCompass(SensorPort.In1);
+			HiTecColor colorSensor = new HiTecColor(SensorPort.In2);
+			HiTecGyro gyro = new HiTecGyro(SensorPort.In3, 600);
+			UltraSonicSensor us = new UltraSonicSensor(SensorPort.In4);
 			buts.EscapePressed += () => { 
 				terminateProgram.Set ();
 			};
 			buts.UpPressed += () => { 
 				Console.WriteLine ("Compass sensor: " + compass.ReadAsString());
 			};
-			buts.DownPressed += () => { 
+			buts.EnterPressed += () => {
+				Console.WriteLine ("Color sensor: " + colorSensor.ReadAsString());
+				Console.WriteLine ("Color index: " + colorSensor.ReadColorIndex());
+				 
 			};
-			buts.RightPressed += () => { 
-			
+			buts.DownPressed += () => { 
+				Console.WriteLine ("Gyro sensor: " + gyro.ReadAsString());
+			};
+			buts.LeftPressed += () => { 
+				Console.WriteLine ("Ultra Sonic sensor: " + us.ReadAsString());	
 			};
 			terminateProgram.WaitOne ();  
 		}

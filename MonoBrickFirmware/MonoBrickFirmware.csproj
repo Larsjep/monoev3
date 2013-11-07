@@ -65,6 +65,9 @@
     <Compile Include="IO\IRSensor.cs" />
     <Compile Include="IO\I2C.cs" />
     <Compile Include="IO\HTCompassSensor.cs" />
+    <Compile Include="IO\HTColor.cs" />
+    <Compile Include="IO\HTGyroSensor.cs" />
+    <Compile Include="IO\UltraSonicSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -12,12 +12,6 @@ namespace I2CExample
 		
 		public static void Main (string[] args)
 		{
-			Lcd lcd = new Lcd();
-			Font f = Font.FromResource(System.Reflection.Assembly.GetExecutingAssembly(), "font.info56_12");
-			Point offset = new Point(0,25);
-			Point p = new Point(10, Lcd.Height-75);
-			Point boxSize = new Point(100, 24);
-			Rect box = new Rect(p, p+boxSize);
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
 			ButtonEvents buts = new ButtonEvents ();
 			I2CSensor sensor = new I2CSensor(SensorPort.In1, 0x02, I2CMode.LowSpeed9V);
