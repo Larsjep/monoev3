@@ -232,7 +232,7 @@ namespace MonoBrickFirmware.IO
 		}	
 	}
 	
-	internal class EV3ColorSensor : UartSensor, IColorSensor{
+	internal class EV3ColorSensor : UartSensorAbstraction, IColorSensor{
 		
 		/// <summary>
 		/// Initializes a new instance of the NXTColorSensor class in color mode
@@ -391,7 +391,7 @@ namespace MonoBrickFirmware.IO
 	
 	
 	
-	internal class NXTColorSensor : AnalogSensor, IColorSensor{
+	internal class NXTColorSensor : AnalogSensorAbstraction, IColorSensor{
 		
 		//Analog memory offsets
     	private const int ColorOffset = 4856;

@@ -54,8 +54,6 @@
     <Compile Include="IO\Vehicle.cs" />
     <Compile Include="IO\MotorSync.cs" />
     <Compile Include="IO\MotorBase.cs" />
-    <Compile Include="IO\AnalogSensor.cs" />
-    <Compile Include="IO\UARTSensor.cs" />
     <Compile Include="IO\TouchSensor.cs" />
     <Compile Include="IO\ISensor.cs" />
     <Compile Include="IO\LightSensor.cs" />
@@ -68,6 +66,8 @@
     <Compile Include="IO\HTColor.cs" />
     <Compile Include="IO\HTGyroSensor.cs" />
     <Compile Include="IO\UltraSonicSensor.cs" />
+    <Compile Include="IO\AnalogSensorAbstraction.cs" />
+    <Compile Include="IO\UARTSensorAbstraction.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

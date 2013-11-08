@@ -17,7 +17,7 @@ namespace MonoBrickFirmware.IO
 	/// <summary>
 	/// Class for reading and writing data to a UART sensor
 	/// </summary>
-	public abstract class UartSensor
+	public abstract class UartSensorAbstraction
 	{
 		private MemoryArea uartMemory;
 		
@@ -46,7 +46,7 @@ namespace MonoBrickFirmware.IO
 		protected SensorPort port;
 		protected UARTMode uartMode{get; private set;}
 		
-		public UartSensor (SensorPort port)
+		public UartSensorAbstraction (SensorPort port)
 		{
 			this.port = port;
 			uartMemory = SensorManager.Instance.UartMemory;

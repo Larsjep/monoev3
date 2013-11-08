@@ -5,7 +5,7 @@ namespace MonoBrickFirmware.IO
 	/// <summary>
 	/// HiTechnic gyro sensor
     /// </summary>
-    public class HiTecGyro : AnalogSensor, ISensor {
+    public class HiTecGyro : AnalogSensorAbstraction, ISensor {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.NXT.HiTecGyro"/> class without offset
 		/// </summary>

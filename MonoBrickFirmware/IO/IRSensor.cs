@@ -64,7 +64,7 @@ namespace MonoBrickFirmware.IO
 	/// <summary>
 	/// Class for the EV3 IR sensor - In seek or remote mode it only works with channel 0
 	/// </summary>
-	public class IRSensor :UartSensor{
+	public class IRSensor :UartSensorAbstraction{
 		
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.IRSensor"/> class.
