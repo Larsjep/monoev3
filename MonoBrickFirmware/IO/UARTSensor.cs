@@ -24,7 +24,7 @@ namespace MonoBrickFirmware.IO
 		public UARTSensor (SensorPort port, UARTMode mode): base(port)
 		{
 			base.Initialise(mode);
-			base.Initialise(mode);//Do it two times to make it work
+			base.Initialise(mode);//Do it two times to make it work!!
 				
 		}
 		
@@ -36,7 +36,7 @@ namespace MonoBrickFirmware.IO
 		/// <param name="mode">Mode to set</param>
 		public new bool SetMode(UARTMode mode)
 	    {
-	       base.SetMode(mode); 
+	       return base.SetMode(mode); 
 	    }
 	   	
 	   	/// <summary>

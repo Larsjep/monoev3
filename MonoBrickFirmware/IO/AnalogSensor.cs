@@ -21,12 +21,11 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <param name="port">Sensor port to use</param>
 		/// <param name="mode">Sensor mode to use</param>
-		public AnalogSensor (SensorPort port, AnalogMode mode)
+		public AnalogSensor (SensorPort port, AnalogMode mode):base(port)
 		{
 			SetMode(mode);
 		
 		}
-		
 		
 		public new void SetMode(AnalogMode mode)
 	    {
@@ -83,8 +82,8 @@ namespace MonoBrickFirmware.IO
 		/// Reads the value of pin 1 converted to 10 bit
 		/// </summary>
 		/// <returns>The raw value</returns>
-		public new Int16 ReadRaw(){
-			return base.ReadRaw();
+		public int ReadRaw(){
+			return base.ReadPin1AsRaw();
 		}
 		
 		

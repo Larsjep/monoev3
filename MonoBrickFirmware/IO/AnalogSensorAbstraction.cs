@@ -63,8 +63,8 @@ namespace MonoBrickFirmware.IO
 		/// Reads the value of pin 1 converted to 10 bit
 		/// </summary>
 		/// <returns>The raw value</returns>
-		protected Int16 ReadRaw(){
-			return (ReadPin1()+3)/4;
+		protected int ReadPin1AsRaw(){
+			return (int) (((int) ReadPin1()+ 3)/4);
 		}
 		
 		

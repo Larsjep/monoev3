@@ -73,9 +73,9 @@ namespace MonoBrickFirmware.IO
 		/// <summary>
 		/// Read the sensor value as percent
 		/// </summary>
-		public int Read()
+		public Int16 Read()
 		{
-			return (int)this.ReadPin1AsPct();
+			return this.ReadPin1AsPct();
 		}
 		
 		/// <summary>
@@ -84,7 +84,7 @@ namespace MonoBrickFirmware.IO
 		/// <returns>The raw sensor value.</returns>
 		public int ReadRaw ()
 		{
-			return (int)this.ReadRaw();
+			return ReadPin1AsRaw();
 		}
 		
 	}

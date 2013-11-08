@@ -7,7 +7,8 @@ namespace MonoBrickFirmware.IO
 	/// </summary>
 	public class TouchSensor : AnalogSensorAbstraction, ISensor{
 		private bool nxtConnected;
-		private const int boolCutOff = ADCResolution/2;
+		private const int EV3Cutoff = ADCResolution/2;
+		private const int NXTCutoff = 512;
 		
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.TouchSensor"/> class in boolean mode
@@ -40,8 +41,8 @@ namespace MonoBrickFirmware.IO
 		public int ReadRaw(){
 			nxtConnected = ( SensorManager.Instance.GetSensorType(this.port) == SensorType.NXTTouch);
 			if(nxtConnected)
-				return ReadRaw();//NXT
-			return ReadPin6();//EV3
+				return ReadPin1AsRaw();//NXT
+			return (int)ReadPin6();//EV3
 		}
 		
 		/// <summary>
@@ -52,12 +53,12 @@ namespace MonoBrickFirmware.IO
 		{
 			short rawValue = (short)ReadRaw();
 			if (nxtConnected) {
-				if(rawValue < boolCutOff)
+				if(rawValue < NXTCutoff)
 					return true;
 				return false;	
 			} 
 			else {
-				if(rawValue > boolCutOff)
+				if(rawValue > EV3Cutoff)
 					return true;
 				return false;
 			} 

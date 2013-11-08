@@ -1,6 +1,7 @@
 using System;
+using MonoBrickFirmware.Native;
 
-namespace MonoBrickFirmware
+namespace MonoBrickFirmware.IO
 {
 	/// <summary>
 	/// Sensor modes
