@@ -84,7 +84,7 @@ namespace MonoBrickFirmware.IO
 		/// <returns>The raw sensor value.</returns>
 		public int ReadRaw ()
 		{
-			return ReadPin1AsRaw();
+			return base.ReadPin1As10Bit();
 		}
 		
 	}

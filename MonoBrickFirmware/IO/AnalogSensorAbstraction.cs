@@ -54,7 +54,7 @@ namespace MonoBrickFirmware.IO
 			return (Int16)((ReadPin1()*100)/ADCResolution);
 		}
 		
-		protected Int16 ReadPin6AsPct ()
+		protected int ReadPin6AsPct ()
 		{
 			return (Int16)((ReadPin6()*100)/ADCResolution);
 		}
@@ -63,24 +63,24 @@ namespace MonoBrickFirmware.IO
 		/// Reads the value of pin 1 converted to 10 bit
 		/// </summary>
 		/// <returns>The raw value</returns>
-		protected int ReadPin1AsRaw(){
+		protected int ReadPin1As10Bit(){
 			return (int) (((int) ReadPin1()+ 3)/4);
 		}
 		
 		
-		protected Int16 ReadPin1()
+		protected int ReadPin1()
 		{
-		    return ReadInt16 (PinOneOffset);
+		    return ReadOffset (PinOneOffset);
 		}
 		
-		protected Int16 ReadPin5()
+		protected int ReadPin5()
 		{
-		    return ReadInt16 (PinFiveOffset);
+		    return ReadOffset (PinFiveOffset);
 		}
 		
-		protected Int16 ReadPin6()
+		protected int ReadPin6()
 		{
-		    return ReadInt16 (PinSixOffset); 
+		    return ReadOffset (PinSixOffset); 
 		}
 		
 		protected byte[] ReadBytes (int offset, int length)
@@ -88,9 +88,9 @@ namespace MonoBrickFirmware.IO
 			return analogMemory.Read(offset, length);
 		}
 		
-		private Int16 ReadInt16 (int offset)
+		private int ReadOffset (int offset)
 		{
-			 return BitConverter.ToInt16(analogMemory.Read(offset, NumberOfSenosrPorts*2),(int) port * 2);
+			 return (int)BitConverter.ToInt16(analogMemory.Read(offset, NumberOfSenosrPorts*2),(int) port * 2);
 		}
 		
 		

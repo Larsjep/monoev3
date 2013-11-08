@@ -36,7 +36,7 @@ namespace MonoBrickFirmware.IO
 		/// Reads pin 1 as percent.
 		/// </summary>
 		/// <returns>Pin 1 as percent</returns>
-		public new Int16 ReadPin1AsPct ()
+		public new int ReadPin1AsPct ()
 		{
 			return base.ReadPin1AsPct();
 		}
@@ -45,7 +45,7 @@ namespace MonoBrickFirmware.IO
 		/// Reads pin 6 as percent.
 		/// </summary>
 		/// <returns>Pin 6 as percent</returns>
-		public new Int16 ReadPin6AsPct ()
+		public new int ReadPin6AsPct ()
 		{
 			return base.ReadPin6AsPct();
 		}
@@ -55,7 +55,7 @@ namespace MonoBrickFirmware.IO
 		/// Reads Pin 1.
 		/// </summary>
 		/// <returns>Pin 1 value</returns>
-		public new Int16 ReadPin1()
+		public new int ReadPin1()
 		{
 		    return base.ReadPin1();
 		}
@@ -64,7 +64,7 @@ namespace MonoBrickFirmware.IO
 		/// Reads pin 5.
 		/// </summary>
 		/// <returns>Pin5 value</returns>
-		public new Int16 ReadPin5()
+		public new int ReadPin5()
 		{
 		    return base.ReadPin5();
 		}
@@ -73,7 +73,7 @@ namespace MonoBrickFirmware.IO
 		/// Reads pin 6.
 		/// </summary>
 		/// <returns>Pin 6 value</returns>
-		public new Int16 ReadPin6()
+		public new int ReadPin6()
 		{
 		    return base.ReadPin6(); 
 		}
@@ -83,7 +83,7 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		/// <returns>The raw value</returns>
 		public int ReadRaw(){
-			return base.ReadPin1AsRaw();
+			return base.ReadPin1As10Bit();
 		}
 		
 		

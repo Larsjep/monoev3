@@ -29,7 +29,7 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
 		public int ReadAngularAcceleration()
         {
-            return ReadPin1AsRaw() - Offset;
+            return base.ReadPin1As10Bit() - Offset;
         }
 
 		/// <summary>
