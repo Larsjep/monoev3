@@ -91,13 +91,13 @@ namespace MonoBrickFirmware.IO
 	   	
 	    protected byte ReadByte()
 	    {
-	        CheckSensor();
+	        //CheckSensor();
 	        return GetRawData(CalcRawOffset(), 1)[0];  
 	    }
 	    
 	    protected byte[] ReadBytes (int length)
 		{
-			CheckSensor ();
+			//CheckSensor ();
 			return GetRawData (CalcRawOffset(), length);
 	    }
 		

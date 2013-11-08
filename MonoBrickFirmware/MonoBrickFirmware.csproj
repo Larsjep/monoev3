@@ -68,6 +68,9 @@
     <Compile Include="IO\UltraSonicSensor.cs" />
     <Compile Include="IO\AnalogSensorAbstraction.cs" />
     <Compile Include="IO\UARTSensorAbstraction.cs" />
+    <Compile Include="IO\I2CAbstraction.cs" />
+    <Compile Include="IO\AnalogSensor.cs" />
+    <Compile Include="IO\UARTSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

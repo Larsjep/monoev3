@@ -59,6 +59,15 @@ namespace MonoBrickFirmware.IO
 			return (Int16)((ReadPin6()*100)/ADCResolution);
 		}
 		
+		/// <summary>
+		/// Reads the value of pin 1 converted to 10 bit
+		/// </summary>
+		/// <returns>The raw value</returns>
+		protected Int16 ReadRaw(){
+			return (ReadPin1()+3)/4;
+		}
+		
+		
 		protected Int16 ReadPin1()
 		{
 		    return ReadInt16 (PinOneOffset);
