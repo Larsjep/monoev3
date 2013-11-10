@@ -264,7 +264,7 @@ namespace MonoBrickFirmware.IO
 	/// <summary>
 	/// Class holding a reply from the device
 	/// </summary>
-	internal class DeviceReply
+	public class DeviceReply
 	{
 		
 		public DeviceReply(byte[] data){

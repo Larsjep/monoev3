@@ -20,7 +20,7 @@ namespace MonoBrickFirmware.IO
 	/// <summary>
 	/// Class for the NXT light sensor
 	/// </summary>
-	public class LightSensor : AnalogSensor, ISensor{
+	public class LightSensor : AnalogSensorAbstraction, ISensor{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.LightSensor"/> class.
 		/// </summary>
@@ -73,9 +73,9 @@ namespace MonoBrickFirmware.IO
 		/// <summary>
 		/// Read the sensor value as percent
 		/// </summary>
-		public int Read()
+		public Int16 Read()
 		{
-			return (int)this.ReadPin1AsPct();
+			return this.ReadPin1AsPct();
 		}
 		
 		/// <summary>
@@ -84,7 +84,7 @@ namespace MonoBrickFirmware.IO
 		/// <returns>The raw sensor value.</returns>
 		public int ReadRaw ()
 		{
-			return (int)this.ReadPin1();
+			return base.ReadPin1As10Bit();
 		}
 		
 	}

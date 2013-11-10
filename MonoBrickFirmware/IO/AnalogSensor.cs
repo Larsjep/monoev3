@@ -1,86 +1,89 @@
 using System;
-using MonoBrickFirmware.Native;
 
 namespace MonoBrickFirmware.IO
 {
-	
 	/// <summary>
-	/// Analog commands
+	/// Analog sensor class. Should not be used for inheritance
 	/// </summary>
-	[Flags]
-	public enum AnalogMode  {
-		#pragma warning disable 
-		None = (byte)'-', Float = (byte)'f', Set = (byte)'0', ColorFull = 0x0D, ColorRed = 0x0E, 
-		ColorGreen = 0x0F, ColorBlue = 0x10, ColorNone = 0x11, ColorExit = 0x12, Pin1 = 0x01, Pin5 = 0x02
-		#pragma warning restore
-	};
-	
-	public abstract class AnalogSensor{
-		private MemoryArea analogMemory;
-		
-		
-		protected const int ADCResolution = 4095;//12-bit
-		protected AnalogMode AnalogMode{get;private set;}
-		protected const int NumberOfSenosrPorts = SensorManager.NumberOfSenosrPorts;
-		protected SensorPort port;
-		
-		
-		//Analog memory offsets
-    	private const int PinOneOffset = 0;
-    	private const int PinSixOffset = 8;
-    	private const int PinFiveOffset = 16;
-    	private const int BatteryTempOffset = 24;
-    	private const int MotorCurrentOffset = 26;
-   	 	private const int BatteryCurrentOffset = 28;
-    	private const int BatteryVoltageOffset = 30;
-    	
-		
-		public AnalogSensor (SensorPort port)
+	public sealed class AnalogSensor : AnalogSensorAbstraction
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.AnalogSensor"/> class in set mode
+		/// </summary>
+		/// <param name="port">Sensor port to use</param>
+		public AnalogSensor (SensorPort port): this(port, AnalogMode.Set)
 		{
-			this.port = port;
-			SensorManager.Instance.ResetUart(this.port);
-			analogMemory = SensorManager.Instance.AnalogMemory;
+			
 		}
 		
-		protected void SetMode(AnalogMode mode)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.AnalogSensor"/> class.
+		/// </summary>
+		/// <param name="port">Sensor port to use</param>
+		/// <param name="mode">Sensor mode to use</param>
+		public AnalogSensor (SensorPort port, AnalogMode mode):base(port)
+		{
+			SetMode(mode);
+		
+		}
+		
+		public new void SetMode(AnalogMode mode)
 	    {
-	        this.AnalogMode = mode;
-	        SensorManager.Instance.SetAnalogMode(mode,port);
+	        base.SetMode(mode);
 	    }
 		
-		protected Int16 ReadPin1AsPct ()
+		/// <summary>
+		/// Reads pin 1 as percent.
+		/// </summary>
+		/// <returns>Pin 1 as percent</returns>
+		public new int ReadPin1AsPct ()
 		{
-			return (Int16)((ReadPin1()*100)/ADCResolution);
+			return base.ReadPin1AsPct();
 		}
 		
-		protected Int16 ReadPin6AsPct ()
+		/// <summary>
+		/// Reads pin 6 as percent.
+		/// </summary>
+		/// <returns>Pin 6 as percent</returns>
+		public new int ReadPin6AsPct ()
 		{
-			return (Int16)((ReadPin6()*100)/ADCResolution);
+			return base.ReadPin6AsPct();
 		}
 		
-		protected Int16 ReadPin1()
+		
+		/// <summary>
+		/// Reads Pin 1.
+		/// </summary>
+		/// <returns>Pin 1 value</returns>
+		public new int ReadPin1()
 		{
-		    return ReadInt16 (PinOneOffset);
+		    return base.ReadPin1();
 		}
 		
-		protected Int16 ReadPin5()
+		/// <summary>
+		/// Reads pin 5.
+		/// </summary>
+		/// <returns>Pin5 value</returns>
+		public new int ReadPin5()
 		{
-		    return ReadInt16 (PinFiveOffset);
+		    return base.ReadPin5();
 		}
 		
-		protected Int16 ReadPin6()
+		/// <summary>
+		/// Reads pin 6.
+		/// </summary>
+		/// <returns>Pin 6 value</returns>
+		public new int ReadPin6()
 		{
-		    return ReadInt16 (PinSixOffset); 
+		    return base.ReadPin6(); 
 		}
 		
-		protected byte[] ReadBytes (int offset, int length)
-		{
-			return analogMemory.Read(offset, length);
-		}
-		
-		private Int16 ReadInt16 (int offset)
-		{
-			 return BitConverter.ToInt16(analogMemory.Read(offset, NumberOfSenosrPorts*2),(int) port * 2);
+		/// <summary>
+		/// Reads the value of pin 1 converted to 10 bit
+		/// </summary>
+		/// <returns>The raw value</returns>
+		public int ReadRaw(){
+			return base.ReadPin1As10Bit();
 		}
 		
 		
