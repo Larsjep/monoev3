@@ -38,6 +38,7 @@
     <Folder Include="IO\" />
     <Folder Include="Graphics\" />
     <Folder Include="Native\" />
+    <Folder Include="Graphics\Resources\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IO\Lcd.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="IO\SensorManager.cs" />
     <Compile Include="Graphics\BmpCreator.cs" />
     <Compile Include="IO\IRSensor.cs" />
+    <Compile Include="Graphics\Console.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -75,4 +77,12 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <EmbeddedResource Include="Graphics\Resources\info56_12.bin">
+      <LogicalName>font.info56_12</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graphics\Resources\profont_7.bin">
+      <LogicalName>font.profont_7</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

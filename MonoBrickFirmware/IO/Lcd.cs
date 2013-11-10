@@ -59,9 +59,11 @@ namespace MonoBrickFirmware.IO
 		    0xFF // 111 11111111
 		    }; 
 		
-		public void Update()
+		
+		public void Update(int yoffset = 0)
 		{
-			int inOffset = 0;
+			const int bytesPrLine = 3*7+2;
+			int inOffset = (yoffset % Lcd.Height)*(bytesPrLine);
 		    int outOffset = 0;
 		    for(int row = 0; row < Height; row++)
 		    {
@@ -96,6 +98,8 @@ namespace MonoBrickFirmware.IO
 		        hwBuffer[outOffset++] = convert[pixels & 0x7];
 		        pixels >>= 3;
 		        hwBuffer[outOffset++] = convert[pixels & 0x7];
+				if (inOffset >= Height*bytesPrLine)
+					inOffset = 0;
 		    } 
 			memory.Write(0,hwBuffer);
 		}
