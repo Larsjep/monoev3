@@ -1,6 +1,7 @@
 using System;
 using MonoBrickFirmware;
 using MonoBrickFirmware.IO;
+using MonoBrickFirmware.Graphics;
 namespace NXTColorSensorExample
 {
 	class MainClass
@@ -17,21 +18,21 @@ namespace NXTColorSensorExample
 				run  = false;
 			};
 			buts.UpPressed += () => { 
-				Console.WriteLine("Sensor value: " + colorSensor.ReadAsString());
+				LcdConsole.WriteLine("Sensor value: " + colorSensor.ReadAsString());
 			};
 			buts.LeftPressed += () => { 
-				Console.WriteLine("Raw sensor value: " + colorSensor.ReadRaw());
+				LcdConsole.WriteLine("Raw sensor value: " + colorSensor.ReadRaw());
 			};
 			buts.RightPressed += () => { 
 				RGBColor RGB = colorSensor.ReadRGBColor();
-				Console.WriteLine("Red value  : " + RGB.Red);
-				Console.WriteLine("Green value: " + RGB.Green);
-				Console.WriteLine("Blue value : " + RGB.Blue);
+				LcdConsole.WriteLine("Red value  : " + RGB.Red);
+				LcdConsole.WriteLine("Green value: " + RGB.Green);
+				LcdConsole.WriteLine("Blue value : " + RGB.Blue);
 			};
 			buts.DownPressed += () => { 
 				modeIdx = (modeIdx+1)%modes.Length;
 				colorSensor.Mode = modes[modeIdx];
-				Console.WriteLine("Sensor mode is set to: " + modes[modeIdx]);
+				LcdConsole.WriteLine("Sensor mode is set to: " + modes[modeIdx]);
 			};  
 			while (run) {
 				System.Threading.Thread.Sleep(50);
