@@ -81,7 +81,7 @@ Global
 		{ED35A35F-224C-4700-8CB5-745B518623F2}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = HiTechnicI2CExample\HiTechnicI2CExample.csproj
+		StartupItem = MotorExample\MotorExample.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2
