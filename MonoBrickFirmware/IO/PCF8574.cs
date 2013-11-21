@@ -17,7 +17,8 @@ namespace MonoBrickFirmware.IO
 		/// </summary>
         public int Read()
         {
-            return base.ReadRegister(I2CAddress)[0];
+			byte[] data = {};
+			return base.WriteAndRead(0,data,1)[0];
         }
 
 		/// <summary>
@@ -27,7 +28,8 @@ namespace MonoBrickFirmware.IO
 		/// Pins to set (0-255)
 		/// </param>
         public void Write(byte set) {
-            base.WriteRegister(I2CAddress,set);
+            byte[] data = {set};
+			base.WriteAndRead(0,data,0);
         }
 
 		/// <summary>
