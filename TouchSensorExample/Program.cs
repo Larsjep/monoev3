@@ -1,5 +1,6 @@
 using System;
 using MonoBrickFirmware.IO;
+using MonoBrickFirmware.Graphics;
 using System.Threading;
 namespace TouchSensorExample
 {
@@ -14,10 +15,10 @@ namespace TouchSensorExample
 				terminateProgram.Set();
 			};
 			buts.UpPressed += () => { 
-				Console.WriteLine("Sensor value:" + touchSensor.ReadAsString());
+				LcdConsole.WriteLine("Sensor value:" + touchSensor.ReadAsString());
 			};
 			buts.DownPressed += () => { 
-				Console.WriteLine("Raw sensor value: " + touchSensor.ReadRaw());
+				LcdConsole.WriteLine("Raw sensor value: " + touchSensor.ReadRaw());
 			};  
 			terminateProgram.WaitOne();
 		}
