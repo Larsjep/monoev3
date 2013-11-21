@@ -13,6 +13,8 @@ namespace example
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		public static void Main (string[] args)
 		{
+			 new Motor(MotorPort.OutA).Off();
+			
 			Lcd lcd = new Lcd();
 			//lcd.ShowPicture(MonoPicture.Picture);
 			Font f = Font.FromResource(System.Reflection.Assembly.GetExecutingAssembly(), "font.info56_12");

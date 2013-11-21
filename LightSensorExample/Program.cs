@@ -1,17 +1,18 @@
 using System;
 using MonoBrickFirmware.IO;
+using System.Threading;
 namespace LightSensorExample
 {
 	class MainClass
 	{
 		public static void Main (string[] args)
 		{
-			bool run = true;
+			ManualResetEvent terminateProgram = new ManualResetEvent(false);
 			var lightSensor = new LightSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			lightSensor.Initialize();
 			buts.EnterPressed += () => { 
-				run  = false;
+				terminateProgram.Set();
 			};
 			buts.UpPressed += () => { 
 				Console.WriteLine("Sensor value:" + lightSensor.ReadAsString());
@@ -25,9 +26,7 @@ namespace LightSensorExample
 				}
 				Console.WriteLine("Sensor mode is now: " + lightSensor.Mode);
 			};  
-			while (run) {
-				System.Threading.Thread.Sleep(50);
-			}
+			terminateProgram.WaitOne();
 		}
 	}
 }
