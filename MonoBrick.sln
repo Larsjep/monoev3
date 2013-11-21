@@ -25,8 +25,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "I2CExample", "I2CExample\I2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTechnicI2CExample", "HiTechnicI2CExample\HiTechnicI2CExample.csproj", "{11C84BA4-9A8A-4BF2-AA7B-2D45AC63ACAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCF8574Example", "PCF8574Example\PCF8574Example.csproj", "{43B31FFA-138F-46C9-9F6A-3B466964B43B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -45,10 +43,6 @@ Global
 		{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}.Debug|x86.Build.0 = Debug|x86
 		{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}.Release|x86.ActiveCfg = Release|x86
 		{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}.Release|x86.Build.0 = Release|x86
-		{43B31FFA-138F-46C9-9F6A-3B466964B43B}.Debug|x86.ActiveCfg = Debug|x86
-		{43B31FFA-138F-46C9-9F6A-3B466964B43B}.Debug|x86.Build.0 = Debug|x86
-		{43B31FFA-138F-46C9-9F6A-3B466964B43B}.Release|x86.ActiveCfg = Release|x86
-		{43B31FFA-138F-46C9-9F6A-3B466964B43B}.Release|x86.Build.0 = Release|x86
 		{610E902C-B188-4C05-BDEB-1CDB38893F89}.Debug|x86.ActiveCfg = Debug|x86
 		{610E902C-B188-4C05-BDEB-1CDB38893F89}.Debug|x86.Build.0 = Debug|x86
 		{610E902C-B188-4C05-BDEB-1CDB38893F89}.Release|x86.ActiveCfg = Release|x86
@@ -87,7 +81,7 @@ Global
 		{ED35A35F-224C-4700-8CB5-745B518623F2}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = TouchSensorExample\TouchSensorExample.csproj
+		StartupItem = LcdExample\LcdExample.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2

@@ -75,6 +75,7 @@
     <Compile Include="IO\UARTSensor.cs" />
     <Compile Include="IO\QueueThread.cs" />
     <Compile Include="IO\PCF8574.cs" />
+    <Compile Include="IO\PCF8591.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

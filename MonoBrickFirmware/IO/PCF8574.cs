@@ -2,7 +2,10 @@ using System;
 
 namespace MonoBrickFirmware.IO
 {
-	public class PCF8574: I2CAbstraction, ISensor
+	/// <summary>
+    /// PCF8574 I/O chip
+    /// </summary>
+    public class PCF8574: I2CAbstraction, ISensor
 	{
 		public PCF8574 (SensorPort port, byte address) : base (port, address, I2CMode.LowSpeed9V)
 		{
@@ -35,7 +38,7 @@ namespace MonoBrickFirmware.IO
 		/// </returns>
         public string ReadAsString()
         {
-            return "I/O value: " + Read();
+			return "I/O value: " + Read();
         }
 		
 	}
