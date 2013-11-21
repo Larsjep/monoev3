@@ -62,7 +62,7 @@ namespace MonoBrickFirmware.IO
     }
 	
 	/// <summary>
-	/// Sensor mode when using a NXT color sensor
+	/// Sensor mode when using a NXT or EV3 color sensor
     /// </summary>
     public enum ColorMode { 
 		/// <summary>

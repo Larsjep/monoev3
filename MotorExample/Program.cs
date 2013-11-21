@@ -1,5 +1,8 @@
 using System;
+using MonoBrickFirmware;
 using MonoBrickFirmware.IO;
+using MonoBrickFirmware.Graphics;
+
 namespace MotorExample
 {
 	class MainClass
@@ -8,49 +11,48 @@ namespace MotorExample
 		{
 			Motor motor = new Motor (MotorPort.OutA);
 			MotorSync motorSync = new MotorSync(MotorPort.OutA, MotorPort.OutD);
-			
-			Console.WriteLine ("Running single motor test");
-			Console.WriteLine ("Reset motor tacho");
+			LcdConsole.WriteLine ("Running single motor test");
+			LcdConsole.WriteLine ("Reset motor tacho");
 			motor.ResetTacho ();
-			Console.WriteLine ("Running forward with 20");
+			LcdConsole.WriteLine ("Running forward with 20");
 			motor.On(20);
 			System.Threading.Thread.Sleep(2500);
-			Console.WriteLine ("Printing motor speed: " + motor.GetSpeed());
+			LcdConsole.WriteLine ("Printing motor speed: " + motor.GetSpeed());
 			System.Threading.Thread.Sleep(2500);
-			Console.WriteLine ("Running backwards with 70");
+			LcdConsole.WriteLine ("Running backwards with 70");
 			motor.On(-70);
 			System.Threading.Thread.Sleep(3000);
-			Console.WriteLine ("Reverse direction");
+			LcdConsole.WriteLine ("Reverse direction");
 			motor.Reverse = true;
 			System.Threading.Thread.Sleep(3000);
-			Console.WriteLine ("Brake");
+			LcdConsole.WriteLine ("Brake");
 			motor.Reverse = false;
 			motor.Brake();
 			System.Threading.Thread.Sleep(3000);			
-			Console.WriteLine ("Off");
+			LcdConsole.WriteLine ("Off");
 			motor.Off();
 			System.Threading.Thread.Sleep(3000);			
 			
-			Console.WriteLine ("Move to zero");
+			LcdConsole.WriteLine ("Move to zero");
 			motor.MoveTo(40, 0, true);
-			Console.WriteLine("Motor at position: " + motor.GetTachoCount());
+			LcdConsole.WriteLine("Motor at position: " + motor.GetTachoCount());
 			System.Threading.Thread.Sleep(2000);
 			
-			Console.WriteLine ("Creating a step profile");
+			LcdConsole.WriteLine ("Creating a step profile");
 			motor.SpeedProfileStep(40,100, 1500, 100, true);
 			motor.Off();
-			Console.WriteLine("Motor at position: " + motor.GetTachoCount());
+			LcdConsole.WriteLine("Motor at position: " + motor.GetTachoCount());
 			System.Threading.Thread.Sleep(2000);
 			
-			Console.WriteLine ("Motor " + motorSync.BitField + " synchronised forward for 2500 steps");
+			LcdConsole.WriteLine ("Motor " + motorSync.BitField + " synchronised forward for 2500 steps");
 			motorSync.On(50, 0, 2500, true);
 			motorSync.Off();
-			Console.WriteLine ("Motor " + motorSync.BitField + " synchronised with second motor moving at half speed");
+			LcdConsole.WriteLine ("Motor " + motorSync.BitField + " synchronised with second motor moving at half speed");
 			motorSync.On(-20,50,2500, false); //coast when done
 			
 			
 			
-			Console.WriteLine ("Done executing motor test");
+			LcdConsole.WriteLine ("Done executing motor test");
 		}
 	}
 }

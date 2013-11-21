@@ -1,6 +1,7 @@
 using System;
 using MonoBrickFirmware;
 using MonoBrickFirmware.IO;
+using System.Threading;
 
 namespace IRSensorExample
 {
@@ -11,12 +12,12 @@ namespace IRSensorExample
 			IRChannel[] channels = {IRChannel.One, IRChannel.Two, IRChannel.Three, IRChannel.Four};
 			
 			int channelIdx = 0;
-			bool run = true;
+			ManualResetEvent terminateProgram = new ManualResetEvent(false);
 			var sensor = new IRSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			
 			buts.EscapePressed += () => { 
-				run  = false;
+				terminateProgram.Set();
 			};
 			buts.UpPressed += () => { 
 				Console.WriteLine("Distance " + sensor.ReadDistance() +  " cm");
@@ -37,10 +38,8 @@ namespace IRSensorExample
 			buts.RightPressed += () => { 
 				Console.WriteLine(sensor.ReadAsString());	
 			};
-			 
-			while (run) {
-				System.Threading.Thread.Sleep(50);
-			}
+			terminateProgram.WaitOne(); 
+			
 		}
 	}
 }
