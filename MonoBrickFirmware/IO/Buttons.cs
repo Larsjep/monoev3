@@ -95,6 +95,7 @@ namespace MonoBrickFirmware.IO
 		EventWaitHandle stopPolling = new ManualResetEvent(false);
 		const int pollTime = 50;
 		Buttons btns = new Buttons();
+		QueueThread queue = new QueueThread();
 		
 		public ButtonEvents()
 		{
@@ -127,23 +128,23 @@ namespace MonoBrickFirmware.IO
 					Buttons.ButtonStates pressed = (bs ^ lastState) & (~lastState);
 					switch (pressed)
 					{
-						case Buttons.ButtonStates.Down:		DownPressed(); break;
-						case Buttons.ButtonStates.Enter:	EnterPressed(); break;
-						case Buttons.ButtonStates.Escape:	EscapePressed(); break;
-						case Buttons.ButtonStates.Left:		LeftPressed(); break;
-						case Buttons.ButtonStates.Right:	RightPressed(); break;
-						case Buttons.ButtonStates.Up:		UpPressed(); break;
+						case Buttons.ButtonStates.Down:		queue.Enqueue(DownPressed); break;
+						case Buttons.ButtonStates.Enter:	queue.Enqueue(EnterPressed); break;
+						case Buttons.ButtonStates.Escape:	queue.Enqueue(EscapePressed); break;
+						case Buttons.ButtonStates.Left:		queue.Enqueue(LeftPressed); break;
+						case Buttons.ButtonStates.Right:	queue.Enqueue(RightPressed); break;
+						case Buttons.ButtonStates.Up:		queue.Enqueue(UpPressed); break;
 					}
 					
 					Buttons.ButtonStates released = (bs ^ lastState) & lastState;
 					switch (released)
 					{
-						case Buttons.ButtonStates.Down:		DownReleased(); break;
-						case Buttons.ButtonStates.Enter:	EnterReleased(); break;
-						case Buttons.ButtonStates.Escape:	EscapeReleased(); break;
-						case Buttons.ButtonStates.Left:		LeftReleased(); break;
-						case Buttons.ButtonStates.Right:	RightReleased(); break;
-						case Buttons.ButtonStates.Up:		UpReleased(); break;
+						case Buttons.ButtonStates.Down:		queue.Enqueue(DownReleased); break;
+						case Buttons.ButtonStates.Enter:	queue.Enqueue(EnterReleased); break;
+						case Buttons.ButtonStates.Escape:	queue.Enqueue(EscapeReleased); break;
+						case Buttons.ButtonStates.Left:		queue.Enqueue(LeftReleased); break;
+						case Buttons.ButtonStates.Right:	queue.Enqueue(RightReleased); break;
+						case Buttons.ButtonStates.Up:		queue.Enqueue(UpReleased); break;
 					}
 					lastState = bs;
 				}

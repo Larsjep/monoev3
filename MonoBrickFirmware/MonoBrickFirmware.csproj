@@ -73,6 +73,7 @@
     <Compile Include="IO\I2CAbstraction.cs" />
     <Compile Include="IO\AnalogSensor.cs" />
     <Compile Include="IO\UARTSensor.cs" />
+    <Compile Include="IO\QueueThread.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
