@@ -10,7 +10,7 @@ namespace MonoBrickFirmware.Graphics
 		private class ConsoleWriter
 		{
 			Lcd lcd = new Lcd();
-			Font f = Font.FromResource(Assembly.GetExecutingAssembly(), "font.profont_7");
+			Font f = Font.SmallFont;
 			int scrollPos = 0;
 			int lines;
 			float lineHeigth;

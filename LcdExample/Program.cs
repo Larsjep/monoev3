@@ -16,13 +16,12 @@ namespace example
 			 new Motor(MotorPort.OutA).Off();
 			
 			Lcd lcd = new Lcd();
-			//lcd.ShowPicture(MonoPicture.Picture);
-			Font f = Font.FromResource(System.Reflection.Assembly.GetExecutingAssembly(), "font.info56_12");
+			lcd.ShowPicture(MonoPicture.Picture);
+			Font f = Font.MediumFont;
 			Point offset = new Point(0,25);
 			Point p = new Point(10, Lcd.Height-75);
 			Point boxSize = new Point(100, 24);
 			Rect box = new Rect(p, p+boxSize);
-			lcd.Clear();
 			
 			ButtonEvents buts = new ButtonEvents();
 			int val = 7;

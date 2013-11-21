@@ -45,11 +45,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="info56_12.bin">
-      <LogicalName>font.info56_12</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="monologo.bin">
+    <EmbeddedResource Include="Resources\monologo.bin">
       <LogicalName>monologo.bitmap</LogicalName>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 
 namespace MonoBrickFirmware.Graphics
 {
@@ -62,6 +63,12 @@ namespace MonoBrickFirmware.Graphics
 			}
 			return new Point(width, (int)maxHeight);
 		}
+		
+		static Font font_info56 = Font.FromResource(Assembly.GetExecutingAssembly(), "font.info56_12");
+		static Font font_profont_7 = Font.FromResource(Assembly.GetExecutingAssembly(), "font.profont_7");
+		
+		static public Font SmallFont { get { return font_profont_7; } }
+		static public Font MediumFont { get { return font_info56; } }
 	}
 }
 
