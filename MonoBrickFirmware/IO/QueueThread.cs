@@ -18,15 +18,20 @@ namespace MonoBrickFirmware.IO
 		{
 			while (!stop.WaitOne(0))
 			{
+				Action action = null;
 				lock (queue)
 				{
-					while (queue.Count > 0)
+					if (queue.Count > 0)
 					{
-						Action action = queue.Dequeue();
-						action();
+						action = queue.Dequeue();						
 					}
-					Monitor.Wait(queue);					
+					else
+					{
+						Monitor.Wait(queue);					
+					}
 				}
+				if (action != null)
+					action();
 			}
 		}
 		
@@ -35,6 +40,7 @@ namespace MonoBrickFirmware.IO
 			lock (queue)
 			{
 				queue.Enqueue(a);
+				Monitor.Pulse(queue);
 			}
 		}
 					
@@ -43,6 +49,7 @@ namespace MonoBrickFirmware.IO
 			lock (queue)
 			{
 				stop.Set();
+				Monitor.Pulse(queue);
 			}
 		}								
 	}
