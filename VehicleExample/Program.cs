@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using MonoBrickFirmware.IO;
+using MonoBrickFirmware.Graphics;
 namespace VehicleExample
 {
 	class MainClass
@@ -18,15 +19,15 @@ namespace VehicleExample
 			
 			//Make a square
 			for (int i = 0; i < 4; i++) {
-				Console.WriteLine ("Spin left");
+				LcdConsole.WriteLine ("Spin left");
 				vehicle.SpinLeft (speed, spinSteps, true);
-				Console.WriteLine ("Move forward");
+				LcdConsole.WriteLine ("Move forward");
 				vehicle.Forward (speed, moveSteps, true);
 			}
 			vehicle.Off ();
 			
 			Thread.Sleep(3000);
-			Console.WriteLine("Make a soft turn to the left");
+			LcdConsole.WriteLine("Make a soft turn to the left");
 			vehicle.TurnLeftForward (speed, 50, moveSteps, false);
 			
 		}

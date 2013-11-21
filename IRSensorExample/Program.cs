@@ -2,7 +2,7 @@ using System;
 using MonoBrickFirmware;
 using MonoBrickFirmware.IO;
 using System.Threading;
-
+using MonoBrickFirmware.Graphics;
 namespace IRSensorExample
 {
 	class MainClass
@@ -20,23 +20,23 @@ namespace IRSensorExample
 				terminateProgram.Set();
 			};
 			buts.UpPressed += () => { 
-				Console.WriteLine("Distance " + sensor.ReadDistance() +  " cm");
+				LcdConsole.WriteLine("Distance " + sensor.ReadDistance() +  " cm");
 			};
 			buts.EnterPressed += () => { 
-				Console.WriteLine("Remote command " + sensor.ReadRemoteCommand() + " on channel " + sensor.Channel);									
+				LcdConsole.WriteLine("Remote command " + sensor.ReadRemoteCommand() + " on channel " + sensor.Channel);									
 			};
 			buts.DownPressed += () => { 
 				BeaconLocation location  = sensor.ReadBeaconLocation();
-				Console.WriteLine("Beacon location: " + location.Location + " Beacon distance: " + location.Distance + " cm"); 
+				LcdConsole.WriteLine("Beacon location: " + location.Location + " Beacon distance: " + location.Distance + " cm"); 
 				
 			};
 			buts.LeftPressed += () => { 
 				channelIdx = (channelIdx+1)%channels.Length;
 				sensor.Channel = channels[channelIdx];
-				Console.WriteLine("Channel is set to: " + channels[channelIdx]);
+				LcdConsole.WriteLine("Channel is set to: " + channels[channelIdx]);
 			};
 			buts.RightPressed += () => { 
-				Console.WriteLine(sensor.ReadAsString());	
+				LcdConsole.WriteLine(sensor.ReadAsString());	
 			};
 			terminateProgram.WaitOne(); 
 			

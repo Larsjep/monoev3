@@ -159,15 +159,9 @@ namespace MonoBrickFirmware.IO
 				}
 				if (status == 0) {
 					byte[] reply = new byte[rxLength];
-					/*for (int i =0; i < i2cData.Length; i ++) {
-						Console.WriteLine ("Data[{0}]: {1:X}",i,i2cData[i]);
-					}*/
 					if (rxLength > 0) {
 						Array.Copy(i2cData,replyIndex, reply,0, rxLength);
 					}
-					/*for (int i =0; i < reply.Length; i ++) {
-						Console.WriteLine ("Data[{0}]: {1:X}",i,reply[i]);
-					}*/
 					return reply;
 				}
 			}

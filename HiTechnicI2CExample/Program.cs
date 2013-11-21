@@ -21,18 +21,18 @@ namespace HiTechnicI2CExample
 				terminateProgram.Set ();
 			};
 			buts.UpPressed += () => { 
-				Console.WriteLine ("Compass sensor: " + compass.ReadAsString());
+				LcdConsole.WriteLine ("Compass sensor: " + compass.ReadAsString());
 			};
 			buts.EnterPressed += () => {
-				Console.WriteLine ("Color sensor: " + colorSensor.ReadAsString());
-				Console.WriteLine ("Color index: " + colorSensor.ReadColorIndex());
+				LcdConsole.WriteLine ("Color sensor: " + colorSensor.ReadAsString());
+				LcdConsole.WriteLine ("Color index: " + colorSensor.ReadColorIndex());
 				 
 			};
 			buts.DownPressed += () => { 
-				Console.WriteLine ("Gyro sensor: " + gyro.ReadAsString());
+				LcdConsole.WriteLine ("Gyro sensor: " + gyro.ReadAsString());
 			};
 			buts.LeftPressed += () => { 
-				Console.WriteLine ("Ultra Sonic sensor: " + us.ReadAsString());	
+				LcdConsole.WriteLine ("Ultra Sonic sensor: " + us.ReadAsString());	
 			};
 			terminateProgram.WaitOne ();  
 		}
