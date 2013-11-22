@@ -14,9 +14,14 @@ namespace MonoBrickFirmware.IO
 		const int hwBufferSize = hwBufferLineSize*Height;			
 		private UnixDevice device;
 		private MemoryArea memory;
-		private BmpImage bmpImage = new BmpImage(bytesPrLine * 8 , Height, ColorDepth.GrayScaleColor);
-		
 		byte[] displayBuf = new byte[bufferSize];
+		
+		private BmpImage screenshotImage = new BmpImage(bytesPrLine * 8 , Height, ColorDepth.TrueColor);
+		private RGB startColor = new RGB(188,191,161);
+		private RGB endColor = new  RGB(219,225,206);
+		private float redGradientStep;
+		private float greenGradientStep;  
+		private float blueGradientStep; 
 		
 		public void SetPixel(int x, int y, bool color)
 		{
@@ -44,7 +49,11 @@ namespace MonoBrickFirmware.IO
 			device = new UnixDevice("/dev/fb0");
 			memory =  device.MMap(hwBufferSize, 0);
 			Clear();
-			Update();	
+			Update();
+			
+			redGradientStep = (float)(endColor.Red - startColor.Red)/Height; 
+			greenGradientStep = (float)(endColor.Green - startColor.Green)/Height; 
+			blueGradientStep = (float)(endColor.Blue - startColor.Blue)/Height; 
 		}
 		
 		static byte[] convert = 
@@ -112,7 +121,11 @@ namespace MonoBrickFirmware.IO
 		
 		public void TakeScreenShot (string directory = "")
 		{
-			bmpImage.Clear ();
+			screenshotImage.Clear ();
+			float redActual = (float) endColor.Red;
+			float greenActual = (float) endColor.Green;
+			float blueActual = (float) endColor.Blue;
+			
 			RGB color = new RGB ();
 			for (int y = Height -1; y >= 0; y--) {
 				for (int x = 0; x < bytesPrLine * 8; x++) {
@@ -122,14 +135,17 @@ namespace MonoBrickFirmware.IO
 						color.Red = 0x00;	
 					} 
 					else {
-						color.Blue = 0xff;
-						color.Green = 0xff;
-						color.Red = 0xff;
+						color.Red = (byte)redActual;
+						color.Green = (byte)greenActual;
+						color.Blue = (byte)blueActual;
 					}
-					bmpImage.AppendRGB(color);
+					screenshotImage.AppendRGB(color);
 				}
+				redActual -= redGradientStep;
+				greenActual-= greenGradientStep;
+				blueActual -= blueGradientStep;
 			}
-			bmpImage.WriteToFile(System.IO.Path.Combine(directory,"ScreenShot") + string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}",DateTime.Now)+ ".bmp");
+			screenshotImage.WriteToFile(System.IO.Path.Combine(directory,"ScreenShot") + string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}",DateTime.Now)+ ".bmp");
 		}
 		
 		
@@ -266,7 +282,7 @@ namespace MonoBrickFirmware.IO
 		void IDisposable.Dispose ()
 		{
 			device.Dispose();
-			bmpImage.Dispose();
+			screenshotImage.Dispose();
 		}
 		#endregion
 	}

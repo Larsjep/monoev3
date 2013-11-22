@@ -11,6 +11,18 @@ namespace MonoBrickFirmware.Graphics
 	public enum ColorDepth { TrueColor = 24, LowColor = 8, GrayScaleColor = 9 };
 	
 	public class RGB{
+		public RGB ()
+		{
+			Red = 0;
+			Green = 0;
+			Blue = 0;
+		}
+		
+		public RGB(byte red, byte green, byte blue){
+			Red = red;
+			Green = green;
+			Blue = blue;
+		}
 		public byte Red;
 		public byte Green;
 		public byte Blue;
