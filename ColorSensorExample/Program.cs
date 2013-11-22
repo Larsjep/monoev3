@@ -3,7 +3,7 @@ using MonoBrickFirmware;
 using MonoBrickFirmware.IO;
 using MonoBrickFirmware.Graphics;
 using System.Threading;
-namespace NXTColorSensorExample
+namespace ColorSensorExample
 {
 class MainClass
 {

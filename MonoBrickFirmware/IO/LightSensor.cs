@@ -46,11 +46,6 @@ namespace MonoBrickFirmware.IO
 			set{SetMode((AnalogMode) value);}
 		}
 		
-		public void Initialize ()
-		{
-			SetMode(AnalogMode);
-		}
-
 		/// <summary>
 		/// Reads the sensor value as a string.
 		/// </summary>

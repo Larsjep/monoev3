@@ -74,6 +74,7 @@
     <Compile Include="IO\AnalogSensor.cs" />
     <Compile Include="IO\UARTSensor.cs" />
     <Compile Include="IO\QueueThread.cs" />
+    <Compile Include="IO\SoundSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
