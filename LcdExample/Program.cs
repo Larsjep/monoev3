@@ -37,7 +37,7 @@ namespace example
 			buts.UpPressed += () =>
 			{ 
 				lcd.Clear();
-				lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,0));	
+				lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,10));	
 				lcd.Update();	
 			};
 			buts.DownPressed += () =>
