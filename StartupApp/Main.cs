@@ -17,7 +17,7 @@ namespace StartupApp
 	class MainClass
 	{
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
-		static Font font = Font.FromResource(Assembly.GetExecutingAssembly(), "info56_12.font");
+		static Font font = Font.MediumFont;
 		static Action MenuAction = null;
 		
 		public static string GetIpAddress()
