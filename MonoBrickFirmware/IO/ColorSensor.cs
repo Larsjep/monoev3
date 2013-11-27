@@ -94,18 +94,6 @@ namespace MonoBrickFirmware.IO
 	public interface IColorSensor{
 	
 		/// <summary>
-		/// Reads the color of the RGB.
-		/// </summary>
-		/// <returns>The RGB color.</returns>
-		RGBColor ReadRGBColor ();
-		
-		/// <summary>
-		/// Gets or sets the color mode.
-		/// </summary>
-		/// <value>The color mode.</value>
-		ColorMode Mode{get;set;}
-		
-		/// <summary>
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>
@@ -117,12 +105,16 @@ namespace MonoBrickFirmware.IO
 		/// <returns>The raw value</returns>
 		int ReadRaw ();
 		
-		
 		/// <summary>
 		/// Read the intensity of the reflected or ambient light in percent. In color mode the color index is returned
 		/// </summary>
 		int Read();
 		
+		/// <summary>
+		/// Gets or sets the color mode.
+		/// </summary>
+		/// <value>The color mode.</value>
+		ColorMode Mode{get;set;}
 		
 		/// <summary>
 		/// Reads the color.
@@ -175,15 +167,6 @@ namespace MonoBrickFirmware.IO
 				colorSensor.Mode = mode.Value;
 		}
 		
-		
-		/// <summary>
-		/// Reads the color of the RGB.
-		/// </summary>
-		/// <returns>The RGB color.</returns>
-		public RGBColor ReadRGBColor ()
-		{
-			return colorSensor.ReadRGBColor();
-		}
 	
 		/// <summary>
 		/// Gets or sets the color mode.
@@ -232,7 +215,7 @@ namespace MonoBrickFirmware.IO
 		}	
 	}
 	
-	internal class EV3ColorSensor : UartSensorAbstraction, IColorSensor{
+	public class EV3ColorSensor : UartSensorAbstraction, IColorSensor{
 		
 		/// <summary>
 		/// Initializes a new instance of the NXTColorSensor class in color mode
@@ -253,15 +236,6 @@ namespace MonoBrickFirmware.IO
 						
 		}
 		
-		/// <summary>
-		/// Reads the color of the RGB.
-		/// </summary>
-		/// <returns>The RGB color.</returns>
-		public RGBColor ReadRGBColor ()
-		{
-			return new RGBColor((byte)0, (byte)0, (byte) 0);
-		}
-	
 		/// <summary>
 		/// Gets or sets the color mode.
 		/// </summary>
@@ -391,7 +365,7 @@ namespace MonoBrickFirmware.IO
 	
 	
 	
-	internal class NXTColorSensor : AnalogSensorAbstraction, IColorSensor{
+	public class NXTColorSensor : AnalogSensorAbstraction, IColorSensor{
 		
 		//Analog memory offsets
     	private const int ColorOffset = 4856;
