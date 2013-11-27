@@ -8,9 +8,8 @@ namespace MonoBrickFirmware.IO
         GreenReading = 0x44, BlueReading = 0x45, RedRawReadingLow = 0x46, RedRawReadingHigh = 0x47, GreenRawReadingLow = 0x48, GreenRawReadingHigh = 0x49,
         BlueRawReadingLow = 0x4A, BlueRawReadingHigh = 0x4B, ColorIndexNo = 0x4c, RedNormalized = 0x4d, GreenNormalized = 0x4e, BlueNormalized = 0x4f
     };
-
 	
-    
+	
 	/// <summary>
 	/// HiTechnic color sensor
 	/// </summary>

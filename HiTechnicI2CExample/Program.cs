@@ -15,8 +15,7 @@ namespace HiTechnicI2CExample
 			ButtonEvents buts = new ButtonEvents ();
 			HiTecCompass compass = new HiTecCompass(SensorPort.In1);
 			HiTecColor colorSensor = new HiTecColor(SensorPort.In2);
-			HiTecGyro gyro = new HiTecGyro(SensorPort.In3, 600);
-			UltraSonicSensor us = new UltraSonicSensor(SensorPort.In4);
+			HiTecTilt tilt = new HiTecTilt(SensorPort.In3);
 			buts.EscapePressed += () => { 
 				terminateProgram.Set ();
 			};
@@ -29,10 +28,7 @@ namespace HiTechnicI2CExample
 				 
 			};
 			buts.DownPressed += () => { 
-				LcdConsole.WriteLine ("Gyro sensor: " + gyro.ReadAsString());
-			};
-			buts.LeftPressed += () => { 
-				LcdConsole.WriteLine ("Ultra Sonic sensor: " + us.ReadAsString());	
+				LcdConsole.WriteLine ("Tilt : " + tilt.ReadAsString());	
 			};
 			terminateProgram.WaitOne ();  
 		}

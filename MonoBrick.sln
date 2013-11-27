@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTechnicI2CExample", "HiTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundSensorExample", "SoundSensorExample\SoundSensorExample.csproj", "{61423DCA-229C-4A9C-B49A-3F2C1432B8F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltraSonicSensorExample", "UltraSonicSensorExample\UltraSonicSensorExample.csproj", "{5E5516A2-E61D-4748-A4C0-0B92EDC67048}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GyroSensorExample", "GyroSensorExample\GyroSensorExample.csproj", "{CB1D3F34-4C0F-409F-844B-4874E251E34A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -45,6 +49,10 @@ Global
 		{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}.Debug|x86.Build.0 = Debug|x86
 		{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}.Release|x86.ActiveCfg = Release|x86
 		{3FCBF457-301A-4F4E-B2E2-D6D2C680FDAC}.Release|x86.Build.0 = Release|x86
+		{5E5516A2-E61D-4748-A4C0-0B92EDC67048}.Debug|x86.ActiveCfg = Debug|x86
+		{5E5516A2-E61D-4748-A4C0-0B92EDC67048}.Debug|x86.Build.0 = Debug|x86
+		{5E5516A2-E61D-4748-A4C0-0B92EDC67048}.Release|x86.ActiveCfg = Release|x86
+		{5E5516A2-E61D-4748-A4C0-0B92EDC67048}.Release|x86.Build.0 = Release|x86
 		{610E902C-B188-4C05-BDEB-1CDB38893F89}.Debug|x86.ActiveCfg = Debug|x86
 		{610E902C-B188-4C05-BDEB-1CDB38893F89}.Debug|x86.Build.0 = Debug|x86
 		{610E902C-B188-4C05-BDEB-1CDB38893F89}.Release|x86.ActiveCfg = Release|x86
@@ -73,6 +81,10 @@ Global
 		{B5086CF6-F415-44FB-8543-E912A7D28D05}.Debug|x86.Build.0 = Debug|x86
 		{B5086CF6-F415-44FB-8543-E912A7D28D05}.Release|x86.ActiveCfg = Release|x86
 		{B5086CF6-F415-44FB-8543-E912A7D28D05}.Release|x86.Build.0 = Release|x86
+		{CB1D3F34-4C0F-409F-844B-4874E251E34A}.Debug|x86.ActiveCfg = Debug|x86
+		{CB1D3F34-4C0F-409F-844B-4874E251E34A}.Debug|x86.Build.0 = Debug|x86
+		{CB1D3F34-4C0F-409F-844B-4874E251E34A}.Release|x86.ActiveCfg = Release|x86
+		{CB1D3F34-4C0F-409F-844B-4874E251E34A}.Release|x86.Build.0 = Release|x86
 		{CFE397E2-F479-4B7D-BB02-11BC2859F00B}.Debug|x86.ActiveCfg = Debug|x86
 		{CFE397E2-F479-4B7D-BB02-11BC2859F00B}.Debug|x86.Build.0 = Debug|x86
 		{CFE397E2-F479-4B7D-BB02-11BC2859F00B}.Release|x86.ActiveCfg = Release|x86

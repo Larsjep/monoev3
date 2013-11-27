@@ -97,6 +97,7 @@ namespace MonoBrickFirmware.IO
                 return (reading * 39370) / 1000;
             return reading;
         }
+        
 		/// <summary>
 		/// Fire a single shot 
 		/// </summary>

@@ -75,6 +75,7 @@
     <Compile Include="IO\UARTSensor.cs" />
     <Compile Include="IO\QueueThread.cs" />
     <Compile Include="IO\SoundSensor.cs" />
+    <Compile Include="IO\HTTiltSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
