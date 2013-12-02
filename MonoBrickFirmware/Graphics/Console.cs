@@ -17,9 +17,15 @@ namespace MonoBrickFirmware.Graphics
 			Rect lineSize;
 			public ConsoleWriter()
 			{
+				Reset();
+			}
+			
+			public void Reset ()
+			{
 				lines = (int)(Lcd.Height/f.maxHeight);				
 				lineHeigth = (float)Lcd.Height/lines;
 				lineSize = new Rect(new Point(0,0), new Point((int)Lcd.Width, (int)f.maxHeight));
+
 			}
 				
 			public void WriteLine(string line)
@@ -32,6 +38,13 @@ namespace MonoBrickFirmware.Graphics
 				if (scrollPos >= lines)
 					scrollPos = 0;
 			}
+			
+			public void Clear ()
+			{
+				lcd.Clear();
+				Reset();
+			}
+			
 		}
 		static ConsoleWriter cw = null;
 		static public void WriteLine(string format, params Object[] arg)
@@ -39,6 +52,16 @@ namespace MonoBrickFirmware.Graphics
 			if (cw == null)
 				cw = new ConsoleWriter();
 			cw.WriteLine(string.Format (format, arg));
+		}
+		
+		static public void Clear ()
+		{
+			if (cw == null) 
+			{
+				cw = new ConsoleWriter ();//will do a clear
+			} 
+			cw.Clear ();
+			
 		}
 	}
 }
