@@ -2,7 +2,9 @@ using System;
 using MonoBrickFirmware.IO;
 using MonoBrickFirmware.Graphics;
 using System.Threading;
-using System.Net; using System.Net.Mail; 
+using System.Net;
+using System.Net.Mail;
+
 namespace MailExample
 {
 	class MainClass
@@ -16,7 +18,16 @@ namespace MailExample
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
 			var colorSensor = new ColorSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
-			SmtpClient smptpClient = new SmtpClient("smtp.gmail.com", 587); 			smptpClient.EnableSsl = true; 			smptpClient.UseDefaultCredentials = false; 			smptpClient.Credentials = new NetworkCredential(from, password); 			MailMessage message = new MailMessage(); 			message.To.Add(to); 			message.From = new MailAddress(from); 			message.Subject = "Color message from EV3"; 			message.Body = "EV3 test"; 			LcdConsole.Clear();
+			SmtpClient smptpClient = new SmtpClient("smtp.gmail.com", 587);
+			smptpClient.EnableSsl = true;
+			smptpClient.UseDefaultCredentials = false;
+			smptpClient.Credentials = new NetworkCredential(from, password);
+			MailMessage message = new MailMessage();
+			message.To.Add(to);
+			message.From = new MailAddress(from);
+			message.Subject = "Color message from EV3";
+			message.Body = "EV3 test";
+			LcdConsole.Clear();
 			buts.EscapePressed += () => { 
 				terminateProgram.Set();
 			};

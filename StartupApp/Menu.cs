@@ -10,6 +10,7 @@ namespace StartupApp
 	{
 		public string text;
 		public Func<bool> action;
+		
 	}
 	
 	public class Menu
