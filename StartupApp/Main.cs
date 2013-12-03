@@ -74,7 +74,7 @@ namespace StartupApp
 		static bool RunPrograms(Lcd lcd, Buttons btns)
 		{
 			IEnumerable<MenuItem> items = Directory.EnumerateFiles("/home/root/apps/", "*.exe")
-				.Select( (filename) => new MenuItem() { text = GetFileNameWithoutExt(filename), action = () => StartApp(filename) } );
+				.Select( (filename) => new MenuItem(lcd, GetFileNameWithoutExt(filename),  () => StartApp(filename)));
 			Menu m = new Menu(font, lcd, "Run program:", items);
 			m.ShowMenu(btns);
 			return true;
@@ -110,13 +110,24 @@ namespace StartupApp
 		{
 			
 			List<MenuItem> items = new List<MenuItem>();
-			items.Add (new MenuItem() { text = "Information", action = () => Information(lcd, btns) });
-			items.Add (new MenuItem() { text = "Run programs", action = () => RunPrograms(lcd, btns) });
-			items.Add (new MenuItem() { text = "Shutdown", action = () => Shutdown(lcd,btns) });			
-			
+			items.Add (new MenuItem(lcd, "Information", () => Information(lcd, btns)));
+			items.Add (new MenuItem(lcd, "Run programs", () => RunPrograms(lcd, btns)));
+			items.Add (new MenuItem(lcd, "Shutdown", () => Shutdown(lcd,btns)));
+			items.Add (new MenuItem(lcd, "Settings", () => ShowSettings(lcd,btns)));
 			Menu m = new Menu(font, lcd, "Main menu", items);
 			m.ShowMenu(btns);
 		}
+		
+		static bool ShowSettings(Lcd lcd, Buttons btns)
+		{
+			List<IMenuItem> items = new List<IMenuItem>();
+			items.Add(new MenuItemWithOptions(lcd,"Remote debug",new string[]{"On", "Off"},0));
+			items.Add(new MenuItemWithOptions(lcd,"EnableBT",new string[]{"Yes", "No"},0));
+			Menu m = new Menu(font, lcd, "Settings", items);
+			m.ShowMenu(btns);
+			return false;
+		}
+		
 		
 		public static void Main (string[] args)
 		{

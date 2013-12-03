@@ -6,16 +6,65 @@ using MonoBrickFirmware.Graphics;
 
 namespace StartupApp
 {
-	public struct MenuItem
-	{
-		public string text;
-		public Func<bool> action;
-		
+	public interface IMenuItem{
+		bool EnterAction();
+		void Draw(Font f, Rect r, bool color);
+		bool LeftAction();
+		bool RightAction();
 	}
+	
+	public class MenuItem : IMenuItem
+	{
+		private string text;
+		private Lcd lcd;
+		private Func<bool> action;
+		public MenuItem(Lcd lcd, string text, Func<bool> action){
+			this.text = text;
+			this.action = action;
+			this.lcd = lcd;
+		}
+		public bool EnterAction()
+		{
+			return action();
+		}
+		public bool LeftAction (){return false;}
+		public bool RightAction(){return false;}
+		public void Draw (Font f, Rect r, bool color)
+		{
+			lcd.WriteTextBox(f, r, text, color);	
+		}	
+	}
+	
+	public class MenuItemWithOptions : IMenuItem
+	{
+		private string text;
+		private Lcd lcd;
+		private string[] options;
+		private int optionIdx; 
+		public MenuItemWithOptions(Lcd lcd, string text, string[] options, int startIdx = 0){
+			this.text = text;
+			this.lcd = lcd;
+			this.options = options;
+			this.optionIdx = startIdx;
+		}
+		public bool EnterAction()
+		{
+			optionIdx = (optionIdx+1)%options.Length;
+			return false;
+		}
+		public bool LeftAction (){return false;}
+		public bool RightAction(){return false;}
+		public void Draw (Font f, Rect r, bool color)
+		{
+			lcd.WriteTextBox(f, r, options[optionIdx], color, Lcd.Alignment.Right);
+			lcd.WriteText(f, new Point (0, 0) + r.p1, text, color);
+		}
+	}
+	
 	
 	public class Menu
 	{
-		MenuItem[] items;
+		IMenuItem[] items;
 		Lcd lcd;
 		Font font;
 		string title;
@@ -25,7 +74,7 @@ namespace StartupApp
 		int cursorPos;
 		int scrollPos;
 		
-		public Menu (Font f, Lcd lcd, string title, IEnumerable<MenuItem> items)
+		public Menu (Font f, Lcd lcd, string title, IEnumerable<IMenuItem> items)
 		{
 			this.font = f;
 			this.lcd = lcd;
@@ -38,23 +87,22 @@ namespace StartupApp
 			scrollPos = 0;
 		}
 		
-		private void RedrawMenu()
+		private void RedrawMenu ()
 		{
-			lcd.Clear();
-			Rect startPos = new Rect(new Point(0,0), itemSize);
+			lcd.Clear ();
+			Rect startPos = new Rect (new Point (0, 0), itemSize);
 			
-			lcd.WriteTextBox(font, startPos, title, true, Lcd.Alignment.Center);
+			lcd.WriteTextBox (font, startPos, title, true, Lcd.Alignment.Center);
 			
-			for (int i = 0; i != itemsOnScreen; ++i)
-			{
-				if (i+scrollPos >= items.Length)
+			for (int i = 0; i != itemsOnScreen; ++i) {
+				if (i + scrollPos >= items.Length)
 					break;
-				lcd.WriteTextBox(font, startPos+itemHeight*(i+1), items[i+scrollPos].text, i != cursorPos);
+				items[i + scrollPos].Draw(font, startPos+itemHeight*(i+1), i != cursorPos);
 			}
 			lcd.Update();
 		}
 		
-		void MoveUp()
+		private void MoveUp()
 		{
 			if (cursorPos+scrollPos > 0)
 			{
@@ -65,7 +113,7 @@ namespace StartupApp
 			}
 		}
 		
-		void MoveDown()
+		private void MoveDown()
 		{
 			if (scrollPos+cursorPos < items.Length-1)
 			{
@@ -95,7 +143,19 @@ namespace StartupApp
 					  exit = true;
 					break;
 					case Buttons.ButtonStates.Enter:
-						if (items[scrollPos+cursorPos].action())
+						if (items[scrollPos+cursorPos].EnterAction())
+				   		{
+					    	exit = true;
+						}
+					break;
+					case Buttons.ButtonStates.Left:
+						if (items[scrollPos+cursorPos].LeftAction())
+				   		{
+					    	exit = true;
+						}
+					break;
+					case Buttons.ButtonStates.Right:
+						if (items[scrollPos+cursorPos].RightAction())
 				   		{
 					    	exit = true;
 						}
