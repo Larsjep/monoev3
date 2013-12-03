@@ -11,9 +11,9 @@ namespace MailExample
 	{
 		public static void Main (string[] args)
 		{
-			const string to = "anders@soborg.net";
-			const string from = "anders.soborg@gmail.com";
-			const string password = "builttospill";
+			const string to = "to@mail.com";
+			const string from = "from@mail.com";
+			const string password = "password";
 			
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
 			var colorSensor = new ColorSensor(SensorPort.In1);
