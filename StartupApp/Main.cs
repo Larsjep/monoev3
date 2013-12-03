@@ -61,7 +61,7 @@ namespace StartupApp
 		
 		static bool StartApp(string filename)
 		{
-			MenuAction = () => RunAndWaitForProgram("mono", filename);
+			MenuAction = () => RunAndWaitForProgram("/usr/local/bin/mono", filename);
 			return true;
 		}
 		
@@ -84,6 +84,7 @@ namespace StartupApp
 		{
 			System.Diagnostics.Process proc = new System.Diagnostics.Process();
 			proc.EnableRaisingEvents=false; 
+			Console.WriteLine("Starting process: {0} with arguments: {1}", filename, arguments);
 			proc.StartInfo.FileName = filename;
 			proc.StartInfo.Arguments = arguments;
 			proc.Start();
