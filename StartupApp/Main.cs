@@ -19,7 +19,8 @@ namespace StartupApp
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		static Font font = Font.MediumFont;
 		static Action MenuAction = null;
-		
+		static string SettingsFileName = "firmwareSettings.xml";
+		static FirmwareSettings settings = new FirmwareSettings();
 		public static string GetIpAddress()
 		{
 			NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
@@ -118,26 +119,52 @@ namespace StartupApp
 			m.ShowMenu(btns);
 		}
 		
-		static bool ShowSettings(Lcd lcd, Buttons btns)
+		static bool ShowSettings (Lcd lcd, Buttons btns)
 		{
-			List<IMenuItem> items = new List<IMenuItem>();
-			items.Add(new MenuItemWithOptions(lcd,"Remote debug",new string[]{"On", "Off"},0));
-			items.Add(new MenuItemWithOptions(lcd,"EnableBT",new string[]{"Yes", "No"},0));
-			Menu m = new Menu(font, lcd, "Settings", items);
-			m.ShowMenu(btns);
+			//Create the settings items and apply the settings 
+			List<IMenuItem> items = new List<IMenuItem> ();
+			var debugItem = new MenuItemWithCheck (lcd, "Remote debug", settings.DebugMode);
+			//var debugPortItem = new MenuItemWithCheck(lcd, "Debug port", false);
+			items.Add (debugItem);
+			//items.Add (debugPortItem);
+			
+			//Show the menu
+			Menu m = new Menu (font, lcd, "Settings", items);
+			m.ShowMenu (btns);
+			
+			//Save the new settings
+			FirmwareSettings newXmlSettings = new FirmwareSettings();
+			newXmlSettings.DebugMode = debugItem.Checked;
+			newXmlSettings.DebugPort = 12345;
+			try{
+				newXmlSettings.SaveToXML(SettingsFileName);
+			}
+			catch
+			{
+				Console.WriteLine ("Failed to save settings");	
+			}
+			settings = newXmlSettings;//apply the settings
 			return false;
 		}
 		
 		
 		public static void Main (string[] args)
 		{
-			Console.WriteLine ("Hello World!");
+			//Load settings
+			try {
+				settings = settings.LoadFromXML (SettingsFileName);
+			} 
+			catch 
+			{
+				Console.WriteLine ("Failed to read settings. Using default settings");
+			}
+			
 			using (Lcd lcd = new Lcd())
 				using (Buttons btns = new Buttons())
 				{					
 					lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,0));					
 					string iptext = "IP: " + GetIpAddress();
-					Point textPos = new Point((Lcd.Width-font.TextSize(iptext).x)/2, Lcd.Height-23);
+					Point textPos = new Point((Lcd.Width-font.TextSize(iptext).X)/2, Lcd.Height-23);
 					lcd.WriteText(font, textPos, iptext , true);
 					lcd.Update();						
 					btns.GetKeypress();

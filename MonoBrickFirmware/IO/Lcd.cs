@@ -161,8 +161,8 @@ namespace MonoBrickFirmware.IO
 		
 		public void DrawHLine(Point startPoint, int length, bool setOrClear)
 		{
-			int bytePos = bytesPrLine*startPoint.y + startPoint.x/8;
-			int bitPos = startPoint.x & 0x7;
+			int bytePos = bytesPrLine*startPoint.Y + startPoint.X/8;
+			int bitPos = startPoint.X & 0x7;
 			int bitsInFirstByte = Math.Min(8 - bitPos, length);			
 			byte bitMask = (byte)((0xff >> (8-bitsInFirstByte)) << bitPos);
 			
@@ -192,9 +192,9 @@ namespace MonoBrickFirmware.IO
 		
 		public void DrawBox(Rect r, bool setOrClear)
 		{
-			int length = r.p2.x - r.p1.x;
-			for (int y = r.p1.y; y <= r.p2.y; ++y)
-				DrawHLine(new Point(r.p1.x, y), length, setOrClear);
+			int length = r.P2.X - r.P1.X;
+			for (int y = r.P1.Y; y <= r.P2.Y; ++y)
+				DrawHLine(new Point(r.P1.X, y), length, setOrClear);
 		}
 		
 		public void DrawBitmap(Bitmap bm, Point p)
@@ -204,11 +204,11 @@ namespace MonoBrickFirmware.IO
 		
 		public void DrawBitmap(BitStreamer bs, Point p, uint xsize, uint ysize, bool color)
 		{
-			for (int yPos = p.y; yPos != p.y+ysize; yPos++)
+			for (int yPos = p.Y; yPos != p.Y+ysize; yPos++)
 			{
-				int BufPos = bytesPrLine*yPos+p.x/8;
+				int BufPos = bytesPrLine*yPos+p.X/8;
 				uint xBitsLeft = xsize;
-				int xPos = p.x;
+				int xPos = p.X;
 				
 				while (xBitsLeft > 0)
 				{
@@ -242,10 +242,10 @@ namespace MonoBrickFirmware.IO
 			foreach(char c in text)
 			{
 				CharStreamer cs = f.getChar(c);
-				if (p.x+cs.width > Lcd.Width)
+				if (p.X+cs.width > Lcd.Width)
 					break;
 				DrawBitmap(cs, p, cs.width, cs.height, color);		
-				p.x += (int)cs.width;				
+				p.X += (int)cs.width;				
 			}
 		}
 		
@@ -266,16 +266,16 @@ namespace MonoBrickFirmware.IO
 			else if (aln == Alignment.Center)
 			{
 				int width = TextWidth(f, text);
-				xpos = (r.p2.x-r.p1.x)/2-width/2;
+				xpos = (r.P2.X-r.P1.X)/2-width/2;
 				if (xpos < 0) xpos = 0;
 			}
 			else 
 			{
 				int width = TextWidth(f, text);
-				xpos = (r.p2.x-r.p1.x)-width;
+				xpos = (r.P2.X-r.P1.X)-width;
 				if (xpos < 0) xpos = 0;
 			}
-			WriteText(f, r.p1+new Point(xpos, 0) , text, color);
+			WriteText(f, r.P1+new Point(xpos, 0) , text, color);
 		}			
 	
 		#region IDisposable implementation
