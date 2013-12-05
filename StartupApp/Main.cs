@@ -74,10 +74,10 @@ namespace StartupApp
 		
 		static bool RunPrograms(Lcd lcd, Buttons btns)
 		{
-			IEnumerable<MenuItem> items = Directory.EnumerateFiles("/home/root/apps/", "*.exe")
-				.Select( (filename) => new MenuItem(lcd, GetFileNameWithoutExt(filename),  () => StartApp(filename)));
-			Menu m = new Menu(font, lcd, "Run program:", items);
-			m.ShowMenu(btns);
+			IEnumerable<ListItem> items = Directory.EnumerateFiles("/home/root/apps/", "*.exe")
+				.Select( (filename) => new ListItem(lcd, GetFileNameWithoutExt(filename),  () => StartApp(filename)));
+			ListMenu m = new ListMenu(font, lcd, btns, "Run program:", items);
+			m.ShowMenu();
 			return true;
 		}
 		
@@ -110,27 +110,27 @@ namespace StartupApp
 		static void ShowMainMenu(Lcd lcd, Buttons btns)
 		{
 			
-			List<MenuItem> items = new List<MenuItem>();
-			items.Add (new MenuItem(lcd, "Information", () => Information(lcd, btns)));
-			items.Add (new MenuItem(lcd, "Run programs", () => RunPrograms(lcd, btns)));
-			items.Add (new MenuItem(lcd, "Shutdown", () => Shutdown(lcd,btns)));
-			items.Add (new MenuItem(lcd, "Settings", () => ShowSettings(lcd,btns)));
-			Menu m = new Menu(font, lcd, "Main menu", items);
-			m.ShowMenu(btns);
+			List<ListItem> items = new List<ListItem>();
+			items.Add (new ListItem(lcd, "Information", () => Information(lcd, btns)));
+			items.Add (new ListItem(lcd, "Run programs", () => RunPrograms(lcd, btns)));
+			items.Add (new ListItem(lcd, "Shutdown", () => Shutdown(lcd,btns)));
+			items.Add (new ListItem(lcd, "Settings", () => ShowSettings(lcd,btns)));
+			ListMenu m = new ListMenu(font, lcd, btns ,"Main menu", items);
+			m.ShowMenu();
 		}
 		
 		static bool ShowSettings (Lcd lcd, Buttons btns)
 		{
 			//Create the settings items and apply the settings 
-			List<IMenuItem> items = new List<IMenuItem> ();
-			var debugItem = new MenuItemWithCheck (lcd, "Remote debug", settings.DebugMode);
+			List<IListItem> items = new List<IListItem> ();
+			var debugItem = new ListItemWithCheckBox (lcd, "Remote debug", settings.DebugMode);
 			//var debugPortItem = new MenuItemWithCheck(lcd, "Debug port", false);
 			items.Add (debugItem);
 			//items.Add (debugPortItem);
 			
 			//Show the menu
-			Menu m = new Menu (font, lcd, "Settings", items);
-			m.ShowMenu (btns);
+			ListMenu m = new ListMenu (font, lcd, btns, "Settings", items);
+			m.ShowMenu ();
 			
 			//Save the new settings
 			FirmwareSettings newXmlSettings = new FirmwareSettings();

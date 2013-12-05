@@ -6,19 +6,19 @@ using MonoBrickFirmware.Graphics;
 
 namespace StartupApp
 {
-	public interface IMenuItem{
+	public interface IListItem{
 		bool EnterAction();
 		void Draw(Font f, Rect r, bool color);
 		bool LeftAction();
 		bool RightAction();
 	}
 	
-	public class MenuItem : IMenuItem
+	public class ListItem : IListItem
 	{
 		private string text;
 		private Lcd lcd;
 		private Func<bool> action;
-		public MenuItem(Lcd lcd, string text, Func<bool> action){
+		public ListItem(Lcd lcd, string text, Func<bool> action){
 			this.text = text;
 			this.action = action;
 			this.lcd = lcd;
@@ -35,12 +35,12 @@ namespace StartupApp
 		}	
 	}
 	
-	public class MenuItemWithOptions : IMenuItem
+	public class ListItemWithOptions : IListItem
 	{
 		private string text;
 		private Lcd lcd;
 		private string[] options;
-		public MenuItemWithOptions(Lcd lcd, string text, string[] options, int startIdx = 0){
+		public ListItemWithOptions(Lcd lcd, string text, string[] options, int startIdx = 0){
 			this.text = text;
 			this.lcd = lcd;
 			this.options = options;
@@ -61,7 +61,7 @@ namespace StartupApp
 		public int OptionIndex{get;private set;}
 	}
 	
-	public class MenuItemWithCheck : IMenuItem
+	public class ListItemWithCheckBox : IListItem
 	{
 		private string text;
 		private Lcd lcd;
@@ -69,7 +69,7 @@ namespace StartupApp
 		private const int lineSize = 2;
 		private const int edgeSize = 2;
 		
-		public MenuItemWithCheck (Lcd lcd, string text, bool checkedAtStart){
+		public ListItemWithCheckBox (Lcd lcd, string text, bool checkedAtStart){
 			this.text = text;
 			this.lcd = lcd;
 			this.Checked = checkedAtStart;
@@ -94,20 +94,14 @@ namespace StartupApp
 			lcd.DrawBox(innter,!color);
 			if(Checked)
 				lcd.WriteText(f,checkPoint,"v", color);
-			
-			
-			
-			
-			//lcd.WriteText(f, new Point (0, 0) + r.p1, text, color);
-			
 		}
 		public bool Checked{get;private set;}
 	}
 	
 	
-	public class Menu
+	public class ListMenu
 	{
-		IMenuItem[] items;
+		IListItem[] items;
 		Lcd lcd;
 		Font font;
 		string title;
@@ -116,8 +110,8 @@ namespace StartupApp
 		int itemsOnScreen;
 		int cursorPos;
 		int scrollPos;
-		
-		public Menu (Font f, Lcd lcd, string title, IEnumerable<IMenuItem> items)
+		Buttons btns;
+		public ListMenu (Font f, Lcd lcd, Buttons btns, string title, IEnumerable<IListItem> items)
 		{
 			this.font = f;
 			this.lcd = lcd;
@@ -125,9 +119,11 @@ namespace StartupApp
 			this.items = items.ToArray();			
 			this.itemSize = new Point(Lcd.Width, (int)font.maxHeight);
 			this.itemHeight = new Point(0, (int)font.maxHeight);
-			this.itemsOnScreen = (int)(Lcd.Height/font.maxHeight - 1); // -1 Because of the title
+			this.itemsOnScreen = (int)(Lcd.Height/font.maxHeight - 1); // -2 Because of the title and arrows
+			this.btns = btns;
 			cursorPos = 0;
 			scrollPos = 0;
+			
 		}
 		
 		private void RedrawMenu ()
@@ -168,7 +164,7 @@ namespace StartupApp
 		}
 		
 		
-		public void ShowMenu(Buttons btns)
+		public void ShowMenu()
 		{
 			bool exit = false;
 			while (!exit)
