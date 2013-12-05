@@ -38,7 +38,8 @@
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="FirmwareSettings.cs" />
-    <Compile Include="ListMenu.cs" />
+    <Compile Include="Dialog.cs" />
+    <Compile Include="Menu.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

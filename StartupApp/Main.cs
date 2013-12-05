@@ -12,8 +12,6 @@ using System.Linq;
 
 namespace StartupApp
 {
-		
-	
 	class MainClass
 	{
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
@@ -74,10 +72,10 @@ namespace StartupApp
 		
 		static bool RunPrograms(Lcd lcd, Buttons btns)
 		{
-			IEnumerable<ListItem> items = Directory.EnumerateFiles("/home/root/apps/", "*.exe")
-				.Select( (filename) => new ListItem(lcd, GetFileNameWithoutExt(filename),  () => StartApp(filename)));
-			ListMenu m = new ListMenu(font, lcd, btns, "Run program:", items);
-			m.ShowMenu();
+			IEnumerable<MenuItemWithAction> items = Directory.EnumerateFiles("/home/root/apps/", "*.exe")
+				.Select( (filename) => new MenuItemWithAction(lcd, GetFileNameWithoutExt(filename),  () => StartApp(filename)));
+			Menu m = new Menu(font, lcd, btns, "Run program:", items);
+			m.Show();
 			return true;
 		}
 		
@@ -110,34 +108,34 @@ namespace StartupApp
 		static void ShowMainMenu(Lcd lcd, Buttons btns)
 		{
 			
-			List<ListItem> items = new List<ListItem>();
-			items.Add (new ListItem(lcd, "Information", () => Information(lcd, btns)));
-			items.Add (new ListItem(lcd, "Run programs", () => RunPrograms(lcd, btns)));
-			items.Add (new ListItem(lcd, "Shutdown", () => Shutdown(lcd,btns)));
-			items.Add (new ListItem(lcd, "Settings", () => ShowSettings(lcd,btns)));
-			ListMenu m = new ListMenu(font, lcd, btns ,"Main menu", items);
-			m.ShowMenu();
+			List<MenuItemWithAction> items = new List<MenuItemWithAction>();
+			items.Add (new MenuItemWithAction(lcd, "Information", () => Information(lcd, btns),MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction(lcd, "Run programs", () => RunPrograms(lcd, btns),MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction(lcd, "Settings", () => ShowSettings(lcd,btns), MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction(lcd, "Shutdown", () => Shutdown(lcd,btns)));
+			Menu m = new Menu(font, lcd, btns ,"Main menu", items);
+			m.Show();
 		}
 		
 		static bool ShowSettings (Lcd lcd, Buttons btns)
 		{
 			//Create the settings items and apply the settings 
-			List<IListItem> items = new List<IListItem> ();
-			var debugItem = new ListItemWithCheckBox (lcd, "Remote debug", settings.DebugMode);
-			//var debugPortItem = new MenuItemWithCheck(lcd, "Debug port", false);
+			List<IMenutem> items = new List<IMenutem> ();
+			var debugItem = new MenuItemWithCheckBox (lcd, "Remote debug", settings.DebugMode);
+			var debugPortItem = new MenuItemWithNumericInput(lcd, "Debug port",settings.DebugPort,1, ushort.MaxValue);
 			items.Add (debugItem);
-			//items.Add (debugPortItem);
+			items.Add (debugPortItem);
 			
 			//Show the menu
-			ListMenu m = new ListMenu (font, lcd, btns, "Settings", items);
-			m.ShowMenu ();
+			Menu m = new Menu (font, lcd, btns, "Settings", items);
+			m.Show ();
 			
 			//Save the new settings
 			FirmwareSettings newXmlSettings = new FirmwareSettings();
 			newXmlSettings.DebugMode = debugItem.Checked;
-			newXmlSettings.DebugPort = 12345;
+			newXmlSettings.DebugPort = debugPortItem.Value;
 			try{
-				newXmlSettings.SaveToXML(SettingsFileName);
+				//newXmlSettings.SaveToXML(SettingsFileName);
 			}
 			catch
 			{
@@ -152,7 +150,7 @@ namespace StartupApp
 		{
 			//Load settings
 			try {
-				settings = settings.LoadFromXML (SettingsFileName);
+				//settings = settings.LoadFromXML (SettingsFileName);
 			} 
 			catch 
 			{
@@ -162,12 +160,12 @@ namespace StartupApp
 			using (Lcd lcd = new Lcd())
 				using (Buttons btns = new Buttons())
 				{					
-					lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,0));					
+					/*lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,0));					
 					string iptext = "IP: " + GetIpAddress();
 					Point textPos = new Point((Lcd.Width-font.TextSize(iptext).X)/2, Lcd.Height-23);
 					lcd.WriteText(font, textPos, iptext , true);
 					lcd.Update();						
-					btns.GetKeypress();
+					btns.GetKeypress();*/
 				}
 			for (;;)
 			{

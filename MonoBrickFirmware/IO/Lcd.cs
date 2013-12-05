@@ -34,6 +34,9 @@ namespace MonoBrickFirmware.IO
 					
 		}
 		
+		public enum ArrowOrientation{Left, Right, Down, Up}
+		
+		
 		public bool IsPixelSet (int x, int y)
 		{
 			int index = (x / 8) + y * 23;
@@ -248,6 +251,64 @@ namespace MonoBrickFirmware.IO
 				p.X += (int)cs.width;				
 			}
 		}
+		
+		public void DrawArrow (Rect r, ArrowOrientation orientation, bool color)
+		{
+			int height = r.P2.Y - r.P1.Y;
+			int width = r.P2.X - r.P1.X;
+			float inc = 0;
+			if (orientation == ArrowOrientation.Left || orientation == ArrowOrientation.Right) 
+			{
+				inc = (((float)height) / 2.0f) / ((float)width); 
+			} 
+			else 
+			{
+				inc = (((float)width) / 2.0f) / ((float)height); 
+			}
+			if (orientation == ArrowOrientation.Left) {
+				for (int i = 0; i < width; i++) {
+					SetPixel ((int)(r.P1.X + i), (int)(r.P1.Y + height/2), color);
+					int points = (int)(inc*(float)i)+1;
+					for (int j = 0; j < points; j++) {
+						SetPixel ((int)(r.P1.X + i), (int)(r.P1.Y + height / 2 +j), color);
+						SetPixel ((int)(r.P1.X + i), (int)(r.P1.Y + height / 2 -j), color);
+					}
+				}	
+			}
+			if (orientation == ArrowOrientation.Right) {
+				for (int i = 0; i < width; i++) {
+					SetPixel ((int)(r.P2.X - i), (int)(r.P1.Y + height/2), color);
+					int points = (int)(inc*(float)i)+1;
+					for (int j = 0; j < points; j++) {
+						SetPixel ((int)(r.P2.X -i), (int)(r.P1.Y + height / 2 +j), color);
+						SetPixel ((int)(r.P2.X -i), (int)(r.P1.Y + height / 2 -j), color);
+					}
+				}	
+			}
+			if (orientation == ArrowOrientation.Up) {
+				for (int i = 0; i < height; i++) {
+					
+					SetPixel ((int)(r.P1.X + width/2), (int)(r.P1.Y + i), color);
+					int points = (int)(inc*(float)i)+1;
+					for (int j = 0; j < points; j++) {
+						SetPixel ((int)(r.P1.X + width/2+j), (int)(r.P1.Y + i), color);
+						SetPixel ((int)(r.P1.X + width/2-j), (int)(r.P1.Y + i), color);
+					}
+				}	
+			}
+			if (orientation == ArrowOrientation.Down) {
+				for (int i = 0; i < height; i++) {
+					
+					SetPixel ((int)(r.P1.X + width/2), (int)(r.P2.Y -i), color);
+					int points = (int)(inc*(float)i)+1;
+					for (int j = 0; j < points; j++) {
+						SetPixel ((int)(r.P1.X + width/2+j), (int)(r.P2.Y - i), color);
+						SetPixel ((int)(r.P1.X + width/2-j), (int)(r.P2.Y - i), color);
+					}
+				}	
+			}
+		}
+		
 		
 		
 		public enum Alignment { Left, Center, Right };
