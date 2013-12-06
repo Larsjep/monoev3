@@ -135,7 +135,7 @@ namespace StartupApp
 			newXmlSettings.DebugMode = debugItem.Checked;
 			newXmlSettings.DebugPort = debugPortItem.Value;
 			try{
-				//newXmlSettings.SaveToXML(SettingsFileName);
+				newXmlSettings.SaveToXML(SettingsFileName);
 			}
 			catch
 			{
@@ -148,9 +148,14 @@ namespace StartupApp
 		
 		public static void Main (string[] args)
 		{
+			/****** JIT work-around remove when JIT problem is fixed *****/
+			System.Threading.Thread.Sleep(10);
+			Console.WriteLine("JIT workaround - please remove!!!");
+			/**********/
+			  
 			//Load settings
 			try {
-				//settings = settings.LoadFromXML (SettingsFileName);
+				settings = settings.LoadFromXML (SettingsFileName);
 			} 
 			catch 
 			{
@@ -160,12 +165,12 @@ namespace StartupApp
 			using (Lcd lcd = new Lcd())
 				using (Buttons btns = new Buttons())
 				{					
-					/*lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,0));					
+					lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,0));					
 					string iptext = "IP: " + GetIpAddress();
 					Point textPos = new Point((Lcd.Width-font.TextSize(iptext).X)/2, Lcd.Height-23);
 					lcd.WriteText(font, textPos, iptext , true);
 					lcd.Update();						
-					btns.GetKeypress();*/
+					btns.GetKeypress();
 				}
 			for (;;)
 			{

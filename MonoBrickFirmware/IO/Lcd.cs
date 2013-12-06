@@ -193,7 +193,7 @@ namespace MonoBrickFirmware.IO
 			}
 		}
 		
-		public void DrawBox(Rect r, bool setOrClear)
+		public void DrawBox(Rectangle r, bool setOrClear)
 		{
 			int length = r.P2.X - r.P1.X;
 			for (int y = r.P1.Y; y <= r.P2.Y; ++y)
@@ -252,7 +252,7 @@ namespace MonoBrickFirmware.IO
 			}
 		}
 		
-		public void DrawArrow (Rect r, ArrowOrientation orientation, bool color)
+		public void DrawArrow (Rectangle r, ArrowOrientation orientation, bool color)
 		{
 			int height = r.P2.Y - r.P1.Y;
 			int width = r.P2.X - r.P1.X;
@@ -312,12 +312,12 @@ namespace MonoBrickFirmware.IO
 		
 		
 		public enum Alignment { Left, Center, Right };
-		public void WriteTextBox(Font f, Rect r, string text, bool color)
+		public void WriteTextBox(Font f, Rectangle r, string text, bool color)
 		{
 			WriteTextBox(f, r, text, color, Alignment.Left);
 		}
 		
-		public void WriteTextBox(Font f, Rect r, string text, bool color, Alignment aln)
+		public void WriteTextBox(Font f, Rectangle r, string text, bool color, Alignment aln)
 		{
 			DrawBox(r, !color); // Clear background
 			int xpos = 0;

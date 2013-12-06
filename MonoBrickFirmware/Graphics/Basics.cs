@@ -33,20 +33,20 @@ namespace MonoBrickFirmware.Graphics
 		}				
 	}
 	
-	public struct Rect
+	public struct Rectangle
 	{
 		public Point P1 { get; set; }
 		public Point P2 { get; set; }
 		
-		public Rect(Point p1, Point p2) : this()
+		public Rectangle(Point p1, Point p2) : this()
 		{
 			this.P1 = p1;
 			this.P2 = p2;
 		}
 		
-		static public Rect operator+(Rect r, Point p)
+		static public Rectangle operator+(Rectangle r, Point p)
 		{
-			return new Rect(r.P1 + p, r.P2 + p);
+			return new Rectangle(r.P1 + p, r.P2 + p);
 		}
 			
 	}

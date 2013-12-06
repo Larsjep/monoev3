@@ -21,7 +21,7 @@ namespace example
 			Point offset = new Point(0,25);
 			Point p = new Point(10, Lcd.Height-75);
 			Point boxSize = new Point(100, 24);
-			Rect box = new Rect(p, p+boxSize);
+			Rectangle box = new Rectangle(p, p+boxSize);
 			
 			ButtonEvents buts = new ButtonEvents();
 			int val = 7;

@@ -9,7 +9,7 @@ namespace StartupApp
 		
 	public interface IDialogItem{
 		bool EnterAction();
-		void Draw(Font f, Rect r, bool color);
+		void Draw(Font f, Rectangle r, bool color);
 		bool LeftAction();
 		bool RightAction();
 		bool UpAction();
@@ -17,10 +17,10 @@ namespace StartupApp
 		bool Escape();
 	}
 	
-	public class NumericDialogItem:IDialogItem
+	public class InfoDialogItem:IDialogItem
 	{
 		private Lcd lcd;
-		public NumericDialogItem (Lcd lcd, int startValue)
+		public InfoDialogItem (Lcd lcd, int startValue)
 		{
 			Value = startValue;
 			this.lcd = lcd;
@@ -31,7 +31,7 @@ namespace StartupApp
 			return false;												
 		}
 		
-		public void Draw(Font f, Rect r, bool color)
+		public void Draw(Font f, Rectangle r, bool color)
 		{
 			lcd.WriteTextBox(f,r,Value.ToString(),color,Lcd.Alignment.Center);															
 		}
@@ -78,10 +78,10 @@ namespace StartupApp
 		const float dialogHeightPct = 0.60f;
 		const float dialogWidthPct = 0.90f;
 		const int dialogEdge = 5;
-		Rect dialogWindowOuther; 
-		Rect dialogWindowInner;
-		Rect itemWindow;
-		Rect titleRect;
+		Rectangle dialogWindowOuther; 
+		Rectangle dialogWindowInner;
+		Rectangle itemWindow;
+		Rectangle titleRect;
 		public Dialog (Font f, Lcd lcd, Buttons btns, string title, IDialogItem dialogItem)
 		{
 			this.item = dialogItem;
@@ -102,10 +102,10 @@ namespace StartupApp
 			Point itemPoint1 = new Point(xItem,yItem);
 			Point itemPoint2 = new Point(xItem + itemSize, yItem+itemHeight);
 			this.titleSize = font.TextSize(this.title).X;
-			dialogWindowOuther = new Rect(startPoint1, startPoint2);
-			dialogWindowInner = new Rect(new Point(startPoint1.X + dialogEdge, startPoint1.Y+dialogEdge), new Point(startPoint2.X-dialogEdge, startPoint2.Y-dialogEdge));
-			itemWindow = new Rect(itemPoint1,itemPoint2);
-			titleRect = new Rect(new Point((int)( Lcd.Width/2 - titleSize/2), (int)(startPoint1.Y - (font.maxHeight/2)) ), new Point((int)( Lcd.Width/2 + titleSize/2),(int)( startPoint1.Y + (font.maxHeight/2)) ));
+			dialogWindowOuther = new Rectangle(startPoint1, startPoint2);
+			dialogWindowInner = new Rectangle(new Point(startPoint1.X + dialogEdge, startPoint1.Y+dialogEdge), new Point(startPoint2.X-dialogEdge, startPoint2.Y-dialogEdge));
+			itemWindow = new Rectangle(itemPoint1,itemPoint2);
+			titleRect = new Rectangle(new Point((int)( Lcd.Width/2 - titleSize/2), (int)(startPoint1.Y - (font.maxHeight/2)) ), new Point((int)( Lcd.Width/2 + titleSize/2),(int)( startPoint1.Y + (font.maxHeight/2)) ));
 		}
 		
 		private void RedrawDialog ()

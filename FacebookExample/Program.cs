@@ -19,7 +19,7 @@ namespace FacebookExample
 			Point offset = new Point(0,25);
 			Point p = new Point(10, Lcd.Height-75);
 			Point boxSize = new Point(100, 24);
-			Rect box = new Rect(p, p+boxSize);
+			Rectangle box = new Rectangle(p, p+boxSize);
 			bool run = true;
 			var colorSensor = new ColorSensor (SensorPort.In1);
 			var touch = new TouchSensor (SensorPort.In4);

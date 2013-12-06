@@ -8,7 +8,7 @@ namespace StartupApp
 {
 	public interface IMenutem{
 		bool EnterAction();
-		void Draw(Font f, Rect r, bool color);
+		void Draw(Font f, Rectangle r, bool color);
 		bool LeftAction();
 		bool RightAction();
 	}
@@ -35,12 +35,12 @@ namespace StartupApp
 		}
 		public bool LeftAction (){return false;}
 		public bool RightAction(){return false;}
-		public void Draw (Font f, Rect r, bool color)
+		public void Draw (Font f, Rectangle r, bool color)
 		{
 			lcd.WriteTextBox (f, r, text, color);
 			if (symbole == MenuItemSymbole.LeftArrow || symbole == MenuItemSymbole.RightArrow) {
 				int arrowWidth =(int) f.maxWidth/3;
-				Rect arrowRect = new Rect(new Point(r.P2.X -(arrowWidth+arrowOffset), r.P1.Y + arrowEdge), new Point(r.P2.X -arrowOffset, r.P2.Y-arrowEdge));
+				Rectangle arrowRect = new Rectangle(new Point(r.P2.X -(arrowWidth+arrowOffset), r.P1.Y + arrowEdge), new Point(r.P2.X -arrowOffset, r.P2.Y-arrowEdge));
 				if(symbole == MenuItemSymbole.LeftArrow)
 					lcd.DrawArrow(arrowRect,Lcd.ArrowOrientation.Left, color);
 				else
@@ -67,7 +67,7 @@ namespace StartupApp
 		}
 		public bool LeftAction (){return false;}
 		public bool RightAction(){return false;}
-		public void Draw (Font f, Rect r, bool color)
+		public void Draw (Font f, Rectangle r, bool color)
 		{
 			lcd.WriteTextBox(f, r, options[OptionIndex], color, Lcd.Alignment.Right);
 			lcd.WriteText(f, new Point (0, 0) + r.P1, text, color);
@@ -94,11 +94,11 @@ namespace StartupApp
 		}
 		public bool LeftAction (){return false;}
 		public bool RightAction(){return false;}
-		public void Draw (Font f, Rect r, bool color)
+		public void Draw (Font f, Rectangle r, bool color)
 		{
 			int xCheckBoxSize =(int) f.maxWidth;
-			Rect outer = new Rect(new Point(Lcd.Width - xCheckBoxSize + edgeSize, r.P1.Y + edgeSize), new Point(r.P2.X - edgeSize,r.P2.Y - edgeSize));
-			Rect innter = new Rect(new Point(Lcd.Width - xCheckBoxSize + lineSize+edgeSize, r.P1.Y+lineSize + edgeSize), new Point(r.P2.X - lineSize - edgeSize,r.P2.Y - lineSize - edgeSize));
+			Rectangle outer = new Rectangle(new Point(Lcd.Width - xCheckBoxSize + edgeSize, r.P1.Y + edgeSize), new Point(r.P2.X - edgeSize,r.P2.Y - edgeSize));
+			Rectangle innter = new Rectangle(new Point(Lcd.Width - xCheckBoxSize + lineSize+edgeSize, r.P1.Y+lineSize + edgeSize), new Point(r.P2.X - lineSize - edgeSize,r.P2.Y - lineSize - edgeSize));
 			Point fontPoint = f.TextSize("v");
 			Point checkPoint = new Point(Lcd.Width - xCheckBoxSize +(int) fontPoint.X-edgeSize, r.P1.Y);
 			
@@ -119,6 +119,15 @@ namespace StartupApp
 		private int max;
 		private const int rightArrowOffset = 4;
 		private const int arrowEdge = 4;
+		private const int holdSleepTime = 100;
+		private const int holdSingleWait = 5;
+		private const int holdTenWait = 25;
+		private const int holdHundredWait = 45;
+		private const int holdThousandWait = 75;
+		
+		private Font font;
+		private Rectangle rect;
+		private bool drawDataSaved = false;
 		public MenuItemWithNumericInput (Lcd lcd, string text, int startValue, int min = int.MinValue, int max= int.MaxValue){
 			this.text = text;
 			this.lcd = lcd;
@@ -127,38 +136,92 @@ namespace StartupApp
 			this.max = max;
 		}
 		public bool EnterAction(){
-			using (Buttons btns = new Buttons())
-			{
-				var dialogItem = new NumericDialogItem(lcd,this.Value);
-				Dialog dialog = new Dialog(Font.MediumFont, lcd, btns, " Enter number", dialogItem);
-				dialog.Show();					
+			return false;
+		}
+		
+		public bool LeftAction ()
+		{
+			int counter = 0;
+			using (Buttons btns = new Buttons ()) {
+				Value--;
+				do{
+					if(counter < holdSingleWait ){
+						counter++;
+					}
+					if(counter >= holdSingleWait  && counter < holdTenWait){
+						counter++;
+						Value--;
+					}
+					if(counter >= holdTenWait && counter < holdHundredWait){
+						Value = Value -10;
+						counter++;
+					}
+					if(counter >= holdHundredWait && counter < holdThousandWait){
+						Value = Value -100;
+						counter++;
+					}
+					if(counter >= holdThousandWait){
+						Value=Value - 1000;
+					}
+					if(Value<min)
+						Value = max;
+					this.Draw(font,rect,false);
+					lcd.Update();
+					System.Threading.Thread.Sleep(holdSleepTime);
+				}while (btns.GetButtonStates()== Buttons.ButtonStates.Left);
 			}
 			return false;
 		}
 		
-		public bool LeftAction (){
-			Value--;
-			if(Value < min)
-				Value = max;
-			return false;
-		}
-		
 		public bool RightAction(){
-			Value++;
-			if(Value>max)
-				Value = min;
+			int counter = 0;
+			using (Buttons btns = new Buttons ()) {
+				Value++;
+				do{
+					if(counter < holdSingleWait ){
+						counter++;
+					}
+					if(counter >= holdSingleWait  && counter < holdTenWait){
+						counter++;
+						Value++;
+					}
+					if(counter >= holdTenWait && counter < holdHundredWait){
+						Value=Value +10;
+						counter++;
+					}
+					if(counter >= holdHundredWait && counter < holdThousandWait){
+						Value = Value +100;
+						counter++;
+					}
+					if(counter >= holdThousandWait){
+						Value=Value + 1000;
+					}
+					if(Value>max)
+						Value = min;
+					this.Draw(font,rect,false);
+					lcd.Update();
+					System.Threading.Thread.Sleep(holdSleepTime);
+				}while (btns.GetButtonStates()== Buttons.ButtonStates.Right);
+			}
 			return false;
 		}
-		public void Draw (Font f, Rect r, bool color)
+		public void Draw (Font f, Rectangle r, bool color)
 		{
+			if (!drawDataSaved) 
+			{
+				font = f;
+				rect = r;
+				drawDataSaved = true;
+			}
+			
 			int arrowWidth = (int)f.maxWidth / 4;
 			
 			string valueAsString = " " + Value.ToString () + " ";
 			Point p = f.TextSize (valueAsString);
-			Rect numericRect = new Rect ( new Point( Lcd.Width - p.X, r.P1.Y),r.P2);
-			Rect textRect = new Rect (new Point (r.P1.X, r.P1.Y), new Point (r.P2.X - (p.X), r.P2.Y));
-			Rect leftArrowRect = new Rect(new Point(numericRect.P1.X, numericRect.P1.Y+arrowEdge), new Point(numericRect.P1.X+ arrowWidth, numericRect.P2.Y-arrowEdge));
-			Rect rightArrowRect = new Rect( new Point(numericRect.P2.X-(arrowWidth + rightArrowOffset), numericRect.P1.Y+arrowEdge) , new Point(numericRect.P2.X-rightArrowOffset,numericRect.P2.Y-arrowEdge));
+			Rectangle numericRect = new Rectangle ( new Point( Lcd.Width - p.X, r.P1.Y),r.P2);
+			Rectangle textRect = new Rectangle (new Point (r.P1.X, r.P1.Y), new Point (r.P2.X - (p.X), r.P2.Y));
+			Rectangle leftArrowRect = new Rectangle(new Point(numericRect.P1.X, numericRect.P1.Y+arrowEdge), new Point(numericRect.P1.X+ arrowWidth, numericRect.P2.Y-arrowEdge));
+			Rectangle rightArrowRect = new Rectangle( new Point(numericRect.P2.X-(arrowWidth + rightArrowOffset), numericRect.P1.Y+arrowEdge) , new Point(numericRect.P2.X-rightArrowOffset,numericRect.P2.Y-arrowEdge));
 			
 			lcd.WriteTextBox (f, textRect, text, color, Lcd.Alignment.Left);
 			lcd.WriteTextBox (f, numericRect, valueAsString, color, Lcd.Alignment.Right);
@@ -199,7 +262,7 @@ namespace StartupApp
 		private void RedrawMenu ()
 		{
 			lcd.Clear ();
-			Rect startPos = new Rect (new Point (0, 0), itemSize);
+			Rectangle startPos = new Rectangle (new Point (0, 0), itemSize);
 			
 			lcd.WriteTextBox (font, startPos, title, true, Lcd.Alignment.Center);
 			

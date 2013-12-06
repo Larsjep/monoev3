@@ -14,7 +14,7 @@ namespace MonoBrickFirmware.Graphics
 			int scrollPos = 0;
 			int lines;
 			float lineHeigth;
-			Rect lineSize;
+			Rectangle lineSize;
 			public ConsoleWriter()
 			{
 				Reset();
@@ -24,7 +24,7 @@ namespace MonoBrickFirmware.Graphics
 			{
 				lines = (int)(Lcd.Height/f.maxHeight);				
 				lineHeigth = (float)Lcd.Height/lines;
-				lineSize = new Rect(new Point(0,0), new Point((int)Lcd.Width, (int)f.maxHeight));
+				lineSize = new Rectangle(new Point(0,0), new Point((int)Lcd.Width, (int)f.maxHeight));
 
 			}
 				

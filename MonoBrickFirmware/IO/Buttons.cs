@@ -57,7 +57,21 @@ namespace MonoBrickFirmware.IO
 				Thread.Sleep(debounceTime);
 				s2 = ReadButtons();
 			}
-				
+		}
+		
+		public ButtonStates GetButtonStates()
+		{
+			return GetDebounced();
+		}
+		
+		public void WaitForKeyRelease()
+		{
+			ButtonStates bs = GetDebounced();
+			do
+			{				
+				Thread.Sleep(pollTime);
+				bs = GetDebounced();
+			} while (bs != ButtonStates.None);
 		}
 		
 		public ButtonStates GetKeypress()
