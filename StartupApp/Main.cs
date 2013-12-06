@@ -125,11 +125,14 @@ namespace StartupApp
 			var debugPortItem = new MenuItemWithNumericInput(lcd, "Debug port",settings.DebugPort,1, ushort.MaxValue);
 			items.Add (debugItem);
 			items.Add (debugPortItem);
-			
 			//Show the menu
 			Menu m = new Menu (font, lcd, btns, "Settings", items);
 			m.Show ();
 			
+			//Show dialog
+			InfoDialog dialog = new InfoDialog(Font.MediumFont, lcd,btns, "Saving settings");
+			dialog.Show();
+			System.Threading.Thread.Sleep(400);
 			//Save the new settings
 			FirmwareSettings newXmlSettings = new FirmwareSettings();
 			newXmlSettings.DebugMode = debugItem.Checked;
@@ -139,8 +142,13 @@ namespace StartupApp
 			}
 			catch
 			{
-				Console.WriteLine ("Failed to save settings");	
+				dialog.UpdateMessage("Failed to save settings!");
+				System.Threading.Thread.Sleep(1500);
+				Console.WriteLine ("Failed to save settings!");	
 			}
+			dialog.UpdateMessage("Done");
+			System.Threading.Thread.Sleep(500);
+			dialog.Close();
 			settings = newXmlSettings;//apply the settings
 			return false;
 		}

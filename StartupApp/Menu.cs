@@ -123,7 +123,7 @@ namespace StartupApp
 		private const int holdSingleWait = 5;
 		private const int holdTenWait = 25;
 		private const int holdHundredWait = 45;
-		private const int holdThousandWait = 75;
+		private const int holdFiveHundredWait = 75;
 		
 		private Font font;
 		private Rectangle rect;
@@ -156,12 +156,12 @@ namespace StartupApp
 						Value = Value -10;
 						counter++;
 					}
-					if(counter >= holdHundredWait && counter < holdThousandWait){
+					if(counter >= holdHundredWait && counter < holdFiveHundredWait){
 						Value = Value -100;
 						counter++;
 					}
-					if(counter >= holdThousandWait){
-						Value=Value - 1000;
+					if(counter >= holdFiveHundredWait){
+						Value=Value - 500;
 					}
 					if(Value<min)
 						Value = max;
@@ -189,12 +189,12 @@ namespace StartupApp
 						Value=Value +10;
 						counter++;
 					}
-					if(counter >= holdHundredWait && counter < holdThousandWait){
+					if(counter >= holdHundredWait && counter < holdFiveHundredWait){
 						Value = Value +100;
 						counter++;
 					}
-					if(counter >= holdThousandWait){
-						Value=Value + 1000;
+					if(counter >= holdFiveHundredWait){
+						Value=Value + 500;
 					}
 					if(Value>max)
 						Value = min;
