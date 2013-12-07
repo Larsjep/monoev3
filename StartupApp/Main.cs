@@ -48,11 +48,9 @@ namespace StartupApp
 			Point offset = new Point(0, (int)font.maxHeight);
 			Point startPos = new Point(0,0);
 			lcd.Clear();
-			lcd.WriteText(font, startPos+offset*0, "MonoBrickFirmware:", true);
-			lcd.WriteText(font, startPos+offset*1, "0.1.0.0", true);
-			lcd.WriteText(font, startPos+offset*2, "Mono version:", true);
-			lcd.WriteText(font, startPos+offset*3, monoVersion, true);
-			lcd.WriteText(font, startPos+offset*4, "Mono CLR:" + monoCLR, true);			
+			lcd.WriteText(font, startPos+offset*0, "Firmware: 0.1.0.0", true);
+			lcd.WriteText(font, startPos+offset*1, "Mono version: " + monoVersion.Substring(0,7), true);
+			lcd.WriteText(font, startPos+offset*2, "Mono CLR:" + monoCLR, true);			
 			lcd.Update();
 			btns.GetKeypress();
 			return false;
@@ -109,9 +107,9 @@ namespace StartupApp
 		{
 			
 			List<MenuItemWithAction> items = new List<MenuItemWithAction>();
-			items.Add (new MenuItemWithAction(lcd, "Information", () => Information(lcd, btns),MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Run programs", () => RunPrograms(lcd, btns),MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Settings", () => ShowSettings(lcd,btns), MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction(lcd, "Information", () => Information(lcd, btns),MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Shutdown", () => Shutdown(lcd,btns)));
 			Menu m = new Menu(font, lcd, btns ,"Main menu", items);
 			m.Show();
