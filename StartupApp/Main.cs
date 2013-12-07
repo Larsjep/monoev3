@@ -79,17 +79,25 @@ namespace StartupApp
 		
 		static void RunAndWaitForProgram (string filename, string arguments = "")
 		{
-			if (settings.DebugMode) {
+			if (settings.EnableWiFiDebug) {
 				arguments = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugPort + ",server=y " + arguments;
-				using (Lcd lcd = new Lcd())
-					using (Buttons btns = new Buttons())
-					{
+					using (Lcd lcd = new Lcd ())
+					using (Buttons btns = new Buttons ()) {
 						System.Diagnostics.Process proc = new System.Diagnostics.Process ();
-						InfoDialogWithEscape dialog = new InfoDialogWithEscape (
-							Font.MediumFont, 
-							lcd, btns, "Debug mode", 
-							() => {proc.Kill();Console.WriteLine("Kill process");return true;}
-						);
+						Dialog dialog = null;
+						if (settings.TerminateDebugWithEscape) 
+						{
+							dialog = new InfoDialogWithEscape (
+								Font.MediumFont, 
+								lcd, btns, "Debug mode", 
+								() => {proc.Kill();Console.WriteLine("Kill process");return true;}
+							);		
+						} 
+						else 
+						{
+							dialog = new InfoDialog(Font.MediumFont, lcd,btns,"Debug mode");	
+						}
+						//same code as below but uses the lcd and buttons - so don't move
 						dialog.Show();
 						proc.EnableRaisingEvents = false; 
 						Console.WriteLine ("Starting process: {0} with arguments: {1}", filename, arguments);
@@ -131,23 +139,27 @@ namespace StartupApp
 			
 			List<MenuItemWithAction> items = new List<MenuItemWithAction>();
 			items.Add (new MenuItemWithAction(lcd, "Run programs", () => RunPrograms(lcd, btns),MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction(lcd, "Settings", () => ShowSettings(lcd,btns), MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction(lcd, "Debug settings", () => ShowDebugSettings(lcd,btns), MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Information", () => Information(lcd, btns),MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Shutdown", () => Shutdown(lcd,btns)));
 			Menu m = new Menu(font, lcd, btns ,"Main menu", items);
 			m.Show();
 		}
 		
-		static bool ShowSettings (Lcd lcd, Buttons btns)
+		static bool ShowDebugSettings (Lcd lcd, Buttons btns)
 		{
 			//Create the settings items and apply the settings 
 			List<IMenutem> items = new List<IMenutem> ();
-			var debugItem = new MenuItemWithCheckBox (lcd, "Remote debug", settings.DebugMode);
+			var enableWiFiDebugItem = new MenuItemWithCheckBox (lcd, "Enable WiFi debug", settings.EnableWiFiDebug);
+			var terminateWithEscapeItem = new MenuItemWithCheckBox(lcd, "Esc. termination",settings.TerminateDebugWithEscape);
 			var debugPortItem = new MenuItemWithNumericInput(lcd, "Debug port",settings.DebugPort,1, ushort.MaxValue);
-			items.Add (debugItem);
+			
+			items.Add (enableWiFiDebugItem);
+			items.Add(terminateWithEscapeItem);
 			items.Add (debugPortItem);
+			
 			//Show the menu
-			Menu m = new Menu (font, lcd, btns, "Settings", items);
+			Menu m = new Menu (font, lcd, btns, "Debug Settings", items);
 			m.Show ();
 			
 			//Show dialog
@@ -156,13 +168,14 @@ namespace StartupApp
 			System.Threading.Thread.Sleep(400);
 			//Save the new settings
 			FirmwareSettings newXmlSettings = new FirmwareSettings();
-			newXmlSettings.DebugMode = debugItem.Checked;
+			newXmlSettings.EnableWiFiDebug = enableWiFiDebugItem.Checked;
+			newXmlSettings.TerminateDebugWithEscape = terminateWithEscapeItem.Checked; 
 			newXmlSettings.DebugPort = debugPortItem.Value;
+			
 			try{
 				newXmlSettings.SaveToXML(SettingsFileName);
 				dialog.UpdateMessage("Done");
 				System.Threading.Thread.Sleep(500);
-			
 			}
 			catch
 			{

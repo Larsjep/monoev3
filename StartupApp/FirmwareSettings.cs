@@ -9,21 +9,30 @@ namespace StartupApp
 	[XmlRoot("ConfigRoot")]
 	public class FirmwareSettings
 	{
-		[XmlElement("DebugSetting")]
-		private bool debugMode = false;
+		[XmlElement("EnableWiFiDebug")]
+		private bool enableWiFiDebug = false;
 		
 		[XmlElement("DebugPort")]
 		private int debugPort = 12345;
+		
+		[XmlElement("TerminateDebugWithEscape")]
+		private bool terminateDebugWithEscape = true;
 		
 		public FirmwareSettings ()
 		{
 			
 		}
 		
-		public bool DebugMode	
+		public bool EnableWiFiDebug
 		{
-			get { return debugMode; }
-			set { debugMode = value; }
+			get { return enableWiFiDebug; }
+			set { enableWiFiDebug = value; }
+		}
+		
+		public bool TerminateDebugWithEscape	
+		{
+			get { return terminateDebugWithEscape; }
+			set { terminateDebugWithEscape = value; }
 		}
 		
 		public int DebugPort
