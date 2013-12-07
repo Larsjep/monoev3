@@ -56,7 +56,7 @@ namespace StartupApp
 			return false;
 		}
 		
-		static bool StartApp(string filename)
+		static bool StartApp (string filename)
 		{
 			MenuAction = () => RunAndWaitForProgram("/usr/local/bin/mono", filename);
 			return true;
@@ -77,15 +77,38 @@ namespace StartupApp
 			return true;
 		}
 		
-		static void RunAndWaitForProgram(string filename, string arguments = "")
+		static void RunAndWaitForProgram (string filename, string arguments = "")
 		{
-			System.Diagnostics.Process proc = new System.Diagnostics.Process();
-			proc.EnableRaisingEvents=false; 
-			Console.WriteLine("Starting process: {0} with arguments: {1}", filename, arguments);
-			proc.StartInfo.FileName = filename;
-			proc.StartInfo.Arguments = arguments;
-			proc.Start();
-			proc.WaitForExit();
+			if (settings.DebugMode) {
+				arguments = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugPort + ",server=y " + arguments;
+				using (Lcd lcd = new Lcd())
+					using (Buttons btns = new Buttons())
+					{
+						System.Diagnostics.Process proc = new System.Diagnostics.Process ();
+						InfoDialogWithEscape dialog = new InfoDialogWithEscape (
+							Font.MediumFont, 
+							lcd, btns, "Debug mode", 
+							() => {proc.Kill();Console.WriteLine("Kill process");return true;}
+						);
+						dialog.Show();
+						proc.EnableRaisingEvents = false; 
+						Console.WriteLine ("Starting process: {0} with arguments: {1}", filename, arguments);
+						proc.StartInfo.FileName = filename;
+						proc.StartInfo.Arguments = arguments;
+						proc.Start ();
+						proc.WaitForExit ();
+					}
+			} 
+			else 
+			{
+				System.Diagnostics.Process proc = new System.Diagnostics.Process ();
+				proc.EnableRaisingEvents = false; 
+				Console.WriteLine ("Starting process: {0} with arguments: {1}", filename, arguments);
+				proc.StartInfo.FileName = filename;
+				proc.StartInfo.Arguments = arguments;
+				proc.Start ();
+				proc.WaitForExit ();
+			}
 		}
 		
 		static bool Shutdown(Lcd lcd, Buttons btns)
@@ -137,6 +160,9 @@ namespace StartupApp
 			newXmlSettings.DebugPort = debugPortItem.Value;
 			try{
 				newXmlSettings.SaveToXML(SettingsFileName);
+				dialog.UpdateMessage("Done");
+				System.Threading.Thread.Sleep(500);
+			
 			}
 			catch
 			{
@@ -144,9 +170,6 @@ namespace StartupApp
 				System.Threading.Thread.Sleep(1500);
 				Console.WriteLine ("Failed to save settings!");	
 			}
-			dialog.UpdateMessage("Done");
-			System.Threading.Thread.Sleep(500);
-			dialog.Close();
 			settings = newXmlSettings;//apply the settings
 			return false;
 		}

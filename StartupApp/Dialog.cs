@@ -8,80 +8,70 @@ using MonoBrickFirmware.Graphics;
 namespace StartupApp
 {
 	
-	public class InfoDialog: Dialog{
-		public InfoDialog(Font f, Lcd lcd, Buttons btns, string message):base(f,lcd,btns,"Information", new InfoDialogItem(lcd, message)){
-		
+	
+	public class InfoDialogWithEscape: Dialog{
+		private Func<bool> escapeAction;
+		private string message;
+		public InfoDialogWithEscape(Font f, Lcd lcd, Buttons btns, string message, Func<bool> escapeAction):base(f,lcd,btns,"Information"){
+			this.escapeAction = escapeAction;
+			this.message = message;	
 		}
+		
 		public void UpdateMessage(string message){
-			((InfoDialogItem)this.dialogItem).Message = message;
-			this.Redraw();
+			this.message  = message;
+			base.Draw();
+		}
+		protected override bool OnEscape ()
+		{
+			return escapeAction();
+		}
+		
+		protected override void OnDrawContent (Font f, Rectangle rect)
+		{
+			lcd.WriteTextBox(f,rect,message,true,Lcd.Alignment.Center);
+		}
+		
+		protected override void Draw ()
+		{
+			//Don't redraw when a button is pressed
+		}
+		
+		public override void Show ()
+		{
+			base.Show ();
+			base.Draw();
 		}
 	}
 	
-	public interface IDialogItem{
-		bool EnterAction();
-		void Draw(Font f, Rectangle r, bool color);
-		bool LeftAction();
-		bool RightAction();
-		bool UpAction();
-		bool DownAction();
-		bool Escape();
+	public class InfoDialog: Dialog{
+		private string message;
+		public InfoDialog(Font f, Lcd lcd, Buttons btns, string message):base(f,lcd,btns,"Information"){
+			this.message = message;
+		}
+		
+		public void UpdateMessage(string message){
+			this.message  = message;
+			Draw();
+		}
+		
+		public override void Show ()
+		{
+			Draw();
+			//Don't listen for button events
+		}
+		
+		protected override void OnDrawContent (Font f, Rectangle rect)
+		{
+			lcd.WriteTextBox(f,rect,message,true,Lcd.Alignment.Center);
+		}
 	}
-	
-	internal class InfoDialogItem:IDialogItem
-	{
-		private Lcd lcd;
-		public InfoDialogItem (Lcd lcd, string startMessage)
-		{
-			Message = startMessage;
-			this.lcd = lcd;
-		}
-		
-		public bool EnterAction()
-		{
-			return false;												
-		}
-		
-		public void Draw(Font f, Rectangle r, bool color)
-		{
-			lcd.WriteTextBox(f,r,Message,color,Lcd.Alignment.Center);															
-		}
-		
-		public bool LeftAction ()
-		{
-			return false;												
-		}
-		
-		public bool RightAction()
-		{
-			return false;												
-		}
-		
-		public bool UpAction()
-		{
-			return false;												
-		}
-		
-		public bool DownAction()
-		{
-			return false;												
-		}
-		
-		public bool Escape()
-		{
-			return false;												
-		}
-		
-		public string Message{get;set;}
-	}
-	
 	
 	public class Dialog
 	{
-		protected IDialogItem dialogItem;
-		private Lcd lcd;
-		private Font font;
-		private string title;
+		protected Lcd lcd;
+		protected Font font;
+		protected string title;
+		protected ManualResetEvent inputThreadDone;
 		private int titleSize;
 		private int itemSize;
 		private int itemHeight;
@@ -94,10 +84,8 @@ namespace StartupApp
 		private Rectangle itemWindow;
 		private Rectangle titleRect;
 		private bool close = false;
-		private ManualResetEvent inputThreadDone;
-		public Dialog (Font f, Lcd lcd, Buttons btns, string title, IDialogItem dialogItem)
+		public Dialog (Font f, Lcd lcd, Buttons btns, string title)
 		{
-			this.dialogItem = dialogItem;
 			this.font = f;
 			this.lcd = lcd;
 			this.title = title;
@@ -119,13 +107,54 @@ namespace StartupApp
 			dialogWindowInner = new Rectangle(new Point(startPoint1.X + dialogEdge, startPoint1.Y+dialogEdge), new Point(startPoint2.X-dialogEdge, startPoint2.Y-dialogEdge));
 			itemWindow = new Rectangle(itemPoint1,itemPoint2);
 			titleRect = new Rectangle(new Point((int)( Lcd.Width/2 - titleSize/2), (int)(startPoint1.Y - (font.maxHeight/2)) ), new Point((int)( Lcd.Width/2 + titleSize/2),(int)( startPoint1.Y + (font.maxHeight/2)) ));
+			
 		}
 		
-		protected void Redraw ()
+		public virtual void Show()
+		{
+			inputThreadDone = new ManualResetEvent(false);
+			new System.Threading.Thread(handleInputThread).Start();
+		}
+		
+		protected virtual bool OnEnterAction ()
+		{
+			return false;
+		}
+		
+		protected virtual bool OnLeftAction ()
+		{
+			return false;
+		}
+		
+		protected virtual bool OnRightAction ()
+		{
+			return false;
+		}
+		
+		protected virtual bool OnUpAction ()
+		{
+			return false;
+		}
+		
+		protected virtual bool OnDownAction ()
+		{
+			return false;
+		}
+		
+		protected virtual bool OnEscape(){
+			return false;
+		}
+		
+		protected virtual void OnDrawContent (Font f, Rectangle rect)
+		{
+		
+		}
+		
+		protected virtual void Draw ()
 		{
 			lcd.DrawBox(dialogWindowOuther, true);
 			lcd.DrawBox(dialogWindowInner, false);
-			dialogItem.Draw(this.font,itemWindow, true);
+			OnDrawContent(this.font,itemWindow);
 			lcd.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 			lcd.Update();
 		}
@@ -145,61 +174,50 @@ namespace StartupApp
 			return bs;
 		}
 		
-		public void Close ()
+		protected void Close ()
 		{
 			close = true;
-			Wait ();	
-		}
-		
-		public void Wait()
-		{
-			inputThreadDone.WaitOne();
-		}
-		
-		public void Show()
-		{
-			inputThreadDone = new ManualResetEvent(false);
-			new System.Threading.Thread(handleInputThread).Start();
+			inputThreadDone.WaitOne();	
 		}
 		
 		private void handleInputThread ()
 		{
 			close = false;
 			while (!close) {
-				Redraw ();
+				Draw ();
 				switch (WaitForInput ()) {
 				case Buttons.ButtonStates.Down: 
-					if (dialogItem.DownAction()) 
+					if (OnDownAction()) 
 					{
 						close = true;
 					}
 					break;
 				case Buttons.ButtonStates.Up:
-					if (dialogItem.UpAction ()) 
+					if (OnUpAction ()) 
 					{
 						close = true;
 					}
 					break;
 				case Buttons.ButtonStates.Escape:
-					if (dialogItem.Escape()) 
+					if (OnEscape()) 
 					{
 						close = true;
 					}
 					break;
 				case Buttons.ButtonStates.Enter:
-					if (dialogItem.EnterAction ()) 
+					if (OnEnterAction ()) 
 					{
 						close = true;
 					}
 					break;
 				case Buttons.ButtonStates.Left:
-					if (dialogItem.LeftAction()) 
+					if (OnLeftAction()) 
 					{
 						close = true;
 					}
 					break;
 				case Buttons.ButtonStates.Right:
-					if (dialogItem.RightAction()) 
+					if (OnRightAction()) 
 					{
 						close = true;
 					}
@@ -207,9 +225,7 @@ namespace StartupApp
 				}
 			}
 			inputThreadDone.Set();
-		
 		}
-		
 	}
 }
 

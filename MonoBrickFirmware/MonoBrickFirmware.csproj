@@ -59,7 +59,9 @@
     <Compile Include="IO\ISensor.cs" />
     <Compile Include="IO\LightSensor.cs" />
     <Compile Include="IO\ColorSensor.cs" />
-    <Compile Include="IO\SensorManager.cs" />
+    <Compile Include="IO\SensorManager.cs">
+      <DependentUpon>TouchSensor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Graphics\BmpCreator.cs" />
     <Compile Include="IO\IRSensor.cs" />
     <Compile Include="Graphics\Console.cs" />
