@@ -7,10 +7,11 @@ using MonoBrickFirmware.Graphics;
 
 namespace FacebookExample
 {
+	
+	//mozroots --import --ask-remove
 	class MainClass
 	{
 		
-		// /usr/bin# mozroots --import --sync
 		public static void Main (string[] args)
 		{
 			//var fb = new FacebookClient(args[0]);
