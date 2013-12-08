@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Net.NetworkInformation;
 using System.Diagnostics;
 using MonoBrickFirmware.Graphics;
@@ -50,7 +51,7 @@ namespace StartupApp
 			lcd.Clear();
 			lcd.WriteText(font, startPos+offset*0, "Firmware: 0.1.0.0", true);
 			lcd.WriteText(font, startPos+offset*1, "Mono version: " + monoVersion.Substring(0,7), true);
-			lcd.WriteText(font, startPos+offset*2, "Mono CLR:" + monoCLR, true);			
+			lcd.WriteText(font, startPos+offset*2, "Mono CLR: " + monoCLR, true);			
 			lcd.Update();
 			btns.GetKeypress();
 			return false;
@@ -81,31 +82,44 @@ namespace StartupApp
 		{
 			if (settings.EnableWiFiDebug) {
 				arguments = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugPort + ",server=y " + arguments;
-					using (Lcd lcd = new Lcd ())
-					using (Buttons btns = new Buttons ()) {
-						System.Diagnostics.Process proc = new System.Diagnostics.Process ();
-						Dialog dialog = null;
-						if (settings.TerminateDebugWithEscape) 
-						{
-							dialog = new InfoDialogWithEscape (
-								Font.MediumFont, 
-								lcd, btns, "Debug mode", 
-								() => {proc.Kill();Console.WriteLine("Kill process");return true;}
-							);		
-						} 
-						else 
-						{
-							dialog = new InfoDialog(Font.MediumFont, lcd,btns,"Debug mode");	
-						}
-						//same code as below but uses the lcd and buttons - so don't move
-						dialog.Show();
-						proc.EnableRaisingEvents = false; 
-						Console.WriteLine ("Starting process: {0} with arguments: {1}", filename, arguments);
-						proc.StartInfo.FileName = filename;
-						proc.StartInfo.Arguments = arguments;
-						proc.Start ();
-						proc.WaitForExit ();
+				using (Lcd lcd = new Lcd ())
+				using (Buttons btns = new Buttons ()) {
+					System.Diagnostics.Process proc = new System.Diagnostics.Process ();
+					Dialog dialog = null;
+					Thread escapeThread = null;
+					CancellationTokenSource cts = new CancellationTokenSource();
+					CancellationToken token = cts.Token;
+					string portString  = ("Port: " + settings.DebugPort).PadRight(6).PadRight(6);
+					if (settings.TerminateDebugWithEscape) {
+						escapeThread = new System.Threading.Thread (delegate() {
+							while (!token.IsCancellationRequested) {
+								if (btns.GetKeypress (token) == Buttons.ButtonStates.Escape) {
+									proc.Kill ();
+									Console.WriteLine ("Killing process");
+									cts.Cancel();
+								}
+							}
+						});
+						escapeThread.Start();
+						dialog = new InfoDialog (Font.MediumFont, lcd, btns, portString + " Press escape to terminate", "Debug Mode");
+					} 
+					else 
+					{
+						dialog = new InfoDialog (Font.MediumFont, lcd, btns, portString + " Waiting for connection.", "Debug Mode");	
 					}
+					//almost same code as below but uses the lcd and buttons - so don't move
+					dialog.Show ();
+					proc.EnableRaisingEvents = false; 
+					Console.WriteLine ("Starting process: {0} with arguments: {1}", filename, arguments);
+					proc.StartInfo.FileName = filename;
+					proc.StartInfo.Arguments = arguments;
+					proc.Start ();
+					proc.WaitForExit ();
+					if (escapeThread != null && !token.IsCancellationRequested) {
+						cts.Cancel();
+						escapeThread.Join();
+					}
+				}
 			} 
 			else 
 			{
@@ -163,7 +177,7 @@ namespace StartupApp
 			m.Show ();
 			
 			//Show dialog
-			InfoDialog dialog = new InfoDialog(Font.MediumFont, lcd,btns, "Saving settings");
+			InfoDialog dialog = new InfoDialog(Font.MediumFont, lcd,btns, "Saving settings.");
 			dialog.Show();
 			System.Threading.Thread.Sleep(400);
 			//Save the new settings
@@ -174,7 +188,7 @@ namespace StartupApp
 			
 			try{
 				newXmlSettings.SaveToXML(SettingsFileName);
-				dialog.UpdateMessage("Done");
+				dialog.UpdateMessage("Done!");
 				System.Threading.Thread.Sleep(500);
 			}
 			catch
