@@ -101,11 +101,11 @@ namespace StartupApp
 							}
 						});
 						escapeThread.Start();
-						dialog = new InfoDialog (Font.MediumFont, lcd, btns, portString + " Press escape to terminate", "Debug Mode");
+						dialog = new InfoDialog (Font.MediumFont, lcd, btns, portString + " Press escape to terminate", false, "Debug Mode");
 					} 
 					else 
 					{
-						dialog = new InfoDialog (Font.MediumFont, lcd, btns, portString + " Waiting for connection.", "Debug Mode");	
+						dialog = new InfoDialog (Font.MediumFont, lcd, btns, portString + " Waiting for connection.", false, "Debug Mode");	
 					}
 					//almost same code as below but uses the lcd and buttons - so don't move
 					dialog.Show ();
@@ -133,25 +133,31 @@ namespace StartupApp
 			}
 		}
 		
-		static bool Shutdown(Lcd lcd, Buttons btns)
+		static bool Shutdown (Lcd lcd, Buttons btns)
 		{
-			lcd.Clear();
-			lcd.WriteText(font, new Point(0,0), "Shutting down...", true);
-			lcd.Update();
+			var dialog = new QuestionDialog (Font.MediumFont, lcd, btns, "Are you sure?", "Shutdown EV3");
+			dialog.Show ();
+			if (dialog.IsPositiveSelected) {
+				lcd.Clear();
+				lcd.WriteText(font, new Point(0,0), "Shutting down...", true);
+				lcd.Update();
 			
-			using (UnixDevice dev = new UnixDevice("/dev/lms_power"))
-			{
-				dev.IoCtl(0, new byte[0]);
-			}
-			btns.LedPattern(2);
-			MenuAction = () => RunAndWaitForProgram("/lejos/bin/exit", "");			
-			return true;
+				using (UnixDevice dev = new UnixDevice("/dev/lms_power"))
+				{
+					dev.IoCtl(0, new byte[0]);
+				}
+				btns.LedPattern(2);
+				MenuAction = () => RunAndWaitForProgram("/lejos/bin/exit", "");			
+				return true;
+			
+			} 
+			return false;
 		}
 		
 		static void ShowMainMenu(Lcd lcd, Buttons btns)
 		{
 			
-			List<MenuItemWithAction> items = new List<MenuItemWithAction>();
+			List<IMenutem> items = new List<IMenutem>();
 			items.Add (new MenuItemWithAction(lcd, "Run programs", () => RunPrograms(lcd, btns),MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Debug settings", () => ShowDebugSettings(lcd,btns), MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Information", () => Information(lcd, btns),MenuItemSymbole.RightArrow));
@@ -177,7 +183,7 @@ namespace StartupApp
 			m.Show ();
 			
 			//Show dialog
-			InfoDialog dialog = new InfoDialog(Font.MediumFont, lcd,btns, "Saving settings.");
+			InfoDialog dialog = new InfoDialog(Font.MediumFont, lcd,btns,"Saving settings.", false);
 			dialog.Show();
 			System.Threading.Thread.Sleep(400);
 			//Save the new settings
@@ -189,13 +195,12 @@ namespace StartupApp
 			try{
 				newXmlSettings.SaveToXML(SettingsFileName);
 				dialog.UpdateMessage("Done!");
-				System.Threading.Thread.Sleep(500);
+				System.Threading.Thread.Sleep(400);
 			}
 			catch
 			{
-				dialog.UpdateMessage("Failed to save settings!");
-				System.Threading.Thread.Sleep(1500);
-				Console.WriteLine ("Failed to save settings!");	
+				dialog = new InfoDialog(Font.MediumFont, lcd,btns,"Failed to save settings!", true);
+				dialog.Show();
 			}
 			settings = newXmlSettings;//apply the settings
 			return false;
