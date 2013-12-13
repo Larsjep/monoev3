@@ -7,7 +7,71 @@ using MonoBrickFirmware.Graphics;
 
 namespace StartupApp
 {
-	public class QuestionDialog : Dialog{
+    public class CharacterDialog : Dialog
+    {
+
+        public CharacterDialog(Font f, Lcd lcd, Buttons btns, string title)
+            : base(f, lcd, btns, title) 
+        {
+        
+        } 
+        
+        protected override void OnDrawContent(){
+        
+        
+        }
+
+    }
+    
+    public class SelectDialog<SelectionType> : Dialog { 
+        private SelectionType[] options;
+        private int scrollPos;
+        int cursorPos;
+        
+        public SelectDialog(Font f, Lcd lcd, Buttons btns, SelectionType[] options, string title) : base(f, lcd, btns, title) {
+            this.options = options;
+            cursorPos = 0;
+            scrollPos = 0;
+        }
+
+        protected override void OnDrawContent()
+        {
+            for (int i = 0; i != lines.Count; ++i) {
+				if (i + scrollPos >= options.Length)
+					break;
+                lcd.WriteTextBox(font, lines[i], options[i + scrollPos].ToString(), i != cursorPos); 	
+			}
+        }
+
+        protected override bool OnUpAction()
+        {
+            if (cursorPos + scrollPos > 0)
+            {
+                if (cursorPos > 0)
+                    cursorPos--;
+                else
+                    scrollPos--;
+            }
+            return false;
+        }
+
+        protected override bool OnDownAction()
+        {
+            if (scrollPos + cursorPos < options.Length - 1)
+            {
+                if (cursorPos < lines.Count - 1)
+                    cursorPos++;
+                else
+                    scrollPos++;
+            }
+            return false;
+        }
+    }
+    
+    
+    
+    
+    public class QuestionDialog : Dialog{
 		private string negativeText;
 		private string positiveText;
 		private string question;
@@ -41,28 +105,28 @@ namespace StartupApp
 			return true;
 		}
 		
-		protected override void OnDrawContent (Font f, List<Rectangle> lines, Point bottomLineCenter)
+		protected override void OnDrawContent ()
 		{
 			WriteTextOnDialog(question);
 			int textSize = 0;
-			if (f.TextSize (positiveText).X > f.TextSize (negativeText).X) 
+			if (font.TextSize (positiveText).X > font.TextSize (negativeText).X) 
 			{
-				textSize = f.TextSize(positiveText).X;
+				textSize = font.TextSize(positiveText).X;
 			} 
 			else 
 			{
-				textSize = f.TextSize(negativeText).X;
+				textSize = font.TextSize(negativeText).X;
 			}
 			textSize+=textOffset;
 			
-			Point positive1 = bottomLineCenter + new Point(-boxMiddleOffset - (int)textSize,(int)-f.maxHeight/2);
-			Point positive2 = bottomLineCenter + new Point(-boxMiddleOffset,(int)f.maxHeight/2);
+			Point positive1 = bottomLineCenter + new Point(-boxMiddleOffset - (int)textSize,(int)-font.maxHeight/2);
+			Point positive2 = bottomLineCenter + new Point(-boxMiddleOffset,(int)font.maxHeight/2);
 			Point positiveOuter1 = positive1 + new Point(-boxEdge,-boxEdge);
 			Point positiveOuter2 = positive2 + new Point(boxEdge,boxEdge);
 			
 			
-			Point negative1 = bottomLineCenter + new Point(boxMiddleOffset,(int)-f.maxHeight/2);
-			Point negative2 = bottomLineCenter + new Point(boxMiddleOffset + (int)textSize,(int)f.maxHeight/2);
+			Point negative1 = bottomLineCenter + new Point(boxMiddleOffset,(int)-font.maxHeight/2);
+			Point negative2 = bottomLineCenter + new Point(boxMiddleOffset + (int)textSize,(int)font.maxHeight/2);
 			Point negativeOuter1 = negative1 + new Point(-boxEdge,-boxEdge);
 			Point negativeOuter2 = negative2 + new Point(boxEdge,boxEdge);
 			
@@ -121,14 +185,14 @@ namespace StartupApp
 		}
 		
 		
-		protected override void OnDrawContent (Font f, List<Rectangle> lines, Point bottomLineCenter)
+		protected override void OnDrawContent ()
 		{
 			WriteTextOnDialog(message);
 			if (waitForOk) {
-				int textSize = f.TextSize(okString).X;
+				int textSize = font.TextSize(okString).X;
 				textSize+= textOffset;
-				Point okp1 = bottomLineCenter + new Point((int)-textSize/2,(int)-f.maxHeight/2);
-				Point okp2 = bottomLineCenter + new Point((int)textSize/2,(int)f.maxHeight/2);
+				Point okp1 = bottomLineCenter + new Point((int)-textSize/2,(int)-font.maxHeight/2);
+				Point okp2 = bottomLineCenter + new Point((int)textSize/2,(int)font.maxHeight/2);
 				
 				Point okp1Outer = okp1 + new Point(-boxEdge,-boxEdge);
 				Point okp2Outer = okp2 + new Point(boxEdge,boxEdge);
@@ -147,6 +211,8 @@ namespace StartupApp
 		protected Lcd lcd;
 		protected Font font;
 		protected string title;
+        protected List<Rectangle> lines;
+        protected Point bottomLineCenter;
 		private int titleSize;
 		private Buttons btns;
 		private const float dialogHeightPct = 0.70f;
@@ -154,11 +220,9 @@ namespace StartupApp
 		private const int dialogEdge = 5;
 		private Rectangle dialogWindowOuther; 
 		private Rectangle dialogWindowInner;
-		private List<Rectangle> lines;
 		private Rectangle titleRect;
 		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
 		private CancellationToken token;
-		private Point bottomLineCenter;
 		public Dialog (Font f, Lcd lcd, Buttons btns, string title)
 		{
 			this.font = f;
@@ -312,13 +376,13 @@ namespace StartupApp
 		}
 		
 		
-		protected  abstract void OnDrawContent (Font f, List<Rectangle> lines, Point bottomLineCenter);
+		protected  abstract void OnDrawContent ();
 		
 		protected virtual void Draw ()
 		{
 			lcd.DrawBox(dialogWindowOuther, true);
 			lcd.DrawBox(dialogWindowInner, false);
-			OnDrawContent(this.font, lines, bottomLineCenter);
+			OnDrawContent();
 			lcd.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 			lcd.Update();
 		}

@@ -49,14 +49,15 @@ namespace StartupApp
 		}	
 	}
 	
-	public class MenuItemWithOptions : IMenutem
+	public class MenuItemWithOptions<OptionType> : IMenutem
 	{
 		private string text;
 		private Lcd lcd;
-		private string[] options;
+        private OptionType[] options;
 		private const int rightArrowOffset = 4;
 		private const int arrowEdge = 4;
-		public MenuItemWithOptions(Lcd lcd, string text, string[] options, int startIdx = 0){
+        public MenuItemWithOptions(Lcd lcd, string text, OptionType[] options, int startIdx = 0)
+        {
 			this.text = text;
 			this.lcd = lcd;
 			this.options = options;
@@ -82,7 +83,7 @@ namespace StartupApp
 		{
 			int arrowWidth = (int)f.maxWidth / 4;
 			
-			string valueAsString = " " + options[OptionIndex] + " ";
+			string valueAsString = " " + options[OptionIndex].ToString() + " ";
 			Point p = f.TextSize (valueAsString);
 			Rectangle numericRect = new Rectangle ( new Point( Lcd.Width - p.X, r.P1.Y),r.P2);
 			Rectangle textRect = new Rectangle (new Point (r.P1.X, r.P1.Y), new Point (r.P2.X - (p.X), r.P2.Y));
@@ -95,6 +96,11 @@ namespace StartupApp
 			lcd.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
 		}
 		public int OptionIndex{get;private set;}
+
+        OptionType GetSelection() {
+            return options[OptionIndex];
+        }
+
 	}
 	
 	public class MenuItemWithCheckBox : IMenutem
