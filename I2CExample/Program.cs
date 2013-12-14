@@ -2,8 +2,10 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Resources;
-using MonoBrickFirmware.IO;
-using MonoBrickFirmware.Graphics;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.Sensors;
+
 
 namespace I2CExample
 {

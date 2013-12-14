@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MonoBrickFirmware.IO;
-using MonoBrickFirmware.Graphics;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.Buttons;
 
 namespace StartupApp
 {

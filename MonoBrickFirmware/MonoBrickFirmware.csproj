@@ -35,49 +35,50 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="IO\" />
-    <Folder Include="Graphics\" />
     <Folder Include="Native\" />
-    <Folder Include="Graphics\Resources\" />
+    <Folder Include="Tools\" />
+    <Folder Include="Buttons\" />
+    <Folder Include="Display\" />
+    <Folder Include="Display\Resources\" />
+    <Folder Include="Sensors\" />
+    <Folder Include="Movement\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IO\Lcd.cs" />
-    <Compile Include="IO\Motor.cs" />
-    <Compile Include="Graphics\MonoPicture.cs" />
     <Compile Include="Native\Libc.cs" />
-    <Compile Include="Graphics\Font.cs" />
-    <Compile Include="Graphics\Bitmap.cs" />
-    <Compile Include="IO\ByteCodes.cs" />
-    <Compile Include="IO\Commands.cs" />
-    <Compile Include="Graphics\Basics.cs" />
-    <Compile Include="IO\Buttons.cs" />
-    <Compile Include="IO\Output.cs" />
-    <Compile Include="IO\Vehicle.cs" />
-    <Compile Include="IO\MotorSync.cs" />
-    <Compile Include="IO\MotorBase.cs" />
-    <Compile Include="IO\TouchSensor.cs" />
-    <Compile Include="IO\ISensor.cs" />
-    <Compile Include="IO\LightSensor.cs" />
-    <Compile Include="IO\ColorSensor.cs" />
-    <Compile Include="IO\SensorManager.cs">
-      <DependentUpon>TouchSensor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Graphics\BmpCreator.cs" />
-    <Compile Include="IO\IRSensor.cs" />
-    <Compile Include="Graphics\Console.cs" />
-    <Compile Include="IO\I2C.cs" />
-    <Compile Include="IO\HTCompassSensor.cs" />
-    <Compile Include="IO\HTColor.cs" />
-    <Compile Include="IO\HTGyroSensor.cs" />
-    <Compile Include="IO\UltraSonicSensor.cs" />
-    <Compile Include="IO\AnalogSensorAbstraction.cs" />
-    <Compile Include="IO\UARTSensorAbstraction.cs" />
-    <Compile Include="IO\I2CAbstraction.cs" />
-    <Compile Include="IO\AnalogSensor.cs" />
-    <Compile Include="IO\UARTSensor.cs" />
-    <Compile Include="IO\QueueThread.cs" />
-    <Compile Include="IO\SoundSensor.cs" />
-    <Compile Include="IO\HTTiltSensor.cs" />
+    <Compile Include="Tools\QueueThread.cs" />
+    <Compile Include="Buttons\Buttons.cs" />
+    <Compile Include="Tools\BmpCreator.cs" />
+    <Compile Include="Display\Console.cs" />
+    <Compile Include="Display\Basics.cs" />
+    <Compile Include="Display\Bitmap.cs" />
+    <Compile Include="Display\Font.cs" />
+    <Compile Include="Display\Lcd.cs" />
+    <Compile Include="Display\MonoPicture.cs" />
+    <Compile Include="Sensors\HTGyroSensor.cs" />
+    <Compile Include="Sensors\HTCompassSensor.cs" />
+    <Compile Include="Sensors\HTTiltSensor.cs" />
+    <Compile Include="Sensors\UltraSonicSensor.cs" />
+    <Compile Include="Sensors\UARTSensorAbstraction.cs" />
+    <Compile Include="Sensors\UARTSensor.cs" />
+    <Compile Include="Sensors\TouchSensor.cs" />
+    <Compile Include="Sensors\SoundSensor.cs" />
+    <Compile Include="Sensors\SensorManager.cs" />
+    <Compile Include="Sensors\LightSensor.cs" />
+    <Compile Include="Sensors\ISensor.cs" />
+    <Compile Include="Sensors\IRSensor.cs" />
+    <Compile Include="Sensors\I2CAbstraction.cs" />
+    <Compile Include="Sensors\I2C.cs" />
+    <Compile Include="Sensors\HTColor.cs" />
+    <Compile Include="Sensors\ColorSensor.cs" />
+    <Compile Include="Sensors\AnalogSensorAbstraction.cs" />
+    <Compile Include="Sensors\AnalogSensor.cs" />
+    <Compile Include="Movement\Output.cs" />
+    <Compile Include="Movement\Vehicle.cs" />
+    <Compile Include="Movement\MotorBase.cs" />
+    <Compile Include="Movement\Motor.cs" />
+    <Compile Include="Movement\MotorSync.cs" />
+    <Compile Include="Native\KernelByteCodes.cs" />
+    <Compile Include="Tools\Commands.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -91,10 +92,10 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <EmbeddedResource Include="Graphics\Resources\info56_12.bin">
+    <EmbeddedResource Include="Display\Resources\info56_12.bin">
       <LogicalName>font.info56_12</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Graphics\Resources\profont_7.bin">
+    <EmbeddedResource Include="Display\Resources\profont_7.bin">
       <LogicalName>font.profont_7</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

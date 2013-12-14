@@ -1,6 +1,7 @@
 using System;
-using MonoBrickFirmware.IO;
-using MonoBrickFirmware.Graphics;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.Sensors;
 using System.Threading;
 using System.Net;
 using System.Net.Mail;

@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Resources;
 using Facebook;
-using MonoBrickFirmware.IO;
-using MonoBrickFirmware.Graphics;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.Sensors;
 using System.Threading;
 
 namespace FacebookExample

@@ -4,8 +4,8 @@ using System.Net;
 using System.Threading;
 using System.Net.NetworkInformation;
 using System.Diagnostics;
-using MonoBrickFirmware.Graphics;
-using MonoBrickFirmware.IO;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.Buttons;
 using System.Reflection;
 using System.Collections.Generic;
 using MonoBrickFirmware.Native;
@@ -85,7 +85,7 @@ namespace StartupApp
 					} 
 					else 
 					{
-						infoDialog = new InfoDialog (font, lcd, btns, "Error deleting program"s, true, "Deleting File");
+						infoDialog = new InfoDialog (font, lcd, btns, "Error deleting program", true, "Deleting File");
 					}
 					infoDialog.Show ();
 				}

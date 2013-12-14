@@ -1,8 +1,8 @@
 using System;
-using MonoBrickFirmware;
-using MonoBrickFirmware.IO;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.Sensors;
 using System.Threading;
-using MonoBrickFirmware.Graphics;
 namespace IRSensorExample
 {
 	class MainClass
