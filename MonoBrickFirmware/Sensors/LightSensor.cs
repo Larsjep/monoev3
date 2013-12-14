@@ -20,7 +20,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class for the NXT light sensor
 	/// </summary>
-	public class LightSensor : AnalogSensorAbstraction, ISensor{
+	public class LightSensor : AnalogSensorBase, ISensor{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.LightSensor"/> class.
 		/// </summary>

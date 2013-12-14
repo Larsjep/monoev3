@@ -48,7 +48,6 @@
   <ItemGroup>
     <Compile Include="Native\Libc.cs" />
     <Compile Include="Tools\QueueThread.cs" />
-    <Compile Include="Tools\BmpCreator.cs" />
     <Compile Include="Display\Console.cs" />
     <Compile Include="Display\Basics.cs" />
     <Compile Include="Display\Bitmap.cs" />
@@ -59,7 +58,6 @@
     <Compile Include="Sensors\HTCompassSensor.cs" />
     <Compile Include="Sensors\HTTiltSensor.cs" />
     <Compile Include="Sensors\UltraSonicSensor.cs" />
-    <Compile Include="Sensors\UARTSensorAbstraction.cs" />
     <Compile Include="Sensors\UARTSensor.cs" />
     <Compile Include="Sensors\TouchSensor.cs" />
     <Compile Include="Sensors\SoundSensor.cs" />
@@ -67,11 +65,7 @@
     <Compile Include="Sensors\LightSensor.cs" />
     <Compile Include="Sensors\ISensor.cs" />
     <Compile Include="Sensors\IRSensor.cs" />
-    <Compile Include="Sensors\I2CAbstraction.cs" />
-    <Compile Include="Sensors\I2C.cs" />
-    <Compile Include="Sensors\HTColor.cs" />
     <Compile Include="Sensors\ColorSensor.cs" />
-    <Compile Include="Sensors\AnalogSensorAbstraction.cs" />
     <Compile Include="Sensors\AnalogSensor.cs" />
     <Compile Include="Movement\Output.cs" />
     <Compile Include="Movement\Vehicle.cs" />
@@ -79,10 +73,26 @@
     <Compile Include="Movement\Motor.cs" />
     <Compile Include="Movement\MotorSync.cs" />
     <Compile Include="Native\KernelByteCodes.cs" />
-    <Compile Include="Tools\Commands.cs" />
-    <Compile Include="Menus\Menu.cs" />
     <Compile Include="Dialogs\Dialog.cs" />
     <Compile Include="UserInput\Buttons.cs" />
+    <Compile Include="UserInput\ButtonEvents.cs" />
+    <Compile Include="Tools\BmpImage.cs" />
+    <Compile Include="Tools\ByteArrayCreator.cs" />
+    <Compile Include="Sensors\AnalogSensorBase.cs" />
+    <Compile Include="Sensors\HTColorSensor.cs" />
+    <Compile Include="Sensors\I2CSensorBase.cs" />
+    <Compile Include="Sensors\I2CSensor.cs" />
+    <Compile Include="Sensors\UARTSensorBase.cs" />
+    <Compile Include="Menus\IMenuItem.cs" />
+    <Compile Include="Menus\MenuItemWithAction.cs" />
+    <Compile Include="Menus\MenuItemWithOptions.cs" />
+    <Compile Include="Menus\MenuItemWithCheckBox.cs" />
+    <Compile Include="Menus\MenuItemWithNumericInput.cs" />
+    <Compile Include="Dialogs\CharacterDialog.cs" />
+    <Compile Include="Dialogs\SelectDialog.cs" />
+    <Compile Include="Dialogs\QuestionsDialog.cs" />
+    <Compile Include="Dialogs\InfoDialog.cs" />
+    <Compile Include="Menus\Menu.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

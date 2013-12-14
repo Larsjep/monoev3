@@ -215,7 +215,7 @@ namespace MonoBrickFirmware.Sensors
 		}	
 	}
 	
-	public class EV3ColorSensor : UartSensorAbstraction, IColorSensor{
+	public class EV3ColorSensor : UartSensorBase, IColorSensor{
 		
 		/// <summary>
 		/// Initializes a new instance of the NXTColorSensor class in color mode
@@ -365,7 +365,7 @@ namespace MonoBrickFirmware.Sensors
 	
 	
 	
-	public class NXTColorSensor : AnalogSensorAbstraction, IColorSensor{
+	public class NXTColorSensor : AnalogSensorBase, IColorSensor{
 		
 		//Analog memory offsets
     	private const int ColorOffset = 4856;
@@ -557,7 +557,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		protected Color CalculateColor()
 	    {
-	        
+	        //Taken from the LeJos source code - thanks ;-)
 	        GetRawValues();
 	        Calibrate(colorValues);
 	        int red = colorValues[RedIndex];
@@ -569,7 +569,7 @@ namespace MonoBrickFirmware.Sensors
 	        // The following algorithm comes from the 1.29 Lego firmware.
 	        if (red > blue && red > green)
 	        {
-	            // red dominant color
+	            // Red dominant color
 	            if (red < 65 || (blank < 40 && red < 110))
 	                return Color.Black;
 	            if (((blue >> 2) + (blue >> 3) + blue < green) &&
@@ -583,7 +583,7 @@ namespace MonoBrickFirmware.Sensors
 	        }
 	        else if (green > blue)
 	        {
-	            // green dominant color
+	            // Green dominant color
 	            if (green < 40 || (blank < 30 && green < 70))
 	                return Color.Black;
 	            if ((blue << 1) < red)
@@ -597,7 +597,7 @@ namespace MonoBrickFirmware.Sensors
 	        }
 	        else
 	        {
-	            // blue dominant color
+	            // Blue dominant color
 	            if (blue < 48 || (blank < 25 && blue < 85))
 	                return Color.Black;
 	            if ((((red*48) >> 5) < blue && ((green*48) >> 5) < blue) ||
@@ -614,7 +614,7 @@ namespace MonoBrickFirmware.Sensors
 	    	
 		private void Calibrate(Int16[] vals)
     	{
-	        // First select the calibration table to use...
+	        // Select the calibration table to use
 	        int calTab;
 	        int blankVal = rawValues[BackgroundIndex];
 	        if (blankVal < calibrationLimits[1])
@@ -623,13 +623,13 @@ namespace MonoBrickFirmware.Sensors
 	            calTab = 1;
 	        else
 	            calTab = 0;
-	        // Now adjust the raw values
+	        // Adjust the raw values
 	        for (int col = RedIndex; col <= BlueIndex; col++)
 	            if (rawValues[col] > blankVal)
 	                vals[col] = (Int16) (((rawValues[col] - blankVal) * calibrationValues[calTab,col]) >> 16);
 	            else
 	                vals[col] = 0;
-	        // finally adjust the background value
+	        // Adjust the background value
 	        if (blankVal > MinumumBackGroundValue)
 	            blankVal -= MinumumBackGroundValue;
 	        else

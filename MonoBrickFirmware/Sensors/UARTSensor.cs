@@ -5,7 +5,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// UART sensor. Should not be used for inheritance
 	/// </summary>
-	public sealed class UARTSensor : UartSensorAbstraction
+	public sealed class UARTSensor : UartSensorBase
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.UARTSensor"/> class.

@@ -5,7 +5,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Analog sensor class. Should not be used for inheritance
 	/// </summary>
-	public sealed class AnalogSensor : AnalogSensorAbstraction
+	public sealed class AnalogSensor : AnalogSensorBase
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.AnalogSensor"/> class in set mode

@@ -5,11 +5,11 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// HiTechnic gyro sensor
     /// </summary>
-    public class HiTecGyro : AnalogSensorAbstraction, ISensor {
+    public class HiTecGyroSensor : AnalogSensorBase, ISensor {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.NXT.HiTecGyro"/> class without offset
 		/// </summary>
-		public HiTecGyro(SensorPort port) : this(port,0) {
+		public HiTecGyroSensor(SensorPort port) : this(port,0) {
 			
 		}
 
@@ -19,7 +19,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <param name='offset'>
 		/// Offset
 		/// </param>
-		public HiTecGyro(SensorPort port, int offset) : base(port) {
+		public HiTecGyroSensor(SensorPort port, int offset) : base(port) {
 			Offset = offset;
 			base.SetMode(AnalogMode.Set); 
 		}

@@ -5,7 +5,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class used for touch sensor. Works with both EV3 and NXT
 	/// </summary>
-	public class TouchSensor : AnalogSensorAbstraction, ISensor{
+	public class TouchSensor : AnalogSensorBase, ISensor{
 		private bool nxtConnected;
 		private const int EV3Cutoff = ADCResolution/2;
 		private const int NXTCutoff = 512;

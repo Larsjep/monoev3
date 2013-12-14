@@ -13,14 +13,14 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// HiTechnic color sensor
 	/// </summary>
-    public class HiTecColor : I2CAbstraction, ISensor
+    public class HiTecColorSensor : I2CSensorBase, ISensor
     {
         private const byte ColorAddress = 0x02;
         
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.NXT.HiTecColor"/> class.
 		/// </summary>
-		public HiTecColor(SensorPort port) : base(port, ColorAddress, I2CMode.LowSpeed9V) 
+		public HiTecColorSensor(SensorPort port) : base(port, ColorAddress, I2CMode.LowSpeed9V) 
 		{ 
 			base.Initialise();
 		}

@@ -30,7 +30,7 @@ namespace I2CExample
 			};
 			buts.RightPressed += () => { 
 				LcdConsole.WriteLine("Read type");
-				byte[] i2cData = sensor.ReadRegister(0x00,I2CAbstraction.BufferSize);
+				byte[] i2cData = sensor.ReadRegister(0x00,I2CSensorBase.BufferSize);
 				for(int i = 0; i < i2cData.Length;i++) {
 						LcdConsole.WriteLine ("Data[{0}]: {1:X} Char: " + Convert.ToChar(i2cData[i]),i,i2cData[i]);
 				}

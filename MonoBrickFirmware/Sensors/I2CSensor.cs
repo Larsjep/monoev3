@@ -6,7 +6,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// I2C sensor class for writing and reading. Should not be used for inheritance
 	/// </summary>
-	public sealed class I2CSensor : I2CAbstraction{
+	public sealed class I2CSensor : I2CSensorBase{
 		
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.I2CSensor"/> class with I2C address 0x02

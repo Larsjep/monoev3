@@ -60,14 +60,14 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// HiTechnic tilt compass sensor
 	/// </summary>
-    public class HiTecTilt : I2CAbstraction, ISensor
+    public class HiTecTiltSensor : I2CSensorBase, ISensor
     {
         private const byte CompassAddress = 0x02;
         
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.NXT.HiTecCompass"/> class.
 		/// </summary>
-		public HiTecTilt(SensorPort port) : base(port, CompassAddress, I2CMode.LowSpeed9V) { 
+		public HiTecTiltSensor(SensorPort port) : base(port, CompassAddress, I2CMode.LowSpeed9V) { 
 			base.Initialise();
 		}
 
