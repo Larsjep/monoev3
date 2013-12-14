@@ -37,16 +37,17 @@
   <ItemGroup>
     <Folder Include="Native\" />
     <Folder Include="Tools\" />
-    <Folder Include="Buttons\" />
     <Folder Include="Display\" />
     <Folder Include="Display\Resources\" />
     <Folder Include="Sensors\" />
     <Folder Include="Movement\" />
+    <Folder Include="Menus\" />
+    <Folder Include="Dialogs\" />
+    <Folder Include="UserInput\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Native\Libc.cs" />
     <Compile Include="Tools\QueueThread.cs" />
-    <Compile Include="Buttons\Buttons.cs" />
     <Compile Include="Tools\BmpCreator.cs" />
     <Compile Include="Display\Console.cs" />
     <Compile Include="Display\Basics.cs" />
@@ -79,6 +80,9 @@
     <Compile Include="Movement\MotorSync.cs" />
     <Compile Include="Native\KernelByteCodes.cs" />
     <Compile Include="Tools\Commands.cs" />
+    <Compile Include="Menus\Menu.cs" />
+    <Compile Include="Dialogs\Dialog.cs" />
+    <Compile Include="UserInput\Buttons.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

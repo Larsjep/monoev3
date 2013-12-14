@@ -3,9 +3,9 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using MonoBrickFirmware.Display;
-using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.UserInput;
 
-namespace StartupApp
+namespace MonoBrickFirmware.Dialogs
 {
     public class CharacterDialog : Dialog
     {

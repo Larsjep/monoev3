@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using MonoBrickFirmware.Display;
-using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Movement;
 namespace VehicleExample
 {

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Resources;
 using MonoBrickFirmware.Display;
-using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Sensors;
 
 namespace GyroSensorExample.IO

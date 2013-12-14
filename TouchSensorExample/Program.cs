@@ -1,5 +1,5 @@
 using System;
-using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Sensors;
 using System.Threading;

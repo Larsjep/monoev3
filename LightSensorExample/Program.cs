@@ -1,6 +1,6 @@
 using System;
 using MonoBrickFirmware.Display;
-using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Sensors;
 using System.Threading;
 namespace LightSensorExample

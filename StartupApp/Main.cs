@@ -5,10 +5,13 @@ using System.Threading;
 using System.Net.NetworkInformation;
 using System.Diagnostics;
 using MonoBrickFirmware.Display;
-using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.UserInput;
+using MonoBrickFirmware.Native;
+using MonoBrickFirmware.Menus;
+using MonoBrickFirmware.Dialogs;
+
 using System.Reflection;
 using System.Collections.Generic;
-using MonoBrickFirmware.Native;
 using System.Linq;
 
 namespace StartupApp

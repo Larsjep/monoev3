@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MonoBrickFirmware.Display;
-using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.UserInput;
 
-namespace StartupApp
+namespace MonoBrickFirmware.Menus
 {
 	public interface IMenuItem{
 		bool EnterAction();
@@ -266,8 +266,6 @@ namespace StartupApp
 		}
 		public int Value{get;private set;}
 	}
-	
-	
 	
 	public class Menu
 	{

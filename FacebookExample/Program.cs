@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Resources;
 using Facebook;
 using MonoBrickFirmware.Display;
-using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Sensors;
 using System.Threading;
 

@@ -1,7 +1,7 @@
 using System;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Display;
-using MonoBrickFirmware.Buttons;
+using MonoBrickFirmware.UserInput;
 using System.Reflection;
 using System.Resources;
 using System.Threading;

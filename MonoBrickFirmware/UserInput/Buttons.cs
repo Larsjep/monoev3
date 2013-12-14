@@ -3,7 +3,7 @@ using MonoBrickFirmware.Native;
 using MonoBrickFirmware.Tools;
 using System.Threading;
 
-namespace MonoBrickFirmware.Buttons
+namespace MonoBrickFirmware.UserInput
 {
 	public class Buttons : IDisposable
 	{
