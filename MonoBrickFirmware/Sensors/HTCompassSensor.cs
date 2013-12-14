@@ -10,7 +10,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// HiTechnic tilt compass sensor
 	/// </summary>
-    public class HiTecCompassSensor : I2CSensorBase, ISensor
+    public class HiTecCompassSensor : I2CSensor, ISensor
     {
         private const byte CompassAddress = 0x02;
         

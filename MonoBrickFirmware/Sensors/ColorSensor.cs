@@ -215,7 +215,7 @@ namespace MonoBrickFirmware.Sensors
 		}	
 	}
 	
-	public class EV3ColorSensor : UartSensorBase, IColorSensor{
+	public class EV3ColorSensor : UartSensor, IColorSensor{
 		
 		/// <summary>
 		/// Initializes a new instance of the NXTColorSensor class in color mode
@@ -365,7 +365,7 @@ namespace MonoBrickFirmware.Sensors
 	
 	
 	
-	public class NXTColorSensor : AnalogSensorBase, IColorSensor{
+	public class NXTColorSensor : AnalogSensor, IColorSensor{
 		
 		//Analog memory offsets
     	private const int ColorOffset = 4856;

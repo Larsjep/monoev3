@@ -21,7 +21,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class for the NXT sound sensor.
 	/// </summary>
-	public class SoundSensor: AnalogSensorBase, ISensor 
+	public class SoundSensor: AnalogSensor, ISensor 
 	{
 		/// <summary>
 		/// Initializes a new instance of the sound sensor class.

@@ -16,7 +16,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Base class for all I2C sensors. This should be used when implementing a new I2C sensor
 	/// </summary>
-	public abstract class I2CSensorBase
+	public abstract class I2CSensor
 	{
 		private UnixDevice I2CDevice;
 		//private MemoryArea I2CMemory;
@@ -35,7 +35,7 @@ namespace MonoBrickFirmware.Sensors
 		protected UARTMode uartMode{get; private set;}
 		protected I2CMode mode;
 		
-		public I2CSensorBase (SensorPort port, byte address, I2CMode mode)
+		public I2CSensor (SensorPort port, byte address, I2CMode mode)
 		{
 			this.port = port;
 			this.I2CAddress = address;

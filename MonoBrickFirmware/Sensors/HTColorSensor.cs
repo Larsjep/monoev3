@@ -13,7 +13,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// HiTechnic color sensor
 	/// </summary>
-    public class HiTecColorSensor : I2CSensorBase, ISensor
+    public class HiTecColorSensor : I2CSensor, ISensor
     {
         private const byte ColorAddress = 0x02;
         

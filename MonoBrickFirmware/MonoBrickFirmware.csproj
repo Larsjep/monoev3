@@ -76,10 +76,7 @@
     <Compile Include="UserInput\ButtonEvents.cs" />
     <Compile Include="Tools\BmpImage.cs" />
     <Compile Include="Tools\ByteArrayCreator.cs" />
-    <Compile Include="Sensors\AnalogSensorBase.cs" />
     <Compile Include="Sensors\HTColorSensor.cs" />
-    <Compile Include="Sensors\I2CSensorBase.cs" />
-    <Compile Include="Sensors\UARTSensorBase.cs" />
     <Compile Include="Menus\IMenuItem.cs" />
     <Compile Include="Menus\MenuItemWithAction.cs" />
     <Compile Include="Menus\MenuItemWithOptions.cs" />
@@ -90,6 +87,9 @@
     <Compile Include="Dialogs\QuestionsDialog.cs" />
     <Compile Include="Dialogs\InfoDialog.cs" />
     <Compile Include="Menus\Menu.cs" />
+    <Compile Include="Sensors\AnalogSensor.cs" />
+    <Compile Include="Sensors\I2CSensor.cs" />
+    <Compile Include="Sensors\UARTSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

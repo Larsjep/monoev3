@@ -15,7 +15,7 @@ namespace MonoBrickFirmware.Sensors
 		#pragma warning restore
 	};
 	
-	public abstract class AnalogSensorBase{
+	public abstract class AnalogSensor{
 		private MemoryArea analogMemory;
 		
 		
@@ -35,7 +35,7 @@ namespace MonoBrickFirmware.Sensors
     	private const int BatteryVoltageOffset = 30;
     	
 		
-		public AnalogSensorBase (SensorPort port)
+		public AnalogSensor (SensorPort port)
 		{
 			this.port = port;
 			SensorManager.Instance.ResetI2C(this.port);

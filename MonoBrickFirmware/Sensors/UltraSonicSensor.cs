@@ -57,7 +57,7 @@ namespace MonoBrickFirmware.Sensors
     /// <summary>
     /// Sonar sensor
     /// </summary>
-	public class UltraSonicSensor : I2CSensorBase, ISensor {
+	public class UltraSonicSensor : I2CSensor, ISensor {
         private const byte UltraSonicAddress = 0x02;
 		private UltraSonicMode sonarMode;
         
