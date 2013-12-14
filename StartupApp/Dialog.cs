@@ -27,45 +27,73 @@ namespace StartupApp
         private SelectionType[] options;
         private int scrollPos;
         int cursorPos;
-        
-        public SelectDialog(Font f, Lcd lcd, Buttons btns, SelectionType[] options, string title) : base(f, lcd, btns, title) {
-            this.options = options;
-            cursorPos = 0;
-            scrollPos = 0;
+		bool allowEsc;
+		
+        private const int notificationEdge = 2;
+		public SelectDialog (Font f, Lcd lcd, Buttons btns, SelectionType[] options, string title, bool allowEsc) : base (f, lcd, btns, title)
+		{
+			this.options = options;
+			cursorPos = 0;
+			scrollPos = 0;
+			this.allowEsc = allowEsc;
+			EscPressed = false;
         }
 
-        protected override void OnDrawContent()
-        {
-            for (int i = 0; i != lines.Count; ++i) {
+        protected override void OnDrawContent ()
+		{
+			for (int i = 0; i != lines.Count; ++i) {
 				if (i + scrollPos >= options.Length)
 					break;
-                lcd.WriteTextBox(font, lines[i], options[i + scrollPos].ToString(), i != cursorPos); 	
+				lcd.WriteTextBox (font, lines [i], options [i + scrollPos].ToString (), i != cursorPos, Lcd.Alignment.Center); 	
 			}
         }
 
-        protected override bool OnUpAction()
-        {
-            if (cursorPos + scrollPos > 0)
-            {
-                if (cursorPos > 0)
-                    cursorPos--;
-                else
-                    scrollPos--;
-            }
-            return false;
+        protected override bool OnUpAction ()
+		{
+			if (cursorPos + scrollPos > 0) {
+				if (cursorPos > 0)
+					cursorPos--;
+				 else 
+					scrollPos--;
+			} 
+			return false;
         }
 
-        protected override bool OnDownAction()
-        {
-            if (scrollPos + cursorPos < options.Length - 1)
-            {
-                if (cursorPos < lines.Count - 1)
-                    cursorPos++;
-                else
-                    scrollPos++;
-            }
-            return false;
+        protected override bool OnDownAction ()
+		{
+			if (scrollPos + cursorPos < options.Length - 1) {
+				if (cursorPos < lines.Count - 1)
+					cursorPos++;
+				else
+					scrollPos++;
+			} 
+           	return false;
         }
+        
+        protected override bool OnEnterAction ()
+		{
+			return true;
+		}
+		
+		protected override bool OnEscape ()
+		{
+			if (allowEsc) {
+				EscPressed = true;
+				return true;
+			}
+			return false;
+		}
+        
+		public SelectionType GetSelection()
+		{
+			if(EscPressed)
+				return default(SelectionType);
+			else
+				return options[cursorPos+scrollPos];
+		}
+		
+		public bool EscPressed{get; private set;}
+        
     }
     
     
@@ -212,15 +240,16 @@ namespace StartupApp
 		protected Font font;
 		protected string title;
         protected List<Rectangle> lines;
-        protected Point bottomLineCenter;
-		private int titleSize;
+        protected Rectangle dialogWindowOuther; 
+		protected Rectangle dialogWindowInner;
+		protected Rectangle titleRect;
+		protected Point bottomLineCenter;
+        
+        private int titleSize;
 		private Buttons btns;
 		private const float dialogHeightPct = 0.70f;
 		private const float dialogWidthPct = 0.90f;
 		private const int dialogEdge = 5;
-		private Rectangle dialogWindowOuther; 
-		private Rectangle dialogWindowInner;
-		private Rectangle titleRect;
 		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
 		private CancellationToken token;
 		public Dialog (Font f, Lcd lcd, Buttons btns, string title)
@@ -242,7 +271,7 @@ namespace StartupApp
 			token = cancelTokenSource.Token;
 			
 						
-			int top = dialogWindowInner.P1.Y + (int)( f.maxHeight/2) + 1; //plus one since we don't want the top line next to the title
+			int top = dialogWindowInner.P1.Y + (int)( f.maxHeight/2);
 			int middel = dialogWindowInner.P1.Y  + ((dialogWindowInner.P2.Y - dialogWindowInner.P1.Y) / 2) - (int)(f.maxHeight)/2;
 			int count = 0;
 			while (middel > top) {

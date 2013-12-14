@@ -6,7 +6,7 @@ using MonoBrickFirmware.Graphics;
 
 namespace StartupApp
 {
-	public interface IMenutem{
+	public interface IMenuItem{
 		bool EnterAction();
 		void Draw(Font f, Rectangle r, bool color);
 		bool LeftAction();
@@ -15,7 +15,7 @@ namespace StartupApp
 	
 	public enum MenuItemSymbole {None, LeftArrow, RightArrow};
 	
-	public class MenuItemWithAction : IMenutem
+	public class MenuItemWithAction : IMenuItem
 	{
 		private string text;
 		private Lcd lcd;
@@ -49,7 +49,7 @@ namespace StartupApp
 		}	
 	}
 	
-	public class MenuItemWithOptions<OptionType> : IMenutem
+	public class MenuItemWithOptions<OptionType> : IMenuItem
 	{
 		private string text;
 		private Lcd lcd;
@@ -103,7 +103,7 @@ namespace StartupApp
 
 	}
 	
-	public class MenuItemWithCheckBox : IMenutem
+	public class MenuItemWithCheckBox : IMenuItem
 	{
 		private string text;
 		private Lcd lcd;
@@ -147,7 +147,7 @@ namespace StartupApp
 		public bool Checked{get;private set;}
 	}
 	
-	public class MenuItemWithNumericInput : IMenutem
+	public class MenuItemWithNumericInput : IMenuItem
 	{
 		private string text;
 		private Lcd lcd;
@@ -271,7 +271,7 @@ namespace StartupApp
 	
 	public class Menu
 	{
-		IMenutem[] items;
+		IMenuItem[] menuItems;
 		Lcd lcd;
 		Font font;
 		string title;
@@ -281,15 +281,15 @@ namespace StartupApp
 		int cursorPos;
 		int scrollPos;
 		Buttons btns;
-		public Menu (Font f, Lcd lcd, Buttons btns, string title, IEnumerable<IMenutem> items)
+		public Menu (Font f, Lcd lcd, Buttons btns, string title, IEnumerable<IMenuItem> items)
 		{
 			this.font = f;
 			this.lcd = lcd;
 			this.title = title;
-			this.items = items.ToArray();			
-			this.itemSize = new Point(Lcd.Width, (int)font.maxHeight);
-			this.itemHeight = new Point(0, (int)font.maxHeight);
-			this.itemsOnScreen = (int)(Lcd.Height/font.maxHeight - 1); // -2 Because of the title and arrows
+			this.menuItems = items.ToArray ();			
+			this.itemSize = new Point (Lcd.Width, (int)font.maxHeight);
+			this.itemHeight = new Point (0, (int)font.maxHeight);
+			this.itemsOnScreen = (int)(Lcd.Height / font.maxHeight - 1); // -1 Because of the title
 			this.btns = btns;
 			cursorPos = 0;
 			scrollPos = 0;
@@ -298,14 +298,14 @@ namespace StartupApp
 		private void RedrawMenu ()
 		{
 			lcd.Clear ();
-			Rectangle startPos = new Rectangle (new Point (0, 0), itemSize);
-			
-			lcd.WriteTextBox (font, startPos, title, true, Lcd.Alignment.Center);
-			
-			for (int i = 0; i != itemsOnScreen; ++i) {
-				if (i + scrollPos >= items.Length)
+			Rectangle currentPos = new Rectangle (new Point (0, 0), itemSize);
+			lcd.WriteTextBox (font, currentPos, title, true, Lcd.Alignment.Center);
+			int i = 0;
+			while (i != itemsOnScreen) {
+				if (i + scrollPos >= menuItems.Length)
 					break;
-				items[i + scrollPos].Draw(font, startPos+itemHeight*(i+1), i != cursorPos);
+				menuItems[i + scrollPos].Draw(font, currentPos+itemHeight*(i+1), i != cursorPos);
+				i++;
 			}
 			lcd.Update();
 		}
@@ -323,7 +323,7 @@ namespace StartupApp
 		
 		private void MoveDown()
 		{
-			if (scrollPos+cursorPos < items.Length-1)
+			if (scrollPos+cursorPos < menuItems.Length-1)
 			{
 				if (cursorPos < itemsOnScreen-1)
 					cursorPos++;
@@ -350,19 +350,19 @@ namespace StartupApp
 					  exit = true;
 					break;
 					case Buttons.ButtonStates.Enter:
-						if (items[scrollPos+cursorPos].EnterAction())
+						if (menuItems[scrollPos+cursorPos].EnterAction())
 				   		{
 					    	exit = true;
 						}
 					break;
 					case Buttons.ButtonStates.Left:
-						if (items[scrollPos+cursorPos].LeftAction())
+						if (menuItems[scrollPos+cursorPos].LeftAction())
 				   		{
 					    	exit = true;
 						}
 					break;
 					case Buttons.ButtonStates.Right:
-						if (items[scrollPos+cursorPos].RightAction())
+						if (menuItems[scrollPos+cursorPos].RightAction())
 				   		{
 					    	exit = true;
 						}
