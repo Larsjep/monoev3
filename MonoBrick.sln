@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacebookExample", "Facebook
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRSensorExample", "IRSensorExample\IRSensorExample.csproj", "{826357C7-2F1F-46CD-8786-5987E6E26767}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "I2CExample", "I2CExample\I2CExample.csproj", "{ED35A35F-224C-4700-8CB5-745B518623F2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTechnicI2CExample", "HiTechnicI2CExample\HiTechnicI2CExample.csproj", "{11C84BA4-9A8A-4BF2-AA7B-2D45AC63ACAE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundSensorExample", "SoundSensorExample\SoundSensorExample.csproj", "{61423DCA-229C-4A9C-B49A-3F2C1432B8F0}"
@@ -95,10 +93,6 @@ Global
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Debug|x86.Build.0 = Debug|x86
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.ActiveCfg = Release|x86
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.Build.0 = Release|x86
-		{ED35A35F-224C-4700-8CB5-745B518623F2}.Debug|x86.ActiveCfg = Debug|x86
-		{ED35A35F-224C-4700-8CB5-745B518623F2}.Debug|x86.Build.0 = Debug|x86
-		{ED35A35F-224C-4700-8CB5-745B518623F2}.Release|x86.ActiveCfg = Release|x86
-		{ED35A35F-224C-4700-8CB5-745B518623F2}.Release|x86.Build.0 = Release|x86
 		{F9469EB1-222C-4F43-B426-4FA196401BE7}.Debug|x86.ActiveCfg = Debug|x86
 		{F9469EB1-222C-4F43-B426-4FA196401BE7}.Debug|x86.Build.0 = Debug|x86
 		{F9469EB1-222C-4F43-B426-4FA196401BE7}.Release|x86.ActiveCfg = Release|x86
