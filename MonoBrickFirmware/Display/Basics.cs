@@ -48,6 +48,11 @@ namespace MonoBrickFirmware.Display
 		{
 			return new Rectangle(r.P1 + p, r.P2 + p);
 		}
+		
+		static public Rectangle operator-(Rectangle r, Point p)
+		{
+			return new Rectangle(r.P1 - p, r.P2 - p);
+		}
 			
 	}
 }

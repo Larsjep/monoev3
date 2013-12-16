@@ -20,23 +20,23 @@ namespace MonoBrickFirmware.Dialogs
         
         private int titleSize;
 		private Buttons btns;
-		private const float dialogHeightPct = 0.70f;
-		private const float dialogWidthPct = 0.90f;
 		private const int dialogEdge = 5;
+		private int dialogWidth;
+		private int dialogHeight;
 		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
 		private CancellationToken token;
-		public Dialog (Font f, Lcd lcd, Buttons btns, string title)
+		public Dialog (Font f, Lcd lcd, Buttons btns, string title, int width = 160, int height = 90)
 		{
+			dialogWidth = width;
+			dialogHeight = height;
 			this.font = f;
 			this.lcd = lcd;
 			this.title = title;
 			this.btns = btns;
-			int xEdge = (int)((float)(Lcd.Width) * (1.0 - dialogWidthPct) / 2);
-			int yEdge = (int)((float)(Lcd.Height) * (1.0 - dialogHeightPct) / 2);
-			int ySize = (int)((float)(Lcd.Height) * dialogHeightPct);
-			int xSize = (int)((float)(Lcd.Width) * dialogWidthPct);
+			int xEdge = (Lcd.Width - dialogWidth)/2;
+			int yEdge = (Lcd.Height - dialogHeight)/2;
 			Point startPoint1 = new Point (xEdge, yEdge);
-			Point startPoint2 = new Point (xEdge + xSize, yEdge + ySize);
+			Point startPoint2 = new Point (xEdge + dialogWidth, yEdge + dialogHeight);
 			this.titleSize = font.TextSize (this.title).X + (int)f.maxWidth;
 			dialogWindowOuther = new Rectangle (startPoint1, startPoint2);
 			dialogWindowInner = new Rectangle (new Point (startPoint1.X + dialogEdge, startPoint1.Y + dialogEdge), new Point (startPoint2.X - dialogEdge, startPoint2.Y - dialogEdge));

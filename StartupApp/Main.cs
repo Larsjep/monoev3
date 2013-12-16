@@ -203,9 +203,18 @@ namespace StartupApp
 			items.Add (new MenuItemWithAction(lcd, "Debug settings", () => ShowDebugSettings(lcd,btns), MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Information", () => Information(lcd, btns),MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Shutdown", () => Shutdown(lcd,btns)));
+			items.Add (new MenuItemWithAction(lcd, "Test", () => ShowTest(lcd,btns)));
 			Menu m = new Menu(font, lcd, btns ,"Main menu", items);
 			m.Show();
 		}
+		
+		static bool ShowTest (Lcd lcd, Buttons btns)
+		{
+			var dialog = new CharacterDialog(lcd, btns, "Enter number");
+			dialog.Show();
+			return false;
+		}
+		
 		static bool ShowDebugSettings (Lcd lcd, Buttons btns)
 		{
 			//Create the settings items and apply the settings 
@@ -246,10 +255,10 @@ namespace StartupApp
 		
 		public static void Main (string[] args)
 		{
-			/****** JIT work-around remove when JIT problem is fixed *****/
+			/*// JIT work-around remove when JIT problem is fixed
 			System.Threading.Thread.Sleep(10);
 			Console.WriteLine("JIT workaround - please remove!!!");
-			/**********/
+			// JIT work-around
 			  
 			//Load settings
 			try {
@@ -269,7 +278,7 @@ namespace StartupApp
 					lcd.WriteText(font, textPos, iptext , true);
 					lcd.Update();						
 					btns.GetKeypress();
-				}
+				}*/
 			for (;;)
 			{
 				using (Lcd lcd = new Lcd())
