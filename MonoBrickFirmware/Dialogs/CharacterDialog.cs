@@ -37,7 +37,8 @@ namespace MonoBrickFirmware.Dialogs
 		private const string alfabetSetString = "abc";
 		private const string symboleSetString = "123";
 		private string setTypeString;
-		
+        private Rectangle resultRect;
+        private string resultString;
 		public CharacterDialog(Lcd lcd, Buttons btns, string title) : base(Font.MediumFont, lcd, btns, title, Lcd.Width, Lcd.Height-22) 
         {
 			characterInnerBox = new Point(characterSize, characterSize); 
@@ -46,6 +47,8 @@ namespace MonoBrickFirmware.Dialogs
 			symboleSet = new ICharacterSet[]{new NumbersAndSymbols(), new NumbersAndSymbols2()};
 			selectedSet = alfabetSet[selectedSetIndex];
 			setTypeString = symboleSetString;
+            resultRect = new Rectangle(new Point(dialogWindowInner.P1.X, dialogWindowInner.P2.Y - (int)Font.MediumFont.maxHeight ), dialogWindowInner.P2);
+            resultString = "";
         } 
         
 		private bool ChangeSetType ()
@@ -64,15 +67,24 @@ namespace MonoBrickFirmware.Dialogs
 			}
 			return false;
 		}
-		
-		private bool AddCharacter(char letter)
+
+        private bool AddSpace() {
+            resultString = resultString + "";
+            return false;
+		}
+
+		private bool AddCharacter()
 		{
-			return false;
+            resultString = resultString + selectedSet.Characters[selectedSetIndex].ToString();
+            return false;
 		}
     	
 		private bool DeleteCharacter ()
 		{
-			return false;
+            if (resultString.Length != 0) {
+                resultString = resultString.Substring(0, resultString.Length - 1);
+            }
+            return false;
 		}
 		
 		private bool NextSet ()
@@ -114,7 +126,6 @@ namespace MonoBrickFirmware.Dialogs
 		
 		private bool Done(){
 			return true;
-		
 		}
         
 		protected override bool OnEnterAction ()
@@ -126,7 +137,7 @@ namespace MonoBrickFirmware.Dialogs
 					end = ChangeSetType();
 					break;
 				case Selection.Character:
-					end = AddCharacter(selectedCharacter);
+					end = AddCharacter();
 					break;
 				case Selection.Delete:
 					end = DeleteCharacter();
@@ -141,7 +152,7 @@ namespace MonoBrickFirmware.Dialogs
 					end = NextSet();
 					break;
 				case Selection.Space:
-					end = AddCharacter(' ');
+                    end = DeleteCharacter();
 					break;
 			}
 			return end;
@@ -342,7 +353,15 @@ namespace MonoBrickFirmware.Dialogs
 			innerRect = new Rectangle (new Point (outherRect.P1.X + characterEdge, outherRect.P1.Y + characterEdge), new Point (outherRect.P2.X - characterEdge, outherRect.P2.Y - characterEdge));
 			lcd.DrawBox (innerRect, okSelected);
 			lcd.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset+2, innerRect.P1.Y - characterOffset+1), "OK", !okSelected);
-			
+            if (charactersSelected)
+            {
+                int xUnderLinePosition = dialogWindowInner.P1.X + (dialogWindowInner.P2.X - dialogWindowInner.P1.X) 
+                lcd.WriteTextBox(Font.MediumFont, resultRect, resultString + selectedSet.Characters[selectedSetIndex].ToString(), false, Lcd.Alignment.Center);
+            }
+            else 
+            {
+                lcd.WriteTextBox(Font.MediumFont, resultRect, resultString + selectedSet.Characters[selectedSetIndex].ToString(), false, Lcd.Alignment.Center);
+            }
         }
     }
     
