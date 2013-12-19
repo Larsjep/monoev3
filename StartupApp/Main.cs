@@ -212,6 +212,7 @@ namespace StartupApp
 		{
 			var dialog = new CharacterDialog(lcd, btns, "Enter number");
 			dialog.Show();
+			Console.WriteLine(dialog.GetUserInput());
 			return false;
 		}
 		
