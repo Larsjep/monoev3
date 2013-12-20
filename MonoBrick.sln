@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GyroSensorExample", "GyroSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GmailExample", "GmailExample\GmailExample.csproj", "{F9469EB1-222C-4F43-B426-4FA196401BE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiFiTest", "WiFiTest\WiFiTest.csproj", "{BF271062-2A5E-4F7E-8F4F-0CEBCF72A26D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -81,6 +83,10 @@ Global
 		{B5086CF6-F415-44FB-8543-E912A7D28D05}.Debug|x86.Build.0 = Debug|x86
 		{B5086CF6-F415-44FB-8543-E912A7D28D05}.Release|x86.ActiveCfg = Release|x86
 		{B5086CF6-F415-44FB-8543-E912A7D28D05}.Release|x86.Build.0 = Release|x86
+		{BF271062-2A5E-4F7E-8F4F-0CEBCF72A26D}.Debug|x86.ActiveCfg = Debug|x86
+		{BF271062-2A5E-4F7E-8F4F-0CEBCF72A26D}.Debug|x86.Build.0 = Debug|x86
+		{BF271062-2A5E-4F7E-8F4F-0CEBCF72A26D}.Release|x86.ActiveCfg = Release|x86
+		{BF271062-2A5E-4F7E-8F4F-0CEBCF72A26D}.Release|x86.Build.0 = Release|x86
 		{CB1D3F34-4C0F-409F-844B-4874E251E34A}.Debug|x86.ActiveCfg = Debug|x86
 		{CB1D3F34-4C0F-409F-844B-4874E251E34A}.Debug|x86.Build.0 = Debug|x86
 		{CB1D3F34-4C0F-409F-844B-4874E251E34A}.Release|x86.ActiveCfg = Release|x86
@@ -99,7 +105,7 @@ Global
 		{F9469EB1-222C-4F43-B426-4FA196401BE7}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = StartupApp\StartupApp.csproj
+		StartupItem = WiFiTest\WiFiTest.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2

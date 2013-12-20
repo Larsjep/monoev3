@@ -90,6 +90,8 @@
     <Compile Include="Sensors\AnalogSensor.cs" />
     <Compile Include="Sensors\I2CSensor.cs" />
     <Compile Include="Sensors\UARTSensor.cs" />
+    <Compile Include="Native\ProcessHelper.cs" />
+    <Compile Include="Native\WiFiDevice.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

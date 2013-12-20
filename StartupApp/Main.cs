@@ -82,8 +82,7 @@ namespace StartupApp
 				if (selection == deleteString) {
 					var infoDialog = new InfoDialog (font, lcd, btns, "Deleting File. Please wait", false, "Deleting File");
 					infoDialog.Show ();
-					//if (RunAndWaitForProcess ("rm", filename) == 0) {
-					if (RunAndWaitForProcess ("rm", "sdaf") == 0) {
+					if (ProcessHelper.RunAndWaitForProcess ("rm", filename) == 0) {
 						infoDialog = new InfoDialog (font, lcd, btns, "Program deleted", true, "Deleting File");
 					} 
 					else 
@@ -159,21 +158,10 @@ namespace StartupApp
 			} 
 			else 
 			{
-				RunAndWaitForProcess("/usr/local/bin/mono", programName); 
+				ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono", programName); 
 			}
 		}
-		
-		static int RunAndWaitForProcess(string fileName, string arguments = ""){
-			Process proc = new System.Diagnostics.Process ();
-			proc.EnableRaisingEvents = false; 
-			Console.WriteLine ("Starting process: {0} with arguments: {1}", fileName, arguments);
-			proc.StartInfo.FileName = fileName;
-			proc.StartInfo.Arguments = arguments;
-			proc.Start ();
-			proc.WaitForExit ();
-			return proc.ExitCode;	
-		}
-		
+
 		static bool Shutdown (Lcd lcd, Buttons btns)
 		{
 			var dialog = new QuestionDialog (Font.MediumFont, lcd, btns, "Are you sure?", "Shutdown EV3");
@@ -188,7 +176,7 @@ namespace StartupApp
 					dev.IoCtl(0, new byte[0]);
 				}
 				btns.LedPattern(2);
-				MenuAction = () => RunAndWaitForProcess("/lejos/bin/exit", "");			
+				MenuAction = () => ProcessHelper.RunAndWaitForProcess("/lejos/bin/exit");			
 				return true;
 			
 			} 
@@ -256,7 +244,7 @@ namespace StartupApp
 		
 		public static void Main (string[] args)
 		{
-			/*// JIT work-around remove when JIT problem is fixed
+			// JIT work-around remove when JIT problem is fixed
 			System.Threading.Thread.Sleep(10);
 			Console.WriteLine("JIT workaround - please remove!!!");
 			// JIT work-around
@@ -279,7 +267,7 @@ namespace StartupApp
 					lcd.WriteText(font, textPos, iptext , true);
 					lcd.Update();						
 					btns.GetKeypress();
-				}*/
+				}
 			for (;;)
 			{
 				using (Lcd lcd = new Lcd())
