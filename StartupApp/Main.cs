@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading;
-using System.Net.NetworkInformation;
 using System.Diagnostics;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
@@ -21,21 +20,13 @@ namespace StartupApp
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		static Font font = Font.MediumFont;
 		static Action MenuAction = null;
-		static string SettingsFileName = "firmwareSettings.xml";
+		static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
+		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
+		
 		static FirmwareSettings settings = new FirmwareSettings();
-		public static string GetIpAddress()
-		{
-			NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
-			foreach (var ni in interfaces)
-			{
-				foreach (var addr in ni.GetIPProperties().UnicastAddresses)
-				{
-					if (addr.Address.ToString() != "127.0.0.1")
-						return addr.Address.ToString();					
-				}
-			}
-			return "Unknown";
-		}
+		static object settingsLock = new object();
+		static string versionString = "Firmware: 0.1.0.0";
+		static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
 		
 		static bool Information(Lcd lcd, Buttons btns)
 		{
@@ -52,9 +43,10 @@ namespace StartupApp
 			Point offset = new Point(0, (int)font.maxHeight);
 			Point startPos = new Point(0,0);
 			lcd.Clear();
-			lcd.WriteText(font, startPos+offset*0, "Firmware: 0.1.0.0", true);
+			lcd.WriteText(font, startPos+offset*0, versionString, true);
 			lcd.WriteText(font, startPos+offset*1, "Mono version: " + monoVersion.Substring(0,7), true);
 			lcd.WriteText(font, startPos+offset*2, "Mono CLR: " + monoCLR, true);			
+			lcd.WriteText(font, startPos+offset*3, "IP: " + WiFiDevice.GetIpAddress(), true);			
 			lcd.Update();
 			btns.GetKeypress();
 			return false;
@@ -117,7 +109,7 @@ namespace StartupApp
 		static void RunAndWaitForProgram (string programName, bool runInDebugMode)
 		{
 			if (runInDebugMode) {
-				programName = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugPort + ",server=y " + programName;
+				programName = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugSettings.Port + ",server=y " + programName;
 				using (Lcd lcd = new Lcd ())
 				using (Buttons btns = new Buttons ()) {
 					System.Diagnostics.Process proc = new System.Diagnostics.Process ();
@@ -125,8 +117,8 @@ namespace StartupApp
 					Thread escapeThread = null;
 					CancellationTokenSource cts = new CancellationTokenSource();
 					CancellationToken token = cts.Token;
-					string portString  = ("Port: " + settings.DebugPort).PadRight(6).PadRight(6);
-					if (settings.TerminateDebugWithEscape) {
+					string portString  = ("Port: " + settings.DebugSettings.Port).PadRight(6).PadRight(6);
+					if (settings.DebugSettings.TerminateWithEscape) {
 						escapeThread = new System.Threading.Thread (delegate() {
 							while (!token.IsCancellationRequested) {
 								if (btns.GetKeypress (token) == Buttons.ButtonStates.Escape) {
@@ -188,86 +180,268 @@ namespace StartupApp
 			
 			List<IMenuItem> items = new List<IMenuItem>();
 			items.Add (new MenuItemWithAction(lcd, "Programs", () => RunPrograms(lcd, btns),MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction(lcd, "Debug settings", () => ShowDebugSettings(lcd,btns), MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction(lcd, "WiFi Connection", () => ShowWiFiMenu(lcd,btns), MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction(lcd, "Settings", () => ShowSettings(lcd,btns), MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Information", () => Information(lcd, btns),MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction(lcd, "Check for Updates", () => ShowUpdatesDialogs(lcd,btns,true)));
 			items.Add (new MenuItemWithAction(lcd, "Shutdown", () => Shutdown(lcd,btns)));
-			items.Add (new MenuItemWithAction(lcd, "Test", () => ShowTest(lcd,btns)));
 			Menu m = new Menu(font, lcd, btns ,"Main menu", items);
 			m.Show();
 		}
 		
-		static bool ShowTest (Lcd lcd, Buttons btns)
+		static bool ShowWiFiMenu (Lcd lcd, Buttons btns)
 		{
-			var dialog = new CharacterDialog(lcd, btns, "Enter number");
-			dialog.Show();
-			Console.WriteLine(dialog.GetUserInput());
-			return false;
+			List<IMenuItem> items = new List<IMenuItem> ();
+			var ssidItem = new MenuItemWithCharacterInput(lcd,btns,"SSID", "Enter SSID", settings.WiFiSettings.SSID);
+			ssidItem.OnDialogExit += delegate(string text) {
+				new Thread(delegate() {
+			    	lock(settingsLock){
+			    		settings.WiFiSettings.SSID = text;
+						SaveSettings();
+					}
+			    }).Start();
+			};
+			var passwordItem = new MenuItemWithCharacterInput(lcd,btns,"Password", "Password", settings.WiFiSettings.Password, true);
+			passwordItem.OnDialogExit += delegate(string text) {
+				new Thread(delegate() {
+			    	lock(settingsLock){
+			    		settings.WiFiSettings.Password = text;
+						SaveSettings();
+					}
+			    }).Start();
+			};
+			var encryptionItem = new MenuItemWithOptions<string>(lcd,"Encryption", new string[]{"None","WPA/2"}, settings.WiFiSettings.Encryption ? 1 : 0);
+			encryptionItem.OnOptionChanged += delegate(string newOpstion) {
+				new Thread(delegate() {
+			    	lock(settingsLock){
+						if(newOpstion == "None")
+							settings.WiFiSettings.Encryption = false;
+						else
+							settings.WiFiSettings.Encryption = true;
+						SaveSettings(); 
+					}
+			    }).Start();
+			};
+			var connectItem = new MenuItemWithCheckBox(lcd,"Connect", WiFiDevice.IsLinkUp(),
+				delegate(bool WiFiOn)
+         		{ 
+					bool isOn = WiFiOn;
+					lock(settingsLock){
+						var infoDialog = new InfoDialog(font,lcd,btns,"Creating Configuration file", false);
+						infoDialog.Show();
+						WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID,settings.WiFiSettings.Password,settings.WiFiSettings.Encryption);
+						if(WiFiOn){
+							var dialog = new InfoDialog(font,lcd,btns,"Shutting down WiFi", false);
+							dialog.Show();
+							WiFiDevice.TurnOff();
+							dialog = new InfoDialog(font,lcd,btns,"WiFi Disabled!!", true);
+							dialog.Show();
+							isOn = false;
+						}
+						else{
+							var dialog = new InfoDialog(font,lcd,btns,"Connecting to WiFi Network Please Wait", false);
+							dialog.Show();
+							if(WiFiDevice.TurnOn(60000)){
+								if(settings.WiFiSettings.ConnectAtStartUp == false){
+									var question = new QuestionDialog(font,lcd,btns,"Do you want to connect at start-up?", "Settings");
+									question.Show();
+									if(question.IsPositiveSelected){
+										new Thread(delegate() {
+									    	settings.WiFiSettings.ConnectAtStartUp = true;
+											SaveSettings();
+									    }).Start();
+									}
+								}
+								dialog = new InfoDialog(font,lcd,btns,"Connected Successfully " + WiFiDevice.GetIpAddress(), true);
+								dialog.Show();
+								isOn = true;
+							}
+							else{
+								dialog = new InfoDialog(font,lcd,btns,"Failed to connect to WiFI Network", true);
+								dialog.Show();
+								isOn = false;
+							}
+						}
+					}
+					return isOn;
+         		} 
+			);
+			items.Add(ssidItem);
+			items.Add(passwordItem);
+			items.Add(encryptionItem);
+			items.Add(connectItem);
+			//Show the menu
+			Menu m = new Menu (font, lcd, btns, "WiFi Connection", items);
+			m.Show ();
+			return false;	
 		}
 		
-		static bool ShowDebugSettings (Lcd lcd, Buttons btns)
+		static bool SaveSettings ()
+		{
+			bool ok = false;
+			try {
+				settings.SaveToXML(SettingsFileName);
+				ok = true;
+			} 
+			catch {
+			
+			}
+			return ok;
+		}
+		
+		static bool ShowSettings (Lcd lcd, Buttons btns)
 		{
 			//Create the settings items and apply the settings 
 			List<IMenuItem> items = new List<IMenuItem> ();
-			var terminateWithEscapeItem = new MenuItemWithCheckBox(lcd, "Esc. termination",settings.TerminateDebugWithEscape);
-			var debugPortItem = new MenuItemWithNumericInput(lcd, "Debug port",settings.DebugPort,1, ushort.MaxValue);
-			
+			var terminateWithEscapeItem = new MenuItemWithCheckBox(lcd, "Debug termination",settings.DebugSettings.TerminateWithEscape);
+			var debugPortItem = new MenuItemWithNumericInput(lcd, "Debug port",settings.DebugSettings.Port,1, ushort.MaxValue);
+			var checkForUpdate = new MenuItemWithCheckBox(lcd, "Update check",settings.GeneralSettings.CheckForSwUpdatesAtStartUp);
+			var wifiConnect = new MenuItemWithCheckBox(lcd, "WiFi auto connect",settings.WiFiSettings.ConnectAtStartUp);
+			items.Add(wifiConnect);
+			items.Add(checkForUpdate);
 			items.Add(terminateWithEscapeItem);
 			items.Add (debugPortItem);
 			
 			//Show the menu
-			Menu m = new Menu (font, lcd, btns, "Debug Settings", items);
+			Menu m = new Menu (font, lcd, btns, "Settings", items);
 			m.Show ();
-			
-			//Show dialog
-			InfoDialog dialog = new InfoDialog(font, lcd,btns,"Saving settings.", false);
-			dialog.Show();
-			System.Threading.Thread.Sleep(400);
-			//Save the new settings
-			FirmwareSettings newXmlSettings = new FirmwareSettings();
-			newXmlSettings.TerminateDebugWithEscape = terminateWithEscapeItem.Checked; 
-			newXmlSettings.DebugPort = debugPortItem.Value;
-			
-			try{
-				newXmlSettings.SaveToXML(SettingsFileName);
-				dialog.UpdateMessage("Done!");
-				System.Threading.Thread.Sleep(400);
-			}
-			catch
-			{
-				dialog = new InfoDialog(font, lcd,btns,"Failed to save settings!", true);
-				dialog.Show();
-			}
-			settings = newXmlSettings;//apply the settings
+			new Thread(delegate() {
+			    	lock(settingsLock){
+						settings.DebugSettings.TerminateWithEscape = terminateWithEscapeItem.Checked; 
+						settings.DebugSettings.Port = debugPortItem.Value;
+						settings.GeneralSettings.CheckForSwUpdatesAtStartUp = checkForUpdate.Checked;
+						settings.WiFiSettings.ConnectAtStartUp = wifiConnect.Checked;
+						SaveSettings(); 
+					}
+			    }).Start();
 			return false;
+		}
+		
+		
+		public static void WriteWpaSupplicantConfiguration (string ssid, string password, bool useEncryption)
+		{
+			MonoBrickFirmware.Native.ProcessHelper.RunAndWaitForProcess("rm",WpaSupplicantFileName); 
+			string encryption;
+			if(useEncryption)
+				encryption = "WPA-PSK";
+			else
+				encryption = "NONE";	             
+			string[] lines = { 
+				"#This file is auto generated by MonoBrick - will be overwritten at startup", 
+				"#ap_scan=1", 
+				"#fast_reauth=1",
+				"# Pers", 
+				"ctrl_interface=/var/run/wpa_supplicant", 
+				"network={", 
+				"  ssid=\"" + ssid + "\"",
+				"  key_mgmt="+encryption, 
+				"  psk=\"" + password + "\"", 
+				"  pairwise=CCMP TKIP",
+				"  group=CCMP TKIP", 
+				"}", 
+			};
+        	System.IO.File.WriteAllLines(@WpaSupplicantFileName, lines);
+		}
+		
+		static bool ShowUpdatesDialogs (Lcd lcd, Buttons btns, bool showDescriptionDialog)
+		{
+			if (WiFiDevice.IsLinkUp ()) {
+				try {
+					InfoDialog dialog = null;
+					if(showDescriptionDialog){
+						dialog = new InfoDialog(font, lcd, btns, "Checking for updates. Please wait",false);
+						dialog.Show();
+					}
+					if (UpdateAvailable ()) {
+						dialog = new InfoDialog (font, lcd, btns, "Software update available. Visit monobrick.dk", true);
+					} else {
+						dialog = new InfoDialog (font, lcd, btns, "No software updates available", true);
+					}
+					dialog.Show ();
+				} 
+				catch {
+					InfoDialog dialog = new InfoDialog (font, lcd, btns, "Failed to check for updates", true);
+					dialog.Show ();		
+				}
+			} 
+			else 
+			{
+				var dialog = new InfoDialog (font, lcd, btns, "WiFi device is not pressent", true);
+				dialog.Show();	
+			}
+			return false;
+		}
+		
+		
+		public static bool UpdateAvailable ()
+		{
+				var textFromFile = (new WebClient ()).DownloadString (versionURL).TrimEnd (new char[] { '\r', '\n' });
+				return versionString != textFromFile;
 		}
 		
 		
 		public static void Main (string[] args)
 		{
-			// JIT work-around remove when JIT problem is fixed
-			System.Threading.Thread.Sleep(10);
-			Console.WriteLine("JIT workaround - please remove!!!");
-			// JIT work-around
-			  
-			//Load settings
-			try {
-				settings = settings.LoadFromXML (SettingsFileName);
-			} 
-			catch 
-			{
-				Console.WriteLine ("Failed to read settings. Using default settings");
+			using (Lcd lcd = new Lcd ())
+			using (Buttons btns = new Buttons ()) {					
+				lcd.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
+				Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
+				
+				lcd.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
+				lcd.Update ();						
+					
+				// JIT work-around remove when JIT problem is fixed
+				System.Threading.Thread.Sleep (10);
+				Console.WriteLine ("JIT workaround - please remove!!!");
+				lcd.WriteTextBox (Font.SmallFont, textRect, "Checking WiFi...", true, Lcd.Alignment.Center);
+				lcd.Update ();						
+				WiFiDevice.IsLinkUp ();
+				lcd.WriteTextBox (Font.SmallFont, textRect, "Starting Mono Runtime...", true, Lcd.Alignment.Center);
+				lcd.Update ();						
+				string monoVersion = "Unknown";
+				Type type = Type.GetType("Mono.Runtime");
+				if (type != null)
+				{                                          
+		    		MethodInfo displayName = type.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static); 
+		    		if (displayName != null)                   
+		        		monoVersion = (string)displayName.Invoke(null, null);
+		        	Console.WriteLine("Mono Version" + monoVersion); 
+				}	
+				string monoCLR = System.Reflection.Assembly.GetExecutingAssembly().ImageRuntimeVersion;
+				// JIT work-around end but look for more below
+				
+				//Load settings
+				lcd.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
+				lcd.Update ();						
+				try {
+					settings = settings.LoadFromXML (SettingsFileName);
+					lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
+					lcd.Update ();						
+					settings.SaveToXML (SettingsFileName);// JIT work-around
+				} catch {
+					Console.WriteLine ("Failed to read settings. Using default settings");
+				}
+				if (settings.WiFiSettings.ConnectAtStartUp) {
+					lcd.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);
+					lcd.Update ();						
+					if (WiFiDevice.TurnOn (60000)) {
+						WiFiDevice.GetIpAddress();// JIT work-around
+						if (settings.GeneralSettings.CheckForSwUpdatesAtStartUp) {
+							ShowUpdatesDialogs(lcd,btns, false);
+						} 
+						else 
+						{
+							var dialog = new InfoDialog(font,lcd,btns,"Connected Successfully " + WiFiDevice.GetIpAddress(), true);
+							dialog.Show();
+						} 
+					}
+					else{
+						var dialog = new InfoDialog(font,lcd,btns,"Failed to connect to WiFI Network", true);
+						dialog.Show();
+					}
+				}
 			}
 			
-			using (Lcd lcd = new Lcd())
-				using (Buttons btns = new Buttons())
-				{					
-					lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,0));					
-					string iptext = "IP: " + GetIpAddress();
-					Point textPos = new Point((Lcd.Width-font.TextSize(iptext).X)/2, Lcd.Height-23);
-					lcd.WriteText(font, textPos, iptext , true);
-					lcd.Update();						
-					btns.GetKeypress();
-				}
 			for (;;)
 			{
 				using (Lcd lcd = new Lcd())
@@ -284,5 +458,6 @@ namespace StartupApp
 				}
 			}
 		}
+		
 	}		
 }

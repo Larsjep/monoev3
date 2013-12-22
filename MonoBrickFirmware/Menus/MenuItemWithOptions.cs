@@ -10,6 +10,8 @@ namespace MonoBrickFirmware.Menus
         private OptionType[] options;
 		private const int rightArrowOffset = 4;
 		private const int arrowEdge = 4;
+		public Action<OptionType> OnOptionChanged = delegate {};
+        
         public MenuItemWithOptions(Lcd lcd, string text, OptionType[] options, int startIdx = 0)
         {
 			this.text = text;
@@ -19,7 +21,7 @@ namespace MonoBrickFirmware.Menus
 		}
 		public bool EnterAction()
 		{
-			return false;
+			return RightAction();
 		}
 		
 		public bool LeftAction ()
@@ -27,10 +29,12 @@ namespace MonoBrickFirmware.Menus
 			OptionIndex = OptionIndex -1;
 			if(OptionIndex < 0)
 				OptionIndex = options.Length-1;
+			OnOptionChanged(options[OptionIndex]);
 			return false;
 		}
 		public bool RightAction(){
 			OptionIndex = (OptionIndex+1)%options.Length;
+			OnOptionChanged(options[OptionIndex]);
 			return false;
 		}
 		public void Draw (Font f, Rectangle r, bool color)

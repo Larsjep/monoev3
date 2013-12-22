@@ -7,8 +7,8 @@ namespace MonoBrickFirmware.Native
 	{
 		public static int RunAndWaitForProcess(string fileName, string arguments = "" , int timeout = 0){
 			Process proc = new System.Diagnostics.Process ();
-			System.Timers.Timer timer = new System.Timers.Timer(timeout);
 			if(timeout != 0){
+				System.Timers.Timer timer = new System.Timers.Timer(timeout);
 				timer.Elapsed += delegate(object sender, System.Timers.ElapsedEventArgs e) {
 					timer.Stop();
 					proc.Kill();

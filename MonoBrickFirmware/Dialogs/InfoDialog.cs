@@ -21,7 +21,7 @@ namespace MonoBrickFirmware.Dialogs
 		}
 		
 		/// <summary>
-		/// Show the dialog - this does not block only draws the dialog
+		/// Show the dialog - this does not block only draws the dialog if wait for OK is disabled
 		/// </summary>
 		public override void Show ()
 		{
@@ -29,7 +29,9 @@ namespace MonoBrickFirmware.Dialogs
 				base.Show ();
 			} 
 			else {
+				OnShow();
 				Draw ();
+				OnExit();
 				//Don't listen for button events
 			}
 		}

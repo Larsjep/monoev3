@@ -25,6 +25,10 @@ namespace MonoBrickFirmware.Dialogs
 		private int dialogHeight;
 		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
 		private CancellationToken token;
+		
+		public Action OnShow = delegate {};
+		public Action OnExit = delegate {};
+		
 		public Dialog (Font f, Lcd lcd, Buttons btns, string title, int width = 160, int height = 90)
 		{
 			dialogWidth = width;
@@ -69,6 +73,7 @@ namespace MonoBrickFirmware.Dialogs
 		public virtual void Show()
 		{
 			bool exit = false;
+			OnShow();
 			while (!exit && !token.IsCancellationRequested) {
 				Draw ();
 				switch (btns.GetKeypress(token)) {
@@ -110,6 +115,7 @@ namespace MonoBrickFirmware.Dialogs
 						break;
 				}
 			}
+			OnExit();
 		}
 		
 		protected virtual bool OnEnterAction ()

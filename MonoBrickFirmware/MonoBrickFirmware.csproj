@@ -92,6 +92,7 @@
     <Compile Include="Sensors\UARTSensor.cs" />
     <Compile Include="Native\ProcessHelper.cs" />
     <Compile Include="Native\WiFiDevice.cs" />
+    <Compile Include="Menus\MenuItemWithCharacterInput.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

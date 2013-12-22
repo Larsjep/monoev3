@@ -1,13 +1,13 @@
 using System;
+using System.Net.NetworkInformation;
 
 namespace MonoBrickFirmware.Native
 {
 	public class WiFiDevice
 	{
-		
 		public WiFiDevice ()
 		{
-				
+						
 		
 		}
 		
@@ -29,17 +29,47 @@ namespace MonoBrickFirmware.Native
 			return up;
 		}
 		
-		public static string Gateway()
+		public static string Gateway ()
 		{
-			if(IsLinkUp())
-				return ProcessHelper.RunAndWaitForProcessWithOutput ("route");
-			return "";
+			if (IsLinkUp ()) {
+				string s = ProcessHelper.RunAndWaitForProcessWithOutput ("route");
+				string[] result = s.Split (new [] { '\r', '\n' });
+				if (result.Length >= 4) {
+					
+					//The gateway is in line 4 second word. Regex is used to remove whitespaces between words
+					string ipString = System.Text.RegularExpressions.Regex.Replace(result[3],@"\s+"," ").Split(' ')[1];
+					try{
+						System.Net.IPAddress.Parse (ipString);
+						return ipString;
+					}
+					catch{
+					
+					}
+				}
+			}
+			return null;
 		}
 		
 		public static void TurnOff()
 		{
 			ProcessHelper.RunAndWaitForProcess("killall","wpa_supplicant");
 		}
+		
+		public static string GetIpAddress()
+		{
+			if (IsLinkUp ()) {
+				NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces ();
+				foreach (var ni in interfaces) {
+					foreach (var addr in ni.GetIPProperties().UnicastAddresses) {
+						if (addr.Address.ToString () != "127.0.0.1")
+							return addr.Address.ToString ();					
+					}
+				}
+			}
+			return "Unknown";
+		}
+		
+		
 		
 		public static bool TurnOn (int timeout = 0)
 		{

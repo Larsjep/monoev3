@@ -6,30 +6,91 @@ using System.Xml;
 
 namespace StartupApp
 {
+	
+	public class DebugSettings{
+		[XmlElement("Port")]
+		private int port = 12345;
+		
+		[XmlElement("TerminateWithEscape")]
+		private bool terminateWithEscape = true;
+		
+		public bool TerminateWithEscape	
+		{
+			get { return terminateWithEscape; }
+			set { terminateWithEscape = value; }
+		}
+		
+		public int Port
+		{
+			get { return port; }
+			set { port = value; }
+		}
+	}
+	
+	public class WiFiSettings{
+		[XmlElement("SSID")]
+		private string ssid = "YourSSID";
+		
+		[XmlElement("Password")]
+		private string password = "YourPassword";
+		
+		[XmlElement("ConnectAtStartUp")]
+		private bool connectAtStartUp = false;
+		
+		[XmlElement("Encryption")]
+		private bool encryption = true;
+		
+		public string SSID {
+			get{return ssid; }
+			set { ssid = value; }
+		}
+		public string Password{
+			get{return  password; }
+			set {  password = value; }
+		}
+		
+		public bool ConnectAtStartUp	
+		{
+			get { return connectAtStartUp; }
+			set { connectAtStartUp = value; }
+		}
+		
+		public bool Encryption	
+		{
+			get { return encryption; }
+			set { encryption = value; }
+		}
+	}
+	
+	public class GeneralSettings{
+		[XmlElement("CheckForSwUpdatesAtStartUp")]
+		private bool checkForSwUpdatesAtStartUp = true;
+		
+		public bool CheckForSwUpdatesAtStartUp	
+		{
+			get { return checkForSwUpdatesAtStartUp; }
+			set { checkForSwUpdatesAtStartUp = value; }
+		}
+	}
+	
 	[XmlRoot("ConfigRoot")]
 	public class FirmwareSettings
 	{
-		[XmlElement("DebugPort")]
-		private int debugPort = 12345;
+		[XmlElement("GeneralSettings")]
+		public GeneralSettings GeneralSettings { get; set; }
 		
-		[XmlElement("TerminateDebugWithEscape")]
-		private bool terminateDebugWithEscape = true;
+		[XmlElement("WiFiSettings")]
+		public WiFiSettings WiFiSettings { get; set; }
+
+		[XmlElement("DebugSettings")]
+		public DebugSettings DebugSettings{ get; set; }
+
 		
 		public FirmwareSettings ()
 		{
-			
-		}
-		
-		public bool TerminateDebugWithEscape	
-		{
-			get { return terminateDebugWithEscape; }
-			set { terminateDebugWithEscape = value; }
-		}
-		
-		public int DebugPort
-		{
-			get { return debugPort; }
-			set { debugPort = value; }
+			GeneralSettings = new GeneralSettings();
+			WiFiSettings = new WiFiSettings();
+			DebugSettings = new DebugSettings();	
 		}
 		
 		public bool SaveToXML (String filepath)

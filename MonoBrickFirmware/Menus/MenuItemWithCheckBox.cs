@@ -10,7 +10,7 @@ namespace MonoBrickFirmware.Menus
 		private const int lineSize = 2;
 		private const int edgeSize = 2;
 		private Func<bool,bool>func;
-		
+		public Action<bool> OnCheckedChanged = delegate {};
 		public MenuItemWithCheckBox (Lcd lcd, string text, bool checkedAtStart, Func<bool,bool>enterFunc = null){
 			this.text = text;
 			this.lcd = lcd;
@@ -20,11 +20,13 @@ namespace MonoBrickFirmware.Menus
 		public bool EnterAction ()
 		{
 			if (func != null) {
-				Checked = func(Checked);	
+				Checked = func(Checked);
+				OnCheckedChanged(Checked);	
 			} 
 			else 
 			{
 				Checked = !Checked;
+				OnCheckedChanged(Checked);
 			}
 			return false;
 		}
