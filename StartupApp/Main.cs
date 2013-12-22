@@ -417,6 +417,7 @@ namespace StartupApp
 					settings = settings.LoadFromXML (SettingsFileName);
 					lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
 					lcd.Update ();						
+					WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID,settings.WiFiSettings.Password,settings.WiFiSettings.Encryption);
 					settings.SaveToXML (SettingsFileName);// JIT work-around
 				} catch {
 					Console.WriteLine ("Failed to read settings. Using default settings");
