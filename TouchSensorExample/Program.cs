@@ -1,6 +1,7 @@
 using System;
-using MonoBrickFirmware.IO;
-using MonoBrickFirmware.Graphics;
+using MonoBrickFirmware.UserInput;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.Sensors;
 using System.Threading;
 namespace TouchSensorExample
 {

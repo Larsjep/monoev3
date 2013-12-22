@@ -2,8 +2,9 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Resources;
-using MonoBrickFirmware.IO;
-using MonoBrickFirmware.Graphics;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.UserInput;
+using MonoBrickFirmware.Sensors;
 
 namespace HiTechnicI2CExample
 {
@@ -13,9 +14,9 @@ namespace HiTechnicI2CExample
 		{
 			ManualResetEvent terminateProgram = new ManualResetEvent (false);
 			ButtonEvents buts = new ButtonEvents ();
-			HiTecCompass compass = new HiTecCompass(SensorPort.In1);
-			HiTecColor colorSensor = new HiTecColor(SensorPort.In2);
-			HiTecTilt tilt = new HiTecTilt(SensorPort.In3);
+			HiTecCompassSensor compass = new HiTecCompassSensor(SensorPort.In1);
+			HiTecColorSensor colorSensor = new HiTecColorSensor(SensorPort.In2);
+			HiTecTiltSensor tilt = new HiTecTiltSensor(SensorPort.In3);
 			buts.EscapePressed += () => { 
 				terminateProgram.Set ();
 			};

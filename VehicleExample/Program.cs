@@ -1,7 +1,8 @@
 using System;
 using System.Threading;
-using MonoBrickFirmware.IO;
-using MonoBrickFirmware.Graphics;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.UserInput;
+using MonoBrickFirmware.Movement;
 namespace VehicleExample
 {
 	class MainClass

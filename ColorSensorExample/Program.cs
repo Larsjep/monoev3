@@ -1,7 +1,9 @@
 using System;
 using MonoBrickFirmware;
-using MonoBrickFirmware.IO;
-using MonoBrickFirmware.Graphics;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.UserInput;
+using MonoBrickFirmware.Sensors;
+
 using System.Threading;
 namespace ColorSensorExample
 {

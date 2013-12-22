@@ -1,7 +1,7 @@
 using System;
 using MonoBrickFirmware;
-using MonoBrickFirmware.IO;
-using MonoBrickFirmware.Graphics;
+using MonoBrickFirmware.Movement;
+using MonoBrickFirmware.Display;
 
 namespace MotorExample
 {

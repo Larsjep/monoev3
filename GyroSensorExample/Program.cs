@@ -2,8 +2,9 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Resources;
-using MonoBrickFirmware.IO;
-using MonoBrickFirmware.Graphics;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.UserInput;
+using MonoBrickFirmware.Sensors;
 
 namespace GyroSensorExample.IO
 {
@@ -13,7 +14,7 @@ namespace GyroSensorExample.IO
 		{
 			ManualResetEvent terminateProgram = new ManualResetEvent (false);
 			ButtonEvents buts = new ButtonEvents ();
-			var gyro = new HiTecGyro(SensorPort.In1, 600);
+			var gyro = new HiTecGyroSensor(SensorPort.In1, 600);
 			buts.EscapePressed += () => { 
 				terminateProgram.Set ();
 			};
