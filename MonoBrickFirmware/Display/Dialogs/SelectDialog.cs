@@ -10,8 +10,7 @@ namespace MonoBrickFirmware.Display.Dialogs
         int cursorPos;
 		bool allowEsc;
 		
-        private const int notificationEdge = 2;
-		public SelectDialog (Font f, Lcd lcd, Buttons btns, SelectionType[] options, string title, bool allowEsc) : base (f, lcd, btns, title)
+		public SelectDialog (Font f, Lcd lcd, Buttons btns, SelectionType[] options, string title, bool allowEsc) : base (f, lcd, btns, title, 160,90+(int)f.maxHeight/2,(int)f.maxHeight/4)
 		{
 			this.options = options;
 			cursorPos = 0;

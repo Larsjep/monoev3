@@ -68,6 +68,11 @@ namespace StartupApp
 			if (!dialog.EscPressed) {
 				string selection = dialog.GetSelection ();
 				if (selection == runString) {
+					lcd.Clear();
+					lcd.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
+					Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
+					lcd.WriteTextBox (Font.SmallFont, textRect, "Running...", true, Lcd.Alignment.Center);
+					lcd.Update ();						
 					MenuAction = () => RunAndWaitForProgram (filename, false);
 				}
 				if (selection == runInDebugString) {
@@ -153,7 +158,7 @@ namespace StartupApp
 				}
 			} 
 			else 
-			{
+			{	
 				ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono", programName); 
 			}
 		}
@@ -386,13 +391,14 @@ namespace StartupApp
 		
 		public static void Main (string[] args)
 		{
-			using (Lcd lcd = new Lcd ())
+			/*using (Lcd lcd = new Lcd ())
 			using (Buttons btns = new Buttons ()) {					
 				lcd.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
 				Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 				
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
 				lcd.Update ();						
+				WiFiDevice.TurnOff();
 				if(!Directory.Exists(ProgramPathSdCard))
 					Directory.CreateDirectory(ProgramPathSdCard);
 				
@@ -448,7 +454,7 @@ namespace StartupApp
 						dialog.Show();
 					}
 				}
-			}
+			}*/
 			
 			for (;;)
 			{
