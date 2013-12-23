@@ -1,7 +1,7 @@
 using System;
 using MonoBrickFirmware.Display;
 
-namespace MonoBrickFirmware.Menus
+namespace MonoBrickFirmware.Display.Menus
 {
 	public enum MenuItemSymbole {None, LeftArrow, RightArrow};
 	

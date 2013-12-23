@@ -5,7 +5,7 @@ using System.Linq;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 
-namespace MonoBrickFirmware.Dialogs
+namespace MonoBrickFirmware.Display.Dialogs
 {
     public abstract class Dialog
 	{
@@ -29,7 +29,7 @@ namespace MonoBrickFirmware.Dialogs
 		public Action OnShow = delegate {};
 		public Action OnExit = delegate {};
 		
-		public Dialog (Font f, Lcd lcd, Buttons btns, string title, int width = 160, int height = 90)
+		public Dialog (Font f, Lcd lcd, Buttons btns, string title, int width = 160, int height = 90, int topOffset = 0)
 		{
 			dialogWidth = width;
 			dialogHeight = height;
@@ -48,7 +48,7 @@ namespace MonoBrickFirmware.Dialogs
 			token = cancelTokenSource.Token;
 			
 						
-			int top = dialogWindowInner.P1.Y + (int)( f.maxHeight/2);
+			int top = dialogWindowInner.P1.Y + (int)( f.maxHeight/2) + topOffset;
 			int middel = dialogWindowInner.P1.Y  + ((dialogWindowInner.P2.Y - dialogWindowInner.P1.Y) / 2) - (int)(f.maxHeight)/2;
 			int count = 0;
 			while (middel > top) {
@@ -56,7 +56,7 @@ namespace MonoBrickFirmware.Dialogs
 				count ++;
 			}
 			int numberOfLines = count*2+1;
-			Point start1 = new Point (dialogWindowInner.P1.X, dialogWindowInner.P1.Y  + ((dialogWindowInner.P2.Y - dialogWindowInner.P1.Y) / 2) - (int)f.maxHeight/2 - count*((int)f.maxHeight) );
+			Point start1 = new Point (dialogWindowInner.P1.X, topOffset+  dialogWindowInner.P1.Y  + ((dialogWindowInner.P2.Y - dialogWindowInner.P1.Y) / 2) - (int)f.maxHeight/2 - count*((int)f.maxHeight) );
 			Point start2 = new Point (dialogWindowInner.P2.X, start1.Y + (int)f.maxHeight);
 			lines = new List<Rectangle>();
 			for(int i = 0; i < numberOfLines; i++){

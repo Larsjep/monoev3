@@ -2,7 +2,7 @@ using System;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 
-namespace MonoBrickFirmware.Dialogs
+namespace MonoBrickFirmware.Display.Dialogs
 {
 	public class SelectDialog<SelectionType> : Dialog { 
         private SelectionType[] options;
@@ -10,8 +10,7 @@ namespace MonoBrickFirmware.Dialogs
         int cursorPos;
 		bool allowEsc;
 		
-        private const int notificationEdge = 2;
-		public SelectDialog (Font f, Lcd lcd, Buttons btns, SelectionType[] options, string title, bool allowEsc) : base (f, lcd, btns, title)
+		public SelectDialog (Font f, Lcd lcd, Buttons btns, SelectionType[] options, string title, bool allowEsc) : base (f, lcd, btns, title, 160,90+(int)f.maxHeight/2,(int)f.maxHeight/4)
 		{
 			this.options = options;
 			cursorPos = 0;

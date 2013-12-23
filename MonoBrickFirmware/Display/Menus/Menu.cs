@@ -4,7 +4,7 @@ using System.Linq;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 
-namespace MonoBrickFirmware.Menus
+namespace MonoBrickFirmware.Display.Menus
 {
 	
 	public class Menu
@@ -19,6 +19,9 @@ namespace MonoBrickFirmware.Menus
 		int cursorPos;
 		int scrollPos;
 		Buttons btns;
+		int arrowHeight = 5;
+		int arrowWidth = 10;
+		
 		public Menu (Font f, Lcd lcd, Buttons btns, string title, IEnumerable<IMenuItem> items)
 		{
 			this.font = f;
@@ -27,7 +30,7 @@ namespace MonoBrickFirmware.Menus
 			this.menuItems = items.ToArray ();			
 			this.itemSize = new Point (Lcd.Width, (int)font.maxHeight);
 			this.itemHeight = new Point (0, (int)font.maxHeight);
-			this.itemsOnScreen = (int)(Lcd.Height / font.maxHeight - 1); // -1 Because of the title
+			this.itemsOnScreen = (int)((Lcd.Height-arrowHeight)/ font.maxHeight - 1); // -1 Because of the title
 			this.btns = btns;
 			cursorPos = 0;
 			scrollPos = 0;
@@ -37,14 +40,17 @@ namespace MonoBrickFirmware.Menus
 		{
 			lcd.Clear ();
 			Rectangle currentPos = new Rectangle (new Point (0, 0), itemSize);
+			Rectangle arrowRect = new Rectangle (new Point (Lcd.Width / 2 - arrowWidth / 2, Lcd.Height - arrowHeight), new Point (Lcd.Width / 2 + arrowWidth / 2, Lcd.Height-1));
+
 			lcd.WriteTextBox (font, currentPos, title, true, Lcd.Alignment.Center);
 			int i = 0;
 			while (i != itemsOnScreen) {
 				if (i + scrollPos >= menuItems.Length)
 					break;
-				menuItems[i + scrollPos].Draw(font, currentPos+itemHeight*(i+1), i != cursorPos);
+				menuItems [i + scrollPos].Draw (font, currentPos + itemHeight * (i + 1), i != cursorPos);
 				i++;
 			}
+			lcd.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + itemsOnScreen < menuItems.Length);
 			lcd.Update();
 		}
 		

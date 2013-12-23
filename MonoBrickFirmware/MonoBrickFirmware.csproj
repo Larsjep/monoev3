@@ -41,8 +41,6 @@
     <Folder Include="Display\Resources\" />
     <Folder Include="Sensors\" />
     <Folder Include="Movement\" />
-    <Folder Include="Menus\" />
-    <Folder Include="Dialogs\" />
     <Folder Include="UserInput\" />
   </ItemGroup>
   <ItemGroup>
@@ -71,28 +69,28 @@
     <Compile Include="Movement\Motor.cs" />
     <Compile Include="Movement\MotorSync.cs" />
     <Compile Include="Native\KernelByteCodes.cs" />
-    <Compile Include="Dialogs\Dialog.cs" />
     <Compile Include="UserInput\Buttons.cs" />
     <Compile Include="UserInput\ButtonEvents.cs" />
     <Compile Include="Tools\BmpImage.cs" />
     <Compile Include="Tools\ByteArrayCreator.cs" />
     <Compile Include="Sensors\HTColorSensor.cs" />
-    <Compile Include="Menus\IMenuItem.cs" />
-    <Compile Include="Menus\MenuItemWithAction.cs" />
-    <Compile Include="Menus\MenuItemWithOptions.cs" />
-    <Compile Include="Menus\MenuItemWithCheckBox.cs" />
-    <Compile Include="Menus\MenuItemWithNumericInput.cs" />
-    <Compile Include="Dialogs\CharacterDialog.cs" />
-    <Compile Include="Dialogs\SelectDialog.cs" />
-    <Compile Include="Dialogs\QuestionsDialog.cs" />
-    <Compile Include="Dialogs\InfoDialog.cs" />
-    <Compile Include="Menus\Menu.cs" />
     <Compile Include="Sensors\AnalogSensor.cs" />
     <Compile Include="Sensors\I2CSensor.cs" />
     <Compile Include="Sensors\UARTSensor.cs" />
     <Compile Include="Native\ProcessHelper.cs" />
     <Compile Include="Native\WiFiDevice.cs" />
-    <Compile Include="Menus\MenuItemWithCharacterInput.cs" />
+    <Compile Include="Display\Menus\IMenuItem.cs" />
+    <Compile Include="Display\Menus\Menu.cs" />
+    <Compile Include="Display\Menus\MenuItemWithAction.cs" />
+    <Compile Include="Display\Menus\MenuItemWithCharacterInput.cs" />
+    <Compile Include="Display\Menus\MenuItemWithCheckBox.cs" />
+    <Compile Include="Display\Menus\MenuItemWithNumericInput.cs" />
+    <Compile Include="Display\Menus\MenuItemWithOptions.cs" />
+    <Compile Include="Display\Dialogs\CharacterDialog.cs" />
+    <Compile Include="Display\Dialogs\Dialog.cs" />
+    <Compile Include="Display\Dialogs\InfoDialog.cs" />
+    <Compile Include="Display\Dialogs\QuestionsDialog.cs" />
+    <Compile Include="Display\Dialogs\SelectDialog.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
