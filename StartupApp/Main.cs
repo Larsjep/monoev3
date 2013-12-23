@@ -391,7 +391,7 @@ namespace StartupApp
 		
 		public static void Main (string[] args)
 		{
-			/*using (Lcd lcd = new Lcd ())
+			using (Lcd lcd = new Lcd ())
 			using (Buttons btns = new Buttons ()) {					
 				lcd.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
 				Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
@@ -454,7 +454,7 @@ namespace StartupApp
 						dialog.Show();
 					}
 				}
-			}*/
+			}
 			
 			for (;;)
 			{
