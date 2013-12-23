@@ -22,6 +22,8 @@ namespace StartupApp
 		static Action MenuAction = null;
 		static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
+		static string ProgramPathSdCard = "/mnt/bootpar/apps";
+		static string ProgramPathEV3 = "/home/root/apps/";
 		
 		static FirmwareSettings settings = new FirmwareSettings();
 		static object settingsLock = new object();
@@ -97,11 +99,13 @@ namespace StartupApp
 			return filename.Substring(0, filename.Length-4);
 		}
 		
-		static bool RunPrograms(Lcd lcd, Buttons btns)
+		static bool RunPrograms (Lcd lcd, Buttons btns)
 		{
-			IEnumerable<MenuItemWithAction> items = Directory.EnumerateFiles("/home/root/apps/", "*.exe")
-				.Select( (filename) => new MenuItemWithAction(lcd, GetFileNameWithoutExt(filename),  () => ShowProgramOptions(filename, lcd, btns)));
-			Menu m = new Menu(font, lcd, btns, "Run program:", items);
+			IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateFiles (ProgramPathEV3, "*.exe")
+				.Select ((filename) => new MenuItemWithAction (lcd, GetFileNameWithoutExt (filename), () => ShowProgramOptions (filename, lcd, btns)));
+			IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateFiles (ProgramPathSdCard, "*.exe")
+				.Select ((filename) => new MenuItemWithAction (lcd, GetFileNameWithoutExt (filename), () => ShowProgramOptions (filename, lcd, btns)));
+			Menu m = new Menu(font, lcd, btns, "Run program:", itemsFromEV3.Concat(itemsFromSD));
 			m.Show();
 			return true;
 		}
@@ -389,7 +393,9 @@ namespace StartupApp
 				
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
 				lcd.Update ();						
-					
+				if(!Directory.Exists(ProgramPathSdCard))
+					Directory.CreateDirectory(ProgramPathSdCard);
+				
 				// JIT work-around remove when JIT problem is fixed
 				System.Threading.Thread.Sleep (10);
 				Console.WriteLine ("JIT workaround - please remove!!!");
@@ -415,12 +421,13 @@ namespace StartupApp
 				lcd.Update ();						
 				try {
 					settings = settings.LoadFromXML (SettingsFileName);
-					lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
-					lcd.Update ();						
-					settings.SaveToXML (SettingsFileName);// JIT work-around
+					
 				} catch {
 					Console.WriteLine ("Failed to read settings. Using default settings");
 				}
+				lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
+				lcd.Update ();						
+				settings.SaveToXML (SettingsFileName);// JIT work-around
 				WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID,settings.WiFiSettings.Password,settings.WiFiSettings.Encryption);
 				if (settings.WiFiSettings.ConnectAtStartUp) {
 					lcd.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);
