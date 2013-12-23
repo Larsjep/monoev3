@@ -37,7 +37,7 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			string showTextString;
 			int totalWidth = r.P2.X - r.P1.X;
-			int subjectWidth = (int)(f.TextSize (subject + " : ").X);
+			int subjectWidth = (int)(f.TextSize (subject + "  ").X);
 			int textValueWidth = totalWidth - subjectWidth;
 			Rectangle textRect = new Rectangle (new Point (r.P1.X + subjectWidth, r.P1.Y), r.P2);
 			Rectangle subjectRect = new Rectangle (r.P1, new Point (r.P2.X - textValueWidth, r.P2.Y));
@@ -65,7 +65,7 @@ namespace MonoBrickFirmware.Display.Menus
 					showTextString = showTextString + "...";
 				}
 			}
-			lcd.WriteTextBox (f, subjectRect,subject + " : ", color);
+			lcd.WriteTextBox (f, subjectRect,subject + "  ", color);
 			lcd.WriteTextBox(f,textRect,showTextString,color,Lcd.Alignment.Right);
 		}
 
