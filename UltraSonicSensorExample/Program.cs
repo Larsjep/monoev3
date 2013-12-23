@@ -15,6 +15,9 @@ namespace UltraSonicSensorExample.IO
 			ManualResetEvent terminateProgram = new ManualResetEvent (false);
 			ButtonEvents buts = new ButtonEvents ();
 			var sensor = new UltraSonicSensor(SensorPort.In1, UltraSonicMode.Centimeter);
+			LcdConsole.WriteLine("Use sonic on port1");
+			LcdConsole.WriteLine("Enter read");
+			LcdConsole.WriteLine("Esc. terminate");
 			buts.EscapePressed += () => { 
 				terminateProgram.Set ();
 			};

@@ -15,6 +15,9 @@ namespace GyroSensorExample.IO
 			ManualResetEvent terminateProgram = new ManualResetEvent (false);
 			ButtonEvents buts = new ButtonEvents ();
 			var gyro = new HiTecGyroSensor(SensorPort.In1, 600);
+			LcdConsole.WriteLine("Use gyro on port1");
+			LcdConsole.WriteLine("Enter read value");
+			LcdConsole.WriteLine("Esc. terminate");
 			buts.EscapePressed += () => { 
 				terminateProgram.Set ();
 			};

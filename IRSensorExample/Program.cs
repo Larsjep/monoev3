@@ -15,7 +15,13 @@ namespace IRSensorExample
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
 			var sensor = new IRSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
-			
+			LcdConsole.WriteLine("Use IR on port1");
+			LcdConsole.WriteLine("Up distance");
+			LcdConsole.WriteLine("Down beacon location");
+			LcdConsole.WriteLine("Enter read command");
+			LcdConsole.WriteLine("Left change channel");
+			LcdConsole.WriteLine("Right read as string");
+			LcdConsole.WriteLine("Esc. terminate");
 			buts.EscapePressed += () => { 
 				terminateProgram.Set();
 			};

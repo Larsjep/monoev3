@@ -2,6 +2,7 @@ using System;
 using MonoBrickFirmware;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Display;
+using MonoBrickFirmware.UserInput;
 
 namespace MotorExample
 {
@@ -9,10 +10,14 @@ namespace MotorExample
 	{
 		public static void Main (string[] args)
 		{
+			
+			Buttons btns = new Buttons();
 			Motor motor = new Motor (MotorPort.OutA);
 			MotorSync motorSync = new MotorSync(MotorPort.OutA, MotorPort.OutD);
-			LcdConsole.WriteLine ("Running single motor test");
-			LcdConsole.WriteLine ("Reset motor tacho");
+			LcdConsole.WriteLine("Use Motor on A");
+			LcdConsole.WriteLine("Use Motor on D");
+			LcdConsole.WriteLine("Press Ent. to start");
+			btns.GetKeypress();
 			motor.ResetTacho ();
 			LcdConsole.WriteLine ("Running forward with 20");
 			motor.On(20);

@@ -12,7 +12,11 @@ namespace LightSensorExample
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
 			var lightSensor = new LightSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
-			buts.EnterPressed += () => { 
+			LcdConsole.WriteLine("Use light on port1");
+			LcdConsole.WriteLine("Up value ");
+			LcdConsole.WriteLine("Down change mode");
+			LcdConsole.WriteLine("Esc. terminate");
+			buts.EscapePressed += () => { 
 				terminateProgram.Set();
 			};
 			buts.UpPressed += () => { 

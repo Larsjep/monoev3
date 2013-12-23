@@ -39,6 +39,9 @@ namespace GmailExample
 			message.From = new MailAddress(from);
 			message.Subject = "Color mail from my EV3";
 			LcdConsole.Clear();
+			LcdConsole.WriteLine("Use color on port1");
+			LcdConsole.WriteLine("Enter send mail");
+			LcdConsole.WriteLine("Esc. terminate");
 			buts.EscapePressed += () => { 
 				terminateProgram.Set();
 			};
