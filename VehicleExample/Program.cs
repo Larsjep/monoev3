@@ -17,7 +17,8 @@ namespace VehicleExample
 			const int spinSteps = 500;//You need to adjust this
 			vehicle.ReverseLeft = false;//You might need to adjust this
 			vehicle.ReverseRight = false;//You might need to adjust this
-			
+			LcdConsole.WriteLine("Use Motor on A");
+			LcdConsole.WriteLine("Use Motor on D");
 			//Make a square
 			for (int i = 0; i < 4; i++) {
 				LcdConsole.WriteLine ("Spin left");

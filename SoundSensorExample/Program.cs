@@ -13,6 +13,11 @@ namespace SoundSensorExample
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
 			var soundSensor = new SoundSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
+			LcdConsole.WriteLine("Use sound on port1");
+			LcdConsole.WriteLine("Up sensor value");
+			LcdConsole.WriteLine("Enter read raw");
+			LcdConsole.WriteLine("Down change mode");
+			LcdConsole.WriteLine("Esc. terminate");
 			buts.EscapePressed += () => { 
 				terminateProgram.Set();
 			};

@@ -17,6 +17,13 @@ namespace HiTechnicI2CExample
 			HiTecCompassSensor compass = new HiTecCompassSensor(SensorPort.In1);
 			HiTecColorSensor colorSensor = new HiTecColorSensor(SensorPort.In2);
 			HiTecTiltSensor tilt = new HiTecTiltSensor(SensorPort.In3);
+			LcdConsole.WriteLine("Use compass on port1");
+			LcdConsole.WriteLine("Use color on port2");
+			LcdConsole.WriteLine("Use tilt on port3");
+			LcdConsole.WriteLine("Up read compass");
+			LcdConsole.WriteLine("Down read tilt");
+			LcdConsole.WriteLine("Enter read color");
+			LcdConsole.WriteLine("Esc. terminate");
 			buts.EscapePressed += () => { 
 				terminateProgram.Set ();
 			};

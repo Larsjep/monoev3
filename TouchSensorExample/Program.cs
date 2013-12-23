@@ -12,7 +12,11 @@ namespace TouchSensorExample
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
 			var touchSensor = new TouchSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
-			buts.EnterPressed += () => { 
+			LcdConsole.WriteLine("Use touch on port1");
+			LcdConsole.WriteLine("Up read");
+			LcdConsole.WriteLine("Down read raw");
+			LcdConsole.WriteLine("Esc. terminate");
+			buts.EscapePressed += () => { 
 				terminateProgram.Set();
 			};
 			buts.UpPressed += () => { 

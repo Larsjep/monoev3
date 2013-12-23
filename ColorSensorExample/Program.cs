@@ -16,7 +16,11 @@ class MainClass
 		int modeIdx = 0;
 		var sensor = new ColorSensor(SensorPort.In1);
 		ButtonEvents buts = new ButtonEvents ();
-		
+		LcdConsole.WriteLine("Use color on port1");
+		LcdConsole.WriteLine("Up read value");
+		LcdConsole.WriteLine("Down raw value");
+		LcdConsole.WriteLine("Enter change mode");
+		LcdConsole.WriteLine("Esc. terminate");
 		buts.EscapePressed += () => { 
 			stopped.Set();
 		};

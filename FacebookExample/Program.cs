@@ -27,6 +27,9 @@ namespace FacebookExample
 			Rectangle box = new Rectangle(p, p+boxSize);
 			var colorSensor = new ColorSensor (SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
+			LcdConsole.WriteLine("Use color on port1");
+			LcdConsole.WriteLine("Enter post value");
+			LcdConsole.WriteLine("Esc. terminate");
 			buts.EscapePressed += () => { 
 				terminateProgram.Set();
 			};
