@@ -6,8 +6,8 @@ using System.Diagnostics;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Native;
-using MonoBrickFirmware.Menus;
-using MonoBrickFirmware.Dialogs;
+using MonoBrickFirmware.Display.Menus;
+using MonoBrickFirmware.Display.Dialogs;
 
 using System.Reflection;
 using System.Collections.Generic;

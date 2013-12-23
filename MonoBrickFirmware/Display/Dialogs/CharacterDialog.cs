@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 
-namespace MonoBrickFirmware.Dialogs
+namespace MonoBrickFirmware.Display.Dialogs
 {
 	
 	public class CharacterDialog : Dialog

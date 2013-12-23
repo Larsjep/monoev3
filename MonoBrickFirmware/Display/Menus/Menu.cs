@@ -4,7 +4,7 @@ using System.Linq;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 
-namespace MonoBrickFirmware.Menus
+namespace MonoBrickFirmware.Display.Menus
 {
 	
 	public class Menu

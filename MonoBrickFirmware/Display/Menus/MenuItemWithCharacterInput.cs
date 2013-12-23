@@ -1,8 +1,8 @@
 using System;
 using MonoBrickFirmware.Display;
-using MonoBrickFirmware.Dialogs;
+using MonoBrickFirmware.Display.Dialogs;
 
-namespace MonoBrickFirmware.Menus
+namespace MonoBrickFirmware.Display.Menus
 {
 	public class  MenuItemWithCharacterInput : IMenuItem
 	{

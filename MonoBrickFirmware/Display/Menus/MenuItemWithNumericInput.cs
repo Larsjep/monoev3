@@ -2,7 +2,7 @@ using System;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 
-namespace MonoBrickFirmware.Menus
+namespace MonoBrickFirmware.Display.Menus
 {
 	public class MenuItemWithNumericInput : IMenuItem
 	{

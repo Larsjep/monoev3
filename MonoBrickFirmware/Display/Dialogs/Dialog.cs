@@ -5,7 +5,7 @@ using System.Linq;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 
-namespace MonoBrickFirmware.Dialogs
+namespace MonoBrickFirmware.Display.Dialogs
 {
     public abstract class Dialog
 	{

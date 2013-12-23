@@ -2,7 +2,7 @@ using System;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 
-namespace MonoBrickFirmware.Dialogs
+namespace MonoBrickFirmware.Display.Dialogs
 {
 	public class SelectDialog<SelectionType> : Dialog { 
         private SelectionType[] options;
