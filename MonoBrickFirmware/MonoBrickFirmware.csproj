@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -42,6 +43,8 @@
     <Folder Include="Sensors\" />
     <Folder Include="Movement\" />
     <Folder Include="UserInput\" />
+    <Folder Include="Sound\" />
+    <Folder Include="Settings\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Native\Libc.cs" />
@@ -91,6 +94,9 @@
     <Compile Include="Display\Dialogs\InfoDialog.cs" />
     <Compile Include="Display\Dialogs\QuestionsDialog.cs" />
     <Compile Include="Display\Dialogs\SelectDialog.cs" />
+    <Compile Include="Settings\FirmwareSettings.cs" />
+    <Compile Include="Movement\PID.cs" />
+    <Compile Include="Sound\Speaker.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

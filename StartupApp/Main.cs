@@ -8,6 +8,7 @@ using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Native;
 using MonoBrickFirmware.Display.Menus;
 using MonoBrickFirmware.Display.Dialogs;
+using MonoBrickFirmware.Settings;
 
 using System.Reflection;
 using System.Collections.Generic;
@@ -20,12 +21,11 @@ namespace StartupApp
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		static Font font = Font.MediumFont;
 		static Action MenuAction = null;
-		static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
 		
-		static FirmwareSettings settings = new FirmwareSettings();
+		static FirmwareSettings settings = null;
 		static object settingsLock = new object();
 		static string versionString = "Firmware: 0.1.0.0";
 		static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
@@ -289,7 +289,7 @@ namespace StartupApp
 		{
 			bool ok = false;
 			try {
-				settings.SaveToXML(SettingsFileName);
+				settings.SaveToXML();
 				ok = true;
 			} 
 			catch {
@@ -306,10 +306,15 @@ namespace StartupApp
 			var debugPortItem = new MenuItemWithNumericInput(lcd, "Debug port",settings.DebugSettings.Port,1, ushort.MaxValue);
 			var checkForUpdate = new MenuItemWithCheckBox(lcd, "Update check",settings.GeneralSettings.CheckForSwUpdatesAtStartUp);
 			var wifiConnect = new MenuItemWithCheckBox(lcd, "WiFi auto connect",settings.WiFiSettings.ConnectAtStartUp);
+			var soundVolume = new MenuItemWithNumericInput(lcd, "Volume",settings.SoundSettings.Volume);
+			var enableSound = new MenuItemWithCheckBox(lcd, "Enable sound", settings.SoundSettings.EnableSound);
+			
+			
 			items.Add(wifiConnect);
 			items.Add(checkForUpdate);
 			items.Add(terminateWithEscapeItem);
 			items.Add (debugPortItem);
+			items.Add(soundVolume);
 			
 			//Show the menu
 			Menu m = new Menu (font, lcd, btns, "Settings", items);
@@ -320,6 +325,8 @@ namespace StartupApp
 						settings.DebugSettings.Port = debugPortItem.Value;
 						settings.GeneralSettings.CheckForSwUpdatesAtStartUp = checkForUpdate.Checked;
 						settings.WiFiSettings.ConnectAtStartUp = wifiConnect.Checked;
+						settings.SoundSettings.Volume = soundVolume.Value;
+						settings.SoundSettings.EnableSound = enableSound.Checked;
 						SaveSettings(); 
 					}
 			    }).Start();
@@ -426,14 +433,14 @@ namespace StartupApp
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
 				lcd.Update ();						
 				try {
-					settings = settings.LoadFromXML (SettingsFileName);
+					settings = FirmwareSettings.Instance;
 					
 				} catch {
 					Console.WriteLine ("Failed to read settings. Using default settings");
 				}
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
 				lcd.Update ();						
-				settings.SaveToXML (SettingsFileName);// JIT work-around
+				settings.SaveToXML();// JIT work-around
 				WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID,settings.WiFiSettings.Password,settings.WiFiSettings.Encryption);
 				if (settings.WiFiSettings.ConnectAtStartUp) {
 					lcd.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);

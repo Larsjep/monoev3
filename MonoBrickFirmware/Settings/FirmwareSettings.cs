@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Specialized;
 using System.Xml;
 
-namespace StartupApp
+namespace MonoBrickFirmware.Settings
 {
 	
 	public class DebugSettings{
@@ -73,9 +73,35 @@ namespace StartupApp
 		}
 	}
 	
+	public class SoundSettings{
+		[XmlElement("Volume")]
+		private int volume = 60;
+		
+		[XmlElement("EnableSound")]
+		private bool enableSound = true;
+		
+		public bool EnableSound	
+		{
+			get { return enableSound; }
+			set { enableSound = value; }
+		}
+
+		
+		public int Volume	
+		{
+			get { return volume; }
+			set { volume = value; }
+		}
+	}
+	
 	[XmlRoot("ConfigRoot")]
 	public class FirmwareSettings
 	{
+		private static FirmwareSettings instance = null;
+		private static object readWriteLock = new object();
+		private static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
+		
+		
 		[XmlElement("GeneralSettings")]
 		public GeneralSettings GeneralSettings { get; set; }
 		
@@ -85,28 +111,47 @@ namespace StartupApp
 		[XmlElement("DebugSettings")]
 		public DebugSettings DebugSettings{ get; set; }
 
-		
-		public FirmwareSettings ()
+		[XmlElement("SoundSettings")]
+		public SoundSettings SoundSettings{ get; set; }
+
+		private FirmwareSettings ()
 		{
 			GeneralSettings = new GeneralSettings();
 			WiFiSettings = new WiFiSettings();
-			DebugSettings = new DebugSettings();	
+			DebugSettings = new DebugSettings();
+			SoundSettings = new SoundSettings();	
 		}
 		
-		public bool SaveToXML (String filepath)
+		public static FirmwareSettings Instance {
+			get {
+				if (instance == null) {
+					lock (readWriteLock) 
+					{
+						instance = new FirmwareSettings();
+						instance = instance.LoadFromXML(SettingsFileName);
+					} 
+				} 
+				return instance;
+			} 
+		}
+		
+		public bool SaveToXML ()
 		{
 			try {
-				XmlSerializer serializer = new XmlSerializer (typeof(FirmwareSettings));
-				TextWriter textWriter = new StreamWriter (filepath);
-				serializer.Serialize (textWriter, this);
-				textWriter.Close ();
+				lock (readWriteLock) 
+				{
+					XmlSerializer serializer = new XmlSerializer (typeof(FirmwareSettings));
+					TextWriter textWriter = new StreamWriter (SettingsFileName);
+					serializer.Serialize (textWriter, this);
+					textWriter.Close ();
+				}
 				return true;
 			} 
 			catch{}
 			return false;
 		}
 		
-		public FirmwareSettings LoadFromXML (String filepath)
+		private FirmwareSettings LoadFromXML (String filepath)
 		{
 			XmlSerializer deserializer = new XmlSerializer (typeof(FirmwareSettings));
 			TextReader textReader = new StreamReader (filepath);
