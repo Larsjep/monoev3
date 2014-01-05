@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using MonoBrickFirmware.Native;
 using MonoBrickFirmware.Settings;
 
@@ -13,13 +14,34 @@ namespace MonoBrickFirmware.Sound
 	{
 		
 		private UnixDevice soundDevice = new UnixDevice("/dev/lms_sound");
-		private MemoryArea soundMemory;
+		//private MemoryArea soundMemory;
 		private	int currentVolume;
 		private bool enable;
-		private const UInt16 beepFrequency = 10000;
+		private const UInt16 beepFrequency = 600;
 		private const UInt16 buzzFrequency = 100;
-		private const UInt16 buzzDurationMs = 200;
-		private const UInt16 beepDurationMs = 200;
+		private const UInt16 clickFrequency = 100;
+		
+		private const UInt16 buzzDurationMs = 300;
+		private const UInt16 beepDurationMs = 300;
+		private const UInt16 clickDurationMs = 100;
+		
+		private const int RiffHeaderSize = 44;
+		//private const int ChunkId = 0x52494646;//"RIFF"
+    	private const int ChunkId = 0x46464952;//"RIFF"
+    	//private const int WaveFormat = 0x57415645;//"WAVE"
+    	private const int WaveFormat = 0x45564157;//"WAVE"
+    	//private const int SubChunkId = 0x666d7420;//"fmt "
+    	private const int SubChunkId = 0x20746d66;//"fmt "
+    	//private const UInt16 AudioFormat = 0x0100;//PCM
+    	private const UInt16 AudioFormat = 0x0001;//PCM
+    	//private const UInt16 NumChannels = 0x0100;//mono
+    	private const UInt16 NumChannels = 0x0001;//mono
+    	//private const UInt16 BitsPerSample  = 0x0800;
+    	private const UInt16 BitsPerSample  = 0x0008;
+    	//private const int SubChunk2Id = 0x64617461;//"data"
+    	private const int SubChunk2Id = 0x61746164;//"data"
+    
+    	private const int BufferSize = 250;
 		
 		
 		public Speaker ()
@@ -66,6 +88,7 @@ namespace MonoBrickFirmware.Sound
 			command.Append(durationMs);
 			command.Print();
 			soundDevice.Write(command.Data);
+			System.Threading.Thread.Sleep(durationMs);
 		}
 		
 		/// <summary>
@@ -119,15 +142,31 @@ namespace MonoBrickFirmware.Sound
 		{
 			PlayTone(buzzFrequency, durationMs, volume);
 		}
-
+		
+		/// <summary>
+		/// Make the brick click
+		/// </summary>
+		public void Click ()
+		{
+			Click(Volume);
+		}
+		
+		/// <summary>
+		/// Make the brick click
+		/// </summary>
+		public void Click (int volume)
+		{
+			//Click(clickDurationMs, Volume);
+		}
+		
 		/// <summary>
 		/// Play a sound file.
 		/// </summary>
 		/// <param name="name">Name the name of the file to play</param>
 		/// <param name="volume">Volume.</param>
 		/// <param name="repeat">If set to <c>true</c> the file will play in a loop</param>
-		public void PlaySoundFile(string name, byte volume){
-			PlaySoundFile(name, volume, false);
+		public void PlaySoundFile(string name){
+			PlaySoundFile(name, Volume);
 		}
 
 		/// <summary>
@@ -136,137 +175,65 @@ namespace MonoBrickFirmware.Sound
 		/// <param name="name">File to play</param>
 		/// <param name="volume">Volume.</param>
 		/// <param name="repeat">If set to <c>true</c> the file will play in a loop</param>
-		public void PlaySoundFile(string name, byte volume, bool repeat){
-			// First check that we have a wave file. File must be at least 44 bytes
-        	// in size to contain a RIFF header.
-        	/*if (file.length() < RIFF_HDR_SIZE)
-            	return -9;
-        	// Now check for a RIFF header
-        	FileInputStream f = null; 
-        	DataInputStream d = null;
-        	try
-        	{
-	        	f = new FileInputStream(file);
-	        	d = new DataInputStream(f);
-	
-	            if (d.readInt() != RIFF_RIFF_SIG)
-	                return -1;
-	            // Skip chunk size
-	            d.readInt();
-	            // Check we have a wave file
-	            if (d.readInt() != RIFF_WAVE_SIG)
-	                return -2;
-	            if (d.readInt() != RIFF_FMT_SIG)
-	                return -3;
-	            int offset = 16;
-	            // Now check that the format is PCM, Mono 8 bits. Note that these
-	            // values are stored little endian.
-	            int sz = readLSBInt(d);
-	            if (d.readShort() != RIFF_FMT_PCM)
-	                return -4;
-	            if (d.readShort() != RIFF_FMT_1CHAN)
-	                return -5;
-	            int sampleRate = readLSBInt(d);
-	            d.readInt();
-	            d.readShort();
-	            if (d.readShort() != RIFF_FMT_8BITS)
-	                return -6;
-	            // Skip any data in this chunk after the 16 bytes above
-	            sz -= 16;
-	            offset += 20 + sz;
-	            while (sz-- > 0)
-	                d.readByte();
-	            int dataLen;
-	            // Skip optional chunks until we find a data sig (or we hit eof!)
-	            for(;;)
-	            {
-	                int chunk = d.readInt();
-	                dataLen = readLSBInt(d); 
-	                offset += 8;
-	                if (chunk == RIFF_DATA_SIG) break;
-	                // Skip to the start of the next chunk
-	                offset += dataLen;
-	                while(dataLen-- > 0)
-	                    d.readByte();
-	            }
-	            if (vol >= 0)
-	                vol = (vol*masterVolume)/100;
-	            else
-	                vol = -vol;
-	            byte []buf = new byte[PCM_BUFFER_SIZE*4+1];
-	            // get ready to play, set the volume
-	            buf[0] = OP_PLAY;
-	            buf[1] = (byte)vol;
-	            dev.write(buf, 2);
-	            // now play the file
-	            buf[1] = 0;
-	            while((dataLen = d.read(buf, 1, buf.length - 1)) > 0)
-	            {
-	                // now make sure we write all of the data
-	                offset = 0;
-	                while (offset < dataLen)
-	                {
-	                    buf[offset] = OP_SERVICE;
-	                    int len = dataLen - offset;
-	                    if (len > PCM_BUFFER_SIZE) len = PCM_BUFFER_SIZE;
-	                    int written = dev.write(buf, offset, len + 1);
-	                    if (written == 0)
-	                    {
-	                        Delay.msDelay(1);
-	                    }
-	                    else
-	                        offset += written;
-	                }
-	            }
-        	}
-	        catch (IOException e)
-	        {
-	            return -1;
-	        }
-	        finally
-	        {
-	            try {
-	                if (d != null)
-	                    d.close();
-	                if (f != null)
-	                    f.close();
-	            }
-	            catch (IOException e)
-	            {
-	                return -1;
-	            }                
-	        }
-	        return 0;
+		public void PlaySoundFile (string name, int volume)
+		{
+			if (new FileInfo (name).Length < RiffHeaderSize)
+				throw new IOException ("Not a valid sound file");
+			var audioFileStream = File.Open (name, FileMode.Open);
+			byte[] headerData = new byte[RiffHeaderSize];
+			audioFileStream.Read (headerData, 0, RiffHeaderSize);
 			
-			
-			
-			
-			
-			
-			
-			
-			Command command = null;
-			if(repeat){
-				command = new Command(0,0,200,reply);
-				command.Append(ByteCodes.Sound);
-				command.Append(SoundSubCodes.Repeat);
-				command.Append(volume, ConstantParameterType.Value);
-				command.Append(name, ConstantParameterType.Value);
-				command.Append(ByteCodes.SoundReady);//should this be here?
+			//check file
+			bool headerOK = true;
+			if (BitConverter.ToInt32 (headerData, 0) != ChunkId)
+				headerOK = false;
+			if (BitConverter.ToInt32 (headerData, 8) != WaveFormat)
+				headerOK = false;
+			if (BitConverter.ToInt32 (headerData, 12) != SubChunkId)
+				headerOK = false;
+			if (BitConverter.ToUInt16 (headerData, 20) != AudioFormat)
+				headerOK = false;
+			if (BitConverter.ToUInt16 (headerData, 22) != NumChannels)
+				headerOK = false;
+			if (BitConverter.ToUInt16 (headerData, 32) != BitsPerSample)
+				headerOK = false;
+			if (!headerOK) {
+				audioFileStream.Close ();
+				throw new IOException ("Not a valid sound file");
 			}
-			else{
-				command = new Command(0,0,200,reply);
-				command.Append(ByteCodes.Sound);
-				command.Append(SoundSubCodes.Play);
-				command.Append(volume, ConstantParameterType.Value);
-				command.Append(name, ConstantParameterType.Value);
-				command.Append(ByteCodes.SoundReady);//should this be here?
+			try {
+				byte[] buffer = new byte[2];
+				buffer [0] = (byte)AudioMode.Play;
+				if (volume < 0)
+					volume = -volume;
+				buffer [1] = (byte)volume;
+				soundDevice.Write (buffer);
+				buffer = new byte[BufferSize + 1];
+				
+				int size = (int)audioFileStream.Length;
+				int offset = RiffHeaderSize;
+				while (offset < size) {
+					if (size - offset >= BufferSize) {
+						buffer [0] = (byte)AudioMode.Service;
+						audioFileStream.Read (buffer, 1, BufferSize);
+						soundDevice.Write (buffer);
+						offset += (BufferSize);
+					} else {
+						buffer = new byte[size - offset + 1];
+						buffer [0] = (byte)AudioMode.Service;
+						audioFileStream.Read (buffer, 1, size - offset);
+						soundDevice.Write (buffer);
+						offset += (size - offset);
+						 
+					}
+				}
+			} 
+			catch(Exception e)
+			{
+				audioFileStream.Close();
+				throw e;
 			}
-			connection.Send(command);
-			if(reply){
-				var brickReply = connection.Receive();
-				Error.CheckForError(brickReply,200);
-			}*/
+			audioFileStream.Close();
 		}
 		
 		/// <summary>
