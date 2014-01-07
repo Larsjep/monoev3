@@ -195,14 +195,60 @@ namespace MonoBrickFirmware.Sound
 				headerOK = false;
 			if (BitConverter.ToUInt16 (headerData, 22) != NumChannels)
 				headerOK = false;
-			if (BitConverter.ToUInt16 (headerData, 32) != BitsPerSample)
-				headerOK = false;
+			//if (BitConverter.ToUInt16 (headerData, 32) != BitsPerSample)
+			//	headerOK = false;
 			if (!headerOK) {
 				audioFileStream.Close ();
 				throw new IOException ("Not a valid sound file");
 			}
 			try {
-				byte[] buffer = new byte[2];
+				
+			byte []buffer = new byte[2];
+            // get ready to play, set the volume
+           	buffer [0] = (byte)AudioMode.Play;
+			buffer [1] = (byte)volume;
+			soundDevice.Write(buffer);
+            
+            
+            int size = (int)audioFileStream.Length;
+			int totalWritten  =  RiffHeaderSize;
+            buffer = new byte[BufferSize*4 + 1];
+            audioFileStream.Read (buffer, 1, BufferSize*4);
+			int dataLen = BufferSize*4; 
+			while(dataLen > 0)
+            {
+                // now make sure we write all of the data
+                int offset = 0;
+                while (offset < dataLen)
+                {
+                    buffer[offset] = (byte)AudioMode.Play;
+                    int len = dataLen - offset;
+                    if (len >BufferSize) 
+                    	len = BufferSize;
+					byte[] data = new byte[len+1];
+					Array.Copy(buffer, offset,data,0,len+1);
+					soundDevice.Write(data);
+					int written = len+1;
+                    /*if (written == 0)
+                    {
+                        Delay.msDelay(1);
+                    }
+                    else*/
+                    offset += written;
+                    totalWritten += written-1;
+                }
+				if(size - totalWritten >= BufferSize*4){
+					audioFileStream.Read (buffer, 1, BufferSize*4);
+					dataLen = BufferSize*4;
+				}
+				else{
+					audioFileStream.Read (buffer, 1, size- totalWritten);
+						dataLen = size-totalWritten;
+				}
+            }
+				
+				
+				/*byte[] buffer = new byte[2];
 				buffer [0] = (byte)AudioMode.Play;
 				if (volume < 0)
 					volume = -volume;
@@ -214,19 +260,20 @@ namespace MonoBrickFirmware.Sound
 				int offset = RiffHeaderSize;
 				while (offset < size) {
 					if (size - offset >= BufferSize) {
-						buffer [0] = (byte)AudioMode.Service;
+						buffer [0] = (byte)AudioMode.Play;
 						audioFileStream.Read (buffer, 1, BufferSize);
+						MonoBrickFirmware.Display.LcdConsole.WriteLine(audioFileStream.Position.ToString());
 						soundDevice.Write (buffer);
 						offset += (BufferSize);
 					} else {
 						buffer = new byte[size - offset + 1];
-						buffer [0] = (byte)AudioMode.Service;
+						buffer [0] = (byte)AudioMode.Play;
 						audioFileStream.Read (buffer, 1, size - offset);
 						soundDevice.Write (buffer);
 						offset += (size - offset);
 						 
 					}
-				}
+				}*/
 			} 
 			catch(Exception e)
 			{
