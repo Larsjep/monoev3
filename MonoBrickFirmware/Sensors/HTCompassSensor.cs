@@ -10,7 +10,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// HiTechnic tilt compass sensor
 	/// </summary>
-    public class HiTecCompassSensor : I2CSensor, ISensor
+    public class HiTecCompassSensor : I2CSensor
     {
         private const byte CompassAddress = 0x02;
         
@@ -36,7 +36,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <returns>
 		/// The value as a string
 		/// </returns>
-        public string ReadAsString()
+        public override string ReadAsString()
         {
             return "Degrees: " + ReadDirection();
         }

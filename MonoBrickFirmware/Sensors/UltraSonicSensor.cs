@@ -9,11 +9,17 @@ namespace MonoBrickFirmware.Sensors
 		/// <summary>
 		/// Result will be in centimeter
 		/// </summary>
-		Centimeter = 1,
+		Centimeter = UARTMode.Mode0,
+		
 		/// <summary>
 		/// Result will be in centi-inch
 		/// </summary>
-		CentiInch = 2 
+		Inch = UARTMode.Mode1,
+		
+		/// <summary>
+		/// Sensor is in listen mode
+		/// </summary>
+		Listen = UARTMode.Mode2
 	};
     
 	internal enum UltraSonicCommand { Off = 00, SingleShot = 0x01, Continuous = 0x02, EventCapture = 0x03, RequestWarmReset = 0x04 };
@@ -53,11 +59,74 @@ namespace MonoBrickFirmware.Sensors
              return "Zero: " + zero.ToString() + " Scale factor: " + scaleFactor.ToString() + " Scale division: " + scaleDivision.ToString();
         }
     }
+    
+    /// <summary>
+	/// Class for the EV3 ultrasonic sensor
+	/// </summary>
+	public class EV3UltrasonicSensor : UartSensor{
+		/// <summary>
+		/// Initializes a new instance of the EV3 Ultrasonic Sensor.
+		/// </summary>
+		public EV3UltrasonicSensor (SensorPort port) : this(port, UltraSonicMode.Centimeter)
+		{
+			
+		}
+		
+		/// <summary>
+		/// Initializes a new instance of the EV3 Ultrasonic Sensor.
+		/// </summary>
+		/// <param name="mode">Mode.</param>
+		public EV3UltrasonicSensor (SensorPort port, UltraSonicMode mode) :  base(port)
+		{
+			base.Initialise(base.uartMode);
+			Mode = mode;
+		}
+		
+		/// <summary>
+		/// Gets or sets the Gyro mode. 
+		/// </summary>
+		/// <value>The mode.</value>
+		public UltraSonicMode Mode {
+			get{return (UltraSonicMode) base.uartMode;}
+			set{SetMode((UARTMode) value);}
+		}
+
+		/// <summary>
+		/// Reads the sensor value as a string.
+		/// </summary>
+		/// <returns>The value as a string</returns>
+		public override string ReadAsString ()
+		{
+			string s = "";
+			switch ((UltraSonicMode)base.uartMode)
+			{
+			    case UltraSonicMode.Centimeter:
+			        s = Read().ToString() + " cm";
+			        break;
+			   	case UltraSonicMode.Inch:
+			        s = Read().ToString() +  " inch";
+			        break;
+			    case UltraSonicMode.Listen:
+			        s = Read().ToString();
+			        break;
+			}
+			return s;
+		}
+		
+		/// <summary>
+		/// Read the sensor value. Result depends on the mode
+		/// </summary>
+		public float Read()
+		{
+			return BitConverter.ToSingle(ReadBytes(4),0);			
+		}
+	}
+    
         
     /// <summary>
     /// Sonar sensor
     /// </summary>
-	public class UltraSonicSensor : I2CSensor, ISensor {
+	public class UltraSonicSensor : I2CSensor{
         private const byte UltraSonicAddress = 0x02;
 		private UltraSonicMode sonarMode;
         
@@ -91,10 +160,10 @@ namespace MonoBrickFirmware.Sensors
 		/// <summary>
 		/// Read the distance in either centiinches or centimeter
 		/// </summary>
-        public int ReadDistance() {
+        public float ReadDistance() {
             int reading = ReadRegister((byte)UltraSonicRegister.Result1, 1)[0];
-            if (Mode == UltraSonicMode.CentiInch)
-                return (reading * 39370) / 1000;
+            if (Mode == UltraSonicMode.Inch)
+                return (reading * 39370) / 100;
             return reading;
         }
         
@@ -175,16 +244,15 @@ namespace MonoBrickFirmware.Sensors
         /// <returns>
         /// The value as a string
         /// </returns>
-		public string ReadAsString()
+		public override string ReadAsString()
         {
             string s = ReadDistance().ToString();
-            if (Mode == UltraSonicMode.CentiInch)
+            if (Mode == UltraSonicMode.Inch)
                 s = s + " centi-inches";
             else
                 s = s + " centimeters";
             return s;
         }
-        
     }
 }
 

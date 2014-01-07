@@ -6,23 +6,40 @@ using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Sensors;
 
-namespace GyroSensorExample.IO
+namespace GyroSensorExample
 {
 	class MainClass
 	{
 		public static void Main (string[] args)
 		{
 			ManualResetEvent terminateProgram = new ManualResetEvent (false);
+			GyroMode[] modes = {GyroMode.Angle, GyroMode.AngularVelocity};
+			int modeIdx = 0;
 			ButtonEvents buts = new ButtonEvents ();
-			var gyro = new HiTecGyroSensor(SensorPort.In1, 600);
-			LcdConsole.WriteLine("Use gyro on port1");
-			LcdConsole.WriteLine("Enter read value");
+			var gyro = new GyroSensor(SensorPort.In1, GyroMode.Angle);
+			LcdConsole.WriteLine("Use gyro on port 1");
+			LcdConsole.WriteLine("Up read value");
+			LcdConsole.WriteLine("Down rotation count");
+			LcdConsole.WriteLine("Left reset");
+			LcdConsole.WriteLine("Enter change mode");
 			LcdConsole.WriteLine("Esc. terminate");
 			buts.EscapePressed += () => { 
 				terminateProgram.Set ();
 			};
-			buts.EnterPressed += () => {
+			buts.UpPressed += () => {
 				LcdConsole.WriteLine ("Gyro sensor: " + gyro.ReadAsString());
+			};
+			buts.EnterPressed += () => { 
+				modeIdx = (modeIdx+1)%modes.Length;
+				gyro.Mode = modes[modeIdx];
+				LcdConsole.WriteLine("Mode: " + modes[modeIdx]);
+			};
+			buts.DownPressed += () => {
+				LcdConsole.WriteLine ("Rotation count: " + gyro.RotationCount());
+			};
+			buts.LeftPressed += () => {
+				LcdConsole.WriteLine ("Reset");
+				gyro.Reset();
 			};
 			terminateProgram.WaitOne ();  
 		}

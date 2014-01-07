@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JITTest", "JITTest\JITTest.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundExample", "SoundExample\SoundExample.csproj", "{E89DEB78-3534-4A71-89D4-9504EF7C7884}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTechnicGyroSensorExample", "HiTechnicGyroSensorExample\HiTechnicGyroSensorExample.csproj", "{E069E7FC-8331-40B1-BB45-119E02210B96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -98,6 +100,10 @@ Global
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Debug|x86.Build.0 = Debug|x86
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.ActiveCfg = Release|x86
 		{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}.Release|x86.Build.0 = Release|x86
+		{E069E7FC-8331-40B1-BB45-119E02210B96}.Debug|x86.ActiveCfg = Debug|x86
+		{E069E7FC-8331-40B1-BB45-119E02210B96}.Debug|x86.Build.0 = Debug|x86
+		{E069E7FC-8331-40B1-BB45-119E02210B96}.Release|x86.ActiveCfg = Release|x86
+		{E069E7FC-8331-40B1-BB45-119E02210B96}.Release|x86.Build.0 = Release|x86
 		{E89DEB78-3534-4A71-89D4-9504EF7C7884}.Debug|x86.ActiveCfg = Debug|x86
 		{E89DEB78-3534-4A71-89D4-9504EF7C7884}.Debug|x86.Build.0 = Debug|x86
 		{E89DEB78-3534-4A71-89D4-9504EF7C7884}.Release|x86.ActiveCfg = Release|x86
@@ -106,7 +112,7 @@ Global
 		{F9469EB1-222C-4F43-B426-4FA196401BE7}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = SoundExample\SoundExample.csproj
+		StartupItem = GyroSensorExample\GyroSensorExample.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2

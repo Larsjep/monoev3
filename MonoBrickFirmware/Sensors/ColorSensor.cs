@@ -91,14 +91,8 @@ namespace MonoBrickFirmware.Sensors
 		Blue = AnalogMode.ColorBlue,//Mode 1 for EV3
 	};
 	
-	public interface IColorSensor{
+	public interface IColorSensor: ISensor{
 	
-		/// <summary>
-		/// Reads the sensor value as a string.
-		/// </summary>
-		/// <returns>The value as a string</returns>
-		string ReadAsString ();
-		
 		/// <summary>
 		/// Read the raw value of the reflected or ambient light. In color mode the color index is returned
 		/// </summary>
@@ -128,7 +122,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class for color sensor that works with both the EV3 and NXT color sensor.
 	/// </summary>
-	public class ColorSensor : IColorSensor, ISensor{
+	public class ColorSensor : IColorSensor{
 		private IColorSensor colorSensor;
 		private SensorPort port;
 		/// <summary>
@@ -251,7 +245,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
+		public override string ReadAsString ()
 		{
 			string s = "";
 			switch (Mode)
@@ -422,7 +416,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
+		public override string ReadAsString ()
 		{
 			string s = "";
 			switch (Mode)

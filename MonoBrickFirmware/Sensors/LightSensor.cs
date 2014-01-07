@@ -20,7 +20,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class for the NXT light sensor
 	/// </summary>
-	public class LightSensor : AnalogSensor, ISensor{
+	public class LightSensor : AnalogSensor{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.LightSensor"/> class.
 		/// </summary>
@@ -50,7 +50,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
+		public override string ReadAsString ()
 		{
 			string s = "";
 			switch (AnalogMode)

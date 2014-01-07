@@ -62,9 +62,9 @@ namespace MonoBrickFirmware.Sensors
 	
 	
 	/// <summary>
-	/// Class for the EV3 IR sensor - In seek or remote mode it only works with channel 0
+	/// Class for the EV3 IR sensor
 	/// </summary>
-	public class IRSensor :UartSensor{
+	public class IRSensor : UartSensor{
 		
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.IRSensor"/> class.
@@ -98,7 +98,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
+		public override string ReadAsString ()
 		{
 			string s = "";
 			switch ((IRMode)base.uartMode)

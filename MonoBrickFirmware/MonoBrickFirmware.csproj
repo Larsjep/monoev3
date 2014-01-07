@@ -97,6 +97,7 @@
     <Compile Include="Settings\FirmwareSettings.cs" />
     <Compile Include="Movement\PID.cs" />
     <Compile Include="Sound\Speaker.cs" />
+    <Compile Include="Sensors\GyroSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

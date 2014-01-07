@@ -15,7 +15,7 @@ namespace MonoBrickFirmware.Sensors
 		#pragma warning restore
 	};
 	
-	public abstract class AnalogSensor{
+	public abstract class AnalogSensor: ISensor{
 		private MemoryArea analogMemory;
 		
 		
@@ -42,6 +42,8 @@ namespace MonoBrickFirmware.Sensors
 			SensorManager.Instance.ResetUart(this.port);
 			analogMemory = SensorManager.Instance.AnalogMemory;
 		}
+		
+		public abstract string ReadAsString ();
 		
 		protected void SetMode(AnalogMode mode)
 	    {

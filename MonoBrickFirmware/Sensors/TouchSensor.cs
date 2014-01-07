@@ -5,7 +5,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class used for touch sensor. Works with both EV3 and NXT
 	/// </summary>
-	public class TouchSensor : AnalogSensor, ISensor{
+	public class TouchSensor : AnalogSensor{
 		private bool nxtConnected;
 		private const int EV3Cutoff = ADCResolution/2;
 		private const int NXTCutoff = 512;
@@ -22,7 +22,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
+		public override string ReadAsString ()
 		{
 			string s = "";
 			if (IsPressed()) {

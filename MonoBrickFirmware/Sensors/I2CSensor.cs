@@ -16,7 +16,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Base class for all I2C sensors. This should be used when implementing a new I2C sensor
 	/// </summary>
-	public abstract class I2CSensor
+	public abstract class I2CSensor:ISensor
 	{
 		private UnixDevice I2CDevice;
 		//private MemoryArea I2CMemory;
@@ -44,6 +44,8 @@ namespace MonoBrickFirmware.Sensors
 			SensorManager.Instance.SetAnalogMode((AnalogMode)mode, port);
 			
 		}
+		
+		public abstract string ReadAsString ();
 		
 		protected void Reset ()
 		{

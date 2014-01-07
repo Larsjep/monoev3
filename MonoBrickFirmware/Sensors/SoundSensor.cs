@@ -21,7 +21,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class for the NXT sound sensor.
 	/// </summary>
-	public class SoundSensor: AnalogSensor, ISensor 
+	public class SoundSensor: AnalogSensor 
 	{
 		/// <summary>
 		/// Initializes a new instance of the sound sensor class.
@@ -52,7 +52,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
+		public override string ReadAsString ()
 		{
 			string s = "";
 			switch (Mode)
