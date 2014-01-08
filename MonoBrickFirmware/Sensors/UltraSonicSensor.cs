@@ -116,9 +116,15 @@ namespace MonoBrickFirmware.Sensors
 		/// <summary>
 		/// Read the sensor value. Result depends on the mode
 		/// </summary>
-		public float Read()
+		public int Read ()
 		{
-			return BitConverter.ToSingle(ReadBytes(4),0);			
+			if (Mode == UltraSonicMode.Listen) 
+			{
+				if(ReadByte() != 0)
+					return 1;
+				return 0;
+			}
+			return (int) BitConverter.ToInt16(ReadBytes(2),0);
 		}
 	}
     
@@ -248,7 +254,7 @@ namespace MonoBrickFirmware.Sensors
         {
             string s = ReadDistance().ToString();
             if (Mode == UltraSonicMode.Inch)
-                s = s + " centi-inches";
+                s = s + " inches";
             else
                 s = s + " centimeters";
             return s;
