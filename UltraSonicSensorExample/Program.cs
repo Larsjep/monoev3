@@ -32,7 +32,7 @@ namespace UltraSonicSensorExample.IO
 				LcdConsole.WriteLine("Mode: " + modes[modeIdx]);
 			};
 			buts.EnterPressed += () => {
-				LcdConsole.WriteLine ("Distance: " + sensor.Read());
+				LcdConsole.WriteLine (sensor.ReadAsString());
 			};
 			terminateProgram.WaitOne ();  
 		}

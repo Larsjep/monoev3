@@ -60,4 +60,10 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <ProjectReference Include="..\MonoBrickFirmware\MonoBrickFirmware.csproj">
+      <Project>{67261E03-D263-4C42-A5AD-2A4820231B28}</Project>
+      <Name>MonoBrickFirmware</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

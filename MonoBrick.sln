@@ -1,6 +1,6 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LcdExample", "LcdExample\LcdExample.csproj", "{D5E41B28-D2D1-4ECA-9176-B7D23894DE49}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoBrickFirmware", "MonoBrickFirmware\MonoBrickFirmware.csproj", "{67261E03-D263-4C42-A5AD-2A4820231B28}"
