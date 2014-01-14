@@ -432,12 +432,7 @@ namespace StartupApp
 				//Load settings
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
 				lcd.Update ();						
-				try {
-					settings = FirmwareSettings.Instance;
-					
-				} catch {
-					Console.WriteLine ("Failed to read settings. Using default settings");
-				}
+				settings = FirmwareSettings.Instance;
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
 				lcd.Update ();						
 				settings.SaveToXML();// JIT work-around

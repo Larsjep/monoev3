@@ -125,10 +125,15 @@ namespace MonoBrickFirmware.Settings
 		public static FirmwareSettings Instance {
 			get {
 				if (instance == null) {
-					lock (readWriteLock) 
-					{
-						instance = new FirmwareSettings();
-						instance = instance.LoadFromXML(SettingsFileName);
+					lock (readWriteLock) {
+						try {
+							instance = new FirmwareSettings ();
+							instance = instance.LoadFromXML (SettingsFileName);
+						} 
+						catch 
+						{
+							Console.WriteLine ("Failed to read settings. Using default settings");
+						}
 					} 
 				} 
 				return instance;
