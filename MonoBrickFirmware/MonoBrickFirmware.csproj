@@ -45,6 +45,7 @@
     <Folder Include="UserInput\" />
     <Folder Include="Sound\" />
     <Folder Include="Settings\" />
+    <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Native\Libc.cs" />
@@ -81,7 +82,6 @@
     <Compile Include="Sensors\I2CSensor.cs" />
     <Compile Include="Sensors\UARTSensor.cs" />
     <Compile Include="Native\ProcessHelper.cs" />
-    <Compile Include="Native\WiFiDevice.cs" />
     <Compile Include="Display\Menus\IMenuItem.cs" />
     <Compile Include="Display\Menus\Menu.cs" />
     <Compile Include="Display\Menus\MenuItemWithAction.cs" />
@@ -98,6 +98,8 @@
     <Compile Include="Movement\PID.cs" />
     <Compile Include="Sound\Speaker.cs" />
     <Compile Include="Sensors\GyroSensor.cs" />
+    <Compile Include="Services\WebServer.cs" />
+    <Compile Include="Services\WiFiDevice.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

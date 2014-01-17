@@ -6,6 +6,17 @@ using System.Xml;
 
 namespace MonoBrickFirmware.Settings
 {
+	public class WebServerSettings{
+		[XmlElement("Port")]
+		private int port = 80;
+		
+		public int Port
+		{
+			get { return port; }
+			set { port = value; }
+		}
+	}
+	
 	
 	public class DebugSettings{
 		[XmlElement("Port")]
@@ -113,13 +124,18 @@ namespace MonoBrickFirmware.Settings
 
 		[XmlElement("SoundSettings")]
 		public SoundSettings SoundSettings{ get; set; }
+		
+		[XmlElement("WebServerSettings")]
+		public WebServerSettings WebServerSettings{ get; set; }
+		
 
 		private FirmwareSettings ()
 		{
 			GeneralSettings = new GeneralSettings();
 			WiFiSettings = new WiFiSettings();
 			DebugSettings = new DebugSettings();
-			SoundSettings = new SoundSettings();	
+			SoundSettings = new SoundSettings();
+			WebServerSettings = new WebServerSettings();	
 		}
 		
 		public static FirmwareSettings Instance {
@@ -142,28 +158,39 @@ namespace MonoBrickFirmware.Settings
 		
 		public bool SaveToXML ()
 		{
-			try {
-				lock (readWriteLock) 
-				{
+			lock (readWriteLock) {
+				TextWriter textWriter = null;
+				try {
 					XmlSerializer serializer = new XmlSerializer (typeof(FirmwareSettings));
-					TextWriter textWriter = new StreamWriter (SettingsFileName);
+					textWriter = new StreamWriter (SettingsFileName);
 					serializer.Serialize (textWriter, this);
 					textWriter.Close ();
-				}
-				return true;
-			} 
-			catch{}
+					return true;
+				} 
+				catch {} 
+				if(textWriter!= null)
+					textWriter.Close();
+			}
 			return false;
 		}
 		
 		private FirmwareSettings LoadFromXML (String filepath)
 		{
-			XmlSerializer deserializer = new XmlSerializer (typeof(FirmwareSettings));
-			TextReader textReader = new StreamReader (filepath);
-			Object obj = deserializer.Deserialize (textReader);
-			FirmwareSettings myNewSettings = (FirmwareSettings)obj;
-			textReader.Close ();
-			return myNewSettings;
+			lock (readWriteLock) {
+				TextReader textReader = null;
+				try{
+					XmlSerializer deserializer = new XmlSerializer (typeof(FirmwareSettings));
+					textReader = new StreamReader (filepath);
+					Object obj = deserializer.Deserialize (textReader);
+					FirmwareSettings myNewSettings = (FirmwareSettings)obj;
+					textReader.Close ();
+					return myNewSettings;
+				}
+				catch{}
+				if(textReader!= null)
+					textReader.Close();
+			}
+			return null;
 		}
 	}
 }
