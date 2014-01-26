@@ -161,7 +161,7 @@ namespace MonoBrickFirmware.Settings
 			lock (readWriteLock) {
 				TextWriter textWriter = null;
 				try {
-					XmlSerializer serializer = new XmlSerializer (typeof(FirmwareSettings));
+					XmlSerializer serializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
 					textWriter = new StreamWriter (SettingsFileName);
 					serializer.Serialize (textWriter, this);
 					textWriter.Close ();
@@ -179,7 +179,7 @@ namespace MonoBrickFirmware.Settings
 			lock (readWriteLock) {
 				TextReader textReader = null;
 				try{
-					XmlSerializer deserializer = new XmlSerializer (typeof(FirmwareSettings));
+					XmlSerializer deserializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
 					textReader = new StreamReader (filepath);
 					Object obj = deserializer.Deserialize (textReader);
 					FirmwareSettings myNewSettings = (FirmwareSettings)obj;

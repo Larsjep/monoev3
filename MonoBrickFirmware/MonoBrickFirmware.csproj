@@ -100,6 +100,7 @@
     <Compile Include="Sensors\GyroSensor.cs" />
     <Compile Include="Services\WebServer.cs" />
     <Compile Include="Services\WiFiDevice.cs" />
+    <Compile Include="Tools\XmlHelper.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
