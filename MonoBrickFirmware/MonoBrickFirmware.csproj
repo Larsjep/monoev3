@@ -44,7 +44,6 @@
     <Folder Include="Movement\" />
     <Folder Include="UserInput\" />
     <Folder Include="Sound\" />
-    <Folder Include="Settings\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
@@ -94,12 +93,19 @@
     <Compile Include="Display\Dialogs\InfoDialog.cs" />
     <Compile Include="Display\Dialogs\QuestionsDialog.cs" />
     <Compile Include="Display\Dialogs\SelectDialog.cs" />
-    <Compile Include="Settings\FirmwareSettings.cs" />
     <Compile Include="Movement\PID.cs" />
     <Compile Include="Sound\Speaker.cs" />
     <Compile Include="Sensors\GyroSensor.cs" />
     <Compile Include="Services\WebServer.cs" />
     <Compile Include="Services\WiFiDevice.cs" />
+<<<<<<< HEAD
+<<<<<<< HEAD
+    <Compile Include="Native\AOTCompiling.cs" />
+=======
+>>>>>>> 7a02af48852c177f0a4732d540ac2eb2bc4ee237
+=======
+>>>>>>> 7a02af48852c177f0a4732d540ac2eb2bc4ee237
+    <Compile Include="Tools\XmlHelper.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

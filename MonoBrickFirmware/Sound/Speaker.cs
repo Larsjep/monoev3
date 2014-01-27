@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using MonoBrickFirmware.Native;
-using MonoBrickFirmware.Settings;
 
 namespace MonoBrickFirmware.Sound
 {
@@ -16,7 +15,6 @@ namespace MonoBrickFirmware.Sound
 		private UnixDevice soundDevice = new UnixDevice("/dev/lms_sound");
 		//private MemoryArea soundMemory;
 		private	int currentVolume;
-		private bool enable;
 		private const UInt16 beepFrequency = 600;
 		private const UInt16 buzzFrequency = 100;
 		private const UInt16 clickFrequency = 100;
@@ -44,21 +42,14 @@ namespace MonoBrickFirmware.Sound
     	private const int BufferSize = 250;
 		
 		
-		public Speaker ()
+		public Speaker (int volume)
 		{
-			currentVolume = FirmwareSettings.Instance.SoundSettings.Volume;
-			enable = FirmwareSettings.Instance.SoundSettings.EnableSound;
-			
+			currentVolume = Volume;
 		}
 		
 		public int Volume {
 			get{return currentVolume;}
 			set{currentVolume = value; }
-		}
-		
-		public bool Enable {
-			get{return enable;}
-			set{enable = value; }
 		}
 		
 		/// <summary>

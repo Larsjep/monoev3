@@ -21,11 +21,12 @@ namespace StartupApp
 	{
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		static Font font = Font.MediumFont;
+		static WebServer webServer = null;
 		static Action MenuAction = null;
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
-		
+		static FirmwareSettings settings = new FirmwareSettings();
 		static string versionString = "Firmware: 0.1.0.0";
 		static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
 		
@@ -117,7 +118,7 @@ namespace StartupApp
 		static void RunAndWaitForProgram (string programName, bool runInDebugMode)
 		{
 			if (runInDebugMode) {
-				programName = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + FirmwareSettings.Instance.DebugSettings.Port + ",server=y " + programName;
+				programName = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugSettings.Port + ",server=y " + programName;
 				using (Lcd lcd = new Lcd ())
 				using (Buttons btns = new Buttons ()) {
 					System.Diagnostics.Process proc = new System.Diagnostics.Process ();
@@ -125,8 +126,8 @@ namespace StartupApp
 					Thread escapeThread = null;
 					CancellationTokenSource cts = new CancellationTokenSource();
 					CancellationToken token = cts.Token;
-					string portString  = ("Port: " + FirmwareSettings.Instance.DebugSettings.Port).PadRight(6).PadRight(6);
-					if (FirmwareSettings.Instance.DebugSettings.TerminateWithEscape) {
+					string portString  = ("Port: " + settings.DebugSettings.Port).PadRight(6).PadRight(6);
+					if (settings.DebugSettings.TerminateWithEscape) {
 						escapeThread = new System.Threading.Thread (delegate() {
 							while (!token.IsCancellationRequested) {
 								if (btns.GetKeypress (token) == Buttons.ButtonStates.Escape) {
@@ -201,44 +202,77 @@ namespace StartupApp
 		static bool ShowWebServerMenu (Lcd lcd, Buttons btns)
 		{
 			List<IMenuItem> items = new List<IMenuItem> ();
-			var portItem = new MenuItemWithNumericInput(lcd,"Port", FirmwareSettings.Instance.WebServerSettings.Port, 1, ushort.MaxValue);
+			var portItem = new MenuItemWithNumericInput(lcd,"Port", settings.WebServerSettings.Port, 1, ushort.MaxValue);
 			portItem.OnValueChanged+= delegate(int value) 
 			{
 			new Thread(delegate() {
-			    	FirmwareSettings.Instance.WebServerSettings.Port = value;
+			    	settings.WebServerSettings.Port = value;
+			    	SaveSettings();
 				}).Start();
 			};
+			var startItem = new MenuItemWithCheckBox(lcd,"Start server", WebServer.IsRunning(),
+				delegate(bool running)
+         		{ 
+					webServer = new WebServer(settings.WebServerSettings.Port);
+					bool isRunning = running;
+					if(running){
+						var dialog = new InfoDialog(font,lcd,btns,"Shutting down Web-Server", false);
+						dialog.Show();
+						webServer.Stop();
+						dialog = new InfoDialog(font,lcd,btns,"Web-server Stopped!", true);
+						dialog.Show();
+						isRunning = false;
+					}
+					else{
+						var dialog = new InfoDialog(font,lcd,btns,"Starting Web-Server Please Wait", false);
+						dialog.Show();
+						if(webServer.Restart()){
+							dialog = new InfoDialog(font,lcd,btns,"Started successfully at port" + settings.WebServerSettings.Port, true);
+							dialog.Show();
+							isRunning = true;
+						}
+						else{
+							dialog = new InfoDialog(font,lcd,btns,"Failed to start Web-Servers", true);
+							dialog.Show();
+							isRunning = false;
+						}
+					}
+					return isRunning;
+         		} 
+			);
 			
+			items.Add(portItem);
+			items.Add(startItem);
+			//Show the menu
+			Menu m = new Menu (font, lcd, btns, "Web Server", items);
+			m.Show ();
 			return false;
-			
-		
-		
 		}
 		
 		static bool ShowWiFiMenu (Lcd lcd, Buttons btns)
 		{
 			List<IMenuItem> items = new List<IMenuItem> ();
-			var ssidItem = new MenuItemWithCharacterInput(lcd,btns,"SSID", "Enter SSID", FirmwareSettings.Instance.WiFiSettings.SSID);
+			var ssidItem = new MenuItemWithCharacterInput(lcd,btns,"SSID", "Enter SSID", settings.WiFiSettings.SSID);
 			ssidItem.OnDialogExit += delegate(string text) {
 				new Thread(delegate() {
-		    		FirmwareSettings.Instance.WiFiSettings.SSID = text;
+		    		settings.WiFiSettings.SSID = text;
 					SaveSettings();
 			    }).Start();
 			};
-			var passwordItem = new MenuItemWithCharacterInput(lcd,btns,"Password", "Password", FirmwareSettings.Instance.WiFiSettings.Password, true);
+			var passwordItem = new MenuItemWithCharacterInput(lcd,btns,"Password", "Password", settings.WiFiSettings.Password, true);
 			passwordItem.OnDialogExit += delegate(string text) {
 				new Thread(delegate() {
-			    	FirmwareSettings.Instance.WiFiSettings.Password = text;
+			    	settings.WiFiSettings.Password = text;
 					SaveSettings();
 			    }).Start();
 			};
-			var encryptionItem = new MenuItemWithOptions<string>(lcd,"Encryption", new string[]{"None","WPA/2"}, FirmwareSettings.Instance.WiFiSettings.Encryption ? 1 : 0);
+			var encryptionItem = new MenuItemWithOptions<string>(lcd,"Encryption", new string[]{"None","WPA/2"}, settings.WiFiSettings.Encryption ? 1 : 0);
 			encryptionItem.OnOptionChanged += delegate(string newOpstion) {
 				new Thread(delegate() {
 		    		if(newOpstion == "None")
-						FirmwareSettings.Instance.WiFiSettings.Encryption = false;
+						settings.WiFiSettings.Encryption = false;
 					else
-						FirmwareSettings.Instance.WiFiSettings.Encryption = true;
+						settings.WiFiSettings.Encryption = true;
 					SaveSettings(); 
 			    }).Start();
 			};
@@ -248,7 +282,7 @@ namespace StartupApp
 					bool isOn = WiFiOn;
 					var infoDialog = new InfoDialog(font,lcd,btns,"Creating Configuration file", false);
 					infoDialog.Show();
-					WriteWpaSupplicantConfiguration(FirmwareSettings.Instance.WiFiSettings.SSID,FirmwareSettings.Instance.WiFiSettings.Password,FirmwareSettings.Instance.WiFiSettings.Encryption);
+					WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID,settings.WiFiSettings.Password,settings.WiFiSettings.Encryption);
 					if(WiFiOn){
 						var dialog = new InfoDialog(font,lcd,btns,"Shutting down WiFi", false);
 						dialog.Show();
@@ -261,12 +295,12 @@ namespace StartupApp
 						var dialog = new InfoDialog(font,lcd,btns,"Connecting to WiFi Network Please Wait", false);
 						dialog.Show();
 						if(WiFiDevice.TurnOn(60000)){
-							if(FirmwareSettings.Instance.WiFiSettings.ConnectAtStartUp == false){
+							if(settings.WiFiSettings.ConnectAtStartUp == false){
 								var question = new QuestionDialog(font,lcd,btns,"Do you want to connect at start-up?", "Settings");
 								question.Show();
 								if(question.IsPositiveSelected){
 									new Thread(delegate() {
-								    	FirmwareSettings.Instance.WiFiSettings.ConnectAtStartUp = true;
+								    	settings.WiFiSettings.ConnectAtStartUp = true;
 										SaveSettings();
 								    }).Start();
 								}
@@ -296,19 +330,20 @@ namespace StartupApp
 		
 		static bool SaveSettings ()
 		{
-			return FirmwareSettings.Instance.SaveToXML();
+			//return FirmwareSettings.Instance.SaveToXML();
+			return true;
 		}
 		
 		static bool ShowSettings (Lcd lcd, Buttons btns)
 		{
 			//Create the settings items and apply the settings 
 			List<IMenuItem> items = new List<IMenuItem> ();
-			var terminateWithEscapeItem = new MenuItemWithCheckBox(lcd, "Debug termination",FirmwareSettings.Instance.DebugSettings.TerminateWithEscape);
-			var debugPortItem = new MenuItemWithNumericInput(lcd, "Debug port",FirmwareSettings.Instance.DebugSettings.Port,1, ushort.MaxValue);
-			var checkForUpdate = new MenuItemWithCheckBox(lcd, "Update check",FirmwareSettings.Instance.GeneralSettings.CheckForSwUpdatesAtStartUp);
-			var wifiConnect = new MenuItemWithCheckBox(lcd, "WiFi auto connect",FirmwareSettings.Instance.WiFiSettings.ConnectAtStartUp);
-			var soundVolume = new MenuItemWithNumericInput(lcd, "Volume",FirmwareSettings.Instance.SoundSettings.Volume);
-			var enableSound = new MenuItemWithCheckBox(lcd, "Enable sound", FirmwareSettings.Instance.SoundSettings.EnableSound);
+			var terminateWithEscapeItem = new MenuItemWithCheckBox(lcd, "Debug termination",settings.DebugSettings.TerminateWithEscape);
+			var debugPortItem = new MenuItemWithNumericInput(lcd, "Debug port",settings.DebugSettings.Port,1, ushort.MaxValue);
+			var checkForUpdate = new MenuItemWithCheckBox(lcd, "Update check",settings.GeneralSettings.CheckForSwUpdatesAtStartUp);
+			var wifiConnect = new MenuItemWithCheckBox(lcd, "WiFi auto connect",settings.WiFiSettings.ConnectAtStartUp);
+			var soundVolume = new MenuItemWithNumericInput(lcd, "Volume",settings.SoundSettings.Volume);
+			var enableSound = new MenuItemWithCheckBox(lcd, "Enable sound", settings.SoundSettings.EnableSound);
 			
 			
 			items.Add(wifiConnect);
@@ -321,12 +356,12 @@ namespace StartupApp
 			Menu m = new Menu (font, lcd, btns, "Settings", items);
 			m.Show ();
 			new Thread(delegate() {
-	    		FirmwareSettings.Instance.DebugSettings.TerminateWithEscape = terminateWithEscapeItem.Checked; 
-				FirmwareSettings.Instance.DebugSettings.Port = debugPortItem.Value;
-				FirmwareSettings.Instance.GeneralSettings.CheckForSwUpdatesAtStartUp = checkForUpdate.Checked;
-				FirmwareSettings.Instance.WiFiSettings.ConnectAtStartUp = wifiConnect.Checked;
-				FirmwareSettings.Instance.SoundSettings.Volume = soundVolume.Value;
-				FirmwareSettings.Instance.SoundSettings.EnableSound = enableSound.Checked;
+	    		settings.DebugSettings.TerminateWithEscape = terminateWithEscapeItem.Checked; 
+				settings.DebugSettings.Port = debugPortItem.Value;
+				settings.GeneralSettings.CheckForSwUpdatesAtStartUp = checkForUpdate.Checked;
+				settings.WiFiSettings.ConnectAtStartUp = wifiConnect.Checked;
+				settings.SoundSettings.Volume = soundVolume.Value;
+				settings.SoundSettings.EnableSound = enableSound.Checked;
 				SaveSettings(); 
 			}).Start();
 			return false;
@@ -404,7 +439,7 @@ namespace StartupApp
 				
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
 				lcd.Update ();						
-				WiFiDevice.TurnOff ();
+				//WiFiDevice.TurnOff ();
 				if (!Directory.Exists (ProgramPathSdCard))
 					Directory.CreateDirectory (ProgramPathSdCard);
 				
@@ -413,7 +448,7 @@ namespace StartupApp
 				Console.WriteLine ("JIT workaround - please remove!!!");
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Checking WiFi...", true, Lcd.Alignment.Center);
 				lcd.Update ();						
-				WiFiDevice.IsLinkUp ();
+				//WiFiDevice.IsLinkUp ();
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Starting Mono Runtime...", true, Lcd.Alignment.Center);
 				lcd.Update ();						
 				string monoVersion = "Unknown";
@@ -429,11 +464,12 @@ namespace StartupApp
 				
 				//Load settings
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
-				lcd.Update ();						
-				if (FirmwareSettings.Instance != null) {
+				lcd.Update ();
+				//settings = settings.Load();						
+				/*if (FirmwareSettings.Instance != null) {
 					lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
 					lcd.Update ();						
-					FirmwareSettings.Instance.SaveToXML ();// JIT work-around
+					SaveSettings();// JIT work-around
 					WriteWpaSupplicantConfiguration (FirmwareSettings.Instance.WiFiSettings.SSID, FirmwareSettings.Instance.WiFiSettings.Password, FirmwareSettings.Instance.WiFiSettings.Encryption);
 					if (FirmwareSettings.Instance.WiFiSettings.ConnectAtStartUp) {
 						lcd.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);
@@ -456,7 +492,7 @@ namespace StartupApp
 				{
 					var dialog = new InfoDialog (font, lcd, btns, "Failed to load settings", true);
 					dialog.Show ();	
-				}
+				}*/
 			}
 			
 			for (;;)

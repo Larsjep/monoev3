@@ -6,12 +6,6 @@ namespace MonoBrickFirmware.Services
 {
 	public class WiFiDevice
 	{
-		public WiFiDevice ()
-		{
-						
-		
-		}
-		
 		public static bool IsLinkUp()
 		{
 			bool up = false;

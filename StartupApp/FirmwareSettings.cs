@@ -108,7 +108,6 @@ namespace MonoBrickFirmware.Settings
 	[XmlRoot("ConfigRoot")]
 	public class FirmwareSettings
 	{
-		private static FirmwareSettings instance = null;
 		private static object readWriteLock = new object();
 		private static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
 		
@@ -129,7 +128,7 @@ namespace MonoBrickFirmware.Settings
 		public WebServerSettings WebServerSettings{ get; set; }
 		
 
-		private FirmwareSettings ()
+		public FirmwareSettings ()
 		{
 			GeneralSettings = new GeneralSettings();
 			WiFiSettings = new WiFiSettings();
@@ -138,30 +137,12 @@ namespace MonoBrickFirmware.Settings
 			WebServerSettings = new WebServerSettings();	
 		}
 		
-		public static FirmwareSettings Instance {
-			get {
-				if (instance == null) {
-					lock (readWriteLock) {
-						try {
-							instance = new FirmwareSettings ();
-							instance = instance.LoadFromXML (SettingsFileName);
-						} 
-						catch 
-						{
-							Console.WriteLine ("Failed to read settings. Using default settings");
-						}
-					} 
-				} 
-				return instance;
-			} 
-		}
-		
-		public bool SaveToXML ()
+		public bool Save()
 		{
 			lock (readWriteLock) {
 				TextWriter textWriter = null;
 				try {
-					XmlSerializer serializer = new XmlSerializer (typeof(FirmwareSettings));
+					XmlSerializer serializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
 					textWriter = new StreamWriter (SettingsFileName);
 					serializer.Serialize (textWriter, this);
 					textWriter.Close ();
@@ -174,12 +155,14 @@ namespace MonoBrickFirmware.Settings
 			return false;
 		}
 		
-		private FirmwareSettings LoadFromXML (String filepath)
+		public FirmwareSettings Load()
 		{
 			lock (readWriteLock) {
 				TextReader textReader = null;
 				try{
 					XmlSerializer deserializer = new XmlSerializer (typeof(FirmwareSettings));
+					textReader = new StreamReader (SettingsFileName);
+					XmlSerializer deserializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
 					textReader = new StreamReader (filepath);
 					Object obj = deserializer.Deserialize (textReader);
 					FirmwareSettings myNewSettings = (FirmwareSettings)obj;
