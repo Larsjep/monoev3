@@ -98,13 +98,7 @@
     <Compile Include="Sensors\GyroSensor.cs" />
     <Compile Include="Services\WebServer.cs" />
     <Compile Include="Services\WiFiDevice.cs" />
-<<<<<<< HEAD
-<<<<<<< HEAD
     <Compile Include="Native\AOTCompiling.cs" />
-=======
->>>>>>> 7a02af48852c177f0a4732d540ac2eb2bc4ee237
-=======
->>>>>>> 7a02af48852c177f0a4732d540ac2eb2bc4ee237
     <Compile Include="Tools\XmlHelper.cs" />
   </ItemGroup>
   <ProjectExtensions>
