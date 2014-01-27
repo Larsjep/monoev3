@@ -3,6 +3,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Collections.Specialized;
 using System.Xml;
+using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.Settings
 {
@@ -162,8 +163,6 @@ namespace MonoBrickFirmware.Settings
 				try{
 					XmlSerializer deserializer = new XmlSerializer (typeof(FirmwareSettings));
 					textReader = new StreamReader (SettingsFileName);
-					XmlSerializer deserializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
-					textReader = new StreamReader (filepath);
 					Object obj = deserializer.Deserialize (textReader);
 					FirmwareSettings myNewSettings = (FirmwareSettings)obj;
 					textReader.Close ();

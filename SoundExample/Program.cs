@@ -11,7 +11,7 @@ namespace SoundExample
 		{
 			string soundFileName = "/home/root/apps/SoundTest.wav";
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
-			var speaker = new Speaker ();
+			var speaker = new Speaker (50);
 			ButtonEvents buts = new ButtonEvents ();
 			LcdConsole.WriteLine("Up beep");
 			LcdConsole.WriteLine("Down buzz");

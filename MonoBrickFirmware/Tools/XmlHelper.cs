@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Reflection;
 
-namespace MonoBrickFirmware
+namespace MonoBrickFirmware.Tools
 {
 	public static class XmlHelper
 	{

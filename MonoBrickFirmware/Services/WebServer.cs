@@ -76,7 +76,7 @@ namespace MonoBrickFirmware.Services
 					myWebRequest.Timeout=60000;//one minut timeout
 					myWebRequest.GetResponse();*/
 					WebClient client = new WebClient();
-					string downloadString = client.DownloadString("http://127.0.0.1");
+					client.DownloadString("http://127.0.0.1");
 					loaded = true;
 				} 
 				catch(Exception e) 
