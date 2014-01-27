@@ -20,11 +20,6 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <Externalconsole>true</Externalconsole>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="sgen MonoBrickFirmware.dll --type:MonoBrickFirmware.Settings.FirmwareSettings" workingdir="${TargetDir}" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -42,9 +37,7 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="FirmwareSettings.cs">
-      <DependentUpon>AssemblyInfo.cs</DependentUpon>
-    </Compile>
+    <Compile Include="FirmwareSettings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
