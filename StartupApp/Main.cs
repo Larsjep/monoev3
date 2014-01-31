@@ -212,7 +212,7 @@ namespace StartupApp
 			};
 			var startItem = new MenuItemWithCheckBox(lcd,"Start server", WebServer.IsRunning(),
 				delegate(bool running)
-         		{ 
+        { 
 					webServer = new WebServer(settings.WebServerSettings.Port);
 					bool isRunning = running;
 					if(running){
@@ -224,21 +224,24 @@ namespace StartupApp
 						isRunning = false;
 					}
 					else{
-						var dialog = new InfoDialog(font,lcd,btns,"Starting Web-Server Please Wait", false);
+						var dialog = new InfoDialog(font,lcd,btns,"Starting Web-Server Please Wait", false,"Web-Server");
 						dialog.Show();
-						if(webServer.Restart()){
+            webServer.CompilingServer += delegate() { dialog.UpdateMessage("Compiling...");};
+            webServer.LoadingPage += delegate() {dialog.UpdateMessage("Loading page"); };
+            webServer.StartingServer += delegate() {dialog.UpdateMessage("Starting server");};
+            if(webServer.Restart()){
 							dialog = new InfoDialog(font,lcd,btns,"Started successfully at port" + settings.WebServerSettings.Port, true);
 							dialog.Show();
 							isRunning = true;
 						}
 						else{
-							dialog = new InfoDialog(font,lcd,btns,"Failed to start Web-Servers", true);
+							dialog = new (font,lcd,btns,"Failed to start Web-Servers", true);
 							dialog.Show();
 							isRunning = false;
 						}
 					}
 					return isRunning;
-         		} 
+       } 
 			);
 			
 			items.Add(portItem);
@@ -390,7 +393,7 @@ namespace StartupApp
 				"  group=CCMP TKIP", 
 				"}", 
 			};
-        	System.IO.File.WriteAllLines(@WpaSupplicantFileName, lines);
+      System.IO.File.WriteAllLines(@WpaSupplicantFileName, lines);
 		}
 		
 		static bool ShowUpdatesDialogs (Lcd lcd, Buttons btns, bool showDescriptionDialog)
@@ -439,7 +442,7 @@ namespace StartupApp
 				
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
 				lcd.Update ();						
-				//WiFiDevice.TurnOff ();
+				WiFiDevice.TurnOff ();
 				if (!Directory.Exists (ProgramPathSdCard))
 					Directory.CreateDirectory (ProgramPathSdCard);
 				
@@ -465,18 +468,19 @@ namespace StartupApp
 				//Load settings
 				lcd.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
 				lcd.Update ();
-				//settings = settings.Load();						
-				/*if (FirmwareSettings.Instance != null) {
+				settings = settings.Load();						
+				if (settings != null) {
 					lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
 					lcd.Update ();						
 					SaveSettings();// JIT work-around
-					WriteWpaSupplicantConfiguration (FirmwareSettings.Instance.WiFiSettings.SSID, FirmwareSettings.Instance.WiFiSettings.Password, FirmwareSettings.Instance.WiFiSettings.Encryption);
-					if (FirmwareSettings.Instance.WiFiSettings.ConnectAtStartUp) {
+          WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID, settings.WiFiSettings.Password, settings.WiFiSettings.Encryption);
+					if (settings.WiFiSettings.ConnectAtStartUp) {
 						lcd.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);
 						lcd.Update ();						
 						if (WiFiDevice.TurnOn (60000)) {
 							WiFiDevice.GetIpAddress ();// JIT work-around
-							if (FirmwareSettings.Instance.GeneralSettings.CheckForSwUpdatesAtStartUp) {
+              if (settings.GeneralSettings.CheckForSwUpdatesAtStartUp)
+              {
 								ShowUpdatesDialogs (lcd, btns, false);
 							} else {
 								var dialog = new InfoDialog (font, lcd, btns, "Connected Successfully " + WiFiDevice.GetIpAddress (), true);
@@ -491,8 +495,9 @@ namespace StartupApp
 				else 
 				{
 					var dialog = new InfoDialog (font, lcd, btns, "Failed to load settings", true);
-					dialog.Show ();	
-				}*/
+					dialog.Show ();
+          settings = new FirmwareSettings();
+				}
 			}
 			
 			for (;;)
