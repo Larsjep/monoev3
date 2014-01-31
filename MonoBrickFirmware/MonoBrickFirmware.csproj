@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG;Ev3Simu</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
@@ -35,18 +35,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Native\" />
-    <Folder Include="Tools\" />
-    <Folder Include="Display\" />
-    <Folder Include="Display\Resources\" />
-    <Folder Include="Sensors\" />
-    <Folder Include="Movement\" />
-    <Folder Include="UserInput\" />
-    <Folder Include="Sound\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="HardwareIF\ButtonHAL.cs" />
+    <Compile Include="HardwareIF\LcdHAL.cs" />
     <Compile Include="Native\Libc.cs" />
     <Compile Include="Tools\QueueThread.cs" />
     <Compile Include="Display\Console.cs" />
