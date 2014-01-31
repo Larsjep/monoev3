@@ -45,16 +45,14 @@ namespace MonoBrickFirmware.Services
 			int attempts = 0;
 			bool serverReady = false;
 			Console.WriteLine("Server ready");
-			while(attempts < 90 && !serverReady)//Timeout is one minut
+			while(attempts < 90 && !serverReady)// 90 second timeout
 			{
 				try
 			    {
-					if(!serverThread.IsAlive)
-						return false;
-					Console.WriteLine("Check is server is ready");
-				    new TcpClient("127.0.0.1",port);
-					serverReady = true;
-					
+					  if(!serverThread.IsAlive)
+						  return false;
+					  new TcpClient("127.0.0.1",port);
+					  serverReady = true;
 			    }
 			    catch
 			    {
@@ -69,12 +67,9 @@ namespace MonoBrickFirmware.Services
 		{
 			int attemps = 0;
 			bool loaded = false;
-			while(attemps < 10 && !loaded){
+			while(attemps < 2 && !loaded){
 				try {
 					Console.WriteLine("Load webpage");
-					/*WebRequest myWebRequest=WebRequest.Create("127.0.0.1:" + port);
-					myWebRequest.Timeout=60000;//one minut timeout
-					myWebRequest.GetResponse();*/
 					WebClient client = new WebClient();
 					client.DownloadString("http://127.0.0.1");
 					loaded = true;
@@ -84,10 +79,9 @@ namespace MonoBrickFirmware.Services
 					Console.WriteLine(e.Message);
 					Console.WriteLine(e.StackTrace);
 				}
-				//attemps++;
+				attemps++;
 			}
 			return loaded;
-		
 		}
 		
 		public Action CompilingServer = delegate {};
@@ -107,12 +101,11 @@ namespace MonoBrickFirmware.Services
 			if (!IsRunning()) 
 			{
 				try{
-					CheckWebServer();
+				  CheckWebServer();
 					StartingServer();//Action
 					if(serverThread != null && serverThread.IsAlive)
 						serverThread.Abort();//this should never happen
 					serverThread = new Thread(ServerThread);
-					Console.WriteLine("Starting thread");
 					serverThread.Start();
 					if(!ServerReady()){
 						Stop();
