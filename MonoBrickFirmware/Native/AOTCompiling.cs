@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace MonoBrickFirmware.Native
 {
@@ -6,12 +7,14 @@ namespace MonoBrickFirmware.Native
 	{
 		public static bool IsFileCompiled (string fileName)
 		{
-			return false;
+      return File.Exists(fileName + ".so");
 		}
 		
-		public static void Compile(string fileName){
-			//Do something here	
-			System.Threading.Thread.Sleep(3000);
+		public static bool Compile(string fileName){
+      if (IsFileCompiled(fileName))
+        File.Delete(fileName);
+      ProcessHelper.RunAndWaitForProcessWithOutput("mono", "--aot=full " + fileName);
+      return IsFileCompiled(fileName);
 		}
 	}
 }
