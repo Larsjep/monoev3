@@ -235,7 +235,7 @@ namespace StartupApp
 							isRunning = true;
 						}
 						else{
-							dialog = new (font,lcd,btns,"Failed to start Web-Servers", true);
+							dialog = new InfoDialog(font,lcd,btns,"Failed to start Web-Servers", true);
 							dialog.Show();
 							isRunning = false;
 						}
