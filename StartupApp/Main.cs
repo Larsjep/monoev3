@@ -207,7 +207,7 @@ namespace StartupApp
 			{
 			new Thread(delegate() {
 			    	settings.WebServerSettings.Port = value;
-			    	SaveSettings();
+					settings.Save();
 				}).Start();
 			};
 			var startItem = new MenuItemWithCheckBox(lcd,"Start server", WebServer.IsRunning(),
@@ -259,14 +259,14 @@ namespace StartupApp
 			ssidItem.OnDialogExit += delegate(string text) {
 				new Thread(delegate() {
 		    		settings.WiFiSettings.SSID = text;
-					SaveSettings();
+					settings.Save();
 			    }).Start();
 			};
 			var passwordItem = new MenuItemWithCharacterInput(lcd,btns,"Password", "Password", settings.WiFiSettings.Password, true);
 			passwordItem.OnDialogExit += delegate(string text) {
 				new Thread(delegate() {
 			    	settings.WiFiSettings.Password = text;
-					SaveSettings();
+					settings.Save();
 			    }).Start();
 			};
 			var encryptionItem = new MenuItemWithOptions<string>(lcd,"Encryption", new string[]{"None","WPA/2"}, settings.WiFiSettings.Encryption ? 1 : 0);
@@ -276,7 +276,7 @@ namespace StartupApp
 						settings.WiFiSettings.Encryption = false;
 					else
 						settings.WiFiSettings.Encryption = true;
-					SaveSettings(); 
+					settings.Save(); 
 			    }).Start();
 			};
 			var connectItem = new MenuItemWithCheckBox(lcd,"Connect", WiFiDevice.IsLinkUp(),
@@ -304,7 +304,7 @@ namespace StartupApp
 								if(question.IsPositiveSelected){
 									new Thread(delegate() {
 								    	settings.WiFiSettings.ConnectAtStartUp = true;
-										SaveSettings();
+										settings.Save();
 								    }).Start();
 								}
 							}
@@ -330,12 +330,7 @@ namespace StartupApp
 			m.Show ();
 			return false;	
 		}
-		
-		static bool SaveSettings ()
-		{
-			//return FirmwareSettings.Instance.SaveToXML();
-			return true;
-		}
+
 		
 		static bool ShowSettings (Lcd lcd, Buttons btns)
 		{
@@ -365,7 +360,7 @@ namespace StartupApp
 				settings.WiFiSettings.ConnectAtStartUp = wifiConnect.Checked;
 				settings.SoundSettings.Volume = soundVolume.Value;
 				settings.SoundSettings.EnableSound = enableSound.Checked;
-				SaveSettings(); 
+				settings.Save();
 			}).Start();
 			return false;
 		}
@@ -472,7 +467,7 @@ namespace StartupApp
 				if (settings != null) {
 					lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
 					lcd.Update ();						
-					SaveSettings();// JIT work-around
+					settings.Save();// JIT work-around
           WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID, settings.WiFiSettings.Password, settings.WiFiSettings.Encryption);
 					if (settings.WiFiSettings.ConnectAtStartUp) {
 						lcd.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);

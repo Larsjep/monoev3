@@ -149,7 +149,11 @@ namespace MonoBrickFirmware.Settings
 					textWriter.Close ();
 					return true;
 				} 
-				catch {} 
+				catch (Exception exp) 
+				{ 
+					Console.WriteLine("Exception during settings save: " + exp.Message);
+					Console.WriteLine(exp.StackTrace);
+				}
 				if(textWriter!= null)
 					textWriter.Close();
 			}
@@ -161,14 +165,18 @@ namespace MonoBrickFirmware.Settings
 			lock (readWriteLock) {
 				TextReader textReader = null;
 				try{
-					XmlSerializer deserializer = new XmlSerializer (typeof(FirmwareSettings));
+					XmlSerializer deserializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
 					textReader = new StreamReader (SettingsFileName);
 					Object obj = deserializer.Deserialize (textReader);
 					FirmwareSettings myNewSettings = (FirmwareSettings)obj;
 					textReader.Close ();
 					return myNewSettings;
 				}
-				catch{}
+				catch (Exception exp) 
+				{ 
+					Console.WriteLine("Exception during settings load: " + exp.Message);
+					Console.WriteLine(exp.StackTrace);
+				}
 				if(textReader!= null)
 					textReader.Close();
 			}

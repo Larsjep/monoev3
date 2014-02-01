@@ -22,7 +22,7 @@
     <Externalconsole>true</Externalconsole>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="sgen StartupApp.exe" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="sgen /force StartupApp.exe" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
