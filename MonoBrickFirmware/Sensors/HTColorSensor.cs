@@ -68,6 +68,33 @@ namespace MonoBrickFirmware.Sensors
             RGBColor color = ReadRGBColor();
             return "Red:" + color.Red + " green:" + color.Green + " blue:" + color.Blue;
         }
+        
+        public override string GetSensorName ()
+		{
+			return "HT Color";
+		}
+		
+		public override void SelectNextMode()
+		{
+			return;
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return 1;
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return "Color";
+		}
+        
     }
 }
 

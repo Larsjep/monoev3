@@ -53,6 +53,17 @@ namespace MonoBrickFirmware.Sensors
 		}
 		
 		public abstract string ReadAsString ();
+    	
+		public abstract void SelectNextMode();
+		
+		public abstract string GetSensorName();
+		
+		public abstract void SelectPreviousMode();
+		
+		public abstract int NumberOfModes();
+        
+        public abstract string SelectedMode();
+
 		
 		protected void Reset()
 	    {

@@ -1,4 +1,5 @@
 using System;
+using MonoBrickFirmware.Extensions;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -60,79 +61,11 @@ namespace MonoBrickFirmware.Sensors
         }
     }
     
-    /// <summary>
-	/// Class for the EV3 ultrasonic sensor
-	/// </summary>
-	public class EV3UltrasonicSensor : UartSensor{
-		/// <summary>
-		/// Initializes a new instance of the EV3 Ultrasonic Sensor.
-		/// </summary>
-		public EV3UltrasonicSensor (SensorPort port) : this(port, UltraSonicMode.Centimeter)
-		{
-			
-		}
-		
-		/// <summary>
-		/// Initializes a new instance of the EV3 Ultrasonic Sensor.
-		/// </summary>
-		/// <param name="mode">Mode.</param>
-		public EV3UltrasonicSensor (SensorPort port, UltraSonicMode mode) :  base(port)
-		{
-			base.Initialise(base.uartMode);
-			Mode = mode;
-		}
-		
-		/// <summary>
-		/// Gets or sets the Gyro mode. 
-		/// </summary>
-		/// <value>The mode.</value>
-		public UltraSonicMode Mode {
-			get{return (UltraSonicMode) base.uartMode;}
-			set{SetMode((UARTMode) value);}
-		}
-
-		/// <summary>
-		/// Reads the sensor value as a string.
-		/// </summary>
-		/// <returns>The value as a string</returns>
-		public override string ReadAsString ()
-		{
-			string s = "";
-			switch ((UltraSonicMode)base.uartMode)
-			{
-			    case UltraSonicMode.Centimeter:
-			        s = Read().ToString() + " cm";
-			        break;
-			   	case UltraSonicMode.Inch:
-			        s = Read().ToString() +  " inch";
-			        break;
-			    case UltraSonicMode.Listen:
-			        s = Read().ToString();
-			        break;
-			}
-			return s;
-		}
-		
-		/// <summary>
-		/// Read the sensor value. Result depends on the mode
-		/// </summary>
-		public int Read ()
-		{
-			if (Mode == UltraSonicMode.Listen) 
-			{
-				if(ReadByte() != 0)
-					return 1;
-				return 0;
-			}
-			return (int) BitConverter.ToInt16(ReadBytes(2),0);
-		}
-	}
-    
         
     /// <summary>
     /// Sonar sensor
     /// </summary>
-	public class UltraSonicSensor : I2CSensor{
+	public class NXTUltraSonicSensor : I2CSensor{
         private const byte UltraSonicAddress = 0x02;
 		private UltraSonicMode sonarMode;
         
@@ -142,12 +75,15 @@ namespace MonoBrickFirmware.Sensors
 		/// <value>
 		/// The sonar mode 
 		/// </value>
-		public  UltraSonicMode Mode{ get{return sonarMode;} set{sonarMode = value;}}
+		public  UltraSonicMode Mode{ 
+			get{return sonarMode;} 
+			set{sonarMode = value;}
+		}
         
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.NXT.Sonar"/> class in centimeter mode
 		/// </summary>
-		public UltraSonicSensor(SensorPort port) : this(port,UltraSonicMode.Centimeter) { 
+		public NXTUltraSonicSensor(SensorPort port) : this(port,UltraSonicMode.Centimeter) { 
 			
 		}
         
@@ -157,7 +93,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <param name='mode'>
 		/// The sonar mode
 		/// </param>
-		public UltraSonicSensor(SensorPort port, UltraSonicMode mode) : base(port,UltraSonicAddress,I2CMode.LowSpeed9V)
+		public NXTUltraSonicSensor(SensorPort port, UltraSonicMode mode) : base(port,UltraSonicAddress,I2CMode.LowSpeed9V)
 		{ 
 			Mode = mode;
 			base.Initialise(); 
@@ -254,11 +190,45 @@ namespace MonoBrickFirmware.Sensors
         {
             string s = ReadDistance().ToString();
             if (Mode == UltraSonicMode.Inch)
-                s = s + " inches";
+                s = s + " inch";
             else
-                s = s + " centimeters";
+                s = s + " cm";
             return s;
         }
+        
+        
+        public override string GetSensorName ()
+		{
+			return "NXT Ultrasonic";
+		}
+		
+		public override void SelectNextMode()
+		{
+			Mode = Mode.Next();
+			if(Mode == UltraSonicMode.Listen)
+				Mode = Mode.Next();
+			return;
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			Mode = Mode.Previous();
+			if(Mode == UltraSonicMode.Listen)
+				Mode = Mode.Previous();
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return Enum.GetNames(typeof(UltraSonicMode)).Length-1;//listen mode not supported
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return Mode.ToString();
+		}
+        
     }
 }
 

@@ -10,7 +10,7 @@ namespace LightSensorExample
 		public static void Main (string[] args)
 		{
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
-			var lightSensor = new LightSensor(SensorPort.In1);
+			var lightSensor = new NXTLightSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			LcdConsole.WriteLine("Use light on port1");
 			LcdConsole.WriteLine("Up value ");

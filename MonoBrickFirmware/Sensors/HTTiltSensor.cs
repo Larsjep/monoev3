@@ -109,6 +109,35 @@ namespace MonoBrickFirmware.Sensors
             Position pos = ReadPosition();
             return "x:" + pos.X + " y:" + pos.Y + " z:" + pos.Z;
         }
+        
+        public override void SelectNextMode()
+		{
+			return;
+		}
+		
+		public override string GetSensorName ()
+		{
+			return "HT Tilt Sensor";
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return 1;
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return "Tilt";
+		}
+        
+        
     }
 }
 

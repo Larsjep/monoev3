@@ -13,7 +13,7 @@ namespace IRSensorExample
 			
 			int channelIdx = 0;
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
-			var sensor = new IRSensor(SensorPort.In1);
+			var sensor = new EV3IRSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			LcdConsole.WriteLine("Use IR on port1");
 			LcdConsole.WriteLine("Up distance");

@@ -43,8 +43,6 @@ namespace MonoBrickFirmware.Sensors
 			analogMemory = SensorManager.Instance.AnalogMemory;
 		}
 		
-		public abstract string ReadAsString ();
-		
 		protected void SetMode(AnalogMode mode)
 	    {
 	        this.AnalogMode = mode;
@@ -95,6 +93,17 @@ namespace MonoBrickFirmware.Sensors
 			 return (int)BitConverter.ToInt16(analogMemory.Read(offset, NumberOfSenosrPorts*2),(int) port * 2);
 		}
 		
+		public abstract string ReadAsString ();
+    	
+		public abstract void SelectNextMode();
+		
+		public abstract string GetSensorName();
+		
+		public abstract void SelectPreviousMode();
+		
+		public abstract int NumberOfModes();
+        
+        public abstract string SelectedMode();
 		
 	}
 }

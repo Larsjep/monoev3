@@ -10,7 +10,8 @@ namespace TouchSensorExample
 		public static void Main (string[] args)
 		{
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
-			var touchSensor = new TouchSensor(SensorPort.In1);
+			var touchSensor = new EV3TouchSensor(SensorPort.In1);
+			//svar touchSensor = new NXTTouchSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			LcdConsole.WriteLine("Use touch on port1");
 			LcdConsole.WriteLine("Up read");

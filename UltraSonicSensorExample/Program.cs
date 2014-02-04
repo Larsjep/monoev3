@@ -16,8 +16,6 @@ namespace UltraSonicSensorExample.IO
 			UltraSonicMode[] modes = {UltraSonicMode.Centimeter, UltraSonicMode.Inch, UltraSonicMode.Listen};
 			int modeIdx = 0;
 			ButtonEvents buts = new ButtonEvents ();
-			var sensor2 = new UltraSonicSensor(SensorPort.In2, UltraSonicMode.Centimeter);
-			sensor2.Continuous();
 			var sensor = new EV3UltrasonicSensor(SensorPort.In1, modes[modeIdx]);
 			LcdConsole.WriteLine("Use sonic on port1");
 			LcdConsole.WriteLine("Up change mode");

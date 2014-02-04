@@ -1,4 +1,5 @@
 using System;
+using MonoBrickFirmware.Extensions;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -23,12 +24,12 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class for the EV3 Gyro sensor
 	/// </summary>
-	public class GyroSensor :UartSensor{
+	public class EV3GyroSensor :UartSensor{
 		
 		/// <summary>
 		/// Initializes a new instance of the Gyro sensor.
 		/// </summary>
-		public GyroSensor (SensorPort port) : this(port, GyroMode.Angle)
+		public EV3GyroSensor (SensorPort port) : this(port, GyroMode.Angle)
 		{
 				
 		}
@@ -37,7 +38,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Initializes a new instance of the Gyro sensor.
 		/// </summary>
 		/// <param name="mode">Mode.</param>
-		public GyroSensor (SensorPort port, GyroMode mode) :  base(port)
+		public EV3GyroSensor (SensorPort port, GyroMode mode) :  base(port)
 		{
 			base.Initialise(base.uartMode);
 			Mode = mode;
@@ -112,6 +113,36 @@ namespace MonoBrickFirmware.Sensors
 			}
 			return BitConverter.ToInt16(ReadBytes(2),0);
 		}
+		
+		public override string GetSensorName ()
+		{
+			return "EV3 Gyro";
+		}
+		
+		public override void SelectNextMode()
+		{
+			Mode = Mode.Next();
+			return;
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			Mode = Mode.Previous();
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return Enum.GetNames(typeof(GyroMode)).Length;
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return Mode.ToString();
+		}
+		
+		
 	}
 }
 

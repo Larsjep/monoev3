@@ -50,7 +50,34 @@ namespace MonoBrickFirmware.Sensors
 		/// The offset.
 		/// </value>
 		public int Offset{get;set;}
-
+		
+		
+		public override void SelectNextMode()
+		{
+			return;
+		}
+		
+		public override string GetSensorName ()
+		{
+			return "HT Gyro";
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return 1;
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return "Analog";
+		}
     }
 }
 

@@ -1,5 +1,5 @@
 using System;
-
+using MonoBrickFirmware.Extensions;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -21,12 +21,12 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class for the NXT sound sensor.
 	/// </summary>
-	public class SoundSensor: AnalogSensor 
+	public class NXTSoundSensor: AnalogSensor 
 	{
 		/// <summary>
 		/// Initializes a new instance of the sound sensor class.
 		/// </summary>
-		public SoundSensor (SensorPort port) : this(port, SoundMode.SoundDB)
+		public NXTSoundSensor (SensorPort port) : this(port, SoundMode.SoundDB)
 		{
 			
 		}
@@ -35,7 +35,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Initializes a new instance of the sound sensor class.
 		/// </summary>
 		/// <param name="mode">Mode.</param>
-		public SoundSensor (SensorPort port, SoundMode  mode) :  base(port)
+		public NXTSoundSensor (SensorPort port, SoundMode  mode) :  base(port)
 		{
 			Mode = mode;
 		}
@@ -94,6 +94,33 @@ namespace MonoBrickFirmware.Sensors
 			return 1023 - base.ReadPin1As10Bit();
 		}
 		
+		public override string GetSensorName ()
+		{
+			return "NXT Sound";
+		}
+		
+		public override void SelectNextMode()
+		{
+			Mode = Mode.Next();
+			return;
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			Mode = Mode.Previous();
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return Enum.GetNames(typeof(SoundMode)).Length;
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return Mode.ToString();
+		}
 	}
 }
 

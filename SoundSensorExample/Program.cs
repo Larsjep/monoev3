@@ -11,7 +11,7 @@ namespace SoundSensorExample
 		public static void Main (string[] args)
 		{
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
-			var soundSensor = new SoundSensor(SensorPort.In1);
+			var soundSensor = new NXTSoundSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			LcdConsole.WriteLine("Use sound on port1");
 			LcdConsole.WriteLine("Up sensor value");

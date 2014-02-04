@@ -16,7 +16,7 @@ namespace GyroSensorExample
 			GyroMode[] modes = {GyroMode.Angle, GyroMode.AngularVelocity};
 			int modeIdx = 0;
 			ButtonEvents buts = new ButtonEvents ();
-			var gyro = new GyroSensor(SensorPort.In1, GyroMode.Angle);
+			var gyro = new EV3GyroSensor(SensorPort.In1, GyroMode.Angle);
 			LcdConsole.WriteLine("Use gyro on port 1");
 			LcdConsole.WriteLine("Up read value");
 			LcdConsole.WriteLine("Down rotation count");

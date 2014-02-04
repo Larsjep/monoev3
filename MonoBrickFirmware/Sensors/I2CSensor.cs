@@ -45,8 +45,6 @@ namespace MonoBrickFirmware.Sensors
 			
 		}
 		
-		public abstract string ReadAsString ();
-		
 		protected void Reset ()
 		{
 			SensorManager.Instance.ResetI2C(this.port);
@@ -170,6 +168,19 @@ namespace MonoBrickFirmware.Sensors
 			}
         	throw new TimeoutException("I2C timeout");
     	}
+    	
+    	public abstract string ReadAsString ();
+    	
+		public abstract void SelectNextMode();
+		
+		public abstract string GetSensorName();
+		
+		public abstract void SelectPreviousMode();
+		
+		public abstract int NumberOfModes();
+        
+        public abstract string SelectedMode();
+    	
 	}
 }
 

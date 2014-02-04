@@ -5,15 +5,13 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class used for touch sensor. Works with both EV3 and NXT
 	/// </summary>
-	public class TouchSensor : AnalogSensor{
-		private bool nxtConnected;
-		private const int EV3Cutoff = ADCResolution/2;
+	public class NXTTouchSensor : AnalogSensor{
 		private const int NXTCutoff = 512;
 		
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.TouchSensor"/> class in boolean mode
 		/// </summary>
-		public TouchSensor (SensorPort port) : base(port)
+		public NXTTouchSensor (SensorPort port) : base(port)
 		{
 			
 		}
@@ -39,10 +37,7 @@ namespace MonoBrickFirmware.Sensors
 		/// </summary>
 		/// <returns>The raw.</returns>
 		public int ReadRaw(){
-			nxtConnected = ( SensorManager.Instance.GetSensorType(this.port) == SensorType.NXTTouch);
-			if(nxtConnected)
-				return base.ReadPin1As10Bit();//NXT
-			return (int)ReadPin6();//EV3
+			return base.ReadPin1As10Bit();//NXT
 		}
 		
 		/// <summary>
@@ -52,18 +47,10 @@ namespace MonoBrickFirmware.Sensors
 		public bool IsPressed ()
 		{
 			short rawValue = (short)ReadRaw();
-			if (nxtConnected) {
-				if(rawValue < NXTCutoff)
-					return true;
-				return false;	
-			} 
-			else {
-				if(rawValue > EV3Cutoff)
-					return true;
-				return false;
-			} 
+			if(rawValue < NXTCutoff)
+				return true;
+			return false;	
 		}
-		
 		
 		/// <summary>
 		/// Read the value. Will return 1 or 0
@@ -71,6 +58,32 @@ namespace MonoBrickFirmware.Sensors
 		public int Read()
 		{
 			return Convert.ToInt32(IsPressed());
+		}
+		
+		public override string GetSensorName ()
+		{
+			return "NXT Touch";
+		}
+		
+		public override void SelectNextMode()
+		{
+			return;
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return 1;
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return "Analog";
 		}
 	}
 }
