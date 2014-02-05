@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTechnicGyroSensorExample"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoBrickWebServer", "MonoBrickWebServer\MonoBrickWebServer.csproj", "{46A2BC89-7B2D-40CC-84D2-67A145924A0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorFactoryExample", "SensorFactoryExample\SensorFactoryExample.csproj", "{64CFD3F7-4F67-4353-9617-BA4804A2F389}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,18 @@ Global
 		{61423DCA-229C-4A9C-B49A-3F2C1432B8F0}.Release|Mixed Platforms.Build.0 = Release|x86
 		{61423DCA-229C-4A9C-B49A-3F2C1432B8F0}.Release|x86.ActiveCfg = Release|x86
 		{61423DCA-229C-4A9C-B49A-3F2C1432B8F0}.Release|x86.Build.0 = Release|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Debug|Any CPU.Build.0 = Debug|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Debug|x86.ActiveCfg = Debug|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Debug|x86.Build.0 = Debug|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Release|Any CPU.ActiveCfg = Release|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Release|Any CPU.Build.0 = Release|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Release|Mixed Platforms.Build.0 = Release|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Release|x86.ActiveCfg = Release|x86
+		{64CFD3F7-4F67-4353-9617-BA4804A2F389}.Release|x86.Build.0 = Release|x86
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Debug|Mixed Platforms.Build.0 = Debug|x86
@@ -240,7 +254,7 @@ Global
 		{F9469EB1-222C-4F43-B426-4FA196401BE7}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = StartupApp\StartupApp.csproj
+		StartupItem = SensorFactoryExample\SensorFactoryExample.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2

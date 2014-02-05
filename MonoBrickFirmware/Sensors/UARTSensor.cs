@@ -101,7 +101,6 @@ namespace MonoBrickFirmware.Sensors
 	            return Initialise(mode);
 	    }
 	
-	   	
 	    protected byte ReadByte()
 	    {
 	        //CheckSensor();
@@ -187,7 +186,7 @@ namespace MonoBrickFirmware.Sensors
 		private void ClearPortChanged()
 		{
 			SensorManager.Instance.ClearUartPortChanged(this.port);
-			uartMemory.Write (UartStatusOffset + (int) port, new byte[] { (byte)(uartMemory.Read ((int)port, 1) [0] & ~UartPortChanged) });
+			uartMemory.Write (UartStatusOffset + (int) port, new byte[] { (byte)(uartMemory.Read (UartStatusOffset +(int)port, 1) [0] & ~UartPortChanged) });
 			this.uartMode = UARTMode.Mode0;
 	    }
 		

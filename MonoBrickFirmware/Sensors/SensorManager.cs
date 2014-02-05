@@ -38,7 +38,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class used to share sensor functions and informations between sensor instances
 	/// </summary>
-	internal sealed class SensorManager
+	public sealed class SensorManager
 	{
 		private static byte [] sensorData = new byte[3*NumberOfSenosrPorts];
 		private static object setupLock = new object();
