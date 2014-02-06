@@ -16,7 +16,7 @@ namespace SensorFactoryExample
 			ISensor[] sensor = new ISensor[4];
 			for (int i = 0; i < 4; i++) {
 				lastSensorType [i] = SensorType.None;
-				sensor[i] = null;
+				sensor [i] = null;
 			}
 			ButtonEvents buts = new ButtonEvents ();
 			buts.EscapePressed += () => { 
@@ -26,17 +26,18 @@ namespace SensorFactoryExample
 						
 				for (int i = 0; i < 4; i++) {
 					SensorType currentType = SensorManager.Instance.GetSensorType (sensorPort [i]);
-					Console.WriteLine (currentType);
-					ConnectionType connectionType = SensorManager.Instance.GetConnectionType(sensorPort[i]);
-					Console.WriteLine(connectionType);
-					sensor[i] = SensorFactory.GetSensor(sensorPort[i]);
-						
 					if (currentType != lastSensorType [i]) {
-						connectionType = SensorManager.Instance.GetConnectionType(sensorPort[i]);
-						//Console.WriteLine(connectionType);
-						//Console.WriteLine (sensorPort [i] + " changed from  " + lastSensorType [i] + " to " + currentType);
+						Console.WriteLine (sensorPort [i] + " changed from  " + lastSensorType [i] + " to " + currentType);
+						sensor [i] = SensorFactory.GetSensor (sensorPort [i]);
 						lastSensorType [i] = currentType;
-						//Console.WriteLine(sensor[i]);
+						Console.WriteLine (sensor [i]);
+						if (currentType == SensorType.None) 
+						{
+							SensorManager.Instance.ResetUart(sensorPort [i]);
+							SensorManager.Instance.ResetI2C(sensorPort [i]);
+							SensorManager.Instance.SetAnalogMode(AnalogMode.None, sensorPort [i]); 
+							
+						}
 						//sensor[i].GetSensorName();
 					}
 							

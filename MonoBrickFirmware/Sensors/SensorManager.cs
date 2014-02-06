@@ -58,9 +58,8 @@ namespace MonoBrickFirmware.Sensors
     	private const UInt32 I2CIOSet = 0xc02c6906;
 		
 		// UART IO control
-		private const UInt32 UartIOSetConnection = 0xc00c7500;//This number can also be found in sensormanager.cs
-		private const UInt32 UartIOReadModeInfo = 0xc03c7501;
-    	private const UInt32 UartIONackModeInfo = 0xc03c7502;
+		private const UInt32 UartIOSetConnection = 0xc00c7500;
+		private const UInt32 UartIONackModeInfo = 0xc03c7502;
     	private const UInt32 UartIOClearChanges = 0xc03c7503;
 		
 		public const int NumberOfSenosrPorts = 4;
@@ -70,7 +69,7 @@ namespace MonoBrickFirmware.Sensors
 		private UnixDevice AnalogDevice{get;set;}
 		public MemoryArea AnalogMemory{get; private set;}
 		
-		private UnixDevice UartDevice{get; set;}
+		public UnixDevice UartDevice{get; private set;}
 		public MemoryArea UartMemory{get; private set;}
 		
 		public UnixDevice I2CDevice{get; private set;}

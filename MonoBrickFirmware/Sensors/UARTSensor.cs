@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using System;
 using System.Collections.Generic;
 using MonoBrickFirmware.Native;
+using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -33,6 +34,10 @@ namespace MonoBrickFirmware.Sensors
     	private const int UartActualOffset = 42592;
     	private const int UartRawOffset = 4192;
     	
+    	// UART IO control
+    	private const UInt32 UartIOReadModeInfo = 0xc03c7501;
+		private const UInt32 SensorInfoLength = 56;
+    	
     	private const int UartRawDataSize = 32; 
 		private const int UartRawBufferLength = 300;
 		private const int UartRawBufferSize = UartRawDataSize * UartRawBufferLength;
@@ -41,6 +46,7 @@ namespace MonoBrickFirmware.Sensors
     	private const byte UartDataReady = 8;
 		private const byte UartPortChanged = 1;
 		
+		private UnixDevice UartDevice;
 		
 		protected const int NumberOfSenosrPorts = SensorManager.NumberOfSenosrPorts;
 		protected SensorPort port;
@@ -50,6 +56,7 @@ namespace MonoBrickFirmware.Sensors
 		{
 			this.port = port;
 			uartMemory = SensorManager.Instance.UartMemory;
+			UartDevice = SensorManager.Instance.UartDevice;
 		}
 		
 		public abstract string ReadAsString ();
@@ -71,6 +78,46 @@ namespace MonoBrickFirmware.Sensors
 			uartMode = UARTMode.Mode0; 
 	        WaitZeroStatus(WaitTimout);
 	    }
+	    
+	    
+	    /// <summary>
+	    /// Gets the sensor info based on the mode
+	    /// </summary>
+	    /// <returns>Raw Sensor info data</returns>
+		protected byte[] GetSensorInfo()
+		{
+			ByteArrayCreator command = new ByteArrayCreator ();
+			command.Append (new Byte[SensorInfoLength]);
+			/*command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Single());
+			command.Append(new Single());
+			command.Append(new Single());
+			command.Append(new Single());
+			command.Append(new Single());
+			command.Append(new Single());
+			
+			
+			command.Append(new Int16());
+			command.Append(new Int16());
+			command.Append(new Byte());
+			command.Append (new Byte[5]);
+			command.Append(new Int16());*/
+			
+			command.Append ((byte)this.port);
+			command.Append ((byte)this.uartMode);
+			byte[] uartData = command.Data;
+			unchecked {
+				UartDevice.IoCtl ((Int32)UartIOReadModeInfo, uartData);
+			}
+			return uartData;
+		}
 		
 		
 	    protected bool Initialise(UARTMode mode)

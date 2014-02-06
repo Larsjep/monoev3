@@ -8,16 +8,11 @@ namespace MonoBrickFirmware.Sensors
 		public static ISensor GetSensor (SensorPort port)
 		{
 			ISensor sensor = null;
-			if (SensorManager.Instance.GetConnectionType (port) == ConnectionType.UART) {
-				System.Threading.Thread.Sleep(1000);
-				var temp = new EV3GyroSensor(port);
-				System.Threading.Thread.Sleep(1000);
-				temp.Read();
-				SensorManager.Instance.SetUartOperatingMode(UARTMode.Mode1,port);
-			}
+			/*if (SensorManager.Instance.GetConnectionType (port) == ConnectionType.UART) {
+				
+			}*/
 			
 			SensorType type = SensorManager.Instance.GetSensorType (port);
-			Console.WriteLine(type);
 			switch (type) {
 				case SensorType.Color:
 					sensor = new EV3ColorSensor (port); 
@@ -51,12 +46,10 @@ namespace MonoBrickFirmware.Sensors
 					break;
 				case SensorType.NXTI2c:
 					var helper = new I2CHelper (port);
-					Console.WriteLine(helper.GetSensorName ());
 					switch (helper.GetSensorName ()) 
 					{
 						case "LEGO???Sonar??":
 							sensor = new NXTUltraSonicSensor(port);
-							Console.WriteLine("Setting sensor values to Ultrasonic");
 						break;
 						case "HiTechncColor":
 							sensor = new HiTecColorSensor(port);
@@ -95,16 +88,106 @@ namespace MonoBrickFirmware.Sensors
 					
 					break;
 				case SensorType.Unknown:
-						
+					var uartHelper	 = new UARTHelper(port);
+					switch (uartHelper.GetSensorName ()) 
+					{
+						case "COL-REFLECT":
+							sensor = new EV3ColorSensor(port);
+						break;
+						case "IR-PROX":
+							sensor = new EV3IRSensor(port);
+						break;
+						case "GYRO-ANG":
+							sensor = new EV3GyroSensor(port);
+						break;
+						case "US-DIST-CM":
+							sensor = new EV3UltrasonicSensor(port);
+						break;
+					}	
 					break;
 			}
-			if(sensor == null)
-				Console.WriteLine("Sensor value is null");
-			else
-				Console.WriteLine("Sensor value is not null");
 			return sensor;
 		}
 	}
+	internal class UARTHelper : UartSensor{
+		
+		private const UInt32 SensorNameLength = 12;
+    	
+		public UARTHelper (SensorPort port) : base (port)
+		{
+			base.Initialise(base.uartMode);
+			base.SetMode(UARTMode.Mode0);
+		}
+		
+		/// <summary>
+		/// Reads the sensor value as a string.
+		/// </summary>
+		/// <returns>
+		/// The value as a string
+		/// </returns>
+        public override string ReadAsString ()
+		{
+			return "";
+		}
+        
+        /// <summary>
+        /// Gets the name of the sensor.
+        /// </summary>
+        /// <returns>The sensor name.</returns>
+		public override string GetSensorName ()
+		{
+			
+			Console.WriteLine("Get Sensor Name");
+			byte[] data = this.GetSensorInfo ();
+			byte[] name = new byte[SensorNameLength];
+			Array.Copy(data, name, SensorNameLength);
+			for (int i = 0; i < name.Length; i++) 
+			{
+				Console.WriteLine("Data["+i+"]:" + name[i].ToString("X"));
+			}
+			Console.WriteLine(System.Text.Encoding.ASCII.GetString (name));
+			return System.Text.Encoding.ASCII.GetString(name);
+		}
+		
+		/// <summary>
+		/// Selects the next mode.
+		/// </summary>
+		public override void SelectNextMode ()
+		{
+			return;
+		}
+		
+		/// <summary>
+		/// Selects the previous mode.
+		/// </summary>
+		public override void SelectPreviousMode ()
+		{
+			return;
+		}
+		
+		/// <summary>
+		/// Numbers the of modes.
+		/// </summary>
+		/// <returns>The number of modes</returns>
+		public override int NumberOfModes()
+		{
+			return 0;
+		}
+        
+        /// <summary>
+        /// .m.-,
+        /// </summary>
+        /// <returns>The mode.</returns>
+        public override string SelectedMode ()
+		{
+			return "";
+		}
+		
+		
+	
+	}
+	
+	
 	internal class I2CHelper : I2CSensor
 	{
 		public I2CHelper (SensorPort port) : base (port, 0x02, I2CMode.LowSpeed9V)
@@ -132,9 +215,14 @@ namespace MonoBrickFirmware.Sensors
 			byte[] data = new byte[16];
 			var temp = ReadRegister(0x08);
 			Buffer.BlockCopy(temp,0,data,0,8);
-			System.Threading.Thread.Sleep(50);
+			System.Threading.Thread.Sleep(100);
 			temp = ReadRegister(0x10);
 			Buffer.BlockCopy(temp,0,data,8,8);
+			for (int i = 0; i < data.Length; i++) 
+			{
+				Console.WriteLine("Data["+i+"]:" + data[i].ToString("X"));
+			}
+			Console.WriteLine(System.Text.Encoding.ASCII.GetString (data));
 			return System.Text.Encoding.ASCII.GetString (data);	
 		}
 		
