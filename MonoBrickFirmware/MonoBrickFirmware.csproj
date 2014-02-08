@@ -106,6 +106,7 @@
     <Compile Include="Sensors\EV3ColorSensor.cs" />
     <Compile Include="Sensors\NXTColorSensor.cs" />
     <Compile Include="Sensors\EV3UltraSonicSensor.cs" />
+    <Compile Include="Sensors\SensorListner.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
