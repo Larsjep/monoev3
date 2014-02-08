@@ -70,7 +70,8 @@ namespace MonoBrickFirmware.Sensors
 		public abstract int NumberOfModes();
         
         public abstract string SelectedMode();
-
+        
+        public SensorPort Port{ get {return port;}}
 		
 		protected void Reset()
 	    {

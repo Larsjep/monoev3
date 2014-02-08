@@ -42,6 +42,15 @@ namespace MonoBrickFirmware.Sensors
         /// <returns>The mode.</returns>
         string SelectedMode();
         
+        /// <summary>
+		/// Sensor port
+		/// </summary>
+		/// <returns>The sensor port</returns>
+		SensorPort Port
+    	{
+        	get;
+    	}
+        
 	}
 }
 
