@@ -8,10 +8,6 @@ namespace MonoBrickFirmware.Sensors
 		public static ISensor GetSensor (SensorPort port)
 		{
 			ISensor sensor = null;
-			/*if (SensorManager.Instance.GetConnectionType (port) == ConnectionType.UART) {
-				
-			}*/
-			
 			SensorType type = SensorManager.Instance.GetSensorType (port);
 			switch (type) {
 				case SensorType.Color:
@@ -46,26 +42,11 @@ namespace MonoBrickFirmware.Sensors
 					break;
 				case SensorType.NXTI2c:
 					var helper = new I2CHelper (port);
-					switch (helper.GetSensorName ()) 
-					{
-						case "LEGO???Sonar??":
-							sensor = new NXTUltraSonicSensor(port);
-						break;
-						case "HiTechncColor":
-							sensor = new HiTecColorSensor(port);
-						break;
-						case "HiTechncCompass":
-							sensor = new HiTecCompassSensor(port);
-						break;
-						case "HITECHNCAccel.":
-							sensor = new HiTecTiltSensor(port);
-						break;
-					}	
+					sensor = helper.GetSensor();
 					break;
 				case SensorType.I2CUnknown:
 						
 					break;
-				
 				case SensorType.NXTTemperature:
 						
 					break;
@@ -89,34 +70,53 @@ namespace MonoBrickFirmware.Sensors
 					break;
 				case SensorType.Unknown:
 					var uartHelper	 = new UARTHelper(port);
-					switch (uartHelper.GetSensorName ()) 
-					{
-						case "COL-REFLECT":
-							sensor = new EV3ColorSensor(port);
-						break;
-						case "IR-PROX":
-							sensor = new EV3IRSensor(port);
-						break;
-						case "GYRO-ANG":
-							sensor = new EV3GyroSensor(port);
-						break;
-						case "US-DIST-CM":
-							sensor = new EV3UltrasonicSensor(port);
-						break;
-					}	
+					sensor = uartHelper.GetSensor();
 					break;
 			}
 			return sensor;
 		}
 	}
+	
 	internal class UARTHelper : UartSensor{
 		
 		private const UInt32 SensorNameLength = 12;
+    	private static byte[] IRName = {1,2,3};
+    	private static byte[] ColorName = {1,2,3};
+    	private static byte[] GyroName = {1,2,3};
+    	private static byte[] UltrasonicName = {1,2,3};
+    	
+    	private Dictionary<byte[], ISensor> sensorDictionary = null;
     	
 		public UARTHelper (SensorPort port) : base (port)
 		{
 			base.Initialise(base.uartMode);
 			base.SetMode(UARTMode.Mode0);
+			sensorDictionary = new Dictionary<byte[], ISensor>();
+			sensorDictionary.Add(IRName, new EV3IRSensor(port));
+			sensorDictionary.Add(GyroName, new EV3GyroSensor(port));
+			sensorDictionary.Add(ColorName, new EV3ColorSensor(port));
+			sensorDictionary.Add(UltrasonicName, new EV3UltrasonicSensor(port));
+		}
+		
+		private bool ByteArrayCompare(byte[] a1, byte[] a2) 
+		{
+		  for(int i=0; i<a1.Length; i++)
+		    if(a1[i]!=a2[i])
+		      return false;
+		  return true;
+		}
+		
+		public ISensor GetSensor ()
+		{
+			byte[] data = this.GetSensorInfo ();
+			byte[] name = new byte[SensorNameLength];
+			Array.Copy(data, name, SensorNameLength);
+			foreach (KeyValuePair<byte[], ISensor> pair in sensorDictionary) {
+				if (ByteArrayCompare (pair.Key, name)) {
+					return pair.Value;
+				}
+			}
+			return null;
 		}
 		
 		/// <summary>
@@ -136,17 +136,7 @@ namespace MonoBrickFirmware.Sensors
         /// <returns>The sensor name.</returns>
 		public override string GetSensorName ()
 		{
-			
-			Console.WriteLine("Get Sensor Name");
-			byte[] data = this.GetSensorInfo ();
-			byte[] name = new byte[SensorNameLength];
-			Array.Copy(data, name, SensorNameLength);
-			for (int i = 0; i < name.Length; i++) 
-			{
-				Console.WriteLine("Data["+i+"]:" + name[i].ToString("X"));
-			}
-			Console.WriteLine(System.Text.Encoding.ASCII.GetString (name));
-			return System.Text.Encoding.ASCII.GetString(name);
+			return "";
 		}
 		
 		/// <summary>
@@ -182,17 +172,34 @@ namespace MonoBrickFirmware.Sensors
 		{
 			return "";
 		}
-		
-		
-	
 	}
-	
 	
 	internal class I2CHelper : I2CSensor
 	{
+		private Dictionary<byte[], ISensor> sensorDictionary = null;
+    	
+    	private static byte[] SonarName = {1,2,3};
+    	private static byte[] HTColorName = {1,2,3};
+    	private static byte[] HTCompassName = {1,2,3};
+    	private static byte[] HTAccelName = {1,2,3};
+    	
+    	
 		public I2CHelper (SensorPort port) : base (port, 0x02, I2CMode.LowSpeed9V)
 		{
 			base.Initialise();
+			sensorDictionary = new Dictionary<byte[], ISensor>();
+			sensorDictionary.Add(SonarName , new NXTUltraSonicSensor(port));
+			sensorDictionary.Add(HTColorName, new HiTecColorSensor(port));
+			sensorDictionary.Add(HTCompassName, new HiTecCompassSensor(port));
+			sensorDictionary.Add(HTAccelName, new HiTecTiltSensor(port));
+		}
+		
+		private bool ByteArrayCompare(byte[] a1, byte[] a2) 
+		{
+		  for(int i=0; i<a1.Length; i++)
+		    if(a1[i]!=a2[i])
+		      return false;
+		  return true;
 		}
 		
 		/// <summary>
@@ -205,6 +212,22 @@ namespace MonoBrickFirmware.Sensors
 		{
 			return "";
 		}
+		
+		public ISensor GetSensor ()
+		{
+			byte[] data = new byte[16];
+			var temp = ReadRegister (0x08);
+			Buffer.BlockCopy (temp, 0, data, 0, 8);
+			System.Threading.Thread.Sleep (100);
+			temp = ReadRegister (0x10);
+			Buffer.BlockCopy (temp, 0, data, 8, 8);
+			foreach (KeyValuePair<byte[], ISensor> pair in sensorDictionary) {
+				if (ByteArrayCompare (pair.Key, temp)) {
+					return pair.Value;
+				}
+			}
+			return null;
+		}
         
         /// <summary>
         /// Gets the name of the sensor.
@@ -212,18 +235,7 @@ namespace MonoBrickFirmware.Sensors
         /// <returns>The sensor name.</returns>
 		public override string GetSensorName ()
 		{
-			byte[] data = new byte[16];
-			var temp = ReadRegister(0x08);
-			Buffer.BlockCopy(temp,0,data,0,8);
-			System.Threading.Thread.Sleep(100);
-			temp = ReadRegister(0x10);
-			Buffer.BlockCopy(temp,0,data,8,8);
-			for (int i = 0; i < data.Length; i++) 
-			{
-				Console.WriteLine("Data["+i+"]:" + data[i].ToString("X"));
-			}
-			Console.WriteLine(System.Text.Encoding.ASCII.GetString (data));
-			return System.Text.Encoding.ASCII.GetString (data);	
+			return "";
 		}
 		
 		/// <summary>
