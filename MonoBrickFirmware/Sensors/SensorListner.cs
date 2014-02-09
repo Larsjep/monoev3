@@ -12,7 +12,7 @@ namespace MonoBrickFirmware.Sensors
 		Thread thread = null;
 		private int interval = 0;
 		public event Action<ISensor> SensorAttached = delegate {};
-		public event Action SensorDetached = delegate {};
+		public event Action<SensorPort> SensorDetached = delegate {};
 		public SensorListner (int interval)
 		{
 			this.interval = interval;
@@ -61,7 +61,7 @@ namespace MonoBrickFirmware.Sensors
 							SensorManager.Instance.SetAnalogMode (AnalogMode.None, sensorPort [i]); 
 							SensorAttached (sensor [i]);	
 						} else {
-							SensorDetached ();
+							SensorDetached (sensorPort [i]);
 						}
 					}
 					System.Threading.Thread.Sleep(interval);
