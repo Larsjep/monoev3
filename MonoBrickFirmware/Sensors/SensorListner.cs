@@ -10,10 +10,12 @@ namespace MonoBrickFirmware.Sensors
 		private SensorPort[] sensorPort = { SensorPort.In1, SensorPort.In2, SensorPort.In3, SensorPort.In4 };
 		private ISensor[] sensor = new ISensor[SensorManager.NumberOfSenosrPorts];
 		Thread thread = null;
+		private int interval = 0;
 		public event Action<ISensor> SensorAttached = delegate {};
 		public event Action SensorDetached = delegate {};
-		public SensorListner ()
+		public SensorListner (int interval)
 		{
+			this.interval = interval;
 			run = false;
 			thread = new Thread(ListenThread);
 		}
@@ -62,6 +64,7 @@ namespace MonoBrickFirmware.Sensors
 							SensorDetached ();
 						}
 					}
+					System.Threading.Thread.Sleep(interval);
 				}
 			}	
 		
