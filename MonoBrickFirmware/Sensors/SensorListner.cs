@@ -9,13 +9,13 @@ namespace MonoBrickFirmware.Sensors
 		private SensorType[] lastSensorType = new SensorType[SensorManager.NumberOfSenosrPorts];	
 		private SensorPort[] sensorPort = { SensorPort.In1, SensorPort.In2, SensorPort.In3, SensorPort.In4 };
 		private ISensor[] sensor = new ISensor[SensorManager.NumberOfSenosrPorts];
-		Thread listenThread = null;
+		Thread thread = null;
 		public event Action<ISensor> SensorAttached = delegate {};
 		public event Action SensorDetached = delegate {};
 		public SensorListner ()
 		{
 			run = false;
-			listenThread = new Thread(new ThreadStart(listenThread));
+			thread = new Thread(ListenThread);
 		}
 		
 		public void Start ()
@@ -27,7 +27,7 @@ namespace MonoBrickFirmware.Sensors
 					sensor [i] = null;
 				}
 				run = true;
-				listenThread.Start ();
+				thread.Start ();
 			}
 		}
 		
@@ -36,7 +36,7 @@ namespace MonoBrickFirmware.Sensors
 			if (run) 
 			{
 				run = false;
-				listenThread.Join();
+				thread.Join();
 			}
 		}
 		
