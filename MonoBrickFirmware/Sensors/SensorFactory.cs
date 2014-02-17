@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using MonoBrickFirmware.Extensions;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -8,8 +9,10 @@ namespace MonoBrickFirmware.Sensors
 		public static ISensor GetSensor (SensorPort port)
 		{
 			ISensor sensor = null;
-			SensorType type = SensorManager.Instance.GetSensorType (port);
-			switch (type) {
+			
+			SensorType sensorType = SensorManager.Instance.GetSensorType (port);
+			ConnectionType connectionType = SensorManager.Instance.GetConnectionType (port);
+			switch (sensorType) {
 				case SensorType.Color:
 					sensor = new EV3ColorSensor (port); 
 					break;
@@ -42,7 +45,16 @@ namespace MonoBrickFirmware.Sensors
 					break;
 				case SensorType.NXTI2c:
 					var helper = new I2CHelper (port);
-					sensor = helper.GetSensor();
+					sensor = helper.GetSensor ();
+					break;
+				case SensorType.Unknown:
+					if (connectionType == ConnectionType.UART) {
+						var uartHelper = new UARTHelper (port);
+						sensor = uartHelper.GetSensor ();
+					}
+					if (connectionType == ConnectionType.InputResistor) {
+						sensor  = new EV3TouchSensor(port);
+					}
 					break;
 				case SensorType.I2CUnknown:
 						
@@ -68,9 +80,8 @@ namespace MonoBrickFirmware.Sensors
 				case SensorType.Error:
 					
 					break;
-				case SensorType.Unknown:
-					var uartHelper	 = new UARTHelper(port);
-					sensor = uartHelper.GetSensor();
+				case SensorType.None:
+					
 					break;
 			}
 			return sensor;
@@ -78,15 +89,13 @@ namespace MonoBrickFirmware.Sensors
 	}
 	
 	internal class UARTHelper : UartSensor{
-		
 		private const UInt32 SensorNameLength = 12;
-    	private static byte[] IRName = {1,2,3};
-    	private static byte[] ColorName = {1,2,3};
-    	private static byte[] GyroName = {1,2,3};
-    	private static byte[] UltrasonicName = {1,2,3};
-    	
+    	private static byte[] IRName = {0x49, 0x52, 0x2d, 0x50, 0x52, 0x4f, 0x58, 0x00, 0x00, 0x00, 0x00, 0x00};
+    	private static byte[] ColorName = {0x43, 0x4f, 0x4c, 0x2d, 0x52, 0x45, 0x46, 0x4c, 0x45, 0x43, 0x54, 0x00};
+    	private static byte[] GyroName = {0x47, 0x59, 0x52, 0x4f, 0x2d, 0x41, 0x4e, 0x47, 0x00, 0x00, 0x00, 0x00};
+    	private static byte[] UltrasonicName = {0x55, 0x53, 0x2d, 0x44, 0x49, 0x53, 0x54, 0x2d, 0x43, 0x4d, 0x00, 0x00};
     	private Dictionary<byte[], ISensor> sensorDictionary = null;
-    	
+
 		public UARTHelper (SensorPort port) : base (port)
 		{
 			base.Initialise(base.uartMode);
@@ -96,6 +105,7 @@ namespace MonoBrickFirmware.Sensors
 			sensorDictionary.Add(GyroName, new EV3GyroSensor(port));
 			sensorDictionary.Add(ColorName, new EV3ColorSensor(port));
 			sensorDictionary.Add(UltrasonicName, new EV3UltrasonicSensor(port));
+			System.Threading.Thread.Sleep(100);
 		}
 		
 		private bool ByteArrayCompare(byte[] a1, byte[] a2) 
@@ -108,7 +118,11 @@ namespace MonoBrickFirmware.Sensors
 		
 		public ISensor GetSensor ()
 		{
-			byte[] data = this.GetSensorInfo ();
+			byte[] data = new byte[SensorNameLength];
+			data[0] = 0;
+			while(data[0] == 0){
+				data = this.GetSensorInfo ();
+			}
 			byte[] name = new byte[SensorNameLength];
 			Array.Copy(data, name, SensorNameLength);
 			foreach (KeyValuePair<byte[], ISensor> pair in sensorDictionary) {
@@ -178,12 +192,11 @@ namespace MonoBrickFirmware.Sensors
 	{
 		private Dictionary<byte[], ISensor> sensorDictionary = null;
     	
-    	private static byte[] SonarName = {1,2,3};
-    	private static byte[] HTColorName = {1,2,3};
-    	private static byte[] HTCompassName = {1,2,3};
-    	private static byte[] HTAccelName = {1,2,3};
-    	
-    	
+    	private static byte[] SonarName = {0x4c, 0x45, 0x47, 0x4f, 0x00, 0xff, 0xff, 0xff, 0x53, 0x6f, 0x6e, 0x61, 0x72, 0x00, 0xff, 0xff};
+    	private static byte[] HTColorName = {0x48, 0x69, 0x54, 0x65, 0x63, 0x68, 0x6e, 0x63, 0x43, 0x6f, 0x6c, 0x6f, 0x72, 0x20, 0x20, 0x20};
+    	private static byte[] HTCompassName = {0x48, 0x69, 0x54, 0x65, 0x63, 0x68, 0x6e, 0x63, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x73, 0x73, 0x20};
+    	private static byte[] HTAccelName = {0x48, 0x49, 0x54, 0x45, 0x43, 0x48, 0x4e, 0x43, 0x41, 0x63, 0x63, 0x65, 0x6c, 0x2e, 0x20, 0x20};
+		
 		public I2CHelper (SensorPort port) : base (port, 0x02, I2CMode.LowSpeed9V)
 		{
 			base.Initialise();
@@ -222,7 +235,7 @@ namespace MonoBrickFirmware.Sensors
 			temp = ReadRegister (0x10);
 			Buffer.BlockCopy (temp, 0, data, 8, 8);
 			foreach (KeyValuePair<byte[], ISensor> pair in sensorDictionary) {
-				if (ByteArrayCompare (pair.Key, temp)) {
+				if (ByteArrayCompare (pair.Key, data)) {
 					return pair.Value;
 				}
 			}
@@ -272,5 +285,77 @@ namespace MonoBrickFirmware.Sensors
 			return "";
 		}
 	}
+	
+	internal class DummySensor : ISensor
+	{
+		private SensorPort port;
+		private enum DummyMode{Raw = 1, Digital = 2};
+		private DummyMode mode = DummyMode.Raw;
+		Random rnd = new Random();
+		public DummySensor(SensorPort port)
+		{
+			this.port = port;
+			System.Threading.Thread.Sleep(500);
+		}
+		
+		/// <summary>
+		/// Reads the sensor value as a string.
+		/// </summary>
+		/// <returns>
+		/// The value as a string
+		/// </returns>
+        public string ReadAsString ()
+		{
+			if (mode == DummyMode.Digital)
+				return rnd.Next(1).ToString(); 
+			return rnd.Next(1024) + " A/D value";
+		}
+		
+		/// <summary>
+        /// Gets the name of the sensor.
+        /// </summary>
+        /// <returns>The sensor name.</returns>
+		public string GetSensorName ()
+		{
+			return "Dummy Sensor";
+		}
+		
+		/// <summary>
+		/// Selects the next mode.
+		/// </summary>
+		public void SelectNextMode ()
+		{
+			mode = mode.Next();
+		}
+		
+		/// <summary>
+		/// Selects the previous mode.
+		/// </summary>
+		public void SelectPreviousMode ()
+		{
+			mode = mode.Previous();
+		}
+		
+		/// <summary>
+		/// Numbers the of modes.
+		/// </summary>
+		/// <returns>The number of modes</returns>
+		public int NumberOfModes()
+		{
+			return Enum.GetNames(typeof(DummyMode)).Length;
+		}
+        
+        /// <summary>
+        /// .m.-,
+        /// </summary>
+        /// <returns>The mode.</returns>
+        public string SelectedMode ()
+		{
+			return mode.ToString();
+		}
+		
+		public SensorPort Port{ get {return port;}}
+	}
+	
 }
 
