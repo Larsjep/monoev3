@@ -26,6 +26,9 @@ namespace MonoBrickFirmware.Sensors
 			{
 				for (int i = 0; i < SensorManager.NumberOfSenosrPorts; i++) {
 					lastSensorType [i] = SensorType.None;
+					SensorManager.Instance.ResetUart (sensorPort [i]);
+					SensorManager.Instance.ResetI2C (sensorPort [i]);
+					SensorManager.Instance.SetAnalogMode (AnalogMode.None, sensorPort [i]); 
 					sensor [i] = null;
 				}
 				run = true;
@@ -51,7 +54,6 @@ namespace MonoBrickFirmware.Sensors
 				for (int i = 0; i < SensorManager.NumberOfSenosrPorts; i++) {
 					SensorType currentType = SensorManager.Instance.GetSensorType (sensorPort [i]);
 					if (currentType != lastSensorType [i]) {
-							
 						//Console.WriteLine (sensorPort [i] + " changed from  " + lastSensorType [i] + " to " + currentType);
 						sensor [i] = SensorFactory.GetSensor (sensorPort [i]);
 						lastSensorType [i] = currentType;
@@ -59,13 +61,13 @@ namespace MonoBrickFirmware.Sensors
 							SensorManager.Instance.ResetUart (sensorPort [i]);
 							SensorManager.Instance.ResetI2C (sensorPort [i]);
 							SensorManager.Instance.SetAnalogMode (AnalogMode.None, sensorPort [i]); 
-							SensorAttached (sensor [i]);	
+							SensorDetached (sensorPort [i]);	
 						} else {
-							SensorDetached (sensorPort [i]);
+							SensorAttached (sensor [i]);
 						}
 					}
-					System.Threading.Thread.Sleep(interval);
 				}
+				System.Threading.Thread.Sleep(interval);
 			}	
 		
 		}
