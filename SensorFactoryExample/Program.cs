@@ -10,39 +10,52 @@ namespace SensorFactoryExample
 	{
 		public static void Main (string[] args)
 		{
+			object sensorLock = new object();
 			bool run = true;
-			SensorType[] lastSensorType = new SensorType[4];	
-			SensorPort[] sensorPort = { SensorPort.In1, SensorPort.In2, SensorPort.In3, SensorPort.In4 };
 			ISensor[] sensor = new ISensor[4];
 			for (int i = 0; i < 4; i++) {
-				lastSensorType [i] = SensorType.None;
 				sensor [i] = null;
 			}
+			SensorListner listner = new SensorListner(1000);
+			listner.SensorAttached += delegate(ISensor obj) {
+				lock(sensorLock){
+					if(obj != null){
+						sensor[(int)obj.Port] = obj;
+						Console.WriteLine(obj.GetSensorName() + " attached on " + obj.Port);
+					}
+				}	
+			};
+			listner.SensorDetached += delegate(SensorPort obj) {
+				lock(sensorLock){
+					Console.WriteLine(sensor[(int)obj] + " detached from " + obj);
+					sensor[(int)obj] = null;
+				}	
+			};
 			ButtonEvents buts = new ButtonEvents ();
-			buts.EscapePressed += () => { 
+			buts.EscapePressed += delegate 
+			{ 
 				run = false;
 			};
+			listner.Start();
 			while (run) {
 						
-				for (int i = 0; i < 4; i++) {
-					SensorType currentType = SensorManager.Instance.GetSensorType (sensorPort [i]);
-					if (currentType != lastSensorType [i]) {
-						Console.WriteLine (sensorPort [i] + " changed from  " + lastSensorType [i] + " to " + currentType);
-						sensor [i] = SensorFactory.GetSensor (sensorPort [i]);
-						lastSensorType [i] = currentType;
-						Console.WriteLine (sensor [i]);
-						if (currentType == SensorType.None) 
-						{
-							SensorManager.Instance.ResetUart(sensorPort [i]);
-							SensorManager.Instance.ResetI2C(sensorPort [i]);
-							SensorManager.Instance.SetAnalogMode(AnalogMode.None, sensorPort [i]); 
-							
+				lock (sensorLock) {
+					
+					/*for (int i = 0; i < sensor.Length; i++) {
+						if (sensor[i] != null) {
+							typeLabel [i].Text = sensor[i].GetSensorName ();
+							modeLabel [i].Text = sensor[i].SelectedMode ();
+							valueLabel[i].Text = sensor[i].ReadAsString ();
+						} else {
+							typeLabel [i].Text = "Not connected";
+							modeLabel [i].Text = "-";
+							valueLabel [i].Text = "-";
 						}
-						//sensor[i].GetSensorName();
-					}
-							
+					}*/
 				}
+				System.Threading.Thread.Sleep(1000);
 			}
+			listner.Stop();
 		}
 	}
 }

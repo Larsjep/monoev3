@@ -205,14 +205,14 @@ namespace StartupApp
 			var portItem = new MenuItemWithNumericInput(lcd,"Port", settings.WebServerSettings.Port, 1, ushort.MaxValue);
 			portItem.OnValueChanged+= delegate(int value) 
 			{
-			new Thread(delegate() {
+				new Thread(delegate() {
 			    	settings.WebServerSettings.Port = value;
 					settings.Save();
 				}).Start();
 			};
 			var startItem = new MenuItemWithCheckBox(lcd,"Start server", WebServer.IsRunning(),
 				delegate(bool running)
-        { 
+       	 		{ 
 					webServer = new WebServer(settings.WebServerSettings.Port);
 					bool isRunning = running;
 					if(running){
@@ -226,10 +226,10 @@ namespace StartupApp
 					else{
 						var dialog = new InfoDialog(font,lcd,btns,"Starting Web-Server Please Wait", false,"Web-Server");
 						dialog.Show();
-            webServer.CompilingServer += delegate() { dialog.UpdateMessage("Compiling...");};
-            webServer.LoadingPage += delegate() {dialog.UpdateMessage("Loading page"); };
-            webServer.StartingServer += delegate() {dialog.UpdateMessage("Starting server");};
-            if(webServer.Restart()){
+			            webServer.CompilingServer += delegate() { dialog.UpdateMessage("Compiling...");};
+			            webServer.LoadingPage += delegate() {dialog.UpdateMessage("Loading page"); };
+			            webServer.StartingServer += delegate() {dialog.UpdateMessage("Starting server");};
+			            if(webServer.Restart()){
 							dialog = new InfoDialog(font,lcd,btns,"Started successfully at port" + settings.WebServerSettings.Port, true);
 							dialog.Show();
 							isRunning = true;
@@ -241,7 +241,7 @@ namespace StartupApp
 						}
 					}
 					return isRunning;
-       } 
+       			} 
 			);
 			
 			items.Add(portItem);
@@ -468,20 +468,24 @@ namespace StartupApp
 					lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
 					lcd.Update ();						
 					settings.Save();// JIT work-around
-          WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID, settings.WiFiSettings.Password, settings.WiFiSettings.Encryption);
+          			WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID, settings.WiFiSettings.Password, settings.WiFiSettings.Encryption);
 					if (settings.WiFiSettings.ConnectAtStartUp) {
 						lcd.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);
 						lcd.Update ();						
 						if (WiFiDevice.TurnOn (60000)) {
 							WiFiDevice.GetIpAddress ();// JIT work-around
-              if (settings.GeneralSettings.CheckForSwUpdatesAtStartUp)
-              {
+              				if (settings.GeneralSettings.CheckForSwUpdatesAtStartUp)
+              				{
 								ShowUpdatesDialogs (lcd, btns, false);
-							} else {
+							} 
+							else 
+							{
 								var dialog = new InfoDialog (font, lcd, btns, "Connected Successfully " + WiFiDevice.GetIpAddress (), true);
 								dialog.Show ();
 							} 
-						} else {
+						} 
+						else
+						{
 							var dialog = new InfoDialog (font, lcd, btns, "Failed to connect to WiFI Network", true);
 							dialog.Show ();
 						}
@@ -491,7 +495,7 @@ namespace StartupApp
 				{
 					var dialog = new InfoDialog (font, lcd, btns, "Failed to load settings", true);
 					dialog.Show ();
-          settings = new FirmwareSettings();
+          			settings = new FirmwareSettings();
 				}
 			}
 			

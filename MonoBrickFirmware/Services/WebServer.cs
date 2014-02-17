@@ -32,8 +32,8 @@ namespace MonoBrickFirmware.Services
 			Console.WriteLine("Server thread");
 			Process proc = new System.Diagnostics.Process ();
 			proc.EnableRaisingEvents = false; 
-			proc.StartInfo.FileName = "mono";
-			proc.StartInfo.Arguments = xspName +" --port " + port;
+			proc.StartInfo.FileName = "/usr/local/bin/mono";
+			proc.StartInfo.Arguments = webserPath + xspName +" --port " + port;
 			proc.Start();
 			proc.WaitForExit ();
 			Stopped();
@@ -69,10 +69,18 @@ namespace MonoBrickFirmware.Services
 			bool loaded = false;
 			while(attemps < 2 && !loaded){
 				try {
-					Console.WriteLine("Load webpage");
+					/*Console.WriteLine("Load webpage");
 					WebClient client = new WebClient();
-					client.DownloadString("http://127.0.0.1");
-					loaded = true;
+					client.DownloadString("http://127.0.0.1"+":"+port);
+					loaded = true;*/
+					/*HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(@"http://127.0.0.1:"+ port);
+					myRequest.Method = "GET";
+					WebResponse myResponse = myRequest.GetResponse();
+					StreamReader sr = new StreamReader(myResponse.GetResponseStream(), System.Text.Encoding.UTF8);
+					string result = sr.ReadToEnd();
+					sr.Close();
+					myResponse.Close(); //- See more at: http://www.tech-recipes.com/rx/1954/get_web_page_contents_in_code_with_csharp/#sthash.1xwHk1P3.dpuf
+					loaded = true;*/
 				} 
 				catch(Exception e) 
 				{
@@ -81,7 +89,8 @@ namespace MonoBrickFirmware.Services
 				}
 				attemps++;
 			}
-			return loaded;
+			return true;
+			//return loaded;
 		}
 		
 		public Action CompilingServer = delegate {};
@@ -101,7 +110,7 @@ namespace MonoBrickFirmware.Services
 			if (!IsRunning()) 
 			{
 				try{
-				  CheckWebServer();
+				  	CheckWebServer();
 					StartingServer();//Action
 					if(serverThread != null && serverThread.IsAlive)
 						serverThread.Abort();//this should never happen
@@ -138,9 +147,11 @@ namespace MonoBrickFirmware.Services
 		
 		public void Stop ()
 		{
-			ProcessHelper.KillProcess(xspName);
-			if(serverThread != null)
-				serverThread.Join();
+			if (IsRunning ()) {
+				ProcessHelper.KillProcess (xspName);
+				if (serverThread != null)
+					serverThread.Join ();
+			}
 		}
 		
 		public static bool IsRunning ()
