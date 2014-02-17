@@ -93,6 +93,7 @@ namespace MonoBrickFirmware.Movement
 		/// </summary>
 		public void Off(){
 			output.Stop (false);
+			output.SetPower(0);
 		}
 		
 		/// <summary>
