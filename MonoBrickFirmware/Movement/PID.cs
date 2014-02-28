@@ -32,7 +32,8 @@ namespace MonoBrickFirmware.Movement
 	      k2 = Kp*(Ts/Ki);
 	      k3 = Kp*(Kd/Ts);
 	    }
- 	 	public PID(float P, float I, float D, float newSampleTime, float maxOut, float minOut, float maxChangePerSec = 0.0f, float minChangePerSec = 0.0f){
+		
+ 	 	public PID(float P, float I, float D, float newSampleTime, float maxOut = 100.0f, float minOut = -100.0f, float maxChangePerSec = 0.0f, float minChangePerSec = 0.0f){
 			Kp = P;
 			Ki = I;
 			Kd = D;
@@ -63,14 +64,6 @@ namespace MonoBrickFirmware.Movement
 		public void setD(float D){
 		  	Kd = D;
 		  	update();
-		}
-		public void setMaxMin(float newMax, float newMin){
-			max = newMax;
-			min = newMin;
-		}
-		
-		public void setUk1(float newUk1){
-		 	uk1 = newUk1; 
 		}
 		
 		public void setSampleTime(float time){
