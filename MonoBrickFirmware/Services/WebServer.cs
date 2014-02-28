@@ -79,7 +79,7 @@ namespace MonoBrickFirmware.Services
 					StreamReader sr = new StreamReader(myResponse.GetResponseStream(), System.Text.Encoding.UTF8);
 					string result = sr.ReadToEnd();
 					sr.Close();
-					myResponse.Close(); //- See more at: http://www.tech-recipes.com/rx/1954/get_web_page_contents_in_code_with_csharp/#sthash.1xwHk1P3.dpuf
+					myResponse.Close();
 					loaded = true;*/
 				} 
 				catch(Exception e) 
