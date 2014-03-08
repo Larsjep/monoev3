@@ -24,7 +24,7 @@ namespace GmailExample
 			const string password = "YourPassword";
 			
 			ManualResetEvent terminateProgram = new ManualResetEvent(false);
-			var colorSensor = new ColorSensor(SensorPort.In1);
+			var colorSensor = new EV3ColorSensor(SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			SmtpClient smptpClient = new SmtpClient("smtp.gmail.com", 587);
 			smptpClient.EnableSsl = true;

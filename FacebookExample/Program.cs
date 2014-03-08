@@ -25,7 +25,7 @@ namespace FacebookExample
 			Point p = new Point(10, Lcd.Height-75);
 			Point boxSize = new Point(100, 24);
 			Rectangle box = new Rectangle(p, p+boxSize);
-			var colorSensor = new ColorSensor (SensorPort.In1);
+			var colorSensor = new EV3ColorSensor (SensorPort.In1);
 			ButtonEvents buts = new ButtonEvents ();
 			LcdConsole.WriteLine("Use color on port1");
 			LcdConsole.WriteLine("Enter post value");
