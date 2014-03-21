@@ -29,6 +29,8 @@ namespace StartupApp
 		static FirmwareSettings settings = new FirmwareSettings();
 		static string versionString = "Firmware: 0.1.0.0";
 		static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
+		enum ExecutionMode {Normal = 0, Debug = 1, AOT = 2  };
+		
 		
 		static bool Information(Lcd lcd, Buttons btns)
 		{
@@ -54,48 +56,86 @@ namespace StartupApp
 			return false;
 		}
 		
+		public static bool AOTCompileAndShowDialog(Font font, Lcd lcd, Buttons btns, string filename)
+		{
+			var infoDialog = new InfoDialog (font, lcd, btns, "AOT Compiling. Please wait", false, "AOT Compile");
+			infoDialog.Show ();
+			if (AOTCompiling.Compile (filename)) 
+			{
+				infoDialog = new InfoDialog (font, lcd, btns, "Program AOT compiled", true, "AOT Compile");
+				return true;
+			}
+			else
+			{
+				infoDialog = new InfoDialog (font, lcd, btns, "Failed to AOT compile", true, "AOT Compile");
+				return false;
+			}	
+		}		
+		
+		
 		static bool ShowProgramOptions (string filename, Lcd lcd, Buttons btns)
 		{
-			string runString = "Run Program";
-			string runInDebugString = "Debug Program";
-			string deleteString = "Delete Program";
 			var dialog = new SelectDialog<string> (Font.MediumFont, lcd, btns, new string[] {
-				runString,
-				runInDebugString,
-				deleteString
+				"Run Program",
+				"Debug Program",
+				"Run In AOT",
+				"AOT Compile",
+				"Delete Program",
 			}, "Options", true);
 			dialog.Show ();
 			if (!dialog.EscPressed) {
-				string selection = dialog.GetSelection ();
-				if (selection == runString) {
-					lcd.Clear();
+				switch (dialog.GetSelectionIndex ()) {
+				case 0:
+					lcd.Clear ();
 					lcd.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
 					Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 					lcd.WriteTextBox (Font.SmallFont, textRect, "Running...", true, Lcd.Alignment.Center);
 					lcd.Update ();						
-					MenuAction = () => RunAndWaitForProgram (filename, false);
-				}
-				if (selection == runInDebugString) {
-					MenuAction = () => RunAndWaitForProgram (filename, true);
-				}
-				if (selection == deleteString) {
+					MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.Normal);	
+					break;
+				case 1:
+					MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.Debug);
+					break;
+				case 2:
+					if (!AOTCompiling.IsFileCompiled (filename)) {
+						if (AOTCompileAndShowDialog (font, lcd, btns, filename)) {
+							MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.AOT);	
+						}
+					} 
+					else 
+					{
+						MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.AOT);
+					}
+					break;
+				case 3:
+					if (AOTCompiling.IsFileCompiled (filename)) {
+						var questionDialog = new QuestionDialog(font,lcd,btns,"Progran already compiled. Recompile?","AOT recompile");
+						questionDialog.Show();
+						if(questionDialog.IsPositiveSelected)
+								AOTCompileAndShowDialog(font,lcd,btns,filename);
+					} 
+					else 
+					{
+						AOTCompileAndShowDialog(font,lcd,btns,filename);
+					}
+					break;
+				case 4:
 					var infoDialog = new InfoDialog (font, lcd, btns, "Deleting File. Please wait", false, "Deleting File");
 					infoDialog.Show ();
 					if (ProcessHelper.RunAndWaitForProcess ("rm", filename) == 0) {
-						infoDialog = new InfoDialog (font, lcd, btns, "Program deleted", true, "Deleting File");
+							
 					} 
 					else 
 					{
 						infoDialog = new InfoDialog (font, lcd, btns, "Error deleting program", true, "Deleting File");
 					}
 					infoDialog.Show ();
+					break;
 				}
+				return true;
 			} 
-			else 
-			{
-				return false;
-			}
-			return true;
+			return false;
+			
 		}
 		
 		static string GetFileNameWithoutExt(string fullname)
@@ -115,51 +155,56 @@ namespace StartupApp
 			return true;
 		}
 		
-		static void RunAndWaitForProgram (string programName, bool runInDebugMode)
+		static void RunAndWaitForProgram (string programName, ExecutionMode mode)
 		{
-			if (runInDebugMode) {
-				programName = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugSettings.Port + ",server=y " + programName;
-				using (Lcd lcd = new Lcd ())
-				using (Buttons btns = new Buttons ()) {
-					System.Diagnostics.Process proc = new System.Diagnostics.Process ();
-					Dialog dialog = null;
-					Thread escapeThread = null;
-					CancellationTokenSource cts = new CancellationTokenSource();
-					CancellationToken token = cts.Token;
-					string portString  = ("Port: " + settings.DebugSettings.Port).PadRight(6).PadRight(6);
-					if (settings.DebugSettings.TerminateWithEscape) {
-						escapeThread = new System.Threading.Thread (delegate() {
-							while (!token.IsCancellationRequested) {
-								if (btns.GetKeypress (token) == Buttons.ButtonStates.Escape) {
-									proc.Kill ();
-									Console.WriteLine ("Killing process");
-									cts.Cancel();
+			switch (mode) 
+			{
+				case ExecutionMode.Debug:
+					programName = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugSettings.Port + ",server=y " + programName;
+					using (Lcd lcd = new Lcd ())
+					using (Buttons btns = new Buttons ()) {
+						System.Diagnostics.Process proc = new System.Diagnostics.Process ();
+						Dialog dialog = null;
+						Thread escapeThread = null;
+						CancellationTokenSource cts = new CancellationTokenSource();
+						CancellationToken token = cts.Token;
+						string portString  = ("Port: " + settings.DebugSettings.Port).PadRight(6).PadRight(6);
+						if (settings.DebugSettings.TerminateWithEscape) {
+							escapeThread = new System.Threading.Thread (delegate() {
+								while (!token.IsCancellationRequested) {
+									if (btns.GetKeypress (token) == Buttons.ButtonStates.Escape) {
+										proc.Kill ();
+										Console.WriteLine ("Killing process");
+										cts.Cancel();
+									}
 								}
-							}
-						});
-						escapeThread.Start();
-						dialog = new InfoDialog (Font.MediumFont, lcd, btns, portString + " Press escape to terminate", false, "Debug Mode");
-					} 
-					else 
-					{
-						dialog = new InfoDialog (Font.MediumFont, lcd, btns, portString + " Waiting for connection.", false, "Debug Mode");	
+							});
+							escapeThread.Start();
+							dialog = new InfoDialog (Font.MediumFont, lcd, btns, portString + " Press escape to terminate", false, "Debug Mode");
+						} 
+						else 
+						{
+							dialog = new InfoDialog (Font.MediumFont, lcd, btns, portString + " Waiting for connection.", false, "Debug Mode");	
+						}
+						dialog.Show ();
+						proc.EnableRaisingEvents = false; 
+						Console.WriteLine ("Starting process: {0} with arguments: {1}", "/usr/local/bin/mono", programName);
+						proc.StartInfo.FileName = "/usr/local/bin/mono";
+						proc.StartInfo.Arguments = programName;
+						proc.Start ();
+						proc.WaitForExit ();
+						if (escapeThread != null && !token.IsCancellationRequested) {
+							cts.Cancel();
+							escapeThread.Join();
+						}
 					}
-					dialog.Show ();
-					proc.EnableRaisingEvents = false; 
-					Console.WriteLine ("Starting process: {0} with arguments: {1}", "/usr/local/bin/mono", programName);
-					proc.StartInfo.FileName = "/usr/local/bin/mono";
-					proc.StartInfo.Arguments = programName;
-					proc.Start ();
-					proc.WaitForExit ();
-					if (escapeThread != null && !token.IsCancellationRequested) {
-						cts.Cancel();
-						escapeThread.Join();
-					}
-				}
-			} 
-			else 
-			{	
-				ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono", programName); 
+					break;
+				case ExecutionMode.Normal:
+					ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono", programName); 
+					break;
+				case ExecutionMode.AOT:
+					ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono --full-aot", programName);	
+					break;
 			}
 		}
 
@@ -515,6 +560,16 @@ namespace StartupApp
 				}
 			}
 		}
-		
-	}		
+	}
+						
+	namespace Extensions
+	{
+		public static class AOTExtension
+	    {
+	        
+						
+	    }
+	}
+	
+	
 }

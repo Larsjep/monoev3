@@ -72,6 +72,14 @@ namespace MonoBrickFirmware.Display.Dialogs
 				return options[cursorPos+scrollPos];
 		}
 		
+		public int GetSelectionIndex ()
+		{
+			if(EscPressed)
+				return -1;
+			else
+				return cursorPos+scrollPos;	
+		}
+		
 		public bool EscPressed{get; private set;}
         
     }
