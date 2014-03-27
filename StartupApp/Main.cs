@@ -258,7 +258,7 @@ namespace StartupApp
 			var startItem = new MenuItemWithCheckBox(lcd,"Start server", WebServer.IsRunning(),
 				delegate(bool running)
        	 		{ 
-					webServer = new WebServer(settings.WebServerSettings.Port);
+					webServer = new WebServer();
 					bool isRunning = running;
 					if(running){
 						var dialog = new InfoDialog(font,lcd,btns,"Shutting down Web-Server", false);
@@ -271,11 +271,10 @@ namespace StartupApp
 					else{
 						var dialog = new InfoDialog(font,lcd,btns,"Starting Web-Server Please Wait", false,"Web-Server");
 						dialog.Show();
-			            webServer.CompilingServer += delegate() { dialog.UpdateMessage("Compiling...");};
 			            webServer.LoadingPage += delegate() {dialog.UpdateMessage("Loading page"); };
 			            webServer.StartingServer += delegate() {dialog.UpdateMessage("Starting server");};
 			            if(webServer.Restart()){
-							dialog = new InfoDialog(font,lcd,btns,"Started successfully at port" + settings.WebServerSettings.Port, true);
+							dialog = new InfoDialog(font,lcd,btns,"Started successfully at port 80", true);
 							dialog.Show();
 							isRunning = true;
 						}

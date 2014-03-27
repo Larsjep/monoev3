@@ -9,58 +9,38 @@ namespace MonoBrickFirmware.Services
 {
 	public class WebServer : IDisposable
 	{
-		private const string webserPath = "/home/root/webserver/";
-		private const string xspName = "xsp4.exe";
-		private const string xspPath = "/usr/local/lib/mono/gac/xsp4/2.10.2.0__0738eb9f132ed756/"+xspName;
-		private int port;
-		private Thread serverThread;
-		private void CheckWebServer(){
-			Console.WriteLine("Check web server");
-			if(!File.Exists(webserPath+xspName)){
-				ProcessHelper.RunAndWaitForProcess ("cp",xspPath + " " + webserPath+xspName);
-				Console.WriteLine("Copy XSP");
-			}
-			if(!AOTCompiling.IsFileCompiled(webserPath+xspName)){
-				CompilingServer();
-				Console.WriteLine("AOT compiling");
-				AOTCompiling.Compile(webserPath+xspName);
-			}
+		private const string logDir = "/var/log/lighttpd/";
+		private const string wwwDir = "/www";
+		
+		private const string fastCGIName = "fastcgi-mono-server4.exe";
+		private const string fastCGIPath = "/usr/local/bin/";
+		private const string fastCGIArgs = "/socket=tcp:9000 /address=127.0.0.1 /applications=/:.,/peanuts: "+ wwwDir + "/logfile=" +logDir + "fastcgi.log /verbose &";
+
+		private const string lighttpdName = "lighttpd";
+		private const string lighttpdPath = "/usr/local/sbin/";
+		private const string lighttpdConf = "/etc/lighttpd/lighttpd.conf";
+		
+		private bool StartFastCGI ()
+		{
+			return ProcessHelper.RunAndWaitForProcess("mono", fastCGIPath + fastCGIName + " " + fastCGIArgs) == 0;
 		}
 		
-		private void ServerThread ()
+		private void StopFastCGI ()
 		{
-			Console.WriteLine("Server thread");
-			Process proc = new System.Diagnostics.Process ();
-			proc.EnableRaisingEvents = false; 
-			proc.StartInfo.FileName = "/usr/local/bin/mono";
-			proc.StartInfo.Arguments = webserPath + xspName +" --port " + port;
-			proc.Start();
-			proc.WaitForExit ();
-			Stopped();
-			Console.WriteLine("Server thread end");
-			
+			ProcessHelper.KillProcess(fastCGIName);
 		}
-		private bool ServerReady()
+		
+		private bool StartLighttpd ()
 		{
-			int attempts = 0;
-			bool serverReady = false;
-			Console.WriteLine("Server ready");
-			while(attempts < 90 && !serverReady)// 90 second timeout
-			{
-				try
-			    {
-					  if(!serverThread.IsAlive)
-						  return false;
-					  new TcpClient("127.0.0.1",port);
-					  serverReady = true;
-			    }
-			    catch
-			    {
-			    }
-				Thread.Sleep(1000);
-				attempts++;
-			}
-			return serverReady;
+			ProcessHelper.RunAndWaitForProcess("adduser", "lighttpd");
+			ProcessHelper.RunAndWaitForProcess("mkdir", logDir);
+			ProcessHelper.RunAndWaitForProcess("chown", "_R lighttpd:lighttpd " +  logDir);
+			return ProcessHelper.RunAndWaitForProcess(lighttpdPath+lighttpdName, "-f " + lighttpdConf) == 0;
+		}
+		
+		private void StopLighttpd ()
+		{
+			ProcessHelper.KillProcess(lighttpdName);	
 		}
 		
 		private bool LoadPage ()
@@ -93,49 +73,43 @@ namespace MonoBrickFirmware.Services
 			//return loaded;
 		}
 		
-		public Action CompilingServer = delegate {};
 		public Action StartingServer = delegate {};
 		public Action LoadingPage = delegate {};
-		public Action Running = delegate {};
-		public Action Stopped = delegate {};
 		
-		public WebServer (int port)
+		public WebServer ()
 		{
-			this.port = port;
+
 		}
-		
 		
 		public bool Start ()
 		{
+			bool running = true;
 			if (!IsRunning()) 
 			{
+				running = false;
 				try{
-				  	CheckWebServer();
-					StartingServer();//Action
-					if(serverThread != null && serverThread.IsAlive)
-						serverThread.Abort();//this should never happen
-					serverThread = new Thread(ServerThread);
-					serverThread.Start();
-					if(!ServerReady()){
-						Stop();
-						return false;
+					StartingServer();
+					if(StartFastCGI() && StartLighttpd())
+					{
+						LoadingPage();
+						if(LoadPage())
+						{
+							running = true;
+						}
+						else
+						{
+							Stop();
+						}
+						
 					}
-					System.Threading.Thread.Sleep(1000);
-					LoadingPage();//Action
-					if(!LoadPage()){
-						Stop();
-						return false;
-					}
-					Running();//Action
 				}
 				catch
 				{
-					return false;
+					Stop();
+					running = false;
 				}
-				return true;			
-					
 			}
-			return false;
+			return running;
 		}
 		
 		public bool Restart ()
@@ -148,26 +122,25 @@ namespace MonoBrickFirmware.Services
 		public void Stop ()
 		{
 			if (IsRunning ()) {
-				ProcessHelper.KillProcess (xspName);
-				if (serverThread != null)
-					serverThread.Join ();
+				StopFastCGI();
+				StopLighttpd();
 			}
 		}
 		
 		public static bool IsRunning ()
 		{
-			return ProcessHelper.IsProcessRunning(xspName);
+			return ProcessHelper.IsProcessRunning(lighttpdName) && ProcessHelper.IsProcessRunning(fastCGIName);
 		}
 		
 		public void Dispose()
 		{			
-			ProcessHelper.KillProcess(xspName);
+			Stop();
 			GC.SuppressFinalize(this);	
 		}
 		
 		~WebServer()
 		{
-			ProcessHelper.KillProcess(xspName);
+			Stop();
 		}
 	}
 }
