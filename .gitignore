@@ -1,7 +1,9 @@
 # Exclude the build directory
 */bin
 */obj
+*/html
 /packages
+
  
 # Exclude temp nibs, swap files and MonoDevelop user preferences
 *~.nib
