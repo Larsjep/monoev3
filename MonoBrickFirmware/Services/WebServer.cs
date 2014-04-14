@@ -12,17 +12,36 @@ namespace MonoBrickFirmware.Services
 		private const string logDir = "/var/log/lighttpd/";
 		private const string wwwDir = "/www";
 		
-		private const string fastCGIName = "fastcgi-mono-server4.exe";
-		private const string fastCGIPath = "/usr/local/bin/";
-		private const string fastCGIArgs = "/socket=tcp:9000 /address=127.0.0.1 /applications=/:.,/peanuts: "+ wwwDir + "/logfile=" +logDir + "fastcgi.log /verbose &";
-
+		private const string fastCGIName = @"fastcgi-mono-server4.exe";
+		private const string fastCGIPath = @"/usr/local/bin/";
+		private const string fastCGIArgs = @"/socket=tcp:9000 /address=127.0.0.1 /applications=/:.,/peanuts:"+ wwwDir + @"/" + @" /logfile=" +logDir + @"fastcgi.log /verbose";
+		private const int fastCGICheckIntercal = 1000;//ms
+		private const int fastCGITimeOut = 60000; //ms
+		private const int fastCGIStartUpTime = 30000;//ms
+		
 		private const string lighttpdName = "lighttpd";
 		private const string lighttpdPath = "/usr/local/sbin/";
-		private const string lighttpdConf = "/etc/lighttpd/lighttpd.conf";
+		private const string lighttpdConf = @"/etc/lighttpd/lighttpd.conf";
+		
+		
 		
 		private bool StartFastCGI ()
 		{
-			return ProcessHelper.RunAndWaitForProcess("mono", fastCGIPath + fastCGIName + " " + fastCGIArgs) == 0;
+			ProcessHelper.StartProcess ("mono", fastCGIPath + fastCGIName + @" " + fastCGIArgs);
+			System.Threading.Thread.Sleep (fastCGIStartUpTime); //Wait for CGI to start
+			bool running = false;
+			int numberOfChecks = 0;
+			int remainingTime = fastCGITimeOut - fastCGIStartUpTime;
+			int fastCGICheckCount = 1;
+			if (remainingTime > 0) {
+				fastCGICheckCount = remainingTime/fastCGICheckIntercal;
+			} 
+			while (!running && numberOfChecks < fastCGICheckCount) {
+				running = ProcessHelper.IsProcessRunning(fastCGIName);
+				System.Threading.Thread.Sleep(fastCGICheckIntercal);
+				numberOfChecks++;
+			}
+			return running;
 		}
 		
 		private void StopFastCGI ()
@@ -32,10 +51,12 @@ namespace MonoBrickFirmware.Services
 		
 		private bool StartLighttpd ()
 		{
-			ProcessHelper.RunAndWaitForProcess("adduser", "lighttpd");
+			//ProcessHelper.RunAndWaitForProcess("adduser", "lighttpd");
 			ProcessHelper.RunAndWaitForProcess("mkdir", logDir);
-			ProcessHelper.RunAndWaitForProcess("chown", "_R lighttpd:lighttpd " +  logDir);
-			return ProcessHelper.RunAndWaitForProcess(lighttpdPath+lighttpdName, "-f " + lighttpdConf) == 0;
+			//ProcessHelper.RunAndWaitForProcess("chown", "_R lighttpd:lighttpd " +  logDir);
+			ProcessHelper.RunAndWaitForProcess("chown", "_R root:root " +  logDir);
+			ProcessHelper.StartProcess(lighttpdPath+lighttpdName, "-f " + lighttpdConf);
+			return true;
 		}
 		
 		private void StopLighttpd ()
@@ -45,10 +66,11 @@ namespace MonoBrickFirmware.Services
 		
 		private bool LoadPage ()
 		{
-			int attemps = 0;
+			return true;
+			/*int attemps = 0;
 			bool loaded = false;
 			while(attemps < 2 && !loaded){
-				try {
+				//try {
 					/*Console.WriteLine("Load webpage");
 					WebClient client = new WebClient();
 					client.DownloadString("http://127.0.0.1"+":"+port);
@@ -61,7 +83,7 @@ namespace MonoBrickFirmware.Services
 					sr.Close();
 					myResponse.Close();
 					loaded = true;*/
-				} 
+				/*} 
 				catch(Exception e) 
 				{
 					Console.WriteLine(e.Message);
@@ -69,7 +91,7 @@ namespace MonoBrickFirmware.Services
 				}
 				attemps++;
 			}
-			return true;
+			return true;*/
 			//return loaded;
 		}
 		
@@ -109,6 +131,7 @@ namespace MonoBrickFirmware.Services
 					running = false;
 				}
 			}
+			Console.WriteLine("Start webserver done with result " + running);
 			return running;
 		}
 		
