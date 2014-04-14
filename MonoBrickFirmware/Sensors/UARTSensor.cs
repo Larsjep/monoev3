@@ -169,8 +169,8 @@ namespace MonoBrickFirmware.Sensors
 		
 		private int GetActualData ()
 		{
-			byte[] temp = uartMemory.Read (UartActualOffset, 2);
-			return (int) BitConverter.ToInt16(temp,0);
+			byte[] temp = uartMemory.Read (UartActualOffset, NumberOfSensorPorts * 2);
+			return (int) BitConverter.ToInt16(temp,(int) port * 2);
 		}
 		
 		
