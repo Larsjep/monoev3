@@ -6,6 +6,22 @@ namespace MonoBrickFirmware.Native
 {
 	public class ProcessHelper
 	{
+		public static void StartProcess (string fileName, string arguments = "")
+		{
+			Process proc = new System.Diagnostics.Process ();
+			proc.EnableRaisingEvents = false; 
+			if (arguments == "") {
+				Console.WriteLine ("Starting process: {0}", fileName);
+			} 
+			else 
+			{
+				Console.WriteLine ("Starting process: {0} with arguments: {1}", fileName, arguments);
+			}
+			proc.StartInfo.FileName = fileName;
+			proc.StartInfo.Arguments = arguments;
+			proc.Start();
+		}
+		
 		public static int RunAndWaitForProcess(string fileName, string arguments = "" , int timeout = 0){
 			Process proc = new System.Diagnostics.Process ();
 			if(timeout != 0){
@@ -17,7 +33,13 @@ namespace MonoBrickFirmware.Native
 				timer.Start();	
 			}
 			proc.EnableRaisingEvents = false; 
-			Console.WriteLine ("Starting process: {0} with arguments: {1}", fileName, arguments);
+			if (arguments == "") {
+				Console.WriteLine ("Starting process: {0}", fileName);
+			} 
+			else 
+			{
+				Console.WriteLine ("Starting process: {0} with arguments: {1}", fileName, arguments);
+			}
 			proc.StartInfo.FileName = fileName;
 			proc.StartInfo.Arguments = arguments;
 			proc.Start ();
@@ -33,8 +55,13 @@ namespace MonoBrickFirmware.Native
 			start.Arguments = arguments; 
 			start.UseShellExecute = false;
 			start.RedirectStandardOutput = true;
-			Console.WriteLine ("Starting process: {0} with arguments: {1}", fileName, arguments);
-			using (Process process = Process.Start(start))
+			if (arguments == "") {
+				Console.WriteLine ("Starting process: {0}", fileName);
+			} 
+			else 
+			{
+				Console.WriteLine ("Starting process: {0} with arguments: {1}", fileName, arguments);
+			}using (Process process = Process.Start(start))
 			{
 			    using (StreamReader reader = process.StandardOutput)
 			    {
@@ -60,11 +87,12 @@ namespace MonoBrickFirmware.Native
 					psStrings.Add (s);
 				}
 			}
-			if (psStrings.Count >= 1) {//the grep process will count as one  - hence there should be at least two process with the seach text 
+			if (psStrings.Count >= 1) {
 				//The process id is in the first line second word. Regex is used to remove whitespaces between words
 				string processId = System.Text.RegularExpressions.Regex.Replace(psStrings[0],@"\s+"," ").Split(' ')[1];
 				try{
-					return int.Parse(processId);
+					int id = int.Parse(processId);
+					return id;
 				}
 				catch{
 				
@@ -80,7 +108,9 @@ namespace MonoBrickFirmware.Native
 		/// <param name="seachText">Process seach text.</param>
 		public static bool IsProcessRunning (string seachText)
 		{
-			return (GetProcessId(seachText) != -1);
+			bool running = (GetProcessId (seachText) != -1);
+			Console.WriteLine("Is prcocess " + seachText + " running: " + running);
+			return running;
 		}
 		
 		/// <summary>
@@ -98,6 +128,7 @@ namespace MonoBrickFirmware.Native
 		/// <param name="id">Process id</param>
 		public static void KillProcess (int id)
 		{
+			Console.WriteLine("Killing process with id: " + id);
 			RunAndWaitForProcess("kill", id.ToString());
 		}
 		
