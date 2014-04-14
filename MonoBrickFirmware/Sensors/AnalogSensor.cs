@@ -21,7 +21,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		protected const int ADCResolution = 4095;//12-bit
 		protected AnalogMode AnalogMode{get;private set;}
-		protected const int NumberOfSenosrPorts = SensorManager.NumberOfSenosrPorts;
+		protected const int NumberOfSensorPorts = SensorManager.NumberOfSensorPorts;
 		protected SensorPort port;
 		
 		
@@ -90,7 +90,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		private int ReadOffset (int offset)
 		{
-			 return (int)BitConverter.ToInt16(analogMemory.Read(offset, NumberOfSenosrPorts*2),(int) port * 2);
+			 return (int)BitConverter.ToInt16(analogMemory.Read(offset, NumberOfSensorPorts*2),(int) port * 2);
 		}
 		
 		public abstract string ReadAsString ();

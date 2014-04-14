@@ -30,7 +30,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		protected byte I2CAddress = 0x00;
 		
-		protected const int NumberOfSenosrPorts = SensorManager.NumberOfSenosrPorts;
+		protected const int NumberOfSensorPorts = SensorManager.NumberOfSensorPorts;
 		protected SensorPort port;
 		protected UARTMode uartMode{get; private set;}
 		protected I2CMode mode;

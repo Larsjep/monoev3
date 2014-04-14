@@ -40,7 +40,7 @@ namespace MonoBrickFirmware.Sensors
 	/// </summary>
 	public sealed class SensorManager
 	{
-		private static byte [] sensorData = new byte[3*NumberOfSenosrPorts];
+		private static byte [] sensorData = new byte[3*NumberOfSensorPorts];
 		private static object setupLock = new object();
 		
 		//Analog memory offsets
@@ -62,7 +62,7 @@ namespace MonoBrickFirmware.Sensors
 		private const UInt32 UartIONackModeInfo = 0xc03c7502;
     	private const UInt32 UartIOClearChanges = 0xc03c7503;
 		
-		public const int NumberOfSenosrPorts = 4;
+		public const int NumberOfSensorPorts = 4;
 		
 		private UnixDevice DeviceManager{get; set;}
 		
@@ -100,19 +100,19 @@ namespace MonoBrickFirmware.Sensors
 		{
         	lock (setupLock) {
 				sensorData [(int)sensorPort] = (byte)conn;
-				sensorData [(int)sensorPort + NumberOfSenosrPorts] = (byte)type;
-				sensorData [(int)sensorPort + 2 * NumberOfSenosrPorts] = mode;
+				sensorData [(int)sensorPort + NumberOfSensorPorts] = (byte)type;
+				sensorData [(int)sensorPort + 2 * NumberOfSensorPorts] = mode;
 				return sensorData;
 			}
     	}
 		
 		public SensorType GetSensorType (SensorPort port)
 		{
-			return (SensorType) AnalogMemory.Read(TypeOffset, NumberOfSenosrPorts)[(int) port];
+			return (SensorType) AnalogMemory.Read(TypeOffset, NumberOfSensorPorts)[(int) port];
 		}
 		
 		public ConnectionType GetConnectionType (SensorPort port){
-			return (ConnectionType) AnalogMemory.Read(ConnectionOffset,NumberOfSenosrPorts )[(int) port]; 
+			return (ConnectionType) AnalogMemory.Read(ConnectionOffset,NumberOfSensorPorts )[(int) port]; 
 		}
 		
 		public void ResetUart (SensorPort port)
@@ -154,7 +154,7 @@ namespace MonoBrickFirmware.Sensors
 	    
 	    public void SetAnalogMode(AnalogMode mode, SensorPort port)
 	    {
-	        byte [] modes = new byte[SensorManager.NumberOfSenosrPorts];
+	        byte [] modes = new byte[SensorManager.NumberOfSensorPorts];
 	        for(int i = 0; i < modes.Length; i++)
 	            modes[i] = (byte)AnalogMode.None;
 	        modes[(int)port] = (byte)mode;

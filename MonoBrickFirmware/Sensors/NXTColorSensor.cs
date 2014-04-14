@@ -97,7 +97,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		//Analog memory offsets
     	private const int ColorOffset = 4856;
-		private const int ColorBufferSize = 18 * NumberOfSenosrPorts;
+		private const int ColorBufferSize = 18 * NumberOfSensorPorts;
 		private const int ColorRawOffset = 54;
 		
 		private const int RedIndex = 0;

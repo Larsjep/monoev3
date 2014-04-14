@@ -48,7 +48,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		private UnixDevice UartDevice;
 		
-		protected const int NumberOfSenosrPorts = SensorManager.NumberOfSenosrPorts;
+		protected const int NumberOfSensorPorts = SensorManager.NumberOfSensorPorts;
 		protected SensorPort port;
 		protected UARTMode uartMode{get; private set;}
 		
@@ -176,7 +176,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		private byte GetStatus()
 	    {
-	        return uartMemory.Read(UartStatusOffset, NumberOfSenosrPorts)[(int)port];
+	        return uartMemory.Read(UartStatusOffset, NumberOfSensorPorts)[(int)port];
 	    }
 		
 		

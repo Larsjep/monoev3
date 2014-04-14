@@ -6,9 +6,9 @@ namespace MonoBrickFirmware.Sensors
 	public class SensorListner
 	{
 		private bool run = false;
-		private SensorType[] lastSensorType = new SensorType[SensorManager.NumberOfSenosrPorts];	
+		private SensorType[] lastSensorType = new SensorType[SensorManager.NumberOfSensorPorts];	
 		private SensorPort[] sensorPort = { SensorPort.In1, SensorPort.In2, SensorPort.In3, SensorPort.In4 };
-		private ISensor[] sensor = new ISensor[SensorManager.NumberOfSenosrPorts];
+		private ISensor[] sensor = new ISensor[SensorManager.NumberOfSensorPorts];
 		Thread thread = null;
 		private int interval = 0;
 		public event Action<ISensor> SensorAttached = delegate {};
@@ -24,7 +24,7 @@ namespace MonoBrickFirmware.Sensors
 		{
 			if (!run) 
 			{
-				for (int i = 0; i < SensorManager.NumberOfSenosrPorts; i++) {
+				for (int i = 0; i < SensorManager.NumberOfSensorPorts; i++) {
 					lastSensorType [i] = SensorType.None;
 					SensorManager.Instance.ResetUart (sensorPort [i]);
 					SensorManager.Instance.ResetI2C (sensorPort [i]);
@@ -51,7 +51,7 @@ namespace MonoBrickFirmware.Sensors
 		{
 			while (run) 
 			{
-				for (int i = 0; i < SensorManager.NumberOfSenosrPorts; i++) {
+				for (int i = 0; i < SensorManager.NumberOfSensorPorts; i++) {
 					SensorType currentType = SensorManager.Instance.GetSensorType (sensorPort [i]);
 					if (currentType != lastSensorType [i]) {
 						//Console.WriteLine (sensorPort [i] + " changed from  " + lastSensorType [i] + " to " + currentType);
