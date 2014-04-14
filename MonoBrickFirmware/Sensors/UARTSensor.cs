@@ -167,9 +167,10 @@ namespace MonoBrickFirmware.Sensors
 			return uartMemory.Read(UartRawOffset + idx,  length);
 		}
 		
-		private byte[] GetActualData ()
+		private int GetActualData ()
 		{
-			return uartMemory.Read(UartActualOffset, NumberOfSenosrPorts * 2); 
+			byte[] temp = uartMemory.Read (UartActualOffset, 2);
+			return (int) BitConverter.ToInt16(temp,0);
 		}
 		
 		
@@ -187,7 +188,7 @@ namespace MonoBrickFirmware.Sensors
 	    
 		private int CalcRawOffset()
     	{
-        	return  (int)port * UartRawBufferSize + GetActualData()[(int) port * 2] * UartRawDataSize;
+			return (int)port * UartRawBufferSize + GetActualData() * UartRawDataSize;
     	}
     	
 	    private byte WaitNonZeroStatus (int timeout)
