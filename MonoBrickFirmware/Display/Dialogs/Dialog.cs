@@ -9,22 +9,31 @@ namespace MonoBrickFirmware.Display.Dialogs
 {
     public abstract class Dialog
 	{
+		
+		protected int numberOfLines;
 		protected Lcd lcd;
 		protected Font font;
-		protected string title;
-        protected List<Rectangle> lines;
-        protected Rectangle dialogWindowOuther; 
+		protected Rectangle dialogWindowOuther; 
 		protected Rectangle dialogWindowInner;
-		protected Rectangle titleRect;
-		protected Point bottomLineCenter;
+		protected Buttons btns;
+				
+		private string title;
+        private List<Rectangle> lines;
+        
+		private Rectangle titleRect;
+		private Point bottomLineCenter;
         
         private int titleSize;
-		private Buttons btns;
 		private const int dialogEdge = 5;
 		private int dialogWidth;
 		private int dialogHeight;
 		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
 		private CancellationToken token;
+		
+		
+		private const int buttonEdge = 2;
+		private const int buttonTextOffset = 2;
+		private const int boxMiddleOffset = 8;
 		
 		public Action OnShow = delegate {};
 		public Action OnExit = delegate {};
@@ -55,7 +64,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				middel = middel-(int)f.maxHeight;
 				count ++;
 			}
-			int numberOfLines = count*2+1;
+			numberOfLines = count*2+1;
 			Point start1 = new Point (dialogWindowInner.P1.X, topOffset+  dialogWindowInner.P1.Y  + ((dialogWindowInner.P2.Y - dialogWindowInner.P1.Y) / 2) - (int)f.maxHeight/2 - count*((int)f.maxHeight) );
 			Point start2 = new Point (dialogWindowInner.P2.X, start1.Y + (int)f.maxHeight);
 			lines = new List<Rectangle>();
@@ -63,6 +72,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				lines.Add(new Rectangle(new Point(start1.X, start1.Y+(i*(int)f.maxHeight)),new Point(start2.X,start2.Y+(i*(int)f.maxHeight))));	
             }
 			bottomLineCenter = new Point(dialogWindowInner.P1.X + ((dialogWindowInner.P2.X-dialogWindowInner.P1.X)/2) , dialogWindowOuther.P2.Y - dialogEdge/2);
+			lcd.SaveScreen();
 		}
 		
 		protected void Cancel()
@@ -70,7 +80,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			cancelTokenSource.Cancel();	
 		}
 		
-		public virtual void Show()
+		public virtual bool Show()
 		{
 			bool exit = false;
 			OnShow();
@@ -116,6 +126,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 				}
 			}
 			OnExit();
+			lcd.LoadScreen();
+			return true;
 		}
 		
 		protected virtual bool OnEnterAction ()
@@ -145,6 +157,89 @@ namespace MonoBrickFirmware.Display.Dialogs
 		
 		protected virtual bool OnEscape(){
 			return false;
+		}
+		
+		protected void WriteTextOnLine (string text, int lineIndex, bool color = true, Lcd.Alignment alignment = Lcd.Alignment.Center)
+		{
+			lcd.WriteTextBox(font, lines[lineIndex], text, color, alignment); 
+		}
+		
+		protected void DrawCenterButton (string text, bool color)
+		{
+			DrawCenterButton(text,color,0);
+		}
+		
+		protected void DrawCenterButton (string text, bool color, int textSize)
+		{
+			if (textSize == 0) 
+			{
+				textSize = font.TextSize(text).X;	
+			}
+			textSize+= buttonTextOffset;
+			Point buttonP1 = bottomLineCenter + new Point((int)-textSize/2,(int)-font.maxHeight/2);
+			Point buttonP2 = bottomLineCenter + new Point((int)textSize/2,(int)font.maxHeight/2);
+			
+			Point buttonP1Outer = buttonP1 + new Point(-buttonEdge,-buttonEdge);
+			Point buttonp2Outer = buttonP2 + new Point(buttonEdge,buttonEdge);
+			
+			Rectangle buttonRect = new Rectangle(buttonP1, buttonP2);
+			Rectangle buttonRectEdge = new Rectangle(buttonP1Outer, buttonp2Outer);
+			
+			lcd.DrawBox(buttonRectEdge,true);
+			lcd.WriteTextBox(font,buttonRect,text, color, Lcd.Alignment.Center);		
+		}
+		
+		protected void DrawLeftButton (string text, bool color)
+		{
+			DrawLeftButton (text, color, 0);
+		}
+		
+		protected void DrawLeftButton (string text, bool color, int textSize)
+		{
+			
+			if (textSize == 0) 
+			{
+				textSize = font.TextSize(text).X;	
+			}
+			textSize+= buttonTextOffset;
+			Point left1 = bottomLineCenter + new Point(-boxMiddleOffset - (int)textSize,(int)-font.maxHeight/2);
+			Point left2 = bottomLineCenter + new Point(-boxMiddleOffset,(int)font.maxHeight/2);
+			Point leftOuter1 = left1 + new Point(-buttonEdge,-buttonEdge);
+			Point leftOuter2 = left2 + new Point(buttonEdge,buttonEdge);
+			
+			Rectangle leftRect = new Rectangle(left1, left2);
+			Rectangle leftOuterRect = new Rectangle(leftOuter1, leftOuter2);
+			
+			lcd.DrawBox(leftOuterRect,true);
+			lcd.WriteTextBox(font, leftRect, text, color, Lcd.Alignment.Center);
+		
+		}
+		
+		protected void DrawRightButton (string text, bool color)
+		{
+			DrawRightButton (text, color, 0);
+		}
+		
+		protected void DrawRightButton (string text, bool color, int textSize)
+		{
+			if (textSize == 0) 
+			{
+				textSize = font.TextSize(text).X;	
+			}
+			textSize+= buttonTextOffset;
+			Point right1 = bottomLineCenter + new Point(boxMiddleOffset,(int)-font.maxHeight/2);
+			Point right2 = bottomLineCenter + new Point(boxMiddleOffset + (int)textSize,(int)font.maxHeight/2);
+			Point rightOuter1 = right1 + new Point(-buttonEdge,-buttonEdge);
+			Point rightOuter2 = right2 + new Point(buttonEdge,buttonEdge);
+			
+			
+			Rectangle rightRect = new Rectangle(right1, right2);
+			Rectangle rightOuterRect = new Rectangle(rightOuter1, rightOuter2);
+			
+			lcd.DrawBox(rightOuterRect, true);
+			
+			lcd.WriteTextBox(font, rightRect, text, color, Lcd.Alignment.Center);
+		
 		}
 		
 		protected void WriteTextOnDialog (string text)
@@ -182,6 +277,14 @@ namespace MonoBrickFirmware.Display.Dialogs
 		
 		protected  abstract void OnDrawContent ();
 		
+		protected void ClearContent ()
+		{
+			lcd.LoadScreen();
+			lcd.DrawBox(dialogWindowOuther, true);
+			lcd.DrawBox(dialogWindowInner, false);
+			lcd.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
+		}
+		
 		protected virtual void Draw ()
 		{
 			lcd.DrawBox(dialogWindowOuther, true);
@@ -189,6 +292,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			OnDrawContent();
 			lcd.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 			lcd.Update();
+			lcd.LoadScreen();//Load screen when dialog was created - makes sure screen is left untouched by dialog  
 		}
 	}
 }

@@ -8,13 +8,17 @@ namespace MonoBrickFirmware.Display
 	{
 		public const int Width = 178;
 		public const int Height = 128;
-		const int bytesPrLine = (Width+7)/8;
-		const int bufferSize = bytesPrLine * Height;
-		const int hwBufferLineSize = 60;
-		const int hwBufferSize = hwBufferLineSize*Height;			
+		public enum Alignment { Left, Center, Right };
+		
+		
+		private const int bytesPrLine = (Width+7)/8;
+		private const int bufferSize = bytesPrLine * Height;
+		private const int hwBufferLineSize = 60;
+		private const int hwBufferSize = hwBufferLineSize*Height;			
 		private UnixDevice device;
 		private MemoryArea memory;
-		byte[] displayBuf = new byte[bufferSize];
+		private byte[] displayBuf = new byte[bufferSize];
+		private byte[] savedScreen = new byte[bufferSize];
 		
 		private BmpImage screenshotImage = new BmpImage(bytesPrLine * 8 , Height, ColorDepth.TrueColor);
 		private RGB startColor = new RGB(188,191,161);
@@ -22,6 +26,8 @@ namespace MonoBrickFirmware.Display
 		private float redGradientStep;
 		private float greenGradientStep;  
 		private float blueGradientStep; 
+		private byte[] hwBuffer = new byte[hwBufferSize];
+		
 		
 		public void SetPixel(int x, int y, bool color)
 		{
@@ -43,9 +49,6 @@ namespace MonoBrickFirmware.Display
 			int bit = x & 0x7;
 			return (displayBuf[index] & (1 << bit)) != 0;
 		}
-				
-		
-		byte[] hwBuffer = new byte[hwBufferSize];
 		
 		public Lcd()
 		{
@@ -72,10 +75,10 @@ namespace MonoBrickFirmware.Display
 		    }; 
 		
 		
-		public void Update(int yoffset = 0)
+		public void Update(int yOffset = 0)
 		{
 			const int bytesPrLine = 3*7+2;
-			int inOffset = (yoffset % Lcd.Height)*(bytesPrLine);
+			int inOffset = (yOffset % Lcd.Height)*(bytesPrLine);
 		    int outOffset = 0;
 		    for(int row = 0; row < Height; row++)
 		    {
@@ -114,6 +117,16 @@ namespace MonoBrickFirmware.Display
 					inOffset = 0;
 		    } 
 			memory.Write(0,hwBuffer);
+		}
+		
+		internal void SaveScreen ()
+		{
+			Array.Copy(displayBuf,savedScreen, bufferSize);
+		}
+		
+		internal void LoadScreen()
+		{
+			Array.Copy(savedScreen,displayBuf,bufferSize);
 		}
 		
 		public void ShowPicture(byte[] picture)
@@ -309,9 +322,6 @@ namespace MonoBrickFirmware.Display
 			}
 		}
 		
-		
-		
-		public enum Alignment { Left, Center, Right };
 		public void WriteTextBox(Font f, Rectangle r, string text, bool color)
 		{
 			WriteTextBox(f, r, text, color, Alignment.Left);

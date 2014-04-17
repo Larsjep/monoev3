@@ -21,10 +21,10 @@ namespace MonoBrickFirmware.Display.Dialogs
 
         protected override void OnDrawContent ()
 		{
-			for (int i = 0; i != lines.Count; ++i) {
+			for (int i = 0; i != numberOfLines; ++i) {
 				if (i + scrollPos >= options.Length)
 					break;
-				lcd.WriteTextBox (font, lines [i], options [i + scrollPos].ToString (), i != cursorPos, Lcd.Alignment.Center); 	
+				WriteTextOnLine(options [i + scrollPos].ToString (), i, i != cursorPos);
 			}
         }
 
@@ -42,7 +42,7 @@ namespace MonoBrickFirmware.Display.Dialogs
         protected override bool OnDownAction ()
 		{
 			if (scrollPos + cursorPos < options.Length - 1) {
-				if (cursorPos < lines.Count - 1)
+				if (cursorPos < numberOfLines - 1)
 					cursorPos++;
 				else
 					scrollPos++;

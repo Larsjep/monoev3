@@ -110,8 +110,7 @@ namespace StartupApp
 				case 3:
 					if (AOTCompiling.IsFileCompiled (filename)) {
 						var questionDialog = new QuestionDialog(font,lcd,btns,"Progran already compiled. Recompile?","AOT recompile");
-						questionDialog.Show();
-						if(questionDialog.IsPositiveSelected)
+						if(questionDialog.Show())
 								AOTCompileAndShowDialog(font,lcd,btns,filename);
 					} 
 					else 
@@ -211,8 +210,7 @@ namespace StartupApp
 		static bool Shutdown (Lcd lcd, Buttons btns)
 		{
 			var dialog = new QuestionDialog (Font.MediumFont, lcd, btns, "Are you sure?", "Shutdown EV3");
-			dialog.Show ();
-			if (dialog.IsPositiveSelected) {
+			if(dialog.Show ()){
 				lcd.Clear();
 				lcd.WriteText(font, new Point(0,0), "Shutting down...", true);
 				lcd.Update();
@@ -344,8 +342,7 @@ namespace StartupApp
 						if(WiFiDevice.TurnOn(60000)){
 							if(settings.WiFiSettings.ConnectAtStartUp == false){
 								var question = new QuestionDialog(font,lcd,btns,"Do you want to connect at start-up?", "Settings");
-								question.Show();
-								if(question.IsPositiveSelected){
+								if(question.Show()){
 									new Thread(delegate() {
 								    	settings.WiFiSettings.ConnectAtStartUp = true;
 										settings.Save();

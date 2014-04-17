@@ -46,6 +46,7 @@
     <Folder Include="Sound\" />
     <Folder Include="Services\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Display\Animation\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Native\Libc.cs" />
@@ -107,6 +108,10 @@
     <Compile Include="Sensors\NXTColorSensor.cs" />
     <Compile Include="Sensors\EV3UltraSonicSensor.cs" />
     <Compile Include="Sensors\SensorListner.cs" />
+    <Compile Include="Display\Dialogs\StepDialog.cs" />
+    <Compile Include="Display\Dialogs\IDialogStep.cs" />
+    <Compile Include="Display\Animation\IAnimation.cs" />
+    <Compile Include="Display\Animation\Progress.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
