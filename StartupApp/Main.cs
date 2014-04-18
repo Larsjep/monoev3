@@ -557,15 +557,4 @@ namespace StartupApp
 			}
 		}
 	}
-						
-	namespace Extensions
-	{
-		public static class AOTExtension
-	    {
-	        
-						
-	    }
-	}
-	
-	
 }
