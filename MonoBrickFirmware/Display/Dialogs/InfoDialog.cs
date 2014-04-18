@@ -45,7 +45,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		{
 			WriteTextOnDialog(message);
 			if (waitForOk) {
-				DrawCenterButton(okString, true);
+				DrawCenterButton(okString, false);
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 
 namespace MonoBrickFirmware.Display.Dialogs
 {
-	public interface IDialogStep
+	public interface IStep
 	{
 		string Text{get;}
 		string ErrorText{get;}

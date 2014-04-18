@@ -11,12 +11,14 @@ namespace MonoBrickFirmware.Display.Menus
 		private const int edgeSize = 2;
 		private Func<bool,bool>func;
 		public Action<bool> OnCheckedChanged = delegate {};
+		
 		public MenuItemWithCheckBox (Lcd lcd, string text, bool checkedAtStart, Func<bool,bool>enterFunc = null){
 			this.text = text;
 			this.lcd = lcd;
 			this.Checked = checkedAtStart;
 			this.func = enterFunc;
 		}
+		
 		public bool EnterAction ()
 		{
 			if (func != null) {
@@ -30,6 +32,7 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 			return false;
 		}
+		
 		public bool LeftAction (){return false;}
 		public bool RightAction(){return false;}
 		public void Draw (Font f, Rectangle r, bool color)

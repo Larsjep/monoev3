@@ -35,8 +35,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private const int buttonTextOffset = 2;
 		private const int boxMiddleOffset = 8;
 		
-		public Action OnShow = delegate {};
-		public Action OnExit = delegate {};
+		public Action OnShow = delegate {lcd.SaveScreen();};
+		public Action OnExit = delegate {lcd.LoadScreen();};
 		
 		public Dialog (Font f, Lcd lcd, Buttons btns, string title, int width = 160, int height = 90, int topOffset = 0)
 		{
@@ -72,7 +72,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				lines.Add(new Rectangle(new Point(start1.X, start1.Y+(i*(int)f.maxHeight)),new Point(start2.X,start2.Y+(i*(int)f.maxHeight))));	
             }
 			bottomLineCenter = new Point(dialogWindowInner.P1.X + ((dialogWindowInner.P2.X-dialogWindowInner.P1.X)/2) , dialogWindowOuther.P2.Y - dialogEdge/2);
-			lcd.SaveScreen();
+			
 		}
 		
 		protected void Cancel()
@@ -126,7 +126,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 				}
 			}
 			OnExit();
-			lcd.LoadScreen();
 			return true;
 		}
 		
@@ -157,6 +156,11 @@ namespace MonoBrickFirmware.Display.Dialogs
 		
 		protected virtual bool OnEscape(){
 			return false;
+		}
+		
+		protected Rectangle GetLineRectangle (int lineIndex)
+		{
+			return lines[lineIndex];
 		}
 		
 		protected void WriteTextOnLine (string text, int lineIndex, bool color = true, Lcd.Alignment alignment = Lcd.Alignment.Center)
@@ -292,7 +296,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			OnDrawContent();
 			lcd.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 			lcd.Update();
-			lcd.LoadScreen();//Load screen when dialog was created - makes sure screen is left untouched by dialog  
+			 
 		}
 	}
 }

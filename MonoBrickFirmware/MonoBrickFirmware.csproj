@@ -109,9 +109,10 @@
     <Compile Include="Sensors\EV3UltraSonicSensor.cs" />
     <Compile Include="Sensors\SensorListner.cs" />
     <Compile Include="Display\Dialogs\StepDialog.cs" />
-    <Compile Include="Display\Dialogs\IDialogStep.cs" />
     <Compile Include="Display\Animation\IAnimation.cs" />
-    <Compile Include="Display\Animation\Progress.cs" />
+    <Compile Include="Display\Animation\ProgressAnimation.cs" />
+    <Compile Include="Display\Dialogs\StepContainer.cs" />
+    <Compile Include="Display\Dialogs\IStep.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
