@@ -39,7 +39,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 					StopProgressAnimation();
 					ClearContent();
 					WriteTextOnDialog(steps[stepIndex].ErrorText);
-					DrawCenterButton("Ok",true);
+					DrawCenterButton("Ok",false);
 					lcd.Update();
 					btns.GetKeypress();//Wait for any key
 					errorStep = steps [stepIndex];
