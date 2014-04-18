@@ -113,6 +113,7 @@
     <Compile Include="Display\Animation\ProgressAnimation.cs" />
     <Compile Include="Display\Dialogs\StepContainer.cs" />
     <Compile Include="Display\Dialogs\IStep.cs" />
+    <Compile Include="Display\Dialogs\ProgressDialog.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
