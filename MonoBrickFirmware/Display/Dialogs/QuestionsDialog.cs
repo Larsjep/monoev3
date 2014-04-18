@@ -9,12 +9,11 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private string positiveText;
 		private int textSize = 0;
 		private string question;
-		private bool isPositiveSelected;
 		
 		public override bool Show ()
 		{
 			base.Show ();
-			return isPositiveSelected;
+			return IsPositiveSelected;
 		}
 		
 		public QuestionDialog (Font f, Lcd lcd, Buttons btns, string question, string title, string positiveText="Yes", string negativeText="No", bool isPositiveSelected = true) : base (f, lcd, btns, title)
@@ -22,7 +21,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			this.negativeText = negativeText;
 			this.positiveText = positiveText;
 			this.question = question;
-			this.isPositiveSelected = isPositiveSelected;
+			this.IsPositiveSelected = isPositiveSelected;
 			int positiveSize = font.TextSize (positiveText).X;
 			int negativeSize = font.TextSize (negativeText).X;
 			if (positiveSize > negativeSize) 
@@ -37,15 +36,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 		
 		protected override bool OnLeftAction ()
 		{
-			if(!isPositiveSelected)
-				isPositiveSelected = true;
+			if(!IsPositiveSelected)
+				IsPositiveSelected = true;
 			return false;
 		}
 		
 		protected override bool OnRightAction ()
 		{
-			if(isPositiveSelected)
-				isPositiveSelected = false;
+			if(IsPositiveSelected)
+				IsPositiveSelected = false;
 			return false;
 		}
 		
@@ -57,9 +56,12 @@ namespace MonoBrickFirmware.Display.Dialogs
 		protected override void OnDrawContent ()
 		{
 			WriteTextOnDialog(question);
-			DrawLeftButton(positiveText, !isPositiveSelected, textSize);
-			DrawRightButton(negativeText,isPositiveSelected, textSize);
+			DrawLeftButton(positiveText, !IsPositiveSelected, textSize);
+			DrawRightButton(negativeText,IsPositiveSelected, textSize);
 		}
+		
+		public bool IsPositiveSelected{get; private set;}
+		
 	}
 }
 
