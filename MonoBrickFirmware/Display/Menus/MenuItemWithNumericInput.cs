@@ -103,13 +103,10 @@ namespace MonoBrickFirmware.Display.Menus
 		}
 		public void Draw (Font f, Rectangle r, bool color)
 		{
-			if (!drawDataSaved) 
-			{
-				font = f;
-				rect = r;
-				drawDataSaved = true;
-			}
-			
+			font = f;
+			rect = r;
+			drawDataSaved = true;
+		
 			int arrowWidth = (int)f.maxWidth / 4;
 			
 			string valueAsString = " " + Value.ToString () + " ";
