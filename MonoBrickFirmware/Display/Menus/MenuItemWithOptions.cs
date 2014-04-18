@@ -55,7 +55,7 @@ namespace MonoBrickFirmware.Display.Menus
 		}
 		public int OptionIndex{get;private set;}
 
-        OptionType GetSelection() {
+        public OptionType GetSelection() {
             return options[OptionIndex];
         }
 
