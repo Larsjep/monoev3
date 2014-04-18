@@ -20,7 +20,6 @@ namespace MonoBrickFirmware.Display.Menus
 		
 		private Font font;
 		private Rectangle rect;
-		private bool drawDataSaved = false;
 		public Action<int> OnValueChanged = delegate {};
 		public MenuItemWithNumericInput (Lcd lcd, string text, int startValue, int min = int.MinValue, int max= int.MaxValue){
 			this.text = text;
