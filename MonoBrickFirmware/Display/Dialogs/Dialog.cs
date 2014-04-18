@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
+using MonoBrickFirmware.Display.Animation;
 
 namespace MonoBrickFirmware.Display.Dialogs
 {
@@ -30,13 +31,16 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
 		private CancellationToken token;
 		
+		private ProgressAnimation progress;
+		private const int progressEdgeX = 10;
+		private const int progressEdgeY = 8;
 		
 		private const int buttonEdge = 2;
 		private const int buttonTextOffset = 2;
 		private const int boxMiddleOffset = 8;
 		
-		public Action OnShow = delegate {lcd.SaveScreen();};
-		public Action OnExit = delegate {lcd.LoadScreen();};
+		public Action OnShow = delegate {};
+		public Action OnExit = delegate {};
 		
 		public Dialog (Font f, Lcd lcd, Buttons btns, string title, int width = 160, int height = 90, int topOffset = 0)
 		{
@@ -72,7 +76,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 				lines.Add(new Rectangle(new Point(start1.X, start1.Y+(i*(int)f.maxHeight)),new Point(start2.X,start2.Y+(i*(int)f.maxHeight))));	
             }
 			bottomLineCenter = new Point(dialogWindowInner.P1.X + ((dialogWindowInner.P2.X-dialogWindowInner.P1.X)/2) , dialogWindowOuther.P2.Y - dialogEdge/2);
-			
+			OnShow += delegate {lcd.SaveScreen();};
+			OnExit += delegate {lcd.LoadScreen();};	
 		}
 		
 		protected void Cancel()
@@ -158,11 +163,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 			return false;
 		}
 		
-		protected Rectangle GetLineRectangle (int lineIndex)
-		{
-			return lines[lineIndex];
-		}
-		
 		protected void WriteTextOnLine (string text, int lineIndex, bool color = true, Lcd.Alignment alignment = Lcd.Alignment.Center)
 		{
 			lcd.WriteTextBox(font, lines[lineIndex], text, color, alignment); 
@@ -171,6 +171,25 @@ namespace MonoBrickFirmware.Display.Dialogs
 		protected void DrawCenterButton (string text, bool color)
 		{
 			DrawCenterButton(text,color,0);
+		}
+		
+		protected void CreateProgessAnimation(int lineIndex)
+		{
+			Rectangle progressRect = lines[lineIndex];
+			progressRect = new Rectangle( progressRect.P1 + new Point(progressEdgeX,progressEdgeY), progressRect.P2 + new Point(-progressEdgeX,-progressEdgeY));
+			if(progress != null && progress.IsRunning)
+				progress.Stop();
+			progress = new ProgressAnimation(lcd, progressRect);	
+		}
+		
+		protected void StartProgressAnimation ()
+		{
+			progress.Start();
+		}
+		
+		protected void StopProgressAnimation ()
+		{
+			progress.Stop();
 		}
 		
 		protected void DrawCenterButton (string text, bool color, int textSize)
