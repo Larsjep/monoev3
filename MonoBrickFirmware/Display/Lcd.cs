@@ -11,9 +11,9 @@ namespace MonoBrickFirmware.Display
 		public enum Alignment { Left, Center, Right };
 		
 		
-		private const int bytesPrLine = (Width+7)/8;
+		private const int bytesPrLine = ((Width+31)/32)*4;
 		private const int bufferSize = bytesPrLine * Height;
-		private const int hwBufferLineSize = 60;
+		private const int hwBufferLineSize = bytesPrLine;
 		private const int hwBufferSize = hwBufferLineSize*Height;			
 		private UnixDevice device;
 		private MemoryArea memory;
@@ -77,46 +77,10 @@ namespace MonoBrickFirmware.Display
 		
 		public void Update(int yOffset = 0)
 		{
-			const int bytesPrLine = 3*7+2;
-			int inOffset = (yOffset % Lcd.Height)*(bytesPrLine);
-		    int outOffset = 0;
-		    for(int row = 0; row < Height; row++)
-		    {
-		        int pixels;
-		        for(int i = 0; i < 7; i++)
-		        {
-		            pixels = displayBuf[inOffset++] & 0xff;
-		            pixels |= (displayBuf[inOffset++] & 0xff) << 8;
-		            pixels |= (displayBuf[inOffset++] & 0xff) << 16;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		        }   
-		        pixels = displayBuf[inOffset++] & 0xff;
-		        pixels |= (displayBuf[inOffset++] & 0xff) << 8;
-		        hwBuffer[outOffset++] = convert[pixels & 0x7];
-		        pixels >>= 3;
-		        hwBuffer[outOffset++] = convert[pixels & 0x7];
-		        pixels >>= 3;
-		        hwBuffer[outOffset++] = convert[pixels & 0x7];
-		        pixels >>= 3;
-		        hwBuffer[outOffset++] = convert[pixels & 0x7];
-				if (inOffset >= Height*bytesPrLine)
-					inOffset = 0;
-		    } 
-			memory.Write(0,hwBuffer);
+			int byteOffset = (yOffset % Lcd.Height)*bytesPrLine;
+			Array.Copy(displayBuf, byteOffset, hwBuffer, 0, hwBufferSize-byteOffset);
+			Array.Copy(displayBuf, 0, hwBuffer, hwBufferSize-byteOffset, byteOffset);			
+		    memory.Write(0,hwBuffer);			
 		}
 		
 		internal void SaveScreen ()
