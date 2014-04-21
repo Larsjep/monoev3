@@ -69,7 +69,7 @@ namespace MonoBrickFirmware.Services
 		public static bool TurnOn (int timeout = 0)
 		{
 			if (!IsLinkUp ()) {
-				if (ProcessHelper.RunAndWaitForProcess ("/lejos/bin/startwlan", "", timeout) == 0) 
+				if (ProcessHelper.RunAndWaitForProcess ("/home/root/lejos/bin/startwlan", "", timeout) == 0) 
 				{
 					return true;
 				}
