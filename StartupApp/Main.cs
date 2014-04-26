@@ -21,7 +21,6 @@ namespace StartupApp
 	{
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		static Font font = Font.MediumFont;
-		static WebServer webServer = null;
 		static Action MenuAction = null;
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
@@ -58,18 +57,9 @@ namespace StartupApp
 		
 		public static bool AOTCompileAndShowDialog(Font font, Lcd lcd, Buttons btns, string filename)
 		{
-			var infoDialog = new InfoDialog (font, lcd, btns, "AOT Compiling. Please wait", false, "AOT Compile");
-			infoDialog.Show ();
-			if (AOTCompiling.Compile (filename)) 
-			{
-				infoDialog = new InfoDialog (font, lcd, btns, "Program AOT compiled", true, "AOT Compile");
-				return true;
-			}
-			else
-			{
-				infoDialog = new InfoDialog (font, lcd, btns, "Failed to AOT compile", true, "AOT Compile");
-				return false;
-			}	
+			var step = new StepContainer( () =>{ return AOTCompiling.Compile (filename);}, "Compiling", "Failed to AOT compile", "Program AOT compiled"); 
+			var dialog = new ProgressDialog(lcd,btns,"Program", step );
+			return dialog.Show();
 		}		
 		
 		
@@ -78,8 +68,8 @@ namespace StartupApp
 			var dialog = new SelectDialog<string> (Font.MediumFont, lcd, btns, new string[] {
 				"Run Program",
 				"Debug Program",
-				"Run In AOT",
-				"AOT Compile",
+				//"Run In AOT",
+				//"AOT Compile",
 				"Delete Program",
 			}, "Options", true);
 			dialog.Show ();
@@ -96,7 +86,9 @@ namespace StartupApp
 				case 1:
 					MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.Debug);
 					break;
-				case 2:
+				// 
+				/*case 2:
+					if(!AOTCompiling.IsFileCompiled("MonoBrick"
 					if (!AOTCompiling.IsFileCompiled (filename)) {
 						if (AOTCompileAndShowDialog (font, lcd, btns, filename)) {
 							MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.AOT);	
@@ -106,8 +98,9 @@ namespace StartupApp
 					{
 						MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.AOT);
 					}
-					break;
-				case 3:
+					break;*/
+				/*case 3:
+					
 					if (AOTCompiling.IsFileCompiled (filename)) {
 						var questionDialog = new QuestionDialog(font,lcd,btns,"Progran already compiled. Recompile?","AOT recompile");
 						if(questionDialog.Show())
@@ -117,21 +110,14 @@ namespace StartupApp
 					{
 						AOTCompileAndShowDialog(font,lcd,btns,filename);
 					}
-					break;
-				case 4:
-					var infoDialog = new InfoDialog (font, lcd, btns, "Deleting File. Please wait", false, "Deleting File");
-					infoDialog.Show ();
-					if (ProcessHelper.RunAndWaitForProcess ("rm", filename) == 0) {
-							
-					} 
-					else 
-					{
-						infoDialog = new InfoDialog (font, lcd, btns, "Error deleting program", true, "Deleting File");
-					}
-					infoDialog.Show ();
+					break;*/
+				case 2:
+					var step = new StepContainer(() =>{return ProcessHelper.RunAndWaitForProcess ("rm", filename) == 0;}, "Deleting ", "Error deleting program"); 
+					var progressDialog = new ProgressDialog(lcd,btns,"Program", step);
+					progressDialog.Show();
 					break;
 				}
-				return true;
+				return false;
 			} 
 			return false;
 			
@@ -236,7 +222,7 @@ namespace StartupApp
 			items.Add (new MenuItemWithAction(lcd, "WebServer", () => ShowWebServerMenu(lcd,btns), MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Settings", () => ShowSettings(lcd,btns), MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction(lcd, "Information", () => Information(lcd, btns)));
-			items.Add (new MenuItemWithAction(lcd, "Check for Updates", () => ShowUpdatesDialogs(lcd,btns,true)));
+			items.Add (new MenuItemWithAction(lcd, "Check for Updates", () => ShowUpdatesDialogs(lcd,btns)));
 			items.Add (new MenuItemWithAction(lcd, "Shutdown", () => Shutdown(lcd,btns)));
 			Menu m = new Menu(font, lcd, btns ,"Main menu", items);
 			m.Show();
@@ -256,37 +242,33 @@ namespace StartupApp
 			var startItem = new MenuItemWithCheckBox(lcd,"Start server", WebServer.IsRunning(),
 				delegate(bool running)
        	 		{ 
-					webServer = new WebServer();
+					
 					bool isRunning = running;
 					if(running){
-						var dialog = new InfoDialog(font,lcd,btns,"Shutting down Web-Server", false);
+						var step = new StepContainer(
+							delegate() 
+							{
+								WebServer.StopAll();
+								System.Threading.Thread.Sleep(2000);
+								return true;
+							},
+							"Stopping", "Failed to stop");
+						var dialog = new ProgressDialog(lcd,btns,"Web Server",step);
 						dialog.Show();
-						webServer.Stop();
-						dialog = new InfoDialog(font,lcd,btns,"Web-server Stopped!", true);
-						dialog.Show();
-						isRunning = false;
+						isRunning = WebServer.IsRunning();
 					}
 					else{
-						var dialog = new InfoDialog(font,lcd,btns,"Starting Web-Server Please Wait", false,"Web-Server");
-						dialog.Show();
-			            webServer.LoadingPage += delegate() {dialog.UpdateMessage("Loading page"); };
-			            webServer.StartingServer += delegate() {dialog.UpdateMessage("Starting server");};
-			            if(webServer.Restart()){
-							dialog = new InfoDialog(font,lcd,btns,"Started successfully at port 80", true);
-							dialog.Show();
-							isRunning = true;
-						}
-						else{
-							dialog = new InfoDialog(font,lcd,btns,"Failed to start Web-Servers", true);
-							dialog.Show();
-							isRunning = false;
-						}
+						var step1 = new StepContainer(()=>{return WebServer.StartFastCGI();}, "Fast CGI", "Failed to start fast CGI");
+						var step2 = new StepContainer(()=>{return WebServer.StartLighttpd();}, "Initializing", "Failed to start server");
+						var step3 = new StepContainer(()=>{return WebServer.LoadPage();}, "Loading page", "Failed to load page");
+						var stepDialog = new StepDialog(lcd,btns,"Web Server", new List<IStep>{step1,step2,step3}, "Webserver started");
+						isRunning = stepDialog.Show();
 					}
 					return isRunning;
        			} 
 			);
 			
-			items.Add(portItem);
+			//items.Add(portItem);
 			items.Add(startItem);
 			//Show the menu
 			Menu m = new Menu (font, lcd, btns, "Web Server", items);
@@ -325,21 +307,36 @@ namespace StartupApp
 				delegate(bool WiFiOn)
          		{ 
 					bool isOn = WiFiOn;
-					var infoDialog = new InfoDialog(font,lcd,btns,"Creating Configuration file", false);
-					infoDialog.Show();
-					WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID,settings.WiFiSettings.Password,settings.WiFiSettings.Encryption);
+					var createFileStep = new StepContainer( 
+						delegate() 
+						{
+							WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID,settings.WiFiSettings.Password,settings.WiFiSettings.Encryption);
+							return true;
+						},
+						"Creating file", "Error creating WPA file");
+					var progressDialog = new ProgressDialog(lcd,btns,"WiFi", createFileStep);
+					progressDialog.Show();
 					if(WiFiOn){
-						var dialog = new InfoDialog(font,lcd,btns,"Shutting down WiFi", false);
-						dialog.Show();
-						WiFiDevice.TurnOff();
-						dialog = new InfoDialog(font,lcd,btns,"WiFi Disabled!!", true);
+						var turnOffStep = new StepContainer( 
+						delegate() 
+						{
+							WiFiDevice.TurnOff();
+							return true;
+						},
+						"Turning Off","Error turning off WiFi","WiFi Disabled");
+						var dialog = new ProgressDialog(lcd,btns,"WiFi", turnOffStep);
 						dialog.Show();
 						isOn = false;
 					}
 					else{
-						var dialog = new InfoDialog(font,lcd,btns,"Connecting to WiFi Network Please Wait", false);
-						dialog.Show();
-						if(WiFiDevice.TurnOn(60000)){
+						var turnOnStep = new StepContainer( 
+						delegate() 
+						{
+							return WiFiDevice.TurnOn(60000);
+						},
+						"Connecting", "Failed to connect");
+						Dialog dialog = new ProgressDialog(lcd,btns,"WiFi", turnOnStep);
+						if(dialog.Show()){
 							if(settings.WiFiSettings.ConnectAtStartUp == false){
 								var question = new QuestionDialog(font,lcd,btns,"Do you want to connect at start-up?", "Settings");
 								if(question.Show()){
@@ -349,13 +346,11 @@ namespace StartupApp
 								    }).Start();
 								}
 							}
-							dialog = new InfoDialog(font,lcd,btns,"Connected Successfully " + WiFiDevice.GetIpAddress(), true);
+							dialog = new InfoDialog(font,lcd,btns,"Connected Successfully " + WiFiDevice.GetIpAddress(), true, "WiFi");
 							dialog.Show();
 							isOn = true;
 						}
 						else{
-							dialog = new InfoDialog(font,lcd,btns,"Failed to connect to WiFI Network", true);
-							dialog.Show();
 							isOn = false;
 						}
 					}
@@ -429,29 +424,26 @@ namespace StartupApp
 				"  group=CCMP TKIP", 
 				"}", 
 			};
-      System.IO.File.WriteAllLines(@WpaSupplicantFileName, lines);
+      		System.IO.File.WriteAllLines(@WpaSupplicantFileName, lines);
 		}
 		
-		static bool ShowUpdatesDialogs (Lcd lcd, Buttons btns, bool showDescriptionDialog)
+		static bool ShowUpdatesDialogs (Lcd lcd, Buttons btns)
 		{
-			if (WiFiDevice.IsLinkUp ()) {
-				try {
-					InfoDialog dialog = null;
-					if(showDescriptionDialog){
-						dialog = new InfoDialog(font, lcd, btns, "Checking for updates. Please wait",false);
-						dialog.Show();
-					}
-					if (UpdateAvailable ()) {
-						dialog = new InfoDialog (font, lcd, btns, "Software update available. Visit monobrick.dk", true);
-					} else {
-						dialog = new InfoDialog (font, lcd, btns, "No software updates available", true);
-					}
-					dialog.Show ();
-				} 
-				catch {
-					InfoDialog dialog = new InfoDialog (font, lcd, btns, "Failed to check for updates", true);
-					dialog.Show ();		
-				}
+			if (WiFiDevice.IsLinkUp()) {
+				var step = new StepContainer(
+					delegate() 
+					{
+						try{
+							return UpdateAvailable ();
+						}
+						catch
+						{
+							return false;
+						}
+					},
+					"Checking server", "No software updates available", "Software update available. Visit monobrick.dk"); 
+				var dialog = new ProgressDialog(lcd,btns,"Updates", step);
+				dialog.Show();
 			} 
 			else 
 			{
@@ -464,8 +456,8 @@ namespace StartupApp
 		
 		public static bool UpdateAvailable ()
 		{
-				var textFromFile = (new WebClient ()).DownloadString (versionURL).TrimEnd (new char[] { '\r', '\n' });
-				return versionString != textFromFile;
+			var textFromFile = (new WebClient ()).DownloadString (versionURL).TrimEnd (new char[] { '\r', '\n' });
+			return versionString != textFromFile;
 		}
 		
 		
@@ -517,7 +509,7 @@ namespace StartupApp
 							WiFiDevice.GetIpAddress ();// JIT work-around
               				if (settings.GeneralSettings.CheckForSwUpdatesAtStartUp)
               				{
-								ShowUpdatesDialogs (lcd, btns, false);
+								ShowUpdatesDialogs (lcd, btns);
 							} 
 							else 
 							{
