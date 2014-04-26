@@ -7,7 +7,7 @@ using MonoBrickFirmware.Native;
 using System.Net.Sockets;
 namespace MonoBrickFirmware.Services
 {
-	public class WebServer : IDisposable
+	public static class WebServer
 	{
 		private const string logDir = "/var/log/lighttpd/";
 		private const string wwwDir = "/www";
@@ -25,7 +25,7 @@ namespace MonoBrickFirmware.Services
 		
 		
 		
-		private bool StartFastCGI ()
+		public static bool StartFastCGI ()
 		{
 			ProcessHelper.StartProcess ("mono", fastCGIPath + fastCGIName + @" " + fastCGIArgs);
 			System.Threading.Thread.Sleep (fastCGIStartUpTime); //Wait for CGI to start
@@ -44,12 +44,13 @@ namespace MonoBrickFirmware.Services
 			return running;
 		}
 		
-		private void StopFastCGI ()
+		public static bool StopFastCGI ()
 		{
 			ProcessHelper.KillProcess(fastCGIName);
+			return true;
 		}
 		
-		private bool StartLighttpd ()
+		public static bool StartLighttpd ()
 		{
 			//ProcessHelper.RunAndWaitForProcess("adduser", "lighttpd");
 			ProcessHelper.RunAndWaitForProcess("mkdir", logDir);
@@ -59,12 +60,13 @@ namespace MonoBrickFirmware.Services
 			return true;
 		}
 		
-		private void StopLighttpd ()
+		public static bool StopLighttpd ()
 		{
-			ProcessHelper.KillProcess(lighttpdName);	
+			ProcessHelper.KillProcess(lighttpdName);
+			return true;
 		}
 		
-		private bool LoadPage ()
+		public static bool LoadPage()
 		{
 			return true;
 			/*int attemps = 0;
@@ -95,75 +97,30 @@ namespace MonoBrickFirmware.Services
 			//return loaded;
 		}
 		
-		public Action StartingServer = delegate {};
-		public Action LoadingPage = delegate {};
-		
-		public WebServer ()
+		public static bool StartAll()
 		{
-
+			bool ok = StartFastCGI() && StartLighttpd() && LoadPage();
+			if(!ok)
+				StopAll();
+			return ok;
 		}
 		
-		public bool Start ()
+		public static bool RestartAll()
 		{
-			bool running = true;
-			if (!IsRunning()) 
-			{
-				running = false;
-				try{
-					StartingServer();
-					if(StartFastCGI() && StartLighttpd())
-					{
-						LoadingPage();
-						if(LoadPage())
-						{
-							running = true;
-						}
-						else
-						{
-							Stop();
-						}
-						
-					}
-				}
-				catch
-				{
-					Stop();
-					running = false;
-				}
-			}
-			Console.WriteLine("Start webserver done with result " + running);
-			return running;
-		}
-		
-		public bool Restart ()
-		{
-			Stop();
+			StopAll();
 			Thread.Sleep(1000);
-			return Start();
+			return StartAll();
 		}
 		
-		public void Stop ()
+		public static void StopAll()
 		{
-			if (IsRunning ()) {
-				StopFastCGI();
-				StopLighttpd();
-			}
+			StopFastCGI();
+			StopLighttpd();
 		}
 		
 		public static bool IsRunning ()
 		{
 			return ProcessHelper.IsProcessRunning(lighttpdName) && ProcessHelper.IsProcessRunning(fastCGIName);
-		}
-		
-		public void Dispose()
-		{			
-			Stop();
-			GC.SuppressFinalize(this);	
-		}
-		
-		~WebServer()
-		{
-			Stop();
 		}
 	}
 }
