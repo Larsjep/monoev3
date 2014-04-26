@@ -44,31 +44,45 @@ namespace MonoBrickFirmware.Display.Dialogs
 			StartProgressAnimation (progressLine);
 			for (stepIndex = 0; stepIndex < steps.Count; stepIndex++) {
 				Draw ();
-				if (!steps [stepIndex].Execute ()) {
-					StopProgressAnimation ();
-					ClearContent ();
-					WriteTextOnDialog (steps [stepIndex].ErrorText);
-					DrawCenterButton ("Ok", false);
-					lcd.Update ();
-					btns.GetKeypress ();//Wait for any key
-					errorStep = steps [stepIndex];
-					ok = false;
-					break;
-				} 
-				else {
-					
-					if (steps [stepIndex].ShowOkText) 
-					{
+				try {
+					if (!steps [stepIndex].Execute ()) {
 						StopProgressAnimation ();
 						ClearContent ();
 						WriteTextOnDialog (steps [stepIndex].ErrorText);
 						DrawCenterButton ("Ok", false);
 						lcd.Update ();
 						btns.GetKeypress ();//Wait for any key
-						StartProgressAnimation(progressLine);
+						errorStep = steps [stepIndex];
+						ok = false;
+						break;
+					} else {
+						
+						if (steps [stepIndex].ShowOkText) {
+							StopProgressAnimation ();
+							ClearContent ();
+							WriteTextOnDialog (steps [stepIndex].ErrorText);
+							DrawCenterButton ("Ok", false);
+							lcd.Update ();
+							btns.GetKeypress ();//Wait for any key
+							StartProgressAnimation (progressLine);
+						}
+					
+					
 					}
-				
-				
+				} 
+				catch(Exception e) 
+				{
+					StopProgressAnimation ();
+					ClearContent ();
+					WriteTextOnDialog ("Exception excuting " + steps [stepIndex].StepText);
+					DrawCenterButton ("Ok", false);
+					Console.WriteLine("Exception " + e.Message);
+					Console.WriteLine(e.StackTrace);
+					lcd.Update ();
+					btns.GetKeypress ();//Wait for any key
+					errorStep = steps [stepIndex];
+					ok = false;
+					break;
 				}
 			}
 			StopProgressAnimation ();

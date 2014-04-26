@@ -22,11 +22,20 @@ namespace MonoBrickFirmware.Display.Dialogs
 			OnShow ();
 			Draw ();
 			StartProgressAnimation (progressLine);
-			if (step.Execute ()) {
-				endText = step.OkText;
-			} else {
+			try {
+				if (step.Execute ()) {
+					endText = step.OkText;
+				} else {
+					ok = false;
+					endText = step.ErrorText;
+				}
+			} 
+			catch (Exception e) 
+			{
 				ok = false;
-				endText = step.ErrorText;
+				endText =  "Exception executing " + step.StepText;
+				Console.WriteLine("Exception " + e.Message);
+				Console.WriteLine(e.StackTrace);
 			}
 			StopProgressAnimation ();
 			if ((step.ShowOkText && ok) || !ok) 
