@@ -10,15 +10,25 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private int stepIndex = 0;
 		private int infoLineIndex;
 		private int stepLineIndex;
-		IStep errorStep = null;
+		private string allDoneText;
+		private IStep errorStep = null;
+		private int progressLine = 1;
 		
-		public StepDialog (Lcd lcd, Buttons btns, string title,List<IStep> steps): base(Font.MediumFont, lcd, btns, title)
+		public StepDialog (Lcd lcd, Buttons btns, string title,List<IStep> steps): this(lcd, btns,title,steps,"")		
+		{
+		
+		}
+		
+		public StepDialog (Lcd lcd, Buttons btns, string title,List<IStep> steps, string allCompletedText): base(Font.MediumFont, lcd, btns, title)
 		{
 			this.steps = steps;
 			infoLineIndex = 0;
-			CreateProgessAnimation(1);
+			progressLine = 1;
 			stepLineIndex = 2;
+			this.allDoneText = allCompletedText;
 		}
+		
+		
 		
 		protected override bool OnEnterAction ()
 		{
@@ -29,30 +39,46 @@ namespace MonoBrickFirmware.Display.Dialogs
 		{
 			bool ok = true;
 			errorStep = null;
-			OnShow();
+			OnShow ();
 			Draw ();
-			StartProgressAnimation();
+			StartProgressAnimation (progressLine);
 			for (stepIndex = 0; stepIndex < steps.Count; stepIndex++) {
 				Draw ();
-				if (!steps [stepIndex].Execute ()) 
-				{
-					StopProgressAnimation();
-					ClearContent();
-					WriteTextOnDialog(steps[stepIndex].ErrorText);
-					DrawCenterButton("Ok",false);
-					lcd.Update();
-					btns.GetKeypress();//Wait for any key
+				if (!steps [stepIndex].Execute ()) {
+					StopProgressAnimation ();
+					ClearContent ();
+					WriteTextOnDialog (steps [stepIndex].ErrorText);
+					DrawCenterButton ("Ok", false);
+					lcd.Update ();
+					btns.GetKeypress ();//Wait for any key
 					errorStep = steps [stepIndex];
 					ok = false;
 					break;
+				} 
+				else {
+					
+					if (steps [stepIndex].ShowOkText) 
+					{
+						StopProgressAnimation ();
+						ClearContent ();
+						WriteTextOnDialog (steps [stepIndex].ErrorText);
+						DrawCenterButton ("Ok", false);
+						lcd.Update ();
+						btns.GetKeypress ();//Wait for any key
+						StartProgressAnimation(progressLine);
+					}
+				
+				
 				}
 			}
-			StopProgressAnimation();
-			/*ClearContent();
-			WriteTextOnDialog("Done!");
-			DrawCenterButton("Ok",false);
-			lcd.Update();
-			btns.GetKeypress();//Wait for any key*/
+			StopProgressAnimation ();
+			if (allDoneText != "" && ok) {
+				ClearContent();
+				WriteTextOnDialog(allDoneText);
+				DrawCenterButton("Ok",false);
+				lcd.Update();
+				btns.GetKeypress();//Wait for any key*/
+			}
 			OnExit();
 			return ok;
 		}
@@ -61,7 +87,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		
 		protected override void OnDrawContent ()
 		{
-			WriteTextOnLine(steps[stepIndex].Text,infoLineIndex);
+			WriteTextOnLine(steps[stepIndex].StepText,infoLineIndex);
 			WriteTextOnLine("Step " + (stepIndex +1).ToString() + " of " + steps.Count, stepLineIndex);
 		}
 	}

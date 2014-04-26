@@ -4,9 +4,11 @@ namespace MonoBrickFirmware.Display.Dialogs
 {
 	public interface IStep
 	{
-		string Text{get;}
+		string StepText{get;}
+		string OkText{get;}
 		string ErrorText{get;}
 		bool Execute ();
+		bool ShowOkText{get;}
 	}
 }
 

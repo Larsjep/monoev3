@@ -31,7 +31,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
 		private CancellationToken token;
 		
-		private ProgressAnimation progress;
+		private ProgressAnimation progress = null;
+		private int animationLine = -1;
 		private const int progressEdgeX = 10;
 		private const int progressEdgeY = 8;
 		
@@ -173,17 +174,17 @@ namespace MonoBrickFirmware.Display.Dialogs
 			DrawCenterButton(text,color,0);
 		}
 		
-		protected void CreateProgessAnimation(int lineIndex)
+		protected void StartProgressAnimation (int lineIndex)
 		{
-			Rectangle progressRect = lines[lineIndex];
-			progressRect = new Rectangle( progressRect.P1 + new Point(progressEdgeX,progressEdgeY), progressRect.P2 + new Point(-progressEdgeX,-progressEdgeY));
-			if(progress != null && progress.IsRunning)
-				progress.Stop();
-			progress = new ProgressAnimation(lcd, progressRect);	
-		}
-		
-		protected void StartProgressAnimation ()
-		{
+			if (progress != null || lineIndex != animationLine) 
+			{
+				Rectangle progressRect = lines [lineIndex];
+				animationLine = lineIndex;
+				progressRect = new Rectangle (progressRect.P1 + new Point (progressEdgeX, progressEdgeY), progressRect.P2 + new Point (-progressEdgeX, -progressEdgeY));
+				if (progress != null && progress.IsRunning)
+					progress.Stop ();
+				progress = new ProgressAnimation (lcd, progressRect);
+			}
 			progress.Start();
 		}
 		

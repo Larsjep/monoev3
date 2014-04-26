@@ -64,24 +64,23 @@ namespace MenuExample
 		
 		public static bool TurnCheckBoxOnOff (bool isChecked)
 		{
-			Dialog dialog;
-			if(isChecked)
-			{
-				dialog = new InfoDialog(Font.MediumFont,lcd,btns,"Turning off. Please wait...", false);
-				dialog.Show();
-				System.Threading.Thread.Sleep(2000);
+			if (isChecked) {
+				var step = new StepContainer (DummyStep, "Turning off", "Failed to turn off");
+				var progressDialog = new ProgressDialog (lcd, btns, "Information", step);
+				progressDialog.Show ();
 				return false;
+			} 
+			else 
+			{
+				var dialog = new InfoDialog(Font.MediumFont, lcd, btns, "Turning On", true);
+				dialog.Show();
+				return true;
 			}
-			
-			dialog = new InfoDialog(Font.MediumFont,lcd,btns,"Turning On. Please wait...", false);
-			dialog.Show();
-			System.Threading.Thread.Sleep(2000);
-			return true;
 		}
 		
 		public static bool DummyStep ()
 		{
-			System.Threading.Thread.Sleep(10000);
+			System.Threading.Thread.Sleep(5000);
 			return true;
 		}
 		
