@@ -258,7 +258,7 @@ namespace StartupApp
 						isRunning = WebServer.IsRunning();
 					}
 					else{
-						var step1 = new StepContainer(()=>{return WebServer.StartFastCGI();}, "Fast CGI", "Failed to start fast CGI");
+						var step1 = new StepContainer(()=>{return WebServer.StartFastCGI();}, "Init CGI Server", "Failed to start CGI Server");
 						var step2 = new StepContainer(()=>{return WebServer.StartLighttpd();}, "Initializing", "Failed to start server");
 						var step3 = new StepContainer(()=>{return WebServer.LoadPage();}, "Loading page", "Failed to load page");
 						var stepDialog = new StepDialog(lcd,btns,"Web Server", new List<IStep>{step1,step2,step3}, "Webserver started");
