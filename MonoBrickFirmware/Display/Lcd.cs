@@ -4,7 +4,7 @@ using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.Display
 {	
-	public class Lcd : IDisposable
+	public class Lcd
 	{
 		public const int Width = 178;
 		public const int Height = 128;
@@ -28,6 +28,7 @@ namespace MonoBrickFirmware.Display
 		private float blueGradientStep; 
 		private byte[] hwBuffer = new byte[hwBufferSize];
 		
+		private static readonly Lcd instance = new Lcd();
 		
 		public void SetPixel(int x, int y, bool color)
 		{
@@ -50,7 +51,15 @@ namespace MonoBrickFirmware.Display
 			return (displayBuf[index] & (1 << bit)) != 0;
 		}
 		
-		public Lcd()
+		public static Lcd Instance
+		{
+			get 
+	      	{
+				return instance; 
+	      	}	
+		}
+		
+		private Lcd()
 		{
 			device = new UnixDevice("/dev/fb0");
 			memory =  device.MMap(hwBufferSize, 0);
@@ -83,12 +92,12 @@ namespace MonoBrickFirmware.Display
 		    memory.Write(0,hwBuffer);			
 		}
 		
-		internal void SaveScreen ()
+		public void SaveScreen ()
 		{
 			Array.Copy(displayBuf,savedScreen, bufferSize);
 		}
 		
-		internal void LoadScreen()
+		public void LoadScreen()
 		{
 			Array.Copy(savedScreen,displayBuf,bufferSize);
 		}
@@ -312,14 +321,6 @@ namespace MonoBrickFirmware.Display
 			}
 			WriteText(f, r.P1+new Point(xpos, 0) , text, color);
 		}			
-	
-		#region IDisposable implementation
-		void IDisposable.Dispose ()
-		{
-			device.Dispose();
-			screenshotImage.Dispose();
-		}
-		#endregion
 	}
 }
 

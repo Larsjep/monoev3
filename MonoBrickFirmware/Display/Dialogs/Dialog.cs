@@ -12,7 +12,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 	{
 		
 		protected int numberOfLines;
-		protected Lcd lcd;
 		protected Font font;
 		protected Rectangle dialogWindowOuther; 
 		protected Rectangle dialogWindowInner;
@@ -43,12 +42,11 @@ namespace MonoBrickFirmware.Display.Dialogs
 		public Action OnShow = delegate {};
 		public Action OnExit = delegate {};
 		
-		public Dialog (Font f, Lcd lcd, Buttons btns, string title, int width = 160, int height = 90, int topOffset = 0)
+		public Dialog (Font f, Buttons btns, string title, int width = 160, int height = 90, int topOffset = 0)
 		{
 			dialogWidth = width;
 			dialogHeight = height;
 			this.font = f;
-			this.lcd = lcd;
 			this.title = title;
 			this.btns = btns;
 			int xEdge = (Lcd.Width - dialogWidth)/2;
@@ -77,8 +75,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 				lines.Add(new Rectangle(new Point(start1.X, start1.Y+(i*(int)f.maxHeight)),new Point(start2.X,start2.Y+(i*(int)f.maxHeight))));	
             }
 			bottomLineCenter = new Point(dialogWindowInner.P1.X + ((dialogWindowInner.P2.X-dialogWindowInner.P1.X)/2) , dialogWindowOuther.P2.Y - dialogEdge/2);
-			OnShow += delegate {lcd.SaveScreen();};
-			OnExit += delegate {lcd.LoadScreen();};	
+			OnShow += delegate {Lcd.Instance.SaveScreen();};
+			OnExit += delegate {Lcd.Instance.LoadScreen();};	
 		}
 		
 		protected void Cancel()
@@ -166,7 +164,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		
 		protected void WriteTextOnLine (string text, int lineIndex, bool color = true, Lcd.Alignment alignment = Lcd.Alignment.Center)
 		{
-			lcd.WriteTextBox(font, lines[lineIndex], text, color, alignment); 
+			Lcd.Instance.WriteTextBox(font, lines[lineIndex], text, color, alignment); 
 		}
 		
 		protected void DrawCenterButton (string text, bool color)
@@ -183,7 +181,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				progressRect = new Rectangle (progressRect.P1 + new Point (progressEdgeX, progressEdgeY), progressRect.P2 + new Point (-progressEdgeX, -progressEdgeY));
 				if (progress != null && progress.IsRunning)
 					progress.Stop ();
-				progress = new ProgressAnimation (lcd, progressRect);
+				progress = new ProgressAnimation (progressRect);
 			}
 			progress.Start();
 		}
@@ -209,8 +207,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle buttonRect = new Rectangle(buttonP1, buttonP2);
 			Rectangle buttonRectEdge = new Rectangle(buttonP1Outer, buttonp2Outer);
 			
-			lcd.DrawBox(buttonRectEdge,true);
-			lcd.WriteTextBox(font,buttonRect,text, color, Lcd.Alignment.Center);		
+			Lcd.Instance.DrawBox(buttonRectEdge,true);
+			Lcd.Instance.WriteTextBox(font,buttonRect,text, color, Lcd.Alignment.Center);		
 		}
 		
 		protected void DrawLeftButton (string text, bool color)
@@ -234,8 +232,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle leftRect = new Rectangle(left1, left2);
 			Rectangle leftOuterRect = new Rectangle(leftOuter1, leftOuter2);
 			
-			lcd.DrawBox(leftOuterRect,true);
-			lcd.WriteTextBox(font, leftRect, text, color, Lcd.Alignment.Center);
+			Lcd.Instance.DrawBox(leftOuterRect,true);
+			Lcd.Instance.WriteTextBox(font, leftRect, text, color, Lcd.Alignment.Center);
 		
 		}
 		
@@ -260,9 +258,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle rightRect = new Rectangle(right1, right2);
 			Rectangle rightOuterRect = new Rectangle(rightOuter1, rightOuter2);
 			
-			lcd.DrawBox(rightOuterRect, true);
+			Lcd.Instance.DrawBox(rightOuterRect, true);
 			
-			lcd.WriteTextBox(font, rightRect, text, color, Lcd.Alignment.Center);
+			Lcd.Instance.WriteTextBox(font, rightRect, text, color, Lcd.Alignment.Center);
 		
 		}
 		
@@ -272,7 +270,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			int textRectRatio = font.TextSize (text).X / (width);
 			if (textRectRatio == 0) {
 				int middle = (lines.Count / 2);
-				lcd.WriteTextBox (font, lines [middle], text, true, Lcd.Alignment.Center);
+				Lcd.Instance.WriteTextBox (font, lines [middle], text, true, Lcd.Alignment.Center);
 			} else {
 				string[] words = text.Split (' ');
 				int rectIndex = 0;
@@ -285,7 +283,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 							s = s + " " + words [i];
 						}
 					} else {
-						lcd.WriteTextBox (font, lines [rectIndex], s, true, Lcd.Alignment.Center);
+						Lcd.Instance.WriteTextBox (font, lines [rectIndex], s, true, Lcd.Alignment.Center);
 						s = words [i];
 						rectIndex++;
 						if (rectIndex >= lines.Count)
@@ -294,7 +292,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				
 				}
 				if (s != "" && rectIndex < lines.Count) {
-					lcd.WriteTextBox (font, lines [rectIndex], s, true, Lcd.Alignment.Center);
+					Lcd.Instance.WriteTextBox (font, lines [rectIndex], s, true, Lcd.Alignment.Center);
 				}
 			}
 		}
@@ -303,19 +301,19 @@ namespace MonoBrickFirmware.Display.Dialogs
 		
 		protected void ClearContent ()
 		{
-			lcd.LoadScreen();
-			lcd.DrawBox(dialogWindowOuther, true);
-			lcd.DrawBox(dialogWindowInner, false);
-			lcd.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
+			Lcd.Instance.LoadScreen();
+			Lcd.Instance.DrawBox(dialogWindowOuther, true);
+			Lcd.Instance.DrawBox(dialogWindowInner, false);
+			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 		}
 		
 		protected virtual void Draw ()
 		{
-			lcd.DrawBox(dialogWindowOuther, true);
-			lcd.DrawBox(dialogWindowInner, false);
+			Lcd.Instance.DrawBox(dialogWindowOuther, true);
+			Lcd.Instance.DrawBox(dialogWindowInner, false);
 			OnDrawContent();
-			lcd.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
-			lcd.Update();
+			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
+			Lcd.Instance.Update();
 			 
 		}
 	}

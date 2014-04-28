@@ -8,7 +8,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private string message;
 		private bool waitForOk;
 		private const string okString = "OK";
-		public InfoDialog(Font f, Lcd lcd, Buttons btns, string message, bool waitForOk, string title = "Information"):base(f,lcd,btns,title){
+		public InfoDialog(Buttons btns, string message, bool waitForOk, string title = "Information"):base(Font.MediumFont,btns,title){
 			this.message = message;
 			this.waitForOk = waitForOk;
 		}

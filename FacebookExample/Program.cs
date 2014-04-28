@@ -19,7 +19,6 @@ namespace FacebookExample
 			ManualResetEvent terminateProgram = new ManualResetEvent (false);
 			string fbToken = "CAACpSl1Qm3cBAHAMyZAY...";//This is not valied
 			var fb = new FacebookClient(fbToken);
-			Lcd lcd = new Lcd();
 			Font f = Font.MediumFont;
 			Point offset = new Point(0,25);
 			Point p = new Point(10, Lcd.Height-75);
@@ -36,10 +35,10 @@ namespace FacebookExample
 			
 			buts.EnterPressed += () => { 
 				Color color = colorSensor.ReadColor();
-				lcd.Clear();
-				lcd.WriteTextBox(f, box + offset*0, "Color: " + color, true);
-				lcd.WriteTextBox(f, box + offset*1, "Send to Facebook" + color, true);
-				lcd.Update();
+				Lcd.Instance.Clear();
+				Lcd.Instance.WriteTextBox(f, box + offset*0, "Color: " + color, true);
+				Lcd.Instance.WriteTextBox(f, box + offset*1, "Send to Facebook" + color, true);
+				Lcd.Instance.Update();
 				colorSensor.ReadColor();
 				var me = fb.Get("monobrick.dk") as JsonObject;
 				var uid = me["id"];

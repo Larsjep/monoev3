@@ -6,16 +6,14 @@ namespace MonoBrickFirmware.Display.Menus
 	public class MenuItemWithOptions<OptionType> : IMenuItem
 	{
 		private string text;
-		private Lcd lcd;
-        private OptionType[] options;
+		private OptionType[] options;
 		private const int rightArrowOffset = 4;
 		private const int arrowEdge = 4;
 		public Action<OptionType> OnOptionChanged = delegate {};
         
-        public MenuItemWithOptions(Lcd lcd, string text, OptionType[] options, int startIdx = 0)
+        public MenuItemWithOptions(string text, OptionType[] options, int startIdx = 0)
         {
 			this.text = text;
-			this.lcd = lcd;
 			this.options = options;
 			this.OptionIndex = startIdx;
 		}
@@ -48,10 +46,10 @@ namespace MonoBrickFirmware.Display.Menus
 			Rectangle leftArrowRect = new Rectangle(new Point(numericRect.P1.X, numericRect.P1.Y+arrowEdge), new Point(numericRect.P1.X+ arrowWidth, numericRect.P2.Y-arrowEdge));
 			Rectangle rightArrowRect = new Rectangle( new Point(numericRect.P2.X-(arrowWidth + rightArrowOffset), numericRect.P1.Y+arrowEdge) , new Point(numericRect.P2.X-rightArrowOffset,numericRect.P2.Y-arrowEdge));
 			
-			lcd.WriteTextBox (f, textRect, text, color, Lcd.Alignment.Left);
-			lcd.WriteTextBox (f, numericRect, valueAsString, color, Lcd.Alignment.Right);
-			lcd.DrawArrow(leftArrowRect, Lcd.ArrowOrientation.Left, color);
-			lcd.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
+			Lcd.Instance.WriteTextBox (f, textRect, text, color, Lcd.Alignment.Left);
+			Lcd.Instance.WriteTextBox (f, numericRect, valueAsString, color, Lcd.Alignment.Right);
+			Lcd.Instance.DrawArrow(leftArrowRect, Lcd.ArrowOrientation.Left, color);
+			Lcd.Instance.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
 		}
 		public int OptionIndex{get;private set;}
 

@@ -6,15 +6,13 @@ namespace MonoBrickFirmware.Display.Menus
 	public class MenuItemWithCheckBox : IMenuItem
 	{
 		private string text;
-		private Lcd lcd;
 		private const int lineSize = 2;
 		private const int edgeSize = 2;
 		private Func<bool,bool>func;
 		public Action<bool> OnCheckedChanged = delegate {};
 		
-		public MenuItemWithCheckBox (Lcd lcd, string text, bool checkedAtStart, Func<bool,bool>enterFunc = null){
+		public MenuItemWithCheckBox (string text, bool checkedAtStart, Func<bool,bool>enterFunc = null){
 			this.text = text;
-			this.lcd = lcd;
 			this.Checked = checkedAtStart;
 			this.func = enterFunc;
 		}
@@ -43,11 +41,11 @@ namespace MonoBrickFirmware.Display.Menus
 			Point fontPoint = f.TextSize("v");
 			Point checkPoint = new Point(Lcd.Width - xCheckBoxSize +(int) fontPoint.X-edgeSize, r.P1.Y);
 			
-			lcd.WriteTextBox(f, r, text, color);
-			lcd.DrawBox(outer,color);
-			lcd.DrawBox(innter,!color);
+			Lcd.Instance.WriteTextBox(f, r, text, color);
+			Lcd.Instance.DrawBox(outer,color);
+			Lcd.Instance.DrawBox(innter,!color);
 			if(Checked)
-				lcd.WriteText(f,checkPoint,"v", color);
+				Lcd.Instance.WriteText(f,checkPoint,"v", color);
 		}
 		public bool Checked{get;private set;}
 	}

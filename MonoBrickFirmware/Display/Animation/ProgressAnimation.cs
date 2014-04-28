@@ -13,20 +13,18 @@ namespace MonoBrickFirmware.Display.Animation
 		private const int rectSpace = 0;
 		private const int rectWidth = 20;
 		private int showIndex = 0;
-		private Lcd lcd;
 		private bool leftToRight = true;
 		
 		private List<Rectangle> rects = new List<Rectangle>();
 		private bool run = false;
 		
-		public ProgressAnimation (Lcd lcd, Rectangle rect)
+		public ProgressAnimation (Rectangle rect)
 		{
 			IsRunning = false;
 			thread = new System.Threading.Thread (AnimationThread);
 			int width = rect.P2.X - rect.P1.X;
 			int numberOfRects = (width - rectSpace) / (rectWidth + rectSpace);
 			int height = rect.P2.Y - rect.P1.Y;
-			this.lcd = lcd;
 			int totalWidthUsed = numberOfRects * (rectWidth + rectSpace);
 			int startOffset = (width - totalWidthUsed)/2;
 			Point animationPoint2 = new Point(rectWidth, height);
@@ -35,9 +33,6 @@ namespace MonoBrickFirmware.Display.Animation
 			Point start = new Point(rect.P1.X + rectSpace + startOffset, rect.P1.Y);
 			for (int i = 0; i < numberOfRects; i++) 
 			{
-				//Console.WriteLine("Start.X: " + start.X + " Start.Y: " + start.Y);
-				//Console.WriteLine("Start+Ani.X: " + (start + animationPoint2).X + " Start+Ani.Y: " + (start + animationPoint2).Y);
-				
 				rects.Add( new Rectangle(start, start + animationPoint2) );
 				start = start +  spacePoint + animationPoint;
 			}
@@ -69,9 +64,9 @@ namespace MonoBrickFirmware.Display.Animation
 		{
 			while (run) {
 				for (int i = 0; i < rects.Count; i++) {
-					lcd.DrawBox (rects [i], i == showIndex);
+					Lcd.Instance.DrawBox (rects [i], i == showIndex);
 				}
-				lcd.Update ();
+				Lcd.Instance.Update ();
 				if (leftToRight) 
 				{
 					showIndex++;

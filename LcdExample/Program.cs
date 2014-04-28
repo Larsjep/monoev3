@@ -16,8 +16,7 @@ namespace example
 		{
 			 new Motor(MotorPort.OutA).Off();
 			
-			Lcd lcd = new Lcd();
-			lcd.ShowPicture(MonoPicture.Picture);
+			Lcd.Instance.ShowPicture(MonoPicture.Picture);
 			Font f = Font.MediumFont;
 			Point offset = new Point(0,25);
 			Point p = new Point(10, Lcd.Height-75);
@@ -28,30 +27,30 @@ namespace example
 			int val = 7;
 			buts.EnterPressed += () =>
 			{ 
-				lcd.Clear();
-				lcd.WriteTextBox(f, box + offset*0, "Value = " + val.ToString(), true);
-				lcd.WriteTextBox(f, box + offset*1, "Hello World!!", false);
-				lcd.WriteTextBox(f, box + offset*2, "Hello World!!", true);	
-				lcd.Update (); 				
+				Lcd.Instance.Clear();
+				Lcd.Instance.WriteTextBox(f, box + offset*0, "Value = " + val.ToString(), true);
+				Lcd.Instance.WriteTextBox(f, box + offset*1, "Hello World!!", false);
+				Lcd.Instance.WriteTextBox(f, box + offset*2, "Hello World!!", true);	
+				Lcd.Instance.Update (); 				
 				val++;
 			};
 			buts.UpPressed += () =>
 			{ 
-				lcd.Clear();
-				lcd.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,10));	
-				lcd.Update();	
+				Lcd.Instance.Clear();
+				Lcd.Instance.DrawBitmap(monoLogo, new Point((int)(Lcd.Width-monoLogo.Width)/2,10));	
+				Lcd.Instance.Update();	
 			};
 			buts.DownPressed += () =>
 			{ 
-				lcd.TakeScreenShot();
-				lcd.Clear();
-				lcd.WriteTextBox(f, box + offset*1, "Screen Shot", true);	
-				lcd.Update();		
+				Lcd.Instance.TakeScreenShot();
+				Lcd.Instance.Clear();
+				Lcd.Instance.WriteTextBox(f, box + offset*1, "Screen Shot", true);	
+				Lcd.Instance.Update();		
 			};
 			buts.EscapePressed += () => stopped.Set();
 			stopped.WaitOne();
-			lcd.WriteTextBox(f, box + offset*0, "Done!", true);
-			lcd.Update();
+			Lcd.Instance.WriteTextBox(f, box + offset*0, "Done!", true);
+			Lcd.Instance.Update();
 		}
 	}
 }

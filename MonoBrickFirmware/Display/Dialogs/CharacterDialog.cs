@@ -48,7 +48,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private bool showLine = false;
 		private List<string> inputLines = new List<string>();
 			
-		public CharacterDialog(Lcd lcd, Buttons btns, string title) : base(Font.MediumFont, lcd, btns, title, Lcd.Width, Lcd.Height-22) 
+		public CharacterDialog(Buttons btns, string title) : base(Font.MediumFont, btns, title, Lcd.Width, Lcd.Height-22) 
         {
 			characterInnerBox = new Point(characterSize, characterSize); 
 			characterOutherBox = new Point(characterInnerBox.X + 2* characterEdge, characterInnerBox.Y + 2* characterEdge);
@@ -304,10 +304,10 @@ namespace MonoBrickFirmware.Display.Dialogs
 						charactersSelected = true;
 						selectedCharacter = selectedSet.Characters [characterIndex].ToString ();
 					}
-					lcd.DrawBox (outherRect, true);
+					Lcd.Instance.DrawBox (outherRect, true);
 					innerRect = new Rectangle (new Point (outherRect.P1.X + characterEdge, outherRect.P1.Y + characterEdge), new Point (outherRect.P2.X - characterEdge, outherRect.P2.Y - characterEdge));
-					lcd.DrawBox (innerRect, selected);
-					lcd.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset, innerRect.P1.Y - characterOffset), selectedSet.Characters [characterIndex].ToString (), !selected);
+					Lcd.Instance.DrawBox (innerRect, selected);
+					Lcd.Instance.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset, innerRect.P1.Y - characterOffset), selectedSet.Characters [characterIndex].ToString (), !selected);
 					outherRect = outherRect + new Point (characterOutherBox.X, 0) + characterSpace;
 					characterIndex++;	
 				}
@@ -324,18 +324,18 @@ namespace MonoBrickFirmware.Display.Dialogs
 			start = new Point (dialogWindowInner.P1.X, dialogWindowInner.P1.Y + (int)font.maxHeight / 2 - yPrintOffset + line * characterOutherBox.Y);  
 			
 			outherRect = new Rectangle (start, start + characterOutherBox);
-			lcd.DrawBox (outherRect, true);
+			Lcd.Instance.DrawBox (outherRect, true);
 			innerRect = new Rectangle (new Point (outherRect.P1.X + characterEdge, outherRect.P1.Y + characterEdge), new Point (outherRect.P2.X - characterEdge, outherRect.P2.Y - characterEdge));
-			lcd.DrawBox (innerRect, leftArrowSelected);
+			Lcd.Instance.DrawBox (innerRect, leftArrowSelected);
 			innerRect = new Rectangle (new Point (outherRect.P1.X + 3 * characterEdge, outherRect.P1.Y + 3 * characterEdge), new Point (outherRect.P2.X - 3 * characterEdge, outherRect.P2.Y - 3 * characterEdge));
-			lcd.DrawArrow (innerRect, Lcd.ArrowOrientation.Left, !leftArrowSelected);
+			Lcd.Instance.DrawArrow (innerRect, Lcd.ArrowOrientation.Left, !leftArrowSelected);
 			
 			outherRect = outherRect + new Point (characterOutherBox.X, 0) + characterSpace;
-			lcd.DrawBox (outherRect, true);
+			Lcd.Instance.DrawBox (outherRect, true);
 			innerRect = new Rectangle (new Point (outherRect.P1.X + characterEdge, outherRect.P1.Y + characterEdge), new Point (outherRect.P2.X - characterEdge, outherRect.P2.Y - characterEdge));
-			lcd.DrawBox (innerRect, rightArrowSelected);
+			Lcd.Instance.DrawBox (innerRect, rightArrowSelected);
 			innerRect = new Rectangle (new Point (outherRect.P1.X + 3 * characterEdge, outherRect.P1.Y + 3 * characterEdge), new Point (outherRect.P2.X - 3 * characterEdge, outherRect.P2.Y - 3 * characterEdge));
-			lcd.DrawArrow (innerRect, Lcd.ArrowOrientation.Right, !rightArrowSelected);
+			Lcd.Instance.DrawArrow (innerRect, Lcd.ArrowOrientation.Right, !rightArrowSelected);
 			
 			for (int character = 0; character < maxNumberOfButtomCharacters; character++) {
 				bool selected = false;
@@ -348,10 +348,10 @@ namespace MonoBrickFirmware.Display.Dialogs
 					}
 				}
 				outherRect = outherRect + new Point (characterOutherBox.X, 0) + characterSpace;
-				lcd.DrawBox (outherRect, true);
+				Lcd.Instance.DrawBox (outherRect, true);
 				innerRect = new Rectangle (new Point (outherRect.P1.X + characterEdge, outherRect.P1.Y + characterEdge), new Point (outherRect.P2.X - characterEdge, outherRect.P2.Y - characterEdge));
-				lcd.DrawBox (innerRect, selected);
-				lcd.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset, innerRect.P1.Y - characterOffset), selectedSet.Characters [characterIndex].ToString (), !selected);
+				Lcd.Instance.DrawBox (innerRect, selected);
+				Lcd.Instance.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset, innerRect.P1.Y - characterOffset), selectedSet.Characters [characterIndex].ToString (), !selected);
 				characterIndex++;	
 			}
 			
@@ -361,10 +361,10 @@ namespace MonoBrickFirmware.Display.Dialogs
 			}
 			
 			outherRect = new Rectangle (new Point (outherRect.P1.X, outherRect.P1.Y), new Point (outherRect.P2.X + characterOutherBox.X + characterSpace.X, outherRect.P2.Y)) + new Point (characterOutherBox.X, 0) + new Point (characterSpace.X, characterSpace.Y);
-			lcd.DrawBox (outherRect, true);
+			Lcd.Instance.DrawBox (outherRect, true);
 			innerRect = new Rectangle (new Point (outherRect.P1.X + characterEdge, outherRect.P1.Y + characterEdge), new Point (outherRect.P2.X - characterEdge, outherRect.P2.Y - characterEdge));
-			lcd.DrawBox (innerRect, deleteSelected);
-			lcd.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset + 1, innerRect.P1.Y - characterOffset + 1), "Del", !deleteSelected);
+			Lcd.Instance.DrawBox (innerRect, deleteSelected);
+			Lcd.Instance.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset + 1, innerRect.P1.Y - characterOffset + 1), "Del", !deleteSelected);
 			
 			line++;
 			
@@ -385,49 +385,49 @@ namespace MonoBrickFirmware.Display.Dialogs
 			start = new Point (dialogWindowInner.P1.X, dialogWindowInner.P1.Y + (int)font.maxHeight / 2 - yPrintOffset + line * characterOutherBox.Y);  
 			
 			outherRect = new Rectangle (new Point (start.X, start.Y), new Point (start.X + 2 * characterOutherBox.X + characterSpace.X, start.Y + characterOutherBox.Y));
-			lcd.DrawBox (outherRect, true);
+			Lcd.Instance.DrawBox (outherRect, true);
 			innerRect = new Rectangle (new Point (outherRect.P1.X + characterEdge, outherRect.P1.Y + characterEdge), new Point (outherRect.P2.X - characterEdge, outherRect.P2.Y - characterEdge));
-			lcd.DrawBox (innerRect, changeSelected);
-			lcd.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset - 3, innerRect.P1.Y - characterOffset), setTypeString, !changeSelected);
+			Lcd.Instance.DrawBox (innerRect, changeSelected);
+			Lcd.Instance.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset - 3, innerRect.P1.Y - characterOffset), setTypeString, !changeSelected);
 			
 			outherRect = new Rectangle (new Point (start.X + 2 * characterSpace.X + 2 * characterOutherBox.X, start.Y), new Point (start.X + 2 * characterSpace.X + 2 * characterOutherBox.X + 6 * characterOutherBox.X + 5 * characterSpace.X, start.Y + characterOutherBox.Y));
-			lcd.DrawBox (outherRect, true);
+			Lcd.Instance.DrawBox (outherRect, true);
 			innerRect = new Rectangle (new Point (outherRect.P1.X + characterEdge, outherRect.P1.Y + characterEdge), new Point (outherRect.P2.X - characterEdge, outherRect.P2.Y - characterEdge));
-			lcd.DrawBox (innerRect, spaceSelected);
-			lcd.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset + 3, innerRect.P1.Y - characterOffset + 1), "  SPACE", !spaceSelected);
+			Lcd.Instance.DrawBox (innerRect, spaceSelected);
+			Lcd.Instance.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset + 3, innerRect.P1.Y - characterOffset + 1), "  SPACE", !spaceSelected);
 			
 			outherRect = new Rectangle (new Point (outherRect.P2.X + characterSpace.X, outherRect.P1.Y), new Point (outherRect.P2.X + 2 * characterSpace.X + 2 * characterOutherBox.X, outherRect.P2.Y));
-			lcd.DrawBox (outherRect, true);
+			Lcd.Instance.DrawBox (outherRect, true);
 			innerRect = new Rectangle (new Point (outherRect.P1.X + characterEdge, outherRect.P1.Y + characterEdge), new Point (outherRect.P2.X - characterEdge, outherRect.P2.Y - characterEdge));
-			lcd.DrawBox (innerRect, okSelected);
-			lcd.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset + 2, innerRect.P1.Y - characterOffset + 1), "OK", !okSelected);
+			Lcd.Instance.DrawBox (innerRect, okSelected);
+			Lcd.Instance.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset + 2, innerRect.P1.Y - characterOffset + 1), "OK", !okSelected);
             
 			int xUnderLine = dialogWindowInner.P1.X + characterEdge + resultFont.TextSize (resultString).X;
 			int yUnderLine = dialogWindowInner.P2.Y - 1;
 			
 			if (charactersSelected) {
 				if (!useSmallFont) {
-					lcd.WriteTextBox (resultFont, resultRect, resultString + selectedCharacter, true, Lcd.Alignment.Left);
-					lcd.DrawHLine (new Point (xUnderLine, yUnderLine), resultFont.TextSize(selectedCharacter).X, true);
+					Lcd.Instance.WriteTextBox (resultFont, resultRect, resultString + selectedCharacter, true, Lcd.Alignment.Left);
+					Lcd.Instance.DrawHLine (new Point (xUnderLine, yUnderLine), resultFont.TextSize(selectedCharacter).X, true);
 				} 
 				else {
-					lcd.WriteTextBox (resultFont, resultRectSmall, resultString + selectedCharacter, true, Lcd.Alignment.Left);
-					lcd.DrawHLine (new Point (xUnderLine, yUnderLine), resultFont.TextSize(selectedCharacter).X, true);
+					Lcd.Instance.WriteTextBox (resultFont, resultRectSmall, resultString + selectedCharacter, true, Lcd.Alignment.Left);
+					Lcd.Instance.DrawHLine (new Point (xUnderLine, yUnderLine), resultFont.TextSize(selectedCharacter).X, true);
 					if (showLine) {
-						lcd.WriteTextBox (resultFont, lineRect,inputLines[inputLines.Count-1], true, Lcd.Alignment.Left);	
+						Lcd.Instance.WriteTextBox (resultFont, lineRect,inputLines[inputLines.Count-1], true, Lcd.Alignment.Left);	
 					}
 				}
 			} else {
 				if (!useSmallFont) {
-					lcd.WriteTextBox (resultFont, resultRect, resultString + " ", true, Lcd.Alignment.Left);
-					lcd.DrawHLine (new Point (xUnderLine, yUnderLine), resultFont.TextSize(selectedCharacter).X, true);
+					Lcd.Instance.WriteTextBox (resultFont, resultRect, resultString + " ", true, Lcd.Alignment.Left);
+					Lcd.Instance.DrawHLine (new Point (xUnderLine, yUnderLine), resultFont.TextSize(selectedCharacter).X, true);
 					
 				} 
 				else {
-					lcd.WriteTextBox (resultFont, resultRectSmall, resultString + " ", true, Lcd.Alignment.Left);
-					lcd.DrawHLine (new Point (xUnderLine, yUnderLine), resultFont.TextSize(selectedCharacter).X, true);
+					Lcd.Instance.WriteTextBox (resultFont, resultRectSmall, resultString + " ", true, Lcd.Alignment.Left);
+					Lcd.Instance.DrawHLine (new Point (xUnderLine, yUnderLine), resultFont.TextSize(selectedCharacter).X, true);
 					if (showLine) {
-						lcd.WriteTextBox (resultFont, lineRect, inputLines[inputLines.Count-1], true, Lcd.Alignment.Left);
+						Lcd.Instance.WriteTextBox (resultFont, lineRect, inputLines[inputLines.Count-1], true, Lcd.Alignment.Left);
 					}
 				}
     
