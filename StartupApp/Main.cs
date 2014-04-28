@@ -142,7 +142,7 @@ namespace StartupApp
 				IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateFiles (ProgramPathSdCard, "*.exe")
 					.Select ((filename) => new MenuItemWithAction (GetFileNameWithoutExt (filename), () => ShowProgramOptions (filename, btns)));
 				Menu m = new Menu (font, btns, "Run program:", itemsFromEV3.Concat (itemsFromSD));
-				m.Show ();
+				m.Show ();//block
 			}while (updateProgramList); 
 			return false;
 		}
@@ -543,7 +543,10 @@ namespace StartupApp
 			}
 			using (Buttons btns = new Buttons())
 			{
-				ShowMainMenu(btns);					
+				while(true)
+				{
+					ShowMainMenu(btns);
+				}
 			}			
 		}
 	}
