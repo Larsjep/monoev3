@@ -21,7 +21,7 @@ namespace StartupApp
 	{
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		static Font font = Font.MediumFont;
-		static Action MenuAction = null;
+		static bool updateProgramList = false;
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
@@ -73,6 +73,7 @@ namespace StartupApp
 			}, "Options", true);
 			dialog.Show ();
 			if (!dialog.EscPressed) {
+				Action programAction = null;
 				switch (dialog.GetSelectionIndex ()) {
 				case 0:
 					Lcd.Instance.Clear ();
@@ -80,46 +81,70 @@ namespace StartupApp
 					Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 					Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Running...", true, Lcd.Alignment.Center);
 					Lcd.Instance.Update ();						
-					MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.Normal);	
+					programAction = () => RunAndWaitForProgram (filename, ExecutionMode.Normal);	
 					break;
 				case 1:
-					MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.Debug);
+					programAction = () => RunAndWaitForProgram (filename, ExecutionMode.Debug);
 					break;
 				// 
 				/*case 2:
-					if(!AOTCompiling.IsFileCompiled("MonoBrick"
-					if (!AOTCompiling.IsFileCompiled (filename)) {
-						if (AOTCompileAndShowDialog (font, Lcd.Instance, btns, filename)) {
-							MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.AOT);	
+						if(!AOTCompiling.IsFileCompiled("MonoBrick"
+						if (!AOTCompiling.IsFileCompiled (filename)) {
+							if (AOTCompileAndShowDialog (font, Lcd.Instance, btns, filename)) {
+								MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.AOT);	
+							}
+						} 
+						else 
+						{
+							MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.AOT);
 						}
-					} 
-					else 
-					{
-						MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.AOT);
-					}
-					break;*/
+						break;*/
 				/*case 3:
-					
-					if (AOTCompiling.IsFileCompiled (filename)) {
-						var questionDialog = new QuestionDialog(font,Lcd.Instance,btns,"Progran already compiled. Recompile?","AOT recompile");
-						if(questionDialog.Show())
-								AOTCompileAndShowDialog(font,Lcd.Instance,btns,filename);
-					} 
-					else 
-					{
-						AOTCompileAndShowDialog(font,Lcd.Instance,btns,filename);
-					}
-					break;*/
+						
+						if (AOTCompiling.IsFileCompiled (filename)) {
+							var questionDialog = new QuestionDialog(font,Lcd.Instance,btns,"Progran already compiled. Recompile?","AOT recompile");
+							if(questionDialog.Show())
+									AOTCompileAndShowDialog(font,Lcd.Instance,btns,filename);
+						} 
+						else 
+						{
+							AOTCompileAndShowDialog(font,Lcd.Instance,btns,filename);
+						}
+						break;*/
 				case 2:
-					var step = new StepContainer(() =>{return ProcessHelper.RunAndWaitForProcess ("rm", filename) == 0;}, "Deleting ", "Error deleting program"); 
-					var progressDialog = new ProgressDialog(btns,"Program", step);
-					progressDialog.Show();
+					var step = new StepContainer (() => {
+						return ProcessHelper.RunAndWaitForProcess ("rm", filename) == 0;
+					}, "Deleting ", "Error deleting program"); 
+					var progressDialog = new ProgressDialog (btns, "Program", step);
+					progressDialog.Show ();
+					updateProgramList = true;
 					break;
 				}
-				return false;
-			} 
+				if (programAction != null) 
+				{
+					Console.WriteLine("Starting application");
+					programAction();					
+					Console.WriteLine ("Done running application");
+				}
+				return updateProgramList;
+			}
 			return false;
 			
+		}
+		
+		static bool RunPrograms (Buttons btns)
+		{
+			do
+			{
+				updateProgramList = false;
+				IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateFiles (ProgramPathEV3, "*.exe")
+					.Select ((filename) => new MenuItemWithAction (GetFileNameWithoutExt (filename), () => ShowProgramOptions (filename, btns)));
+				IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateFiles (ProgramPathSdCard, "*.exe")
+					.Select ((filename) => new MenuItemWithAction (GetFileNameWithoutExt (filename), () => ShowProgramOptions (filename, btns)));
+				Menu m = new Menu (font, btns, "Run program:", itemsFromEV3.Concat (itemsFromSD));
+				m.Show ();
+			}while (updateProgramList); 
+			return false;
 		}
 		
 		static string GetFileNameWithoutExt(string fullname)
@@ -128,16 +153,6 @@ namespace StartupApp
 			return filename.Substring(0, filename.Length-4);
 		}
 		
-		static bool RunPrograms (Buttons btns)
-		{
-			IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateFiles (ProgramPathEV3, "*.exe")
-				.Select ((filename) => new MenuItemWithAction (GetFileNameWithoutExt (filename), () => ShowProgramOptions (filename, btns)));
-			IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateFiles (ProgramPathSdCard, "*.exe")
-				.Select ((filename) => new MenuItemWithAction (GetFileNameWithoutExt (filename), () => ShowProgramOptions (filename, btns)));
-			Menu m = new Menu(font, btns, "Run program:", itemsFromEV3.Concat(itemsFromSD));
-			m.Show();
-			return true;
-		}
 		
 		static void RunAndWaitForProgram (string programName, ExecutionMode mode)
 		{
@@ -204,9 +219,7 @@ namespace StartupApp
 					dev.IoCtl(0, new byte[0]);
 				}
 				btns.LedPattern(2);
-				MenuAction = () => ProcessHelper.RunAndWaitForProcess("/lejos/bin/exit");			
-				return true;
-			
+				ProcessHelper.RunAndWaitForProcess("/lejos/bin/exit");			
 			} 
 			return false;
 		}
@@ -528,21 +541,10 @@ namespace StartupApp
           			settings = new FirmwareSettings();
 				}
 			}
-			
-			for (;;)
+			using (Buttons btns = new Buttons())
 			{
-					using (Buttons btns = new Buttons())
-					{
-						ShowMainMenu(btns);					
-					}			
-				if (MenuAction != null)
-				{
-					Console.WriteLine("Starting application");
-					MenuAction();					
-					Console.WriteLine ("Done running application");
-					MenuAction = null;
-				}
-			}
+				ShowMainMenu(btns);					
+			}			
 		}
 	}
 }
