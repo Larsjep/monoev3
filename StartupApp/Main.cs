@@ -215,12 +215,9 @@ namespace StartupApp
 				Lcd.Instance.WriteText(font, new Point(0,0), "Shutting down...", true);
 				Lcd.Instance.Update();
 			
-				using (UnixDevice dev = new UnixDevice("/dev/lms_power"))
-				{
-					dev.IoCtl(0, new byte[0]);
-				}
 				btns.LedPattern(2);
-				ProcessHelper.RunAndWaitForProcess("/lejos/bin/exit");			
+				ProcessHelper.RunAndWaitForProcess("/sbin/shutdown", "-h now");
+				Thread.Sleep(120000);
 			} 
 			return false;
 		}
