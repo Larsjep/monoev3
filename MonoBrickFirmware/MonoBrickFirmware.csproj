@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -35,19 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Native\" />
-    <Folder Include="Tools\" />
-    <Folder Include="Display\" />
-    <Folder Include="Display\Resources\" />
-    <Folder Include="Sensors\" />
-    <Folder Include="Movement\" />
-    <Folder Include="UserInput\" />
-    <Folder Include="Sound\" />
-    <Folder Include="Services\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Display\Animation\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile Include="Native\Libc.cs" />
     <Compile Include="Tools\QueueThread.cs" />
@@ -92,7 +80,7 @@
     <Compile Include="Movement\PID.cs" />
     <Compile Include="Sound\Speaker.cs" />
     <Compile Include="Services\WebServer.cs" />
-    <Compile Include="Services\WiFiDevice.cs" />
+    <Compile Include="Connections\WiFiDevice.cs" />
     <Compile Include="Native\AOTCompiling.cs" />
     <Compile Include="Tools\XmlHelper.cs" />
     <Compile Include="Extensions\EnumExtension.cs" />

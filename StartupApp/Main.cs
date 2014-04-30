@@ -10,6 +10,7 @@ using MonoBrickFirmware.Display.Menus;
 using MonoBrickFirmware.Display.Dialogs;
 using MonoBrickFirmware.Settings;
 using MonoBrickFirmware.Services;
+using MonoBrickFirmware.Connections;
 
 using System.Reflection;
 using System.Collections.Generic;

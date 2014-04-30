@@ -2,7 +2,7 @@ using System;
 using System.Net.NetworkInformation;
 using MonoBrickFirmware.Native;
 
-namespace MonoBrickFirmware.Services
+namespace MonoBrickFirmware.Connections
 {
 	public class WiFiDevice
 	{
