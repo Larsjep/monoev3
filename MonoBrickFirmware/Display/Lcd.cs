@@ -71,19 +71,6 @@ namespace MonoBrickFirmware.Display
 			blueGradientStep = (float)(endColor.Blue - startColor.Blue)/Height; 
 		}
 		
-		static byte[] convert = 
-		    {
-		    0x00, // 000 00000000
-		    0xE0, // 001 11100000
-		    0x1C, // 010 00011100
-		    0xFC, // 011 11111100
-		    0x03, // 100 00000011
-		    0xE3, // 101 11100011
-		    0x1F, // 110 00011111
-		    0xFF // 111 11111111
-		    }; 
-		
-		
 		public void Update(int yOffset = 0)
 		{
 			int byteOffset = (yOffset % Lcd.Height)*bytesPrLine;

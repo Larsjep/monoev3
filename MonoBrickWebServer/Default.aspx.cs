@@ -19,7 +19,6 @@ namespace MonoBrickWebServer
 		private Label[] tachoLabel = new Label[4];
 		private const sbyte increaseSpeed = 10;
 		private Motor[] motorArray = {new Motor(MotorPort.OutA), new Motor(MotorPort.OutB), new Motor(MotorPort.OutC), new Motor(MotorPort.OutD)};
-		private System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
 		
 		protected override void OnLoad (EventArgs e)
 		{
