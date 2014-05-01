@@ -28,6 +28,7 @@ namespace StartupApp
 		static FirmwareSettings settings = new FirmwareSettings();
 		static string versionString = "Firmware: 0.1.0.0";
 		static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
+		
 		enum ExecutionMode {Normal = 0, Debug = 1, AOT = 2  };
 		
 		static bool Information(Buttons btns)
@@ -54,21 +55,37 @@ namespace StartupApp
 			return false;
 		}
 		
-		public static bool AOTCompileAndShowDialog(Font font, Buttons btns, string filename)
+		public static bool AOTCompileAndShowDialog (Font font, Buttons btns, string programFolder)
 		{
-			var step = new StepContainer( () =>{ return AOTCompiling.Compile (filename);}, "Compiling", "Failed to AOT compile", "Program AOT compiled"); 
-			var dialog = new ProgressDialog(btns,"Program", step );
+			List<IStep> steps = new List<IStep> ();
+			foreach (string file in Directory.EnumerateFiles(programFolder,"*.*").Where(s => s.EndsWith(".exe") || s.EndsWith(".dll"))) {
+				steps.Add (new StepContainer (delegate() {
+					return AOTHelper.Compile (file);
+				}, new FileInfo(file).Name, "Failed to compile"));
+			}
+			var dialog = new StepDialog(btns,"Compiling",steps);
 			return dialog.Show();
 		}		
 		
 		
-		static bool ShowProgramOptions (string filename, Buttons btns)
+		static bool ShowProgramOptions (string programFolder, Buttons btns)
 		{
+			string fileName = "";
+			try {
+				fileName = Directory.EnumerateFiles (programFolder, "*.exe").First ();	
+			} catch {
+				var info = new InfoDialog (btns, programFolder + "is not executable", true, "Program");
+				info.Show ();
+				Directory.Delete (programFolder, true);
+				updateProgramList = true;
+				return true;
+			}
+			
 			var dialog = new SelectDialog<string> (btns, new string[] {
 				"Run Program",
 				"Debug Program",
-				//"Run In AOT",
-				//"AOT Compile",
+				"Run In AOT",
+				"AOT Compile",
 				"Delete Program",
 			}, "Options", true);
 			dialog.Show ();
@@ -81,43 +98,42 @@ namespace StartupApp
 					Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 					Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Running...", true, Lcd.Alignment.Center);
 					Lcd.Instance.Update ();						
-					programAction = () => RunAndWaitForProgram (filename, ExecutionMode.Normal);	
+					programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.Normal);	
 					break;
 				case 1:
-					programAction = () => RunAndWaitForProgram (filename, ExecutionMode.Debug);
+					programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.Debug);
 					break;
-				// 
-				/*case 2:
-						if(!AOTCompiling.IsFileCompiled("MonoBrick"
-						if (!AOTCompiling.IsFileCompiled (filename)) {
-							if (AOTCompileAndShowDialog (font, Lcd.Instance, btns, filename)) {
-								MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.AOT);	
-							}
-						} 
-						else 
-						{
-							MenuAction = () => RunAndWaitForProgram (filename, ExecutionMode.AOT);
-						}
-						break;*/
-				/*case 3:
-						
-						if (AOTCompiling.IsFileCompiled (filename)) {
-							var questionDialog = new QuestionDialog(font,Lcd.Instance,btns,"Progran already compiled. Recompile?","AOT recompile");
-							if(questionDialog.Show())
-									AOTCompileAndShowDialog(font,Lcd.Instance,btns,filename);
-						} 
-						else 
-						{
-							AOTCompileAndShowDialog(font,Lcd.Instance,btns,filename);
-						}
-						break;*/
 				case 2:
-					var step = new StepContainer (() => {
-						return ProcessHelper.RunAndWaitForProcess ("rm", filename) == 0;
-					}, "Deleting ", "Error deleting program"); 
-					var progressDialog = new ProgressDialog (btns, "Program", step);
-					progressDialog.Show ();
-					updateProgramList = true;
+					if (!AOTHelper.IsFileCompiled (fileName)) {
+						if (AOTCompileAndShowDialog (font, btns, programFolder)) {
+							programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.AOT);	
+						}
+					} else {
+						programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.AOT);
+					}
+					break;
+				case 3:
+						
+					if (AOTHelper.IsFileCompiled (fileName)) {
+						var questionDialog = new QuestionDialog (btns, "Progran already compiled. Recompile?", "AOT recompile");
+						if (questionDialog.Show ()) {
+							AOTCompileAndShowDialog (font, btns, programFolder);
+						}
+					} else {
+						AOTCompileAndShowDialog (font, btns, programFolder);
+					}
+					break;
+				case 4:
+					var question = new QuestionDialog (btns, "Are you sure?", "Delete");
+					if (question.Show ()) {
+						var step = new StepContainer (() => {
+							Directory.Delete (programFolder, true);
+							return true;
+						}, "Deleting ", "Error deleting program"); 
+						var progressDialog = new ProgressDialog (btns, "Program", step);
+						progressDialog.Show ();
+						updateProgramList = true;
+					}
 					break;
 				}
 				if (programAction != null) 
@@ -137,22 +153,17 @@ namespace StartupApp
 			do
 			{
 				updateProgramList = false;
-				IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateFiles (ProgramPathEV3, "*.exe")
-					.Select ((filename) => new MenuItemWithAction (GetFileNameWithoutExt (filename), () => ShowProgramOptions (filename, btns)));
-				IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateFiles (ProgramPathSdCard, "*.exe")
-					.Select ((filename) => new MenuItemWithAction (GetFileNameWithoutExt (filename), () => ShowProgramOptions (filename, btns)));
+				IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateDirectories(ProgramPathEV3)
+					.Select((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder, btns)));
+				IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateDirectories(ProgramPathSdCard)
+					.Select ((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder, btns)));
+				
+				
 				Menu m = new Menu (font, btns, "Run program:", itemsFromEV3.Concat (itemsFromSD));
 				m.Show ();//block
 			}while (updateProgramList); 
 			return false;
 		}
-		
-		static string GetFileNameWithoutExt(string fullname)
-		{
-			string filename = new FileInfo(fullname).Name;
-			return filename.Substring(0, filename.Length-4);
-		}
-		
 		
 		static void RunAndWaitForProgram (string programName, ExecutionMode mode)
 		{
@@ -201,7 +212,7 @@ namespace StartupApp
 					ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono", programName); 
 					break;
 				case ExecutionMode.AOT:
-					ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono --full-aot", programName);	
+					ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono", "--full-aot " + programName);	
 					break;
 			}
 		}

@@ -93,7 +93,6 @@
     <Compile Include="Sound\Speaker.cs" />
     <Compile Include="Services\WebServer.cs" />
     <Compile Include="Services\WiFiDevice.cs" />
-    <Compile Include="Native\AOTCompiling.cs" />
     <Compile Include="Tools\XmlHelper.cs" />
     <Compile Include="Extensions\EnumExtension.cs" />
     <Compile Include="Sensors\SensorFactory.cs" />
@@ -114,6 +113,7 @@
     <Compile Include="Display\Dialogs\StepContainer.cs" />
     <Compile Include="Display\Dialogs\IStep.cs" />
     <Compile Include="Display\Dialogs\ProgressDialog.cs" />
+    <Compile Include="Native\AOTHelper.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

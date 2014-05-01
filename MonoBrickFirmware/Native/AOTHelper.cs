@@ -3,7 +3,7 @@ using System.IO;
 
 namespace MonoBrickFirmware.Native
 {
-	public class AOTCompiling
+	public class AOTHelper
 	{
 		public static bool IsFileCompiled (string fileName)
 		{
@@ -12,7 +12,7 @@ namespace MonoBrickFirmware.Native
 		
 		public static bool Compile(string fileName){
 	      if (IsFileCompiled(fileName))
-	        File.Delete(fileName);
+				File.Delete(new FileInfo(fileName).Name + ".so");
 	      ProcessHelper.RunAndWaitForProcessWithOutput("mono", "--aot=full " + fileName);
 	      return IsFileCompiled(fileName);
 		}
