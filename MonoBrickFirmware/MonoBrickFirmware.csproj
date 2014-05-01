@@ -47,6 +47,7 @@
     <Folder Include="Services\" />
     <Folder Include="Extensions\" />
     <Folder Include="Display\Animation\" />
+    <Folder Include="Connections\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Native\Libc.cs" />
@@ -92,7 +93,6 @@
     <Compile Include="Movement\PID.cs" />
     <Compile Include="Sound\Speaker.cs" />
     <Compile Include="Services\WebServer.cs" />
-    <Compile Include="Services\WiFiDevice.cs" />
     <Compile Include="Tools\XmlHelper.cs" />
     <Compile Include="Extensions\EnumExtension.cs" />
     <Compile Include="Sensors\SensorFactory.cs" />
@@ -114,6 +114,7 @@
     <Compile Include="Display\Dialogs\IStep.cs" />
     <Compile Include="Display\Dialogs\ProgressDialog.cs" />
     <Compile Include="Native\AOTHelper.cs" />
+    <Compile Include="Connections\WiFiDevice.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
