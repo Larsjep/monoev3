@@ -56,9 +56,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 			symboleSet = new ICharacterSet[]{new NumbersAndSymbols(), new NumbersAndSymbols2()};
 			selectedSet = alfabetSet[selectedSetIndex];
 			setTypeString = symboleSetString;
-            resultRect = new Rectangle(new Point(dialogWindowInner.P1.X+characterEdge, dialogWindowInner.P2.Y - (int)Font.MediumFont.maxHeight -1 ), new Point(dialogWindowInner.P2.X-characterEdge, dialogWindowInner.P2.Y -1));
-            resultRectSmall = new Rectangle(new Point(dialogWindowInner.P1.X+characterEdge, dialogWindowInner.P2.Y - (int)Font.SmallFont.maxHeight -1 ), new Point(dialogWindowInner.P2.X-characterEdge, dialogWindowInner.P2.Y -1));
-            lineRect = new Rectangle(new Point(dialogWindowInner.P1.X+characterEdge, dialogWindowInner.P2.Y - 2*((int)Font.SmallFont.maxHeight -1 )), new Point(dialogWindowInner.P2.X-characterEdge, dialogWindowInner.P2.Y -((int)Font.SmallFont.maxHeight -1 )));
+            resultRect = new Rectangle(new Point(innerWindow.P1.X+characterEdge, innerWindow.P2.Y - (int)Font.MediumFont.maxHeight -1 ), new Point(innerWindow.P2.X-characterEdge, innerWindow.P2.Y -1));
+            resultRectSmall = new Rectangle(new Point(innerWindow.P1.X+characterEdge, innerWindow.P2.Y - (int)Font.SmallFont.maxHeight -1 ), new Point(innerWindow.P2.X-characterEdge, innerWindow.P2.Y -1));
+            lineRect = new Rectangle(new Point(innerWindow.P1.X+characterEdge, innerWindow.P2.Y - 2*((int)Font.SmallFont.maxHeight -1 )), new Point(innerWindow.P2.X-characterEdge, innerWindow.P2.Y -((int)Font.SmallFont.maxHeight -1 )));
             resultString = "";
         }
         
@@ -295,7 +295,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle innerRect;
 			int line;
 			for (line = 0; line < 2; line++) {
-				start = new Point (dialogWindowInner.P1.X, dialogWindowInner.P1.Y + (int)font.maxHeight / 2 - yPrintOffset + line * characterOutherBox.Y);  
+				start = new Point (innerWindow.P1.X, innerWindow.P1.Y + (int)font.maxHeight / 2 - yPrintOffset + line * characterOutherBox.Y);  
 				outherRect = new Rectangle (start, start + characterOutherBox);
 				for (int character = 0; character < maxNumberOfHorizontalCharacters; character++) {
 					bool selected = (selectedLine == line && selectedIndex == character);
@@ -321,7 +321,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 					rightArrowSelected = true;
 				}
 			}
-			start = new Point (dialogWindowInner.P1.X, dialogWindowInner.P1.Y + (int)font.maxHeight / 2 - yPrintOffset + line * characterOutherBox.Y);  
+			start = new Point (innerWindow.P1.X, innerWindow.P1.Y + (int)font.maxHeight / 2 - yPrintOffset + line * characterOutherBox.Y);  
 			
 			outherRect = new Rectangle (start, start + characterOutherBox);
 			Lcd.Instance.DrawBox (outherRect, true);
@@ -382,7 +382,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				spaceSelected = true;
 			}
 			
-			start = new Point (dialogWindowInner.P1.X, dialogWindowInner.P1.Y + (int)font.maxHeight / 2 - yPrintOffset + line * characterOutherBox.Y);  
+			start = new Point (innerWindow.P1.X, innerWindow.P1.Y + (int)font.maxHeight / 2 - yPrintOffset + line * characterOutherBox.Y);  
 			
 			outherRect = new Rectangle (new Point (start.X, start.Y), new Point (start.X + 2 * characterOutherBox.X + characterSpace.X, start.Y + characterOutherBox.Y));
 			Lcd.Instance.DrawBox (outherRect, true);
@@ -402,8 +402,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Lcd.Instance.DrawBox (innerRect, okSelected);
 			Lcd.Instance.WriteText (Font.MediumFont, new Point (innerRect.P1.X + characterOffset + 2, innerRect.P1.Y - characterOffset + 1), "OK", !okSelected);
             
-			int xUnderLine = dialogWindowInner.P1.X + characterEdge + resultFont.TextSize (resultString).X;
-			int yUnderLine = dialogWindowInner.P2.Y - 1;
+			int xUnderLine = innerWindow.P1.X + characterEdge + resultFont.TextSize (resultString).X;
+			int yUnderLine = innerWindow.P2.Y - 1;
 			
 			if (charactersSelected) {
 				if (!useSmallFont) {

@@ -9,6 +9,9 @@ namespace MonoBrickFirmware.Display.Dialogs
         private int scrollPos;
         int cursorPos;
 		bool allowEsc;
+		int arrowHeight = 5;
+		int arrowWidth = 10;
+		Rectangle arrowRect;
 		
 		public SelectDialog (Buttons btns, SelectionType[] options, string title, bool allowEsc) : base (Font.MediumFont, btns, title, 160,90+(int)Font.MediumFont.maxHeight/2,(int)Font.MediumFont.maxHeight/4)
 		{
@@ -17,6 +20,10 @@ namespace MonoBrickFirmware.Display.Dialogs
 			scrollPos = 0;
 			this.allowEsc = allowEsc;
 			EscPressed = false;
+			int yEdge = (Lcd.Height - outherWindow.P2.Y);
+			int dialogEdge = outherWindow.P2.Y - innerWindow.P2.Y;
+			arrowRect = new Rectangle (new Point (Lcd.Width / 2 - arrowWidth / 2, Lcd.Height-yEdge-dialogEdge-arrowHeight), new Point (Lcd.Width/ 2 + arrowWidth / 2, Lcd.Height-yEdge-dialogEdge-1));
+			
         }
 
         protected override void OnDrawContent ()
@@ -26,6 +33,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 					break;
 				WriteTextOnLine(options [i + scrollPos].ToString (), i, i != cursorPos);
 			}
+			Lcd.Instance.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + numberOfLines < options.Length);
+			
         }
 
         protected override bool OnUpAction ()

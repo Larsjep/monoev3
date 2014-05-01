@@ -13,8 +13,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 		
 		protected int numberOfLines;
 		protected Font font;
-		protected Rectangle dialogWindowOuther; 
-		protected Rectangle dialogWindowInner;
+		protected Rectangle outherWindow; 
+		protected Rectangle innerWindow;
 		protected Buttons btns;
 				
 		private string title;
@@ -24,7 +24,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private Point bottomLineCenter;
         
         private int titleSize;
-		private const int dialogEdge = 5;
 		private int dialogWidth;
 		private int dialogHeight;
 		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
@@ -34,7 +33,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private int animationLine = -1;
 		private const int progressEdgeX = 10;
 		private const int progressEdgeY = 8;
-		
+		private const int dialogEdge = 5;
 		private const int buttonEdge = 2;
 		private const int buttonTextOffset = 2;
 		private const int boxMiddleOffset = 8;
@@ -54,27 +53,27 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Point startPoint1 = new Point (xEdge, yEdge);
 			Point startPoint2 = new Point (xEdge + dialogWidth, yEdge + dialogHeight);
 			this.titleSize = font.TextSize (this.title).X + (int)f.maxWidth;
-			dialogWindowOuther = new Rectangle (startPoint1, startPoint2);
-			dialogWindowInner = new Rectangle (new Point (startPoint1.X + dialogEdge, startPoint1.Y + dialogEdge), new Point (startPoint2.X - dialogEdge, startPoint2.Y - dialogEdge));
+			outherWindow = new Rectangle (startPoint1, startPoint2);
+			innerWindow = new Rectangle (new Point (startPoint1.X + dialogEdge, startPoint1.Y + dialogEdge), new Point (startPoint2.X - dialogEdge, startPoint2.Y - dialogEdge));
 			titleRect = new Rectangle (new Point ((int)(Lcd.Width / 2 - titleSize / 2), (int)(startPoint1.Y - (font.maxHeight / 2))), new Point ((int)(Lcd.Width / 2 + titleSize / 2), (int)(startPoint1.Y + (font.maxHeight / 2))));
 			token = cancelTokenSource.Token;
 			
 						
-			int top = dialogWindowInner.P1.Y + (int)( f.maxHeight/2) + topOffset;
-			int middel = dialogWindowInner.P1.Y  + ((dialogWindowInner.P2.Y - dialogWindowInner.P1.Y) / 2) - (int)(f.maxHeight)/2;
+			int top = innerWindow.P1.Y + (int)( f.maxHeight/2) + topOffset;
+			int middel = innerWindow.P1.Y  + ((innerWindow.P2.Y - innerWindow.P1.Y) / 2) - (int)(f.maxHeight)/2;
 			int count = 0;
 			while (middel > top) {
 				middel = middel-(int)f.maxHeight;
 				count ++;
 			}
 			numberOfLines = count*2+1;
-			Point start1 = new Point (dialogWindowInner.P1.X, topOffset+  dialogWindowInner.P1.Y  + ((dialogWindowInner.P2.Y - dialogWindowInner.P1.Y) / 2) - (int)f.maxHeight/2 - count*((int)f.maxHeight) );
-			Point start2 = new Point (dialogWindowInner.P2.X, start1.Y + (int)f.maxHeight);
+			Point start1 = new Point (innerWindow.P1.X, topOffset+  innerWindow.P1.Y  + ((innerWindow.P2.Y - innerWindow.P1.Y) / 2) - (int)f.maxHeight/2 - count*((int)f.maxHeight) );
+			Point start2 = new Point (innerWindow.P2.X, start1.Y + (int)f.maxHeight);
 			lines = new List<Rectangle>();
 			for(int i = 0; i < numberOfLines; i++){
 				lines.Add(new Rectangle(new Point(start1.X, start1.Y+(i*(int)f.maxHeight)),new Point(start2.X,start2.Y+(i*(int)f.maxHeight))));	
             }
-			bottomLineCenter = new Point(dialogWindowInner.P1.X + ((dialogWindowInner.P2.X-dialogWindowInner.P1.X)/2) , dialogWindowOuther.P2.Y - dialogEdge/2);
+			bottomLineCenter = new Point(innerWindow.P1.X + ((innerWindow.P2.X-innerWindow.P1.X)/2) , outherWindow.P2.Y - dialogEdge/2);
 			OnShow += delegate {Lcd.Instance.SaveScreen();};
 			OnExit += delegate {Lcd.Instance.LoadScreen();};	
 		}
@@ -302,15 +301,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 		protected void ClearContent ()
 		{
 			Lcd.Instance.LoadScreen();
-			Lcd.Instance.DrawBox(dialogWindowOuther, true);
-			Lcd.Instance.DrawBox(dialogWindowInner, false);
+			Lcd.Instance.DrawBox(outherWindow, true);
+			Lcd.Instance.DrawBox(innerWindow, false);
 			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 		}
 		
 		protected virtual void Draw ()
 		{
-			Lcd.Instance.DrawBox(dialogWindowOuther, true);
-			Lcd.Instance.DrawBox(dialogWindowInner, false);
+			Lcd.Instance.DrawBox(outherWindow, true);
+			Lcd.Instance.DrawBox(innerWindow, false);
 			OnDrawContent();
 			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 			Lcd.Instance.Update();
