@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<Addin 
+		namespace="MonoBrickAddin" 
+		id="MonoBrickAddin" 
+		name="MonoBrickAddin" 
+		author="Bernhard Straub" 
+		copyright="MIT X11" 
+		description="MonoBrick solution and debugging" 
+		category="Mindstorms" 
+		version="0.1">
+
+	<Dependencies>
+		<Addin id="::MonoDevelop.Core" version="4.2" />
+		<Addin id="::MonoDevelop.Ide" version="4.2" />
+		<Addin id="::MonoDevelop.Debugger" version="4.2" />
+		<Addin id="::MonoDevelop.Debugger.Soft" version="4.2" />
+	</Dependencies>
+
+	<Runtime>
+		<Import assembly = "MonoBrickAddin.dll" />
+		<Import assembly = "Renci.SshNet.dll" />
+		<Import file="License/License.txt" />
+	</Runtime>
+
+	<Extension path = "/MonoDevelop/ProjectModel/MSBuildItemTypes">
+		<DotNetProjectSubtype
+			guid="{803879AC-26C2-49b0-AAA0-0DE4A7C68C87}"
+			type="MonoBrickAddin.MonoBrickProject" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Core/StockIcons">
+		<StockIcon stockid="EV3Icon" resource="monobrickaddin-icon-32.png" size="Dialog" />
+	</Extension>
+
+	<Extension path = "/MonoDevelop/Ide/ProjectTemplates">
+		<ProjectTemplate id = "MonoBrickProject" resource = "MonoBrickProject.xpt.xml"/>
+	</Extension>
+
+	<Extension path = "/MonoDevelop/ProjectModel/ProjectBindings">
+		<ProjectBinding id = "MonoBrick" class = "MonoBrickAddin.MonoBrickProjectBinding" />
+	</Extension>
+		
+	<Extension path = "/MonoDevelop/Core/ExecutionModes">
+		<ModeSetType class="MonoBrickAddin.MonoBrickExecutionModeSet"/>
+	</Extension>
+
+	<Extension path = "/MonoDevelop/ProjectModel/SerializableClasses">
+		<DataType class = "MonoBrickAddin.MonoBrickProject" />
+		<DataType class = "MonoBrickAddin.MonoBrickProjectConfiguration" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Debugging/DebuggerEngines">
+		<DebuggerEngine
+			id="MonoBrickAddin.SoftDebugger"
+			name="Mono Soft Debugger for MonoBrick"
+			features="Breakpoints, Pause, Stepping, DebugFile, ConditionalBreakpoints, Tracepoints, Catchpoints"
+			type="MonoBrickAddin.MonoBrickSoftDebuggerEngine" />
+	</Extension>
+
+	<Extension path = "/MonoDevelop/Ide/GlobalOptionsDialog/Other">
+        <Section id="MonoBrickAddin.Options" _label="MonoBrick" icon="EV3Icon" class="MonoBrickAddin.EV3Options"/>
+    </Extension>      
+</Addin>
