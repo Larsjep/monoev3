@@ -152,7 +152,7 @@ namespace MonoBrickAddin
 
 			try
 			{
-				// assuming you want to include nested folders
+				// check the top directory only
 				var files = Directory.GetFiles(path, "*.*", SearchOption.TopDirectoryOnly)
 					.OrderBy(p => p).ToList();
 
