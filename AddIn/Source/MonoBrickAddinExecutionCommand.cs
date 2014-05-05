@@ -25,13 +25,15 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
 using MonoDevelop.Core.Execution;
 
 namespace MonoBrickAddin
 {
-	public class MonoBrickExecutionCommand: DotNetExecutionCommand
+	public class MonoBrickExecutionCommand: ExecutionCommand
 	{
 		public IConsole Console { get; set; }
+		public IList<string> UserAssemblyPaths { get; set; }
 
 		public MonoBrickExecutionCommand()
 		{
@@ -39,7 +41,7 @@ namespace MonoBrickAddin
 			Console = null;
 		}
 
-		public MonoBrickExecutionCommand(MonoBrickProjectConfiguration config) : base(config.CompiledOutputName)
+		public MonoBrickExecutionCommand(MonoBrickProjectConfiguration config)// : base(config.CompiledOutputName)
 		{
 			this.Config = config;
 			Console = null;

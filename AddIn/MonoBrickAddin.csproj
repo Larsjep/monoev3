@@ -87,7 +87,6 @@
     <Compile Include="Source\MonoBrickAddinDebuggerSession.cs" />
     <Compile Include="Source\MonoBrickAddinExecutionCommand.cs" />
     <Compile Include="Source\MonoBrickAddinExecutionHandler.cs" />
-    <Compile Include="Source\MonoBrickAddinExecutionModeSet.cs" />
     <Compile Include="Source\MonoBrickAddinProjectBinding.cs" />
     <Compile Include="Source\MonoBrickAddinProjects.cs" />
     <Compile Include="Source\MonoBrickAddinSshCommandHelper.cs" />

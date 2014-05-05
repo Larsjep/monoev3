@@ -74,6 +74,13 @@ namespace MonoBrickAddin
 		#endregion
 
 		#region Execution
+		protected override bool OnGetCanExecute (MonoDevelop.Projects.ExecutionContext context, ConfigurationSelector config)
+		{
+			var configuration = (MonoBrickProjectConfiguration) GetConfiguration (config);
+			var cmd = CreateExecutionCommand (config, configuration);
+			return context.ExecutionHandler.CanExecute (cmd);
+		}
+
 		protected override ExecutionCommand CreateExecutionCommand(ConfigurationSelector configSel,
 		                                                            DotNetProjectConfiguration configuration)
 		{

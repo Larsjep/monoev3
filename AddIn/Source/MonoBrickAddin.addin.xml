@@ -39,10 +39,6 @@
 	<Extension path = "/MonoDevelop/ProjectModel/ProjectBindings">
 		<ProjectBinding id = "MonoBrick" class = "MonoBrickAddin.MonoBrickProjectBinding" />
 	</Extension>
-		
-	<Extension path = "/MonoDevelop/Core/ExecutionModes">
-		<ModeSetType class="MonoBrickAddin.MonoBrickExecutionModeSet"/>
-	</Extension>
 
 	<Extension path = "/MonoDevelop/ProjectModel/SerializableClasses">
 		<DataType class = "MonoBrickAddin.MonoBrickProject" />
@@ -60,4 +56,8 @@
 	<Extension path = "/MonoDevelop/Ide/GlobalOptionsDialog/Other">
         <Section id="MonoBrickAddin.Options" _label="MonoBrick" icon="EV3Icon" class="MonoBrickAddin.EV3Options"/>
     </Extension>      
+
+    <Extension path = "/MonoDevelop/Core/ExecutionHandlers">
+		<ExecutionHandler id="MonoBrickAddin" class = "MonoBrickAddin.MonoBrickExecutionHandler"/>
+	</Extension>
 </Addin>
