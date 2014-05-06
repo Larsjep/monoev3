@@ -10,6 +10,8 @@
     <AssemblyName>MonoBrickAddin</AssemblyName>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <Description>MonoBrick addin for EV3 development.</Description>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -111,10 +113,6 @@
       <LogicalName>monobrickaddin-icon-32.png</LogicalName>
       <DeployService-Deploy>True</DeployService-Deploy>
     </EmbeddedResource>
-    <EmbeddedResource Include="External\MonoBrickFirmware.dll">
-      <DeployService-Deploy>True</DeployService-Deploy>
-      <LogicalName>MonoBrick.MonoBrickFirmware.dll</LogicalName>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -138,4 +136,10 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <ProjectReference Include="..\MonoBrickFirmware\MonoBrickFirmware.csproj">
+      <Project>{67261E03-D263-4C42-A5AD-2A4820231B28}</Project>
+      <Name>MonoBrickFirmware</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
