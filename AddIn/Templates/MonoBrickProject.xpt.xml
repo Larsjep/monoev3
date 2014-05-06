@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<Template originator   = "Bernhard Straub"
+          created      = "2013/12/31"
+          lastModified = "2013/12/31">
+	
+	<!-- Template Header -->
+	<TemplateConfiguration>
+		<_Name>MonoBrick Project</_Name>
+		<_Category>MonoBrick</_Category>
+		<Icon>md-project-gui</Icon>
+		<LanguageName>C#</LanguageName>
+		<_Description>MonoBrick Project</_Description>
+		<DefaultFilename>MonoBrickProject</DefaultFilename>
+	</TemplateConfiguration>
+	
+	<!-- Actions -->
+	<Actions>
+		<Open filename = "Main.cs"/>
+	</Actions>
+
+	<!-- Template Content -->
+	<Combine name = "${ProjectName}" directory = ".">
+		<Options>
+			<StartupProject>${ProjectName}</StartupProject>
+		</Options>
+		
+		<Project name = "${ProjectName}" directory = "." type = "MonoBrick">
+			<Options Target = "Exe" MainFile = "Main.cs"/>
+			<Options>
+				<UseMSBuildEngine>False</UseMSBuildEngine>
+			</Options>
+
+			<References>
+				<Reference type="Gac" refto="System" />
+				<Reference type="Assembly" refto="MonoBrickFirmware.dll" />
+			</References>
+
+			<Files>
+				<File name="Main.cs">
+<![CDATA[
+using System;
+using MonoBrickFirmware;
+using MonoBrickFirmware.Display;
+using MonoBrickFirmware.UserInput;
+using System.Threading;
+
+namespace MonoBrickHelloWorld
+{
+	class MainClass
+	{
+		public static void Main (string[] args)
+		{
+			EventWaitHandle stopped = new ManualResetEvent(false);
+
+			ButtonEvents buts = new ButtonEvents ();
+
+			buts.EscapePressed += () => { 
+				stopped.Set();
+			};
+
+			LcdConsole.WriteLine("Hello World");
+			 
+			stopped.WaitOne();
+		}
+	}
+}
+]]>
+				</File>
+			</Files>
+		</Project>
+	</Combine>
+</Template>
