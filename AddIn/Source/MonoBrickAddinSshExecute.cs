@@ -124,6 +124,8 @@ namespace MonoBrickAddin
 				wait.Set();
 				if (Completed != null)
 					Completed(this);
+
+				_cmd.LastError = _sshHelper.ErrorCode;
 			});
 		}
 
@@ -147,6 +149,13 @@ namespace MonoBrickAddin
 			MatchCollection matches = regexAot.Matches(additionalParameters);
 
 			bool aotMode = matches.Count > 0;
+
+			if (!aotMode && _cmd.AOT)
+			{
+				aotMode = true;
+				additionalParameters += "--aot=full";
+			}
+
 			bool debugging = !string.IsNullOrEmpty(_sdbOptions);
 			bool debugMode = false;
 

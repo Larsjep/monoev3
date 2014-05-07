@@ -137,30 +137,41 @@ namespace MonoBrickAddin
 						return;
 					}
 
-					console.Log.WriteLine("Upload to brick...");
-
 					string EV3IPAddress = UserSettings.Instance.IPAddress;
 
-					var uploadOp = MonoBrickUtility.Upload(EV3IPAddress, cmd);
-					opMon.AddOperation(uploadOp);
-				
-					uploadOp.WaitForCompleted();
-
-					if (!uploadOp.Success)
+					for (int pass = 0; pass < 2; ++pass)
 					{
-						console.Log.WriteLine(uploadOp.ErrorMessage);
-						monitor.ReportError(uploadOp.ErrorMessage, null);
-						return;
-					}
+						console.Log.WriteLine(pass == 0 ? "Upload to brick..." : "Forcing upload to brick...");
+
+						var uploadOp = MonoBrickUtility.Upload(EV3IPAddress, cmd);
+						opMon.AddOperation(uploadOp);
 					
-					console.Log.WriteLine("Running on brick...");
+						uploadOp.WaitForCompleted();
 
-					var ex = context.ExecutionHandler.Execute(cmd, console);
-					opMon.AddOperation(ex);
-					ex.WaitForCompleted();
+						if (!uploadOp.Success)
+						{
+							console.Log.WriteLine(uploadOp.ErrorMessage);
+							monitor.ReportError(uploadOp.ErrorMessage, null);
+							return;
+						}
+							
+						console.Log.WriteLine(cmd.AOT ? "Running on brick in AOT mode..." : "Running on brick...");
 
-					console.Log.WriteLine("");
-					console.Log.WriteLine("Finished!");
+						var ex = context.ExecutionHandler.Execute(cmd, console);
+						opMon.AddOperation(ex);
+						ex.WaitForCompleted();
+
+						console.Log.WriteLine(Environment.NewLine);
+
+						if (pass == 1 || cmd.LastError == 0)
+							break;
+
+						// force upload
+						console.Log.WriteLine("First attempt to run failed!");
+						UserSettings.Instance.LastUploadHash = "";
+					}
+
+					console.Log.WriteLine("Finished with exit code {0}", cmd.LastError);
 				}
 				finally
 				{

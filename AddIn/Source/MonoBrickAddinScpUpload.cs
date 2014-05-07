@@ -127,6 +127,7 @@ namespace MonoBrickAddin
 				return; // nothing to do
 
 			_sshHelper.WriteSSHCommand(GetDirectoryCommand());
+			_sshHelper.WriteSSHCommand(GetCleanCommand());
 
 			_scpClient.Connect();
 
@@ -141,6 +142,12 @@ namespace MonoBrickAddin
 		}
 
 		private string GetDirectoryCommand()
+		{
+			string makeDirString = string.Format("mkdir -p {0}", _remotePath);
+			return makeDirString;
+		}
+
+		private string GetCleanCommand()
 		{
 			string makeDirString = string.Format("mkdir -p {0}", _remotePath);
 			return makeDirString;

@@ -26,6 +26,8 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Text.RegularExpressions;
+using System.Globalization;
 using MonoDevelop.Core.Execution;
 using Renci.SshNet;
 
@@ -33,6 +35,8 @@ namespace MonoBrickAddin
 {
 	class SshCommandHelper
 	{
+		public int ErrorCode { get; private set; }
+
 		private SshClient _sshClient = null;
 		private IConsole _console = null;
 		private bool _verbose = false;
@@ -44,6 +48,7 @@ namespace MonoBrickAddin
 			_console = console;
 			_verbose = verbose;
 			_sshClient = new SshClient(IPAddress, "root", "");
+			ErrorCode = 0;
 		}
 
 		public void Cancel()
@@ -61,6 +66,7 @@ namespace MonoBrickAddin
 
 			using (var stream = _sshClient.CreateShellStream("MonoBrickShell", 80, 24, 800, 600, 1024))
 			{
+				ErrorCode = -1;
 				var writer = new StreamWriter(stream);
 				writer.AutoFlush = true;
 
@@ -72,41 +78,44 @@ namespace MonoBrickAddin
 					_executed.Set();
 
 				WaitForPrompt(stream, !waitUntilFinished);
+
+				writer.WriteLine("$?");
+				string result = WaitForPrompt(stream, true);
+				// get error code
+				string error = System.Text.RegularExpressions.Regex.Match (result, "(?<=sh: )([0-9]+)").Value;
+
+				if (!String.IsNullOrEmpty(error))
+					ErrorCode = int.Parse(error);
 			}
 
 			_sshClient.Disconnect();
 		}
 
-		private void WaitForPrompt(ShellStream stream, bool timeOut)
+		private string WaitForPrompt(ShellStream stream, bool timeOut)
 		{
-			if (_verbose)
+			string result = "";
+
+			if (timeOut)
 			{
-				if (timeOut)
+				stream.Expect(TimeSpan.FromSeconds(5), new Renci.SshNet.ExpectAction("#",
+					(output) =>
 				{
-					stream.Expect(TimeSpan.FromSeconds(5), new Renci.SshNet.ExpectAction("#",
-						(output) =>
-					{
-						if (_console != null)
-							_console.Log.Write(output);
-					}));
-				}
-				else
-				{
-					stream.Expect(new Renci.SshNet.ExpectAction("#",
-						(output) =>
-					{
-						if (_console != null)
-							_console.Log.Write(output);
-					}));
-				}
+					result = output;
+				}));
 			}
 			else
 			{
-				if (timeOut)
-					stream.Expect("#", TimeSpan.FromSeconds(5));
-				else
-					stream.Expect("#");
+				stream.Expect(new Renci.SshNet.ExpectAction("#",
+					(output) =>
+				{
+					result = output;
+				}));
 			}
+
+			if (_verbose && _console != null)
+				_console.Log.Write(result);
+
+			return result;
 		}
 	}
 }

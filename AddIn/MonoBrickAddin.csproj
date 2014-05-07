@@ -95,6 +95,7 @@
     <Compile Include="Source\MonoBrickAddinUtility.cs" />
     <Compile Include="Source\MonoBrickAddinSshExecute.cs" />
     <Compile Include="Source\MonoBrickAddinSettings.cs" />
+    <Compile Include="Source\MonoBrickAddinExecutionModeSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\MonoBrickProject.xpt.xml">

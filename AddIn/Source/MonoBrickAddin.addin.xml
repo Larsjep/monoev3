@@ -18,6 +18,7 @@
 
 	<Runtime>
 		<Import assembly = "MonoBrickAddin.dll" />
+		<Import assembly = "MonoBrickFirmware.dll" />
 		<Import assembly = "Renci.SshNet.dll" />
 		<Import file="License/License.txt" />
 	</Runtime>
@@ -38,6 +39,10 @@
 
 	<Extension path = "/MonoDevelop/ProjectModel/ProjectBindings">
 		<ProjectBinding id = "MonoBrick" class = "MonoBrickAddin.MonoBrickProjectBinding" />
+	</Extension>
+		
+	<Extension path = "/MonoDevelop/Core/ExecutionModes">
+		<ModeSetType class="MonoBrickAddin.MonoBrickExecutionModeSet"/>
 	</Extension>
 
 	<Extension path = "/MonoDevelop/ProjectModel/SerializableClasses">
