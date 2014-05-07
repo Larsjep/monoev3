@@ -61,7 +61,7 @@ namespace MonoBrickAddin
 		void Init()
 		{
 			if (!referencePath.IsEmpty)
-				CreateReference(referencePath);
+				CreateReference(referencePath, "MonoBrickFirmware.dll");
 		}
 
 		public override SolutionItemConfiguration CreateConfiguration(string name)
@@ -90,20 +90,15 @@ namespace MonoBrickAddin
 			};
 		}
 
-		protected void CreateReference(FilePath sPath)
+		protected void CreateReference(FilePath sPath, string sName)
 		{
-			// Get the resource and write it out?
-			FilePath sFileName = sPath.Combine("MonoBrickFirmware.dll");
+			// Get the assembly file and write it out
+			FilePath sFileNameOut = sPath.Combine(sName);
 
-			FileStream OutputStream = new FileStream(sFileName, FileMode.Create);
-			Assembly ass = Assembly.GetExecutingAssembly();
-
-			Stream DBStream = ass.GetManifestResourceStream("MonoBrick.MonoBrickFirmware.dll");
-			for (int l = 0; l < DBStream.Length; l++)
-			{
-				OutputStream.WriteByte((byte)DBStream.ReadByte());
-			}
-			OutputStream.Close();
+			FilePath assemblyPath = Assembly.GetExecutingAssembly().Location;
+			FilePath assemblyDirectory = Path.GetDirectoryName(assemblyPath);
+			FilePath sFileNameIn = assemblyDirectory.Combine(sName);
+			File.Copy(sFileNameIn, sFileNameOut, true);
 		}
 
 		protected override void OnExecute(IProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configSel)
