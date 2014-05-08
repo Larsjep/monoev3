@@ -7,7 +7,7 @@
 		copyright="MIT X11" 
 		description="MonoBrick solution and debugging" 
 		category="Mindstorms" 
-		version="0.1">
+		version="0.2">
 
 	<Dependencies>
 		<Addin id="::MonoDevelop.Core" version="4.2" />
