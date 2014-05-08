@@ -25,7 +25,7 @@ namespace StartupApp
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
 		static FirmwareSettings settings = new FirmwareSettings();
-		static string versionString = "Firmware: 0.1.0.0";
+		static string versionString = "Firmware: 0.2.0.0";
 		static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
 		
 		static bool updateProgramList = false;
