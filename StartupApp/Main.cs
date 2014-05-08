@@ -32,41 +32,40 @@ namespace StartupApp
 		
 		enum ExecutionMode {Normal = 0, Debug = 1, AOT = 2  };
 		
-		static bool Information()
+		#region Main Menu
+		static void ShowMainMenu()
 		{
-			string monoVersion = "Unknown";
-			Type type = Type.GetType("Mono.Runtime");
-			if (type != null)
-			{                                          
-	    		MethodInfo displayName = type.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static); 
-	    		if (displayName != null)                   
-	        		monoVersion = (string)displayName.Invoke(null, null); 
-			}	
-			string monoCLR = System.Reflection.Assembly.GetExecutingAssembly().ImageRuntimeVersion;
 			
-			Point offset = new Point(0, (int)Font.MediumFont.maxHeight);
-			Point startPos = new Point(0,0);
-			Lcd.Instance.Clear();
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*0, versionString, true);
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*1, "Mono version: " + monoVersion.Substring(0,7), true);
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*2, "Mono CLR: " + monoCLR, true);			
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*3, "IP: " + WiFiDevice.GetIpAddress(), true);			
-			Lcd.Instance.Update();
-			Buttons.Instance.GetKeypress();
+			List<IMenuItem> items = new List<IMenuItem>();
+			items.Add (new MenuItemWithAction("Programs", () => RunPrograms(),MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction("WiFi Connection", () => ShowWiFiMenu(), MenuItemSymbole.RightArrow));
+			//items.Add (new MenuItemWithAction("WebServer", () => ShowWebServerMenu(), MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction("Settings", () => ShowSettings(), MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction("Information", () => Information()));
+			items.Add (new MenuItemWithAction("Check for Updates", () => ShowUpdatesDialogs()));
+			items.Add (new MenuItemWithAction("Shutdown", () => Shutdown()));
+			Menu m = new Menu("Main menu", items);
+			m.Show();
+		}
+		#endregion
+		
+		#region Programs Menu
+		static bool RunPrograms ()
+		{
+			do
+			{
+				updateProgramList = false;
+				IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateDirectories(ProgramPathEV3)
+					.Select((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
+				IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateDirectories(ProgramPathSdCard)
+					.Select ((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
+				
+				
+				Menu m = new Menu ("Run program:", itemsFromEV3.Concat (itemsFromSD));
+				m.Show ();//block
+			}while (updateProgramList); 
 			return false;
 		}
-		
-		public static bool AOTCompileAndShowDialog(string programFolder)
-		{
-			List<IStep> steps = new List<IStep> ();
-			foreach (string file in Directory.EnumerateFiles(programFolder,"*.*").Where(s => s.EndsWith(".exe") || s.EndsWith(".dll"))) {
-				steps.Add (new StepContainer (delegate() {
-					return AOTHelper.Compile (file);
-				}, new FileInfo(file).Name, "Failed to compile"));
-			}
-			var dialog = new StepDialog("Compiling",steps);
-			return dialog.Show();
-		}		
 		
 		
 		static bool ShowProgramOptions (string programFolder)
@@ -149,22 +148,18 @@ namespace StartupApp
 			
 		}
 		
-		static bool RunPrograms ()
+		static bool AOTCompileAndShowDialog(string programFolder)
 		{
-			do
-			{
-				updateProgramList = false;
-				IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateDirectories(ProgramPathEV3)
-					.Select((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
-				IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateDirectories(ProgramPathSdCard)
-					.Select ((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
-				
-				
-				Menu m = new Menu ("Run program:", itemsFromEV3.Concat (itemsFromSD));
-				m.Show ();//block
-			}while (updateProgramList); 
-			return false;
+			List<IStep> steps = new List<IStep> ();
+			foreach (string file in Directory.EnumerateFiles(programFolder,"*.*").Where(s => s.EndsWith(".exe") || s.EndsWith(".dll"))) {
+				steps.Add (new StepContainer (delegate() {
+					return AOTHelper.Compile (file);
+				}, new FileInfo(file).Name, "Failed to compile"));
+			}
+			var dialog = new StepDialog("Compiling",steps);
+			return dialog.Show();
 		}
+		
 		
 		static void RunAndWaitForProgram (string programName, ExecutionMode mode)
 		{
@@ -215,85 +210,9 @@ namespace StartupApp
 					break;
 			}
 		}
-
-		static bool Shutdown ()
-		{
-			var dialog = new QuestionDialog ("Are you sure?", "Shutdown EV3");
-			if(dialog.Show ()){
-				Lcd.Instance.Clear();
-				Lcd.Instance.WriteText(Font.MediumFont, new Point(0,0), "Shutting down...", true);
-				Lcd.Instance.Update();
-			
-				Buttons.Instance.LedPattern(2);
-				ProcessHelper.RunAndWaitForProcess("/sbin/shutdown", "-h now");
-				Thread.Sleep(120000);
-			} 
-			return false;
-		}
+		#endregion
 		
-		static void ShowMainMenu()
-		{
-			
-			List<IMenuItem> items = new List<IMenuItem>();
-			items.Add (new MenuItemWithAction("Programs", () => RunPrograms(),MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("WiFi Connection", () => ShowWiFiMenu(), MenuItemSymbole.RightArrow));
-			//items.Add (new MenuItemWithAction("WebServer", () => ShowWebServerMenu(), MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("Settings", () => ShowSettings(), MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("Information", () => Information()));
-			items.Add (new MenuItemWithAction("Check for Updates", () => ShowUpdatesDialogs()));
-			items.Add (new MenuItemWithAction("Shutdown", () => Shutdown()));
-			Menu m = new Menu("Main menu", items);
-			m.Show();
-		}
-		
-		static bool ShowWebServerMenu ()
-		{
-			List<IMenuItem> items = new List<IMenuItem> ();
-			var portItem = new MenuItemWithNumericInput("Port", settings.WebServerSettings.Port, 1, ushort.MaxValue);
-			portItem.OnValueChanged+= delegate(int value) 
-			{
-				new Thread(delegate() {
-			    	settings.WebServerSettings.Port = value;
-					settings.Save();
-				}).Start();
-			};
-			var startItem = new MenuItemWithCheckBox("Start server", WebServer.IsRunning(),
-				delegate(bool running)
-       	 		{ 
-					
-					bool isRunning = running;
-					if(running){
-						var step = new StepContainer(
-							delegate() 
-							{
-								WebServer.StopAll();
-								System.Threading.Thread.Sleep(2000);
-								return true;
-							},
-							"Stopping", "Failed to stop");
-						var dialog = new ProgressDialog("Web Server",step);
-						dialog.Show();
-						isRunning = WebServer.IsRunning();
-					}
-					else{
-						var step1 = new StepContainer(()=>{return WebServer.StartFastCGI();}, "Init CGI Server", "Failed to start CGI Server");
-						var step2 = new StepContainer(()=>{return WebServer.StartLighttpd();}, "Initializing", "Failed to start server");
-						var step3 = new StepContainer(()=>{return WebServer.LoadPage();}, "Loading page", "Failed to load page");
-						var stepDialog = new StepDialog("Web Server", new List<IStep>{step1,step2,step3}, "Webserver started");
-						isRunning = stepDialog.Show();
-					}
-					return isRunning;
-       			} 
-			);
-			
-			//items.Add(portItem);
-			items.Add(startItem);
-			//Show the menu
-			Menu m = new Menu ("Web Server", items);
-			m.Show ();
-			return false;
-		}
-		
+		#region WiFi Menu
 		static bool ShowWiFiMenu ()
 		{
 			List<IMenuItem> items = new List<IMenuItem> ();
@@ -384,8 +303,59 @@ namespace StartupApp
 			m.Show ();
 			return false;	
 		}
-
+		#endregion
 		
+		#region WebServer Menu
+		static bool ShowWebServerMenu ()
+		{
+			List<IMenuItem> items = new List<IMenuItem> ();
+			var portItem = new MenuItemWithNumericInput("Port", settings.WebServerSettings.Port, 1, ushort.MaxValue);
+			portItem.OnValueChanged+= delegate(int value) 
+			{
+				new Thread(delegate() {
+			    	settings.WebServerSettings.Port = value;
+					settings.Save();
+				}).Start();
+			};
+			var startItem = new MenuItemWithCheckBox("Start server", WebServer.IsRunning(),
+				delegate(bool running)
+       	 		{ 
+					
+					bool isRunning = running;
+					if(running){
+						var step = new StepContainer(
+							delegate() 
+							{
+								WebServer.StopAll();
+								System.Threading.Thread.Sleep(2000);
+								return true;
+							},
+							"Stopping", "Failed to stop");
+						var dialog = new ProgressDialog("Web Server",step);
+						dialog.Show();
+						isRunning = WebServer.IsRunning();
+					}
+					else{
+						var step1 = new StepContainer(()=>{return WebServer.StartFastCGI();}, "Init CGI Server", "Failed to start CGI Server");
+						var step2 = new StepContainer(()=>{return WebServer.StartLighttpd();}, "Initializing", "Failed to start server");
+						var step3 = new StepContainer(()=>{return WebServer.LoadPage();}, "Loading page", "Failed to load page");
+						var stepDialog = new StepDialog("Web Server", new List<IStep>{step1,step2,step3}, "Webserver started");
+						isRunning = stepDialog.Show();
+					}
+					return isRunning;
+       			} 
+			);
+			
+			//items.Add(portItem);
+			items.Add(startItem);
+			//Show the menu
+			Menu m = new Menu ("Web Server", items);
+			m.Show ();
+			return false;
+		}
+		#endregion
+		
+		#region Settings Menu
 		static bool ShowSettings ()
 		{
 			//Create the settings items and apply the settings 
@@ -420,7 +390,7 @@ namespace StartupApp
 		}
 		
 		
-		public static void WriteWpaSupplicantConfiguration (string ssid, string password, bool useEncryption)
+		static void WriteWpaSupplicantConfiguration (string ssid, string password, bool useEncryption)
 		{
 			MonoBrickFirmware.Native.ProcessHelper.RunAndWaitForProcess("rm",WpaSupplicantFileName); 
 			string encryption;
@@ -444,7 +414,35 @@ namespace StartupApp
 			};
       		System.IO.File.WriteAllLines(@WpaSupplicantFileName, lines);
 		}
+		#endregion
 		
+		#region Information Menu
+		static bool Information()
+		{
+			string monoVersion = "Unknown";
+			Type type = Type.GetType("Mono.Runtime");
+			if (type != null)
+			{                                          
+	    		MethodInfo displayName = type.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static); 
+	    		if (displayName != null)                   
+	        		monoVersion = (string)displayName.Invoke(null, null); 
+			}	
+			string monoCLR = System.Reflection.Assembly.GetExecutingAssembly().ImageRuntimeVersion;
+			
+			Point offset = new Point(0, (int)Font.MediumFont.maxHeight);
+			Point startPos = new Point(0,0);
+			Lcd.Instance.Clear();
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*0, versionString, true);
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*1, "Mono version: " + monoVersion.Substring(0,7), true);
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*2, "Mono CLR: " + monoCLR, true);			
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*3, "IP: " + WiFiDevice.GetIpAddress(), true);			
+			Lcd.Instance.Update();
+			Buttons.Instance.GetKeypress();
+			return false;
+		}
+		#endregion
+		
+		#region Update Menu
 		static bool ShowUpdatesDialogs ()
 		{
 			if (WiFiDevice.IsLinkUp()) {
@@ -472,13 +470,31 @@ namespace StartupApp
 		}
 		
 		
-		public static bool UpdateAvailable ()
+		static bool UpdateAvailable ()
 		{
 			var textFromFile = (new WebClient ()).DownloadString (versionURL).TrimEnd (new char[] { '\r', '\n' });
 			return versionString != textFromFile;
 		}
+		#endregion
 		
+		#region Shutdown Menu
+		static bool Shutdown ()
+		{
+			var dialog = new QuestionDialog ("Are you sure?", "Shutdown EV3");
+			if(dialog.Show ()){
+				Lcd.Instance.Clear();
+				Lcd.Instance.WriteText(Font.MediumFont, new Point(0,0), "Shutting down...", true);
+				Lcd.Instance.Update();
+			
+				Buttons.Instance.LedPattern(2);
+				ProcessHelper.RunAndWaitForProcess("/sbin/shutdown", "-h now");
+				Thread.Sleep(120000);
+			} 
+			return false;
+		}
+		#endregion
 		
+		#region Main Program
 		public static void Main (string[] args)
 		{
 			Lcd.Instance.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
@@ -552,7 +568,8 @@ namespace StartupApp
 			{
 				ShowMainMenu();
 			}
-						
 		}
+		#endregion
 	}
+	
 }
