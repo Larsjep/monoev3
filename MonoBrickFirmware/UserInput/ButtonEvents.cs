@@ -5,11 +5,10 @@ using System.Threading;
 
 namespace MonoBrickFirmware.UserInput
 {
-	public class ButtonEvents : IDisposable
+	public class ButtonEvents
 	{
 		EventWaitHandle stopPolling = new ManualResetEvent (false);
 		const int pollTime = 50;
-		Buttons btns = new Buttons ();
 		QueueThread queue = new QueueThread ();
 
 		public ButtonEvents ()
@@ -33,9 +32,9 @@ namespace MonoBrickFirmware.UserInput
 		void ButtonPollThread ()
 		{	
 			Thread.CurrentThread.IsBackground = true;
-			Buttons.ButtonStates lastState = btns.GetDebounced ();
+			Buttons.ButtonStates lastState = Buttons.Instance.GetDebounced();
 			while (!stopPolling.WaitOne (pollTime)) {
-				Buttons.ButtonStates bs = btns.GetDebounced ();
+				Buttons.ButtonStates bs = Buttons.Instance.GetDebounced ();
 				if (bs != lastState) {
 					Buttons.ButtonStates pressed = (bs ^ lastState) & (~lastState);
 					switch (pressed) {
@@ -85,16 +84,6 @@ namespace MonoBrickFirmware.UserInput
 				
 			}
 		}
-
-		#region IDisposable implementation
-
-		void IDisposable.Dispose ()
-		{
-			((IDisposable)btns).Dispose ();
-		}
-
-		#endregion
-
 	}
 
 }

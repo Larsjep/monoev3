@@ -17,11 +17,16 @@ namespace MonoBrickFirmware.Display.Menus
 		int itemsOnScreen;
 		int cursorPos;
 		int scrollPos;
-		Buttons btns;
 		int arrowHeight = 5;
 		int arrowWidth = 10;
 		
-		public Menu (Font f, Buttons btns, string title, IEnumerable<IMenuItem> items)
+		public Menu (string title, IEnumerable<IMenuItem> items):this(Font.MediumFont, title,items)
+		{
+			
+		}
+		
+		
+		public Menu (Font f, string title, IEnumerable<IMenuItem> items)
 		{
 			this.font = f;
 			this.title = title;
@@ -29,7 +34,6 @@ namespace MonoBrickFirmware.Display.Menus
 			this.itemSize = new Point (Lcd.Width, (int)font.maxHeight);
 			this.itemHeight = new Point (0, (int)font.maxHeight);
 			this.itemsOnScreen = (int)((Lcd.Height-arrowHeight)/ font.maxHeight - 1); // -1 Because of the title
-			this.btns = btns;
 			cursorPos = 0;
 			scrollPos = 0;
 		}
@@ -80,7 +84,7 @@ namespace MonoBrickFirmware.Display.Menus
 			while (!exit)
 			{
 			  	RedrawMenu();
-				switch (btns.GetKeypress())
+				switch (Buttons.Instance.GetKeypress())
 				{
 					case Buttons.ButtonStates.Down: 
 					  MoveDown();

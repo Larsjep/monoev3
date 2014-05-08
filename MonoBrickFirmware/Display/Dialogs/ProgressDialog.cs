@@ -9,7 +9,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private IStep step;
 		private int progressLine;
 		
-		public ProgressDialog (Buttons btns, string title,IStep step): base(Font.MediumFont, btns, title)
+		public ProgressDialog (string title,IStep step): base(Font.MediumFont, title)
 		{
 			this.step = step;
 			progressLine = 1;
@@ -44,7 +44,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				WriteTextOnDialog (endText);
 				DrawCenterButton ("Ok", false);
 				Lcd.Instance.Update ();
-				btns.GetKeypress ();//Wait for any key
+				Buttons.Instance.GetKeypress ();//Wait for any key
 			}
 			OnExit();
 			return ok;

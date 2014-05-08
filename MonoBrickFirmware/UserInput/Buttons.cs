@@ -5,8 +5,10 @@ using System.Threading;
 
 namespace MonoBrickFirmware.UserInput
 {
-	public class Buttons : IDisposable
+	public class Buttons
 	{
+		private static readonly Buttons instance = new Buttons();
+		
 		[Flags]
 		public enum ButtonStates
 		{
@@ -26,13 +28,22 @@ namespace MonoBrickFirmware.UserInput
 		const int debounceTime = 10;
 		const int pollTime = 50;
 
-		public Buttons ()
+		private Buttons ()
 		{
 			dev = new UnixDevice ("/dev/lms_ui");
 			buttonMem = dev.MMap (ButtonCount, 0);			
 		}
-
-		ButtonStates ReadButtons ()
+		
+		public static Buttons Instance
+		{
+			get 
+	      	{
+				return instance; 
+	      	}	
+		}
+		
+		
+		ButtonStates ReadStates()
 		{
 			ButtonStates bs = ButtonStates.None;
 			byte[] buttonData = buttonMem.Read ();
@@ -50,15 +61,15 @@ namespace MonoBrickFirmware.UserInput
 			
 			ButtonStates s2 = ButtonStates.None;
 			for (;;) {
-				ButtonStates s1 = ReadButtons ();
+				ButtonStates s1 = ReadStates ();
 				if (s1 == s2)
 					return s1;
 				Thread.Sleep (debounceTime);
-				s2 = ReadButtons ();
+				s2 = ReadStates ();
 			}
 		}
 
-		public ButtonStates GetButtonStates ()
+		public ButtonStates GetStates ()
 		{
 			return GetDebounced ();
 		}
@@ -102,15 +113,6 @@ namespace MonoBrickFirmware.UserInput
 			cmd [0] = (byte)('0' + pattern);
 			dev.Write (cmd);
 		}
-
-		#region IDisposable implementation
-
-		void IDisposable.Dispose ()
-		{
-			dev.Dispose ();
-		}
-
-		#endregion
 
 	}
 

@@ -9,15 +9,12 @@ namespace MenuExample
 {
 	class MainClass
 	{
-		public static Buttons btns;
-		
 		public static void Main (string[] args)
 		{
-			btns = new Buttons();
 			List<IMenuItem> items = new List<IMenuItem>();
 			items.Add (new MenuItemWithAction("Personal details", () => ShowSubMenu(),MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction("Execute steps", () => ExecuteSteps()));
-			Menu m = new Menu(Font.MediumFont, btns ,"Main menu", items);
+			Menu m = new Menu("Main menu", items);
 			m.Show();	
 		}
 		
@@ -26,7 +23,7 @@ namespace MenuExample
 			List<IStep> steps = new List<IStep>();
 			steps.Add( new StepContainer(DummyStep, "Dummy step 1", "Error executing step 1") );
 			steps.Add( new StepContainer(DummyStep, "Dummy step 2", "Error executing step 2") );
-			Dialog stepDialog = new StepDialog(btns, "Doing steps", steps);
+			Dialog stepDialog = new StepDialog("Doing steps", steps);
 			stepDialog.Show();
 			return false;
 		}
@@ -36,7 +33,7 @@ namespace MenuExample
 		public static bool ShowSubMenu ()
 		{
 			List<IMenuItem> items = new List<IMenuItem> ();
-			var nameItem = new MenuItemWithCharacterInput(btns, "Name", "Enter Name", "Anders");
+			var nameItem = new MenuItemWithCharacterInput("Name", "Enter Name", "Anders");
 			var ageItem = new MenuItemWithNumericInput("Age", 29, 0, 100);
 			var genderItem = new MenuItemWithOptions<string>("Option", new string[]{"Male","Female"});
 			var programItem = new MenuItemWithCheckBox("Loves C#", true);
@@ -49,7 +46,7 @@ namespace MenuExample
 			items.Add(checkBoxWithActionItem);
 			
 			//Show the menu
-			Menu m = new Menu (Font.MediumFont, btns, "Sub Menu", items);
+			Menu m = new Menu ("Sub Menu", items);
 			m.Show ();
 			Console.WriteLine("Your name is " + nameItem.Text);
 			Console.WriteLine("Your genger is " + genderItem.GetSelection().ToString());
@@ -64,13 +61,13 @@ namespace MenuExample
 		{
 			if (isChecked) {
 				var step = new StepContainer (DummyStep, "Turning off", "Failed to turn off");
-				var progressDialog = new ProgressDialog (btns, "Information", step);
+				var progressDialog = new ProgressDialog ("Information", step);
 				progressDialog.Show ();
 				return false;
 			} 
 			else 
 			{
-				var dialog = new InfoDialog(btns, "Turning On", true);
+				var dialog = new InfoDialog("Turning On", true);
 				dialog.Show();
 				return true;
 			}

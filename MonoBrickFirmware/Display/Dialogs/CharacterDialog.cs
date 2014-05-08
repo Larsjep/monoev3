@@ -48,7 +48,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private bool showLine = false;
 		private List<string> inputLines = new List<string>();
 			
-		public CharacterDialog(Buttons btns, string title) : base(Font.MediumFont, btns, title, Lcd.Width, Lcd.Height-22) 
+		public CharacterDialog(string title) : base(Font.MediumFont, title, Lcd.Width, Lcd.Height-22) 
         {
 			characterInnerBox = new Point(characterSize, characterSize); 
 			characterOutherBox = new Point(characterInnerBox.X + 2* characterEdge, characterInnerBox.Y + 2* characterEdge);

@@ -15,7 +15,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 		protected Font font;
 		protected Rectangle outherWindow; 
 		protected Rectangle innerWindow;
-		protected Buttons btns;
 				
 		private string title;
         private List<Rectangle> lines;
@@ -41,13 +40,12 @@ namespace MonoBrickFirmware.Display.Dialogs
 		public Action OnShow = delegate {};
 		public Action OnExit = delegate {};
 		
-		public Dialog (Font f, Buttons btns, string title, int width = 160, int height = 90, int topOffset = 0)
+		public Dialog (Font f, string title, int width = 160, int height = 90, int topOffset = 0)
 		{
 			dialogWidth = width;
 			dialogHeight = height;
 			this.font = f;
 			this.title = title;
-			this.btns = btns;
 			int xEdge = (Lcd.Width - dialogWidth)/2;
 			int yEdge = (Lcd.Height - dialogHeight)/2;
 			Point startPoint1 = new Point (xEdge, yEdge);
@@ -89,7 +87,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			OnShow();
 			while (!exit && !token.IsCancellationRequested) {
 				Draw ();
-				switch (btns.GetKeypress(token)) {
+				switch (Buttons.Instance.GetKeypress(token)) {
 					case Buttons.ButtonStates.Down: 
 						if (OnDownAction()) 
 						{

@@ -32,7 +32,7 @@ namespace StartupApp
 		
 		enum ExecutionMode {Normal = 0, Debug = 1, AOT = 2  };
 		
-		static bool Information(Buttons btns)
+		static bool Information()
 		{
 			string monoVersion = "Unknown";
 			Type type = Type.GetType("Mono.Runtime");
@@ -52,11 +52,11 @@ namespace StartupApp
 			Lcd.Instance.WriteText(font, startPos+offset*2, "Mono CLR: " + monoCLR, true);			
 			Lcd.Instance.WriteText(font, startPos+offset*3, "IP: " + WiFiDevice.GetIpAddress(), true);			
 			Lcd.Instance.Update();
-			btns.GetKeypress();
+			Buttons.Instance.GetKeypress();
 			return false;
 		}
 		
-		public static bool AOTCompileAndShowDialog (Font font, Buttons btns, string programFolder)
+		public static bool AOTCompileAndShowDialog(string programFolder)
 		{
 			List<IStep> steps = new List<IStep> ();
 			foreach (string file in Directory.EnumerateFiles(programFolder,"*.*").Where(s => s.EndsWith(".exe") || s.EndsWith(".dll"))) {
@@ -64,25 +64,25 @@ namespace StartupApp
 					return AOTHelper.Compile (file);
 				}, new FileInfo(file).Name, "Failed to compile"));
 			}
-			var dialog = new StepDialog(btns,"Compiling",steps);
+			var dialog = new StepDialog("Compiling",steps);
 			return dialog.Show();
 		}		
 		
 		
-		static bool ShowProgramOptions (string programFolder, Buttons btns)
+		static bool ShowProgramOptions (string programFolder)
 		{
 			string fileName = "";
 			try {
 				fileName = Directory.EnumerateFiles (programFolder, "*.exe").First ();	
 			} catch {
-				var info = new InfoDialog (btns, programFolder + "is not executable", true, "Program");
+				var info = new InfoDialog (programFolder + "is not executable", true, "Program");
 				info.Show ();
 				Directory.Delete (programFolder, true);
 				updateProgramList = true;
 				return true;
 			}
 			
-			var dialog = new SelectDialog<string> (btns, new string[] {
+			var dialog = new SelectDialog<string> (new string[] {
 				"Run Program",
 				"Debug Program",
 				"Run In AOT",
@@ -106,7 +106,7 @@ namespace StartupApp
 					break;
 				case 2:
 					if (!AOTHelper.IsFileCompiled (fileName)) {
-						if (AOTCompileAndShowDialog (font, btns, programFolder)) {
+						if (AOTCompileAndShowDialog (programFolder)) {
 							programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.AOT);	
 						}
 					} else {
@@ -116,22 +116,22 @@ namespace StartupApp
 				case 3:
 						
 					if (AOTHelper.IsFileCompiled (fileName)) {
-						var questionDialog = new QuestionDialog (btns, "Progran already compiled. Recompile?", "AOT recompile");
+						var questionDialog = new QuestionDialog ("Progran already compiled. Recompile?", "AOT recompile");
 						if (questionDialog.Show ()) {
-							AOTCompileAndShowDialog (font, btns, programFolder);
+							AOTCompileAndShowDialog (programFolder);
 						}
 					} else {
-						AOTCompileAndShowDialog (font, btns, programFolder);
+						AOTCompileAndShowDialog (programFolder);
 					}
 					break;
 				case 4:
-					var question = new QuestionDialog (btns, "Are you sure?", "Delete");
+					var question = new QuestionDialog ("Are you sure?", "Delete");
 					if (question.Show ()) {
 						var step = new StepContainer (() => {
 							Directory.Delete (programFolder, true);
 							return true;
 						}, "Deleting ", "Error deleting program"); 
-						var progressDialog = new ProgressDialog (btns, "Program", step);
+						var progressDialog = new ProgressDialog ("Program", step);
 						progressDialog.Show ();
 						updateProgramList = true;
 					}
@@ -149,18 +149,18 @@ namespace StartupApp
 			
 		}
 		
-		static bool RunPrograms (Buttons btns)
+		static bool RunPrograms ()
 		{
 			do
 			{
 				updateProgramList = false;
 				IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateDirectories(ProgramPathEV3)
-					.Select((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder, btns)));
+					.Select((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
 				IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateDirectories(ProgramPathSdCard)
-					.Select ((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder, btns)));
+					.Select ((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
 				
 				
-				Menu m = new Menu (font, btns, "Run program:", itemsFromEV3.Concat (itemsFromSD));
+				Menu m = new Menu ("Run program:", itemsFromEV3.Concat (itemsFromSD));
 				m.Show ();//block
 			}while (updateProgramList); 
 			return false;
@@ -172,41 +172,39 @@ namespace StartupApp
 			{
 				case ExecutionMode.Debug:
 					programName = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugSettings.Port + ",server=y " + programName;
-					using (Buttons btns = new Buttons ()) {
-						System.Diagnostics.Process proc = new System.Diagnostics.Process ();
-						Dialog dialog = null;
-						Thread escapeThread = null;
-						CancellationTokenSource cts = new CancellationTokenSource();
-						CancellationToken token = cts.Token;
-						string portString  = ("Port: " + settings.DebugSettings.Port).PadRight(6).PadRight(6);
-						if (settings.DebugSettings.TerminateWithEscape) {
-							escapeThread = new System.Threading.Thread (delegate() {
-								while (!token.IsCancellationRequested) {
-									if (btns.GetKeypress (token) == Buttons.ButtonStates.Escape) {
-										proc.Kill ();
-										Console.WriteLine ("Killing process");
-										cts.Cancel();
-									}
+					System.Diagnostics.Process proc = new System.Diagnostics.Process ();
+					Dialog dialog = null;
+					Thread escapeThread = null;
+					CancellationTokenSource cts = new CancellationTokenSource();
+					CancellationToken token = cts.Token;
+					string portString  = ("Port: " + settings.DebugSettings.Port).PadRight(6).PadRight(6);
+					if (settings.DebugSettings.TerminateWithEscape) {
+						escapeThread = new System.Threading.Thread (delegate() {
+							while (!token.IsCancellationRequested) {
+								if (Buttons.Instance.GetKeypress (token) == Buttons.ButtonStates.Escape) {
+									proc.Kill ();
+									Console.WriteLine ("Killing process");
+									cts.Cancel();
 								}
-							});
-							escapeThread.Start();
-							dialog = new InfoDialog (btns, portString + " Press escape to terminate", false, "Debug Mode");
-						} 
-						else 
-						{
-							dialog = new InfoDialog (btns, portString + " Waiting for connection.", false, "Debug Mode");	
-						}
-						dialog.Show ();
-						proc.EnableRaisingEvents = false; 
-						Console.WriteLine ("Starting process: {0} with arguments: {1}", "/usr/local/bin/mono", programName);
-						proc.StartInfo.FileName = "/usr/local/bin/mono";
-						proc.StartInfo.Arguments = programName;
-						proc.Start ();
-						proc.WaitForExit ();
-						if (escapeThread != null && !token.IsCancellationRequested) {
-							cts.Cancel();
-							escapeThread.Join();
-						}
+							}
+						});
+						escapeThread.Start();
+						dialog = new InfoDialog (portString + " Press escape to terminate", false, "Debug Mode");
+					} 
+					else 
+					{
+						dialog = new InfoDialog (portString + " Waiting for connection.", false, "Debug Mode");	
+					}
+					dialog.Show ();
+					proc.EnableRaisingEvents = false; 
+					Console.WriteLine ("Starting process: {0} with arguments: {1}", "/usr/local/bin/mono", programName);
+					proc.StartInfo.FileName = "/usr/local/bin/mono";
+					proc.StartInfo.Arguments = programName;
+					proc.Start ();
+					proc.WaitForExit ();
+					if (escapeThread != null && !token.IsCancellationRequested) {
+						cts.Cancel();
+						escapeThread.Join();
 					}
 					break;
 				case ExecutionMode.Normal:
@@ -218,37 +216,37 @@ namespace StartupApp
 			}
 		}
 
-		static bool Shutdown (Buttons btns)
+		static bool Shutdown ()
 		{
-			var dialog = new QuestionDialog (btns, "Are you sure?", "Shutdown EV3");
+			var dialog = new QuestionDialog ("Are you sure?", "Shutdown EV3");
 			if(dialog.Show ()){
 				Lcd.Instance.Clear();
 				Lcd.Instance.WriteText(font, new Point(0,0), "Shutting down...", true);
 				Lcd.Instance.Update();
 			
-				btns.LedPattern(2);
+				Buttons.Instance.LedPattern(2);
 				ProcessHelper.RunAndWaitForProcess("/sbin/shutdown", "-h now");
 				Thread.Sleep(120000);
 			} 
 			return false;
 		}
 		
-		static void ShowMainMenu(Buttons btns)
+		static void ShowMainMenu()
 		{
 			
 			List<IMenuItem> items = new List<IMenuItem>();
-			items.Add (new MenuItemWithAction("Programs", () => RunPrograms(btns),MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("WiFi Connection", () => ShowWiFiMenu(btns), MenuItemSymbole.RightArrow));
-			//items.Add (new MenuItemWithAction("WebServer", () => ShowWebServerMenu(btns), MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("Settings", () => ShowSettings(btns), MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("Information", () => Information(btns)));
-			items.Add (new MenuItemWithAction("Check for Updates", () => ShowUpdatesDialogs(btns)));
-			items.Add (new MenuItemWithAction("Shutdown", () => Shutdown(btns)));
-			Menu m = new Menu(font, btns ,"Main menu", items);
+			items.Add (new MenuItemWithAction("Programs", () => RunPrograms(),MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction("WiFi Connection", () => ShowWiFiMenu(), MenuItemSymbole.RightArrow));
+			//items.Add (new MenuItemWithAction("WebServer", () => ShowWebServerMenu(), MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction("Settings", () => ShowSettings(), MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction("Information", () => Information()));
+			items.Add (new MenuItemWithAction("Check for Updates", () => ShowUpdatesDialogs()));
+			items.Add (new MenuItemWithAction("Shutdown", () => Shutdown()));
+			Menu m = new Menu("Main menu", items);
 			m.Show();
 		}
 		
-		static bool ShowWebServerMenu (Buttons btns)
+		static bool ShowWebServerMenu ()
 		{
 			List<IMenuItem> items = new List<IMenuItem> ();
 			var portItem = new MenuItemWithNumericInput("Port", settings.WebServerSettings.Port, 1, ushort.MaxValue);
@@ -273,7 +271,7 @@ namespace StartupApp
 								return true;
 							},
 							"Stopping", "Failed to stop");
-						var dialog = new ProgressDialog(btns,"Web Server",step);
+						var dialog = new ProgressDialog("Web Server",step);
 						dialog.Show();
 						isRunning = WebServer.IsRunning();
 					}
@@ -281,7 +279,7 @@ namespace StartupApp
 						var step1 = new StepContainer(()=>{return WebServer.StartFastCGI();}, "Init CGI Server", "Failed to start CGI Server");
 						var step2 = new StepContainer(()=>{return WebServer.StartLighttpd();}, "Initializing", "Failed to start server");
 						var step3 = new StepContainer(()=>{return WebServer.LoadPage();}, "Loading page", "Failed to load page");
-						var stepDialog = new StepDialog(btns,"Web Server", new List<IStep>{step1,step2,step3}, "Webserver started");
+						var stepDialog = new StepDialog("Web Server", new List<IStep>{step1,step2,step3}, "Webserver started");
 						isRunning = stepDialog.Show();
 					}
 					return isRunning;
@@ -291,22 +289,22 @@ namespace StartupApp
 			//items.Add(portItem);
 			items.Add(startItem);
 			//Show the menu
-			Menu m = new Menu (font, btns, "Web Server", items);
+			Menu m = new Menu ("Web Server", items);
 			m.Show ();
 			return false;
 		}
 		
-		static bool ShowWiFiMenu (Buttons btns)
+		static bool ShowWiFiMenu ()
 		{
 			List<IMenuItem> items = new List<IMenuItem> ();
-			var ssidItem = new MenuItemWithCharacterInput(btns,"SSID", "Enter SSID", settings.WiFiSettings.SSID);
+			var ssidItem = new MenuItemWithCharacterInput("SSID", "Enter SSID", settings.WiFiSettings.SSID);
 			ssidItem.OnDialogExit += delegate(string text) {
 				new Thread(delegate() {
 		    		settings.WiFiSettings.SSID = text;
 					settings.Save();
 			    }).Start();
 			};
-			var passwordItem = new MenuItemWithCharacterInput(btns,"Password", "Password", settings.WiFiSettings.Password, true);
+			var passwordItem = new MenuItemWithCharacterInput("Password", "Password", settings.WiFiSettings.Password, true);
 			passwordItem.OnDialogExit += delegate(string text) {
 				new Thread(delegate() {
 			    	settings.WiFiSettings.Password = text;
@@ -334,7 +332,7 @@ namespace StartupApp
 							return true;
 						},
 						"Creating file", "Error creating WPA file");
-					var progressDialog = new ProgressDialog(btns,"WiFi", createFileStep);
+					var progressDialog = new ProgressDialog("WiFi", createFileStep);
 					progressDialog.Show();
 					if(WiFiOn){
 						var turnOffStep = new StepContainer( 
@@ -344,7 +342,7 @@ namespace StartupApp
 							return true;
 						},
 						"Turning Off","Error turning off WiFi","WiFi Disabled");
-						var dialog = new ProgressDialog(btns,"WiFi", turnOffStep);
+						var dialog = new ProgressDialog("WiFi", turnOffStep);
 						dialog.Show();
 						isOn = false;
 					}
@@ -355,10 +353,10 @@ namespace StartupApp
 							return WiFiDevice.TurnOn(60000);
 						},
 						"Connecting", "Failed to connect");
-						Dialog dialog = new ProgressDialog(btns,"WiFi", turnOnStep);
+						Dialog dialog = new ProgressDialog("WiFi", turnOnStep);
 						if(dialog.Show()){
 							if(settings.WiFiSettings.ConnectAtStartUp == false){
-								var question = new QuestionDialog(btns,"Do you want to connect at start-up?", "Settings");
+								var question = new QuestionDialog("Do you want to connect at start-up?", "Settings");
 								if(question.Show()){
 									new Thread(delegate() {
 								    	settings.WiFiSettings.ConnectAtStartUp = true;
@@ -366,7 +364,7 @@ namespace StartupApp
 								    }).Start();
 								}
 							}
-							dialog = new InfoDialog(btns,"Connected Successfully " + WiFiDevice.GetIpAddress(), true, "WiFi");
+							dialog = new InfoDialog("Connected Successfully " + WiFiDevice.GetIpAddress(), true, "WiFi");
 							dialog.Show();
 							isOn = true;
 						}
@@ -382,13 +380,13 @@ namespace StartupApp
 			items.Add(encryptionItem);
 			items.Add(connectItem);
 			//Show the menu
-			Menu m = new Menu (font, btns, "WiFi Connection", items);
+			Menu m = new Menu ("WiFi Connection", items);
 			m.Show ();
 			return false;	
 		}
 
 		
-		static bool ShowSettings (Buttons btns)
+		static bool ShowSettings ()
 		{
 			//Create the settings items and apply the settings 
 			List<IMenuItem> items = new List<IMenuItem> ();
@@ -407,7 +405,7 @@ namespace StartupApp
 			items.Add(soundVolume);
 			
 			//Show the menu
-			Menu m = new Menu (font, btns, "Settings", items);
+			Menu m = new Menu ("Settings", items);
 			m.Show ();
 			new Thread(delegate() {
 	    		settings.DebugSettings.TerminateWithEscape = terminateWithEscapeItem.Checked; 
@@ -447,7 +445,7 @@ namespace StartupApp
       		System.IO.File.WriteAllLines(@WpaSupplicantFileName, lines);
 		}
 		
-		static bool ShowUpdatesDialogs (Buttons btns)
+		static bool ShowUpdatesDialogs ()
 		{
 			if (WiFiDevice.IsLinkUp()) {
 				var step = new StepContainer(
@@ -462,12 +460,12 @@ namespace StartupApp
 						}
 					},
 					"Checking server", "No software updates available", "Software update available. Visit monobrick.dk"); 
-				var dialog = new ProgressDialog(btns,"Updates", step);
+				var dialog = new ProgressDialog("Updates", step);
 				dialog.Show();
 			} 
 			else 
 			{
-				var dialog = new InfoDialog (btns, "WiFi device is not pressent", true);
+				var dialog = new InfoDialog ("WiFi device is not pressent", true);
 				dialog.Show();	
 			}
 			return false;
@@ -483,80 +481,78 @@ namespace StartupApp
 		
 		public static void Main (string[] args)
 		{
-			using (Buttons btns = new Buttons ()) {					
-				Lcd.Instance.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
-				Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
-				
-				Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
+			Lcd.Instance.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
+			Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
+			
+			Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
+			Lcd.Instance.Update ();						
+			WiFiDevice.TurnOff ();
+			if (!Directory.Exists (ProgramPathSdCard))
+				Directory.CreateDirectory (ProgramPathSdCard);
+			
+			// JIT work-around remove when JIT problem is fixed
+			System.Threading.Thread.Sleep (10);
+			Console.WriteLine ("JIT workaround - please remove!!!");
+			Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Checking WiFi...", true, Lcd.Alignment.Center);
+			Lcd.Instance.Update ();						
+			//WiFiDevice.IsLinkUp ();
+			Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Starting Mono Runtime...", true, Lcd.Alignment.Center);
+			Lcd.Instance.Update ();						
+			string monoVersion = "Unknown";
+			Type type = Type.GetType ("Mono.Runtime");
+			if (type != null) {                                          
+				MethodInfo displayName = type.GetMethod ("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static); 
+				if (displayName != null)
+					monoVersion = (string)displayName.Invoke (null, null);
+				Console.WriteLine ("Mono Version" + monoVersion); 
+			}	
+			string monoCLR = System.Reflection.Assembly.GetExecutingAssembly ().ImageRuntimeVersion;
+			// JIT work-around end but look for more below
+			
+			//Load settings
+			Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
+			Lcd.Instance.Update ();
+			settings = settings.Load();						
+			if (settings != null) {
+				Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
 				Lcd.Instance.Update ();						
-				WiFiDevice.TurnOff ();
-				if (!Directory.Exists (ProgramPathSdCard))
-					Directory.CreateDirectory (ProgramPathSdCard);
-				
-				// JIT work-around remove when JIT problem is fixed
-				System.Threading.Thread.Sleep (10);
-				Console.WriteLine ("JIT workaround - please remove!!!");
-				Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Checking WiFi...", true, Lcd.Alignment.Center);
-				Lcd.Instance.Update ();						
-				//WiFiDevice.IsLinkUp ();
-				Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Starting Mono Runtime...", true, Lcd.Alignment.Center);
-				Lcd.Instance.Update ();						
-				string monoVersion = "Unknown";
-				Type type = Type.GetType ("Mono.Runtime");
-				if (type != null) {                                          
-					MethodInfo displayName = type.GetMethod ("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static); 
-					if (displayName != null)
-						monoVersion = (string)displayName.Invoke (null, null);
-					Console.WriteLine ("Mono Version" + monoVersion); 
-				}	
-				string monoCLR = System.Reflection.Assembly.GetExecutingAssembly ().ImageRuntimeVersion;
-				// JIT work-around end but look for more below
-				
-				//Load settings
-				Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
-				Lcd.Instance.Update ();
-				settings = settings.Load();						
-				if (settings != null) {
-					Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
+				settings.Save();// JIT work-around
+      			WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID, settings.WiFiSettings.Password, settings.WiFiSettings.Encryption);
+				if (settings.WiFiSettings.ConnectAtStartUp) {
+					Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);
 					Lcd.Instance.Update ();						
-					settings.Save();// JIT work-around
-          			WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID, settings.WiFiSettings.Password, settings.WiFiSettings.Encryption);
-					if (settings.WiFiSettings.ConnectAtStartUp) {
-						Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);
-						Lcd.Instance.Update ();						
-						if (WiFiDevice.TurnOn (60000)) {
-							WiFiDevice.GetIpAddress ();// JIT work-around
-              				if (settings.GeneralSettings.CheckForSwUpdatesAtStartUp)
-              				{
-								ShowUpdatesDialogs (btns);
-							} 
-							else 
-							{
-								var dialog = new InfoDialog (btns, "Connected Successfully " + WiFiDevice.GetIpAddress (), true);
-								dialog.Show ();
-							} 
+					if (WiFiDevice.TurnOn (60000)) {
+						WiFiDevice.GetIpAddress ();// JIT work-around
+          				if (settings.GeneralSettings.CheckForSwUpdatesAtStartUp)
+          				{
+							ShowUpdatesDialogs ();
 						} 
-						else
+						else 
 						{
-							var dialog = new InfoDialog (btns, "Failed to connect to WiFI Network", true);
+							var dialog = new InfoDialog ("Connected Successfully " + WiFiDevice.GetIpAddress (), true);
 							dialog.Show ();
-						}
+						} 
+					} 
+					else
+					{
+						var dialog = new InfoDialog ("Failed to connect to WiFI Network", true);
+						dialog.Show ();
 					}
-				} 
-				else 
-				{
-					var dialog = new InfoDialog (btns, "Failed to load settings", true);
-					dialog.Show ();
-          			settings = new FirmwareSettings();
 				}
-			}
-			using (Buttons btns = new Buttons())
+			} 
+			else 
 			{
-				while(true)
-				{
-					ShowMainMenu(btns);
-				}
-			}			
+				var dialog = new InfoDialog ("Failed to load settings", true);
+				dialog.Show ();
+      			settings = new FirmwareSettings();
+			}
+			
+			//Keep showing the menu even if user press esc
+			while(true)
+			{
+				ShowMainMenu();
+			}
+						
 		}
 	}
 }

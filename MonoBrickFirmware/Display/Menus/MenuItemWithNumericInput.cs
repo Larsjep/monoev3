@@ -33,68 +33,64 @@ namespace MonoBrickFirmware.Display.Menus
 		public bool LeftAction ()
 		{
 			int counter = 0;
-			using (Buttons btns = new Buttons ()) {
-				Value--;
-				do{
-					if(counter < holdSingleWait ){
-						counter++;
-					}
-					if(counter >= holdSingleWait  && counter < holdTenWait){
-						counter++;
-						Value--;
-					}
-					if(counter >= holdTenWait && counter < holdHundredWait){
-						Value = Value -10;
-						counter++;
-					}
-					if(counter >= holdHundredWait && counter < holdFiveHundredWait){
-						Value = Value -100;
-						counter++;
-					}
-					if(counter >= holdFiveHundredWait){
-						Value=Value - 500;
-					}
-					if(Value<min)
-						Value = max;
-					this.Draw(font,rect,false);
-					Lcd.Instance.Update();
-					System.Threading.Thread.Sleep(holdSleepTime);
-				}while (btns.GetButtonStates()== Buttons.ButtonStates.Left);
-			}
+			Value--;
+			do{
+				if(counter < holdSingleWait ){
+					counter++;
+				}
+				if(counter >= holdSingleWait  && counter < holdTenWait){
+					counter++;
+					Value--;
+				}
+				if(counter >= holdTenWait && counter < holdHundredWait){
+					Value = Value -10;
+					counter++;
+				}
+				if(counter >= holdHundredWait && counter < holdFiveHundredWait){
+					Value = Value -100;
+					counter++;
+				}
+				if(counter >= holdFiveHundredWait){
+					Value=Value - 500;
+				}
+				if(Value<min)
+					Value = max;
+				this.Draw(font,rect,false);
+				Lcd.Instance.Update();
+				System.Threading.Thread.Sleep(holdSleepTime);
+			}while (Buttons.Instance.GetStates()== Buttons.ButtonStates.Left);
 			OnValueChanged(Value);
 			return false;
 		}
 		
 		public bool RightAction(){
 			int counter = 0;
-			using (Buttons btns = new Buttons ()) {
-				Value++;
-				do{
-					if(counter < holdSingleWait ){
-						counter++;
-					}
-					if(counter >= holdSingleWait  && counter < holdTenWait){
-						counter++;
-						Value++;
-					}
-					if(counter >= holdTenWait && counter < holdHundredWait){
-						Value=Value +10;
-						counter++;
-					}
-					if(counter >= holdHundredWait && counter < holdFiveHundredWait){
-						Value = Value +100;
-						counter++;
-					}
-					if(counter >= holdFiveHundredWait){
-						Value=Value + 500;
-					}
-					if(Value>max)
-						Value = min;
-					this.Draw(font,rect,false);
-					Lcd.Instance.Update();
-					System.Threading.Thread.Sleep(holdSleepTime);
-				}while (btns.GetButtonStates()== Buttons.ButtonStates.Right);
-			}
+			Value++;
+			do{
+				if(counter < holdSingleWait ){
+					counter++;
+				}
+				if(counter >= holdSingleWait  && counter < holdTenWait){
+					counter++;
+					Value++;
+				}
+				if(counter >= holdTenWait && counter < holdHundredWait){
+					Value=Value +10;
+					counter++;
+				}
+				if(counter >= holdHundredWait && counter < holdFiveHundredWait){
+					Value = Value +100;
+					counter++;
+				}
+				if(counter >= holdFiveHundredWait){
+					Value=Value + 500;
+				}
+				if(Value>max)
+					Value = min;
+				this.Draw(font,rect,false);
+				Lcd.Instance.Update();
+				System.Threading.Thread.Sleep(holdSleepTime);
+			}while (Buttons.Instance.GetStates()== Buttons.ButtonStates.Right);
 			OnValueChanged(Value);
 			return false;
 		}

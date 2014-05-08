@@ -13,7 +13,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		int arrowWidth = 10;
 		Rectangle arrowRect;
 		
-		public SelectDialog (Buttons btns, SelectionType[] options, string title, bool allowEsc) : base (Font.MediumFont, btns, title, 160,90+(int)Font.MediumFont.maxHeight/2,(int)Font.MediumFont.maxHeight/4)
+		public SelectDialog (SelectionType[] options, string title, bool allowEsc) : base (Font.MediumFont, title, 160,90+(int)Font.MediumFont.maxHeight/2,(int)Font.MediumFont.maxHeight/4)
 		{
 			this.options = options;
 			cursorPos = 0;

@@ -16,7 +16,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			return IsPositiveSelected;
 		}
 		
-		public QuestionDialog (Buttons btns, string question, string title, string positiveText="Yes", string negativeText="No", bool isPositiveSelected = true) : base (Font.MediumFont, btns, title)
+		public QuestionDialog (string question, string title, string positiveText="Yes", string negativeText="No", bool isPositiveSelected = true) : base (Font.MediumFont, title)
 		{
 			this.negativeText = negativeText;
 			this.positiveText = positiveText;

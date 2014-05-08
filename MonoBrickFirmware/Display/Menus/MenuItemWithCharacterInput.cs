@@ -8,22 +8,20 @@ namespace MonoBrickFirmware.Display.Menus
 	{
 		private string subject;
 		private string dialogTitle;
-		private UserInput.Buttons btns;
 		private const int lineSize = 2;
 		private const int edgeSize = 2;
 		private bool hide;
 		public Action<Dialogs.CharacterDialog> OnShowDialog = delegate {};
 		public Action<string> OnDialogExit = delegate {};
-		public  MenuItemWithCharacterInput (UserInput.Buttons btns, string subject, string dialogTitle, string startText, bool hideInput = false){
+		public  MenuItemWithCharacterInput (string subject, string dialogTitle, string startText, bool hideInput = false){
 			this.dialogTitle = dialogTitle; 
 			this.subject = subject;
 			this.Text = startText;
-			this.btns = btns;
 			this.hide = hideInput;
 		}
 		public bool EnterAction ()
 		{
-			var dialog = new Dialogs.CharacterDialog(btns,dialogTitle);
+			var dialog = new Dialogs.CharacterDialog(dialogTitle);
 			dialog.OnShow += delegate{this.OnShowDialog(dialog);};
 			dialog.OnExit += delegate{Text = dialog.GetUserInput();this.OnDialogExit(Text);};
 			dialog.Show();

@@ -14,12 +14,12 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private IStep errorStep = null;
 		private int progressLine = 1;
 		
-		public StepDialog (Buttons btns, string title,List<IStep> steps): this(btns,title,steps,"")		
+		public StepDialog (string title,List<IStep> steps): this(title,steps,"")		
 		{
 		
 		}
 		
-		public StepDialog (Buttons btns, string title,List<IStep> steps, string allCompletedText): base(Font.MediumFont, btns, title)
+		public StepDialog (string title,List<IStep> steps, string allCompletedText): base(Font.MediumFont, title)
 		{
 			this.steps = steps;
 			infoLineIndex = 0;
@@ -51,7 +51,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 						WriteTextOnDialog (steps [stepIndex].ErrorText);
 						DrawCenterButton ("Ok", false);
 						Lcd.Instance.Update ();
-						btns.GetKeypress ();//Wait for any key
+						Buttons.Instance.GetKeypress ();//Wait for any key
 						errorStep = steps [stepIndex];
 						ok = false;
 						break;
@@ -63,7 +63,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 							WriteTextOnDialog (steps [stepIndex].ErrorText);
 							DrawCenterButton ("Ok", false);
 							Lcd.Instance.Update ();
-							btns.GetKeypress ();//Wait for any key
+							Buttons.Instance.GetKeypress ();//Wait for any key
 							StartProgressAnimation (progressLine);
 						}
 					
@@ -79,7 +79,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 					Console.WriteLine("Exception " + e.Message);
 					Console.WriteLine(e.StackTrace);
 					Lcd.Instance.Update ();
-					btns.GetKeypress ();//Wait for any key
+					Buttons.Instance.GetKeypress ();//Wait for any key
 					errorStep = steps [stepIndex];
 					ok = false;
 					break;
@@ -91,7 +91,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				WriteTextOnDialog(allDoneText);
 				DrawCenterButton("Ok",false);
 				Lcd.Instance.Update();
-				btns.GetKeypress();//Wait for any key*/
+				Buttons.Instance.GetKeypress();//Wait for any key*/
 			}
 			OnExit();
 			return ok;
