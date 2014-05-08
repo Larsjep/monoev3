@@ -239,7 +239,7 @@ namespace StartupApp
 			List<IMenuItem> items = new List<IMenuItem>();
 			items.Add (new MenuItemWithAction("Programs", () => RunPrograms(btns),MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction("WiFi Connection", () => ShowWiFiMenu(btns), MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("WebServer", () => ShowWebServerMenu(btns), MenuItemSymbole.RightArrow));
+			//items.Add (new MenuItemWithAction("WebServer", () => ShowWebServerMenu(btns), MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction("Settings", () => ShowSettings(btns), MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction("Information", () => Information(btns)));
 			items.Add (new MenuItemWithAction("Check for Updates", () => ShowUpdatesDialogs(btns)));
