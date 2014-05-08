@@ -21,14 +21,14 @@ namespace StartupApp
 	class MainClass
 	{
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
-		static Font font = Font.MediumFont;
-		static bool updateProgramList = false;
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
 		static FirmwareSettings settings = new FirmwareSettings();
 		static string versionString = "Firmware: 0.1.0.0";
 		static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
+		
+		static bool updateProgramList = false;
 		
 		enum ExecutionMode {Normal = 0, Debug = 1, AOT = 2  };
 		
@@ -44,13 +44,13 @@ namespace StartupApp
 			}	
 			string monoCLR = System.Reflection.Assembly.GetExecutingAssembly().ImageRuntimeVersion;
 			
-			Point offset = new Point(0, (int)font.maxHeight);
+			Point offset = new Point(0, (int)Font.MediumFont.maxHeight);
 			Point startPos = new Point(0,0);
 			Lcd.Instance.Clear();
-			Lcd.Instance.WriteText(font, startPos+offset*0, versionString, true);
-			Lcd.Instance.WriteText(font, startPos+offset*1, "Mono version: " + monoVersion.Substring(0,7), true);
-			Lcd.Instance.WriteText(font, startPos+offset*2, "Mono CLR: " + monoCLR, true);			
-			Lcd.Instance.WriteText(font, startPos+offset*3, "IP: " + WiFiDevice.GetIpAddress(), true);			
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*0, versionString, true);
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*1, "Mono version: " + monoVersion.Substring(0,7), true);
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*2, "Mono CLR: " + monoCLR, true);			
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*3, "IP: " + WiFiDevice.GetIpAddress(), true);			
 			Lcd.Instance.Update();
 			Buttons.Instance.GetKeypress();
 			return false;
@@ -221,7 +221,7 @@ namespace StartupApp
 			var dialog = new QuestionDialog ("Are you sure?", "Shutdown EV3");
 			if(dialog.Show ()){
 				Lcd.Instance.Clear();
-				Lcd.Instance.WriteText(font, new Point(0,0), "Shutting down...", true);
+				Lcd.Instance.WriteText(Font.MediumFont, new Point(0,0), "Shutting down...", true);
 				Lcd.Instance.Update();
 			
 				Buttons.Instance.LedPattern(2);
