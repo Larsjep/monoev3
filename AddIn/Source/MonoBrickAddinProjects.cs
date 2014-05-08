@@ -161,8 +161,6 @@ namespace MonoBrickAddin
 						opMon.AddOperation(ex);
 						ex.WaitForCompleted();
 
-						console.Log.WriteLine(Environment.NewLine);
-
 						if (pass == 1 || cmd.LastError == 0)
 							break;
 

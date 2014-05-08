@@ -35,14 +35,14 @@ namespace MonoBrickAddin
 	{
 		public static ScpUpload Upload(string IPAddress, MonoBrickExecutionCommand cmd)
 		{
-			var scp = new ScpUpload(IPAddress, cmd.Config.OutputDirectory, cmd.DeviceDirectory);
+			var scp = new ScpUpload(IPAddress, cmd);
 			scp.Upload();
 			return scp;
 		}
 
-		public static SshExecute ExecuteCommand(string IPAddress, MonoBrickExecutionCommand cmd, string sdbOptions, IConsole console, bool verbose)
+		public static SshExecute ExecuteCommand(string IPAddress, MonoBrickExecutionCommand cmd, string sdbOptions, bool verbose)
 		{
-			var sshC = new SshExecute(IPAddress, cmd, sdbOptions, console, verbose);
+			var sshC = new SshExecute(IPAddress, cmd, sdbOptions, verbose);
 			return sshC;
 		}
 

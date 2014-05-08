@@ -30,6 +30,7 @@ using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using MonoDevelop.Core;
+using MonoDevelop.Core.Execution;
 using Renci.SshNet;
 
 namespace MonoBrickAddin
@@ -38,6 +39,7 @@ namespace MonoBrickAddin
 	{
 		private string _localPath;
 		private string _remotePath;
+		private IConsole _console = null;
 		private ScpClient _scpClient = null;
 		private SshCommandHelper _sshHelper = null;
 		private string _fileHash;
@@ -69,13 +71,14 @@ namespace MonoBrickAddin
 			wait.Set();
 		}
 
-		public ScpUpload(string IPAddress, string localPath, string remotePath)
+		public ScpUpload(string IPAddress, MonoBrickExecutionCommand cmd)
 		{
-			_localPath = localPath;
-			_remotePath = remotePath;
+			_localPath = cmd.Config.OutputDirectory;
+			_remotePath = cmd.DeviceDirectory;
 			_scpClient = new ScpClient(IPAddress, "root", "");
 			_sshHelper = new SshCommandHelper(IPAddress);
 			_fileHash = UserSettings.Instance.LastUploadHash;
+			_console = cmd.Console;
 
 			Success = false;
 			SuccessWithWarnings = false;
@@ -124,7 +127,10 @@ namespace MonoBrickAddin
 		{
 			string newUploadHash = CreateMd5ForFolder(_localPath);
 			if (newUploadHash == _fileHash)
-				return; // nothing to do
+			{
+				_console.Log.WriteLine("Data unchanged, skipping upload!");
+				return;
+			}
 
 			_sshHelper.WriteSSHCommand(GetDirectoryCommand());
 			_sshHelper.WriteSSHCommand(GetCleanCommand());
@@ -149,7 +155,7 @@ namespace MonoBrickAddin
 
 		private string GetCleanCommand()
 		{
-			string makeDirString = string.Format("mkdir -p {0}", _remotePath);
+			string makeDirString = string.Format(@"find {0}  -maxdepth 1 -type f -regex "".*/.*\.\(exe\|mdb\|pdb\|so\)"" -delete", _remotePath);
 			return makeDirString;
 		}
 			

@@ -41,6 +41,7 @@ namespace MonoBrickAddin
 		private IConsole _console = null;
 		private MonoBrickExecutionCommand _cmd;
 		private ManualResetEvent _executed = new ManualResetEvent(false);
+		static private Regex regexAot = new Regex("(-{1,2}(full)?-{0,2}aot=?(full)?)", RegexOptions.Compiled);
 
 		// IProcessAsyncOperation
 		public int ExitCode { get; private set; }
@@ -81,12 +82,12 @@ namespace MonoBrickAddin
 			wait.Set();
 		}
 
-		public SshExecute(string IPAddress, MonoBrickExecutionCommand cmd, string sdbOptions, IConsole console, bool verbose)
+		public SshExecute(string IPAddress, MonoBrickExecutionCommand cmd, string sdbOptions, bool verbose)
 		{
 			_cmd = cmd;
 			_sdbOptions = sdbOptions;
-			_console = console;
-			_sshHelper = new SshCommandHelper(IPAddress, _executed, console, verbose);
+			_console = cmd.Console;
+			_sshHelper = new SshCommandHelper(IPAddress, _executed, cmd.Console, verbose);
 			Success = false;
 			SuccessWithWarnings = false;
 		}
@@ -141,8 +142,6 @@ namespace MonoBrickAddin
 
 		private string GetRunString()
 		{
-			Regex regexAot = new Regex("(-{1,2}(full)?-{0,2}aot=?(full)?)", RegexOptions.Compiled);
-
 			string additionalParameters = string.IsNullOrEmpty(_cmd.Config.CommandLineParameters)
 				? "" : _cmd.Config.CommandLineParameters;
 
@@ -179,6 +178,17 @@ namespace MonoBrickAddin
 			if (!string.IsNullOrEmpty(_sdbOptions))
 				sb.AppendFormat("--debugger-agent={0}", _sdbOptions);
 
+			if (aotMode)
+			{
+				_sshHelper.WriteSSHCommand(GetAOTExistCommand(), false, true);
+				if (_sshHelper.ErrorCode == 0) // do not compile again
+				{
+					_console.Log.WriteLine("Aot library exist, skipping compilation!");
+					additionalParameters = regexAot.Replace(additionalParameters, "");
+					aotMode = false;
+				}
+			}
+
 			sb.AppendFormat("{0} '{1}'", additionalParameters, _cmd.DeviceExePath);
 
 			if (aotMode)
@@ -195,5 +205,12 @@ namespace MonoBrickAddin
 			string killString = string.Format("kill -9 `ps | grep {0} | grep mono | awk '{{print $1}}'`", appToKill);
 			return killString;
 		}
+
+		private string GetAOTExistCommand()
+		{
+			string aotExistString = string.Format(@"if [ -f {0}.so ] ; then echo ""sh: 0"" ; else echo ""sh: -1"" ; fi", _cmd.DeviceExePath);
+			return aotExistString;
+		}
+
 	}
 }

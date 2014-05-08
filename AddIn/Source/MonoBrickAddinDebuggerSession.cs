@@ -60,7 +60,7 @@ namespace MonoBrickAddin
 			string debugOptions = string.Format("transport=dt_socket,address=0.0.0.0:{0},server=y", args.DebugPort);
 			bool EV3Verbose = UserSettings.Instance.Verbose;
 
-			process = MonoBrickUtility.ExecuteCommand(EV3IPAddress, dsi.ExecutionCommand, debugOptions, dsi.ExecutionCommand.Console, EV3Verbose);
+			process = MonoBrickUtility.ExecuteCommand(EV3IPAddress, dsi.ExecutionCommand, debugOptions, EV3Verbose);
 			process.Execute();
 			process.WaitForExecuted();
 		}

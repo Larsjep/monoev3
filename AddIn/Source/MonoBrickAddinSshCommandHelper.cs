@@ -41,6 +41,7 @@ namespace MonoBrickAddin
 		private IConsole _console = null;
 		private bool _verbose = false;
 		private ManualResetEvent _executed;
+		static private Regex regexResponse = new Regex(@"(?<=sh: )(-?[0-9]+)(?!"")", RegexOptions.Compiled);
 
 		public SshCommandHelper(string IPAddress, ManualResetEvent executed = null, IConsole console = null, bool verbose = false)
 		{
@@ -57,14 +58,14 @@ namespace MonoBrickAddin
 				_sshClient.Disconnect();
 		}
 
-		public void WriteSSHCommand(string command, bool waitUntilFinished = false)
+		public void WriteSSHCommand(string command, bool waitUntilFinished = false, bool scriptWithEcho = false)
 		{
 			if (_executed != null)
 				_executed.Reset();
 
 			_sshClient.Connect();
 
-			using (var stream = _sshClient.CreateShellStream("MonoBrickShell", 80, 24, 800, 600, 1024))
+			using (var stream = _sshClient.CreateShellStream("MonoBrickShell", 200, 80, 800, 600, 1024))
 			{
 				ErrorCode = -1;
 				var writer = new StreamWriter(stream);
@@ -77,18 +78,24 @@ namespace MonoBrickAddin
 				if (_executed != null)
 					_executed.Set();
 
-				WaitForPrompt(stream, !waitUntilFinished);
+				string result = WaitForPrompt(stream, !waitUntilFinished);
 
-				writer.WriteLine("$?");
-				string result = WaitForPrompt(stream, true);
 				// get error code
-				string error = System.Text.RegularExpressions.Regex.Match (result, "(?<=sh: )([0-9]+)").Value;
+				if (!scriptWithEcho)
+				{
+					writer.WriteLine("$?");
+					result = WaitForPrompt(stream, true);
+				}
+				string error = regexResponse.Match(result).Value;
 
 				if (!String.IsNullOrEmpty(error))
 					ErrorCode = int.Parse(error);
 			}
 
 			_sshClient.Disconnect();
+
+			if (_verbose && _console != null)
+				_console.Log.Write(Environment.NewLine);
 		}
 
 		private string WaitForPrompt(ShellStream stream, bool timeOut)

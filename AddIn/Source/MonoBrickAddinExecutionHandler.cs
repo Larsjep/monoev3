@@ -62,7 +62,7 @@ namespace MonoBrickAddin
 			string EV3IPAddress = UserSettings.Instance.IPAddress;
 			bool EV3Verbose = UserSettings.Instance.Verbose;
 
-			var proc = MonoBrickUtility.ExecuteCommand(EV3IPAddress, cmd, null, console, EV3Verbose);
+			var proc = MonoBrickUtility.ExecuteCommand(EV3IPAddress, cmd, null, EV3Verbose);
 			proc.Execute();
 			return proc;
 		}
