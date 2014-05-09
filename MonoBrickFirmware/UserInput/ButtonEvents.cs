@@ -5,15 +5,23 @@ using System.Threading;
 
 namespace MonoBrickFirmware.UserInput
 {
-	public class ButtonEvents
+	public class ButtonEvents : IDisposable
 	{
 		EventWaitHandle stopPolling = new ManualResetEvent (false);
 		const int pollTime = 50;
 		QueueThread queue = new QueueThread ();
-
+		Thread pollThread = null;
+		
 		public ButtonEvents ()
 		{
-			new Thread (ButtonPollThread).Start ();
+			pollThread = new Thread(ButtonPollThread);
+			pollThread.Start ();
+		}
+		
+		public void Kill()
+		{
+			stopPolling.Set();
+			pollThread.Join();		
 		}
 
 		public event Action UpPressed = delegate {};
@@ -84,6 +92,13 @@ namespace MonoBrickFirmware.UserInput
 				
 			}
 		}
+		
+		public void Dispose ()
+ 		{
+			Kill();
+ 		}
+ 
+ 		
 	}
 
 }

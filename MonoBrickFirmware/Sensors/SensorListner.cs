@@ -3,7 +3,7 @@ using System.Threading;
 using MonoBrickFirmware.Tools;
 namespace MonoBrickFirmware.Sensors
 {
-	public class SensorListner
+	public class SensorListner : IDisposable
 	{
 		private bool run = false;
 		private SensorType[] lastSensorType = new SensorType[SensorManager.NumberOfSensorPorts];	
@@ -13,14 +13,22 @@ namespace MonoBrickFirmware.Sensors
 		private int interval = 0;
 		public event Action<ISensor> SensorAttached = delegate {};
 		public event Action<SensorPort> SensorDetached = delegate {};
-		public SensorListner (int interval)
+		
+		public SensorListner (): this(1000)
+		{
+		
+		
+		}
+		
+		private SensorListner (int interval)
 		{
 			this.interval = interval;
 			run = false;
 			thread = new Thread(ListenThread);
+			Start();
 		}
 		
-		public void Start ()
+		private void Start ()
 		{
 			if (!run) 
 			{
@@ -36,7 +44,7 @@ namespace MonoBrickFirmware.Sensors
 			}
 		}
 		
-		public void Stop ()
+		public void Kill ()
 		{
 			if (run) 
 			{
@@ -45,18 +53,20 @@ namespace MonoBrickFirmware.Sensors
 			}
 		}
 		
-		public bool IsListning{ get {return run;}}
+		private bool IsListning{ get {return run;}}
 		
 		private void ListenThread ()
 		{
-			while (run) 
-			{
+			while (run) {
 				for (int i = 0; i < SensorManager.NumberOfSensorPorts; i++) {
 					SensorType currentType = SensorManager.Instance.GetSensorType (sensorPort [i]);
 					if (currentType != lastSensorType [i]) {
 						//Console.WriteLine (sensorPort [i] + " changed from  " + lastSensorType [i] + " to " + currentType);
-						sensor [i] = SensorFactory.GetSensor (sensorPort [i]);
-						lastSensorType [i] = currentType;
+						lock (this) 
+						{
+							sensor [i] = SensorFactory.GetSensor (sensorPort [i]);
+							lastSensorType [i] = currentType;
+						}
 						if (currentType == SensorType.None) {
 							SensorManager.Instance.ResetUart (sensorPort [i]);
 							SensorManager.Instance.ResetI2C (sensorPort [i]);
@@ -72,6 +82,10 @@ namespace MonoBrickFirmware.Sensors
 		
 		}
 		
+		public void Dispose ()
+ 		{
+			Kill();
+ 		}
 		  
 		
 	}

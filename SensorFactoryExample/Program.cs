@@ -16,7 +16,7 @@ namespace SensorFactoryExample
 			for (int i = 0; i < 4; i++) {
 				sensor [i] = null;
 			}
-			SensorListner listner = new SensorListner(1000);
+			SensorListner listner = new SensorListner();
 			listner.SensorAttached += delegate(ISensor obj) {
 				lock(sensorLock){
 					if(obj != null){
@@ -36,7 +36,6 @@ namespace SensorFactoryExample
 			{ 
 				run = false;
 			};
-			listner.Start();
 			while (run) {
 						
 				lock (sensorLock) {
@@ -55,7 +54,7 @@ namespace SensorFactoryExample
 				}
 				System.Threading.Thread.Sleep(1000);
 			}
-			listner.Stop();
+			listner.Kill();
 		}
 	}
 }

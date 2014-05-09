@@ -10,7 +10,7 @@ namespace MonoBrickWebServer
 	public partial class Default : System.Web.UI.Page
 	{
 		private static ISensor[] sensorArray = {null, null, null, null};
-		private static SensorListner listner = new SensorListner(1000);
+		private static SensorListner listner = new SensorListner();
 		private static object sensorArrayLock = new object();
 		private static sbyte speed = 0;
 		private Label[] typeLabel = new Label[4];
@@ -19,7 +19,7 @@ namespace MonoBrickWebServer
 		private Label[] tachoLabel = new Label[4];
 		private const sbyte increaseSpeed = 10;
 		private Motor[] motorArray = {new Motor(MotorPort.OutA), new Motor(MotorPort.OutB), new Motor(MotorPort.OutC), new Motor(MotorPort.OutD)};
-		
+		private bool hasAttached = false;
 		protected override void OnLoad (EventArgs e)
 		{
 			base.OnLoad (e);
@@ -44,12 +44,12 @@ namespace MonoBrickWebServer
 			tachoLabel[3] = Motor4TachoText;
 			
 			
-			if (!listner.IsListning) {
+			if (!hasAttached) {
 				lock (sensorArrayLock) 
 				{
 					listner.SensorAttached += OnSensorAttached;
 					listner.SensorDetached += OnSensorDetached;
-					listner.Start();
+					hasAttached = true;
 				}
 			}
 		}
