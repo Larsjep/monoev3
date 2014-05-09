@@ -16,7 +16,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Device types
 	/// </summary>
-	public enum SensorType  {
+	internal enum SensorType  {
 		#pragma warning disable 
 		NXTTouch = 1, NXTLight = 2, NXTSound = 3, NXTColor = 4, NXTUltraSonic = 5, NXTTemperature = 6, LMotor = 7 , MMotor = 8,
 		Touch = 16, Test = 21, Color = 29, UltraSonic = 30, Gyro = 32, IR = 33, I2CUnknown = 100, NXTTest = 101, NXTI2c = 123, 
@@ -27,7 +27,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Connection modes
 	/// </summary>
-	public enum ConnectionType {
+	internal enum ConnectionType {
 		#pragma warning disable 
 		Unknown = 111, DaisyChain = 117, NXTColor = 118, NXTDumb = 119, NXTI2C = 120, InputResistor = 121, 
 		UART = 122, OutputResistor = 123, OutputCommunication = 124, Tacho = 125, None = 126, Error = 127 	
@@ -38,7 +38,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class used to share sensor functions and informations between sensor instances
 	/// </summary>
-	public sealed class SensorManager
+	internal sealed class SensorManager
 	{
 		private static byte [] sensorData = new byte[3*NumberOfSensorPorts];
 		private static object setupLock = new object();
