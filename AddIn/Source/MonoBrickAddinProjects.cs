@@ -154,8 +154,6 @@ namespace MonoBrickAddin
 							monitor.ReportError(uploadOp.ErrorMessage, null);
 							return;
 						}
-							
-						console.Log.WriteLine(cmd.AOT ? "Running on brick in AOT mode..." : "Running on brick...");
 
 						var ex = context.ExecutionHandler.Execute(cmd, console);
 						opMon.AddOperation(ex);
