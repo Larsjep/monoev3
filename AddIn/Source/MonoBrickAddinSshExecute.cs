@@ -25,12 +25,14 @@
 
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Linq;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
 using Renci.SshNet;
-using System.Text.RegularExpressions;
 
 namespace MonoBrickAddin
 {
@@ -41,7 +43,6 @@ namespace MonoBrickAddin
 		private IConsole _console = null;
 		private MonoBrickExecutionCommand _cmd;
 		private ManualResetEvent _executed = new ManualResetEvent(false);
-		static private Regex regexAot = new Regex("(-{1,2}(full)?-{0,2}aot=?(full)?)", RegexOptions.Compiled);
 
 		// IProcessAsyncOperation
 		public int ExitCode { get; private set; }
@@ -77,8 +78,6 @@ namespace MonoBrickAddin
 		public void Cancel()
 		{
 			_sshHelper.Cancel();
-
-			//DoKill ();
 			wait.Set();
 		}
 
@@ -132,7 +131,7 @@ namespace MonoBrickAddin
 
 		private void DoKill(string appToKill)
 		{
-			_sshHelper.WriteSSHCommand(GetKillCommand(appToKill));
+			_sshHelper.WriteSSHCommand(_sshHelper.GetKillCommand(appToKill));
 		}
 
 		private void DoRun()
@@ -145,72 +144,62 @@ namespace MonoBrickAddin
 			string additionalParameters = string.IsNullOrEmpty(_cmd.Config.CommandLineParameters)
 				? "" : _cmd.Config.CommandLineParameters;
 
-			MatchCollection matches = regexAot.Matches(additionalParameters);
+			MatchCollection matches = _sshHelper.RegexAot.Matches(additionalParameters);
 
-			bool aotMode = matches.Count > 0;
-
-			if (!aotMode && _cmd.AOT)
+			if (matches.Count > 0)
 			{
-				aotMode = true;
-				additionalParameters += "--aot=full";
+				_console.Log.WriteLine("Please use build in AOT run mode!");
+				additionalParameters = _sshHelper.RegexAot.Replace(additionalParameters, "");
 			}
 
-			bool debugging = !string.IsNullOrEmpty(_sdbOptions);
-			bool debugMode = false;
+			if (_cmd.AOT)
+				DoAOTCompile();
 
 			var sb = new StringBuilder();
 
 			sb.Append("mono ");
 
 			if (_cmd.Config.ToString().Contains("Debug"))
-			{
 				sb.Append("--debug ");
-				debugMode = true;
-			}
-
-			if (aotMode && (debugging || debugMode))
-			{
-				aotMode = false;
-				_console.Log.WriteLine("Aot not supported in debug mode or for softdebugger, discarding!");
-				additionalParameters = regexAot.Replace(additionalParameters, "");
-			}
 
 			if (!string.IsNullOrEmpty(_sdbOptions))
 				sb.AppendFormat("--debugger-agent={0}", _sdbOptions);
 
-			if (aotMode)
-			{
-				_sshHelper.WriteSSHCommand(GetAOTExistCommand(), false, true);
-				if (_sshHelper.ErrorCode == 0) // do not compile again
-				{
-					_console.Log.WriteLine("Aot library exist, skipping compilation!");
-					additionalParameters = regexAot.Replace(additionalParameters, "");
-					aotMode = false;
-				}
-			}
+			if (_cmd.AOT)
+				sb.Append("--full-aot ");
 
 			sb.AppendFormat("{0} '{1}'", additionalParameters, _cmd.DeviceExePath);
-
-			if (aotMode)
-				sb.AppendFormat(" && mono '{0}'", _cmd.DeviceExePath);
 
 			return sb.ToString();
 		}
 
-		private string GetKillCommand(string appToKill)
+		private void DoAOTCompile()
 		{
-			if (appToKill == "")
-				appToKill = _cmd.AppName;
+			string fileList = _sshHelper.WriteSSHCommand(_sshHelper.GetFileListCommand(_cmd.DeviceDirectory), false, true);
 
-			string killString = string.Format("kill -9 `ps | grep {0} | grep mono | awk '{{print $1}}'`", appToKill);
-			return killString;
-		}
+			var exeDllList = _sshHelper.RegexExeDll.Matches(fileList)
+				.OfType<Match>()
+				.Select(m => m.Groups[0].Value)
+				.ToArray();
 
-		private string GetAOTExistCommand()
-		{
-			string aotExistString = string.Format(@"if [ -f {0}.so ] ; then echo ""sh: 0"" ; else echo ""sh: -1"" ; fi", _cmd.DeviceExePath);
-			return aotExistString;
+			var soList = _sshHelper.RegexSo.Matches(fileList)
+				.OfType<Match>()
+				.Select(m => m.Groups[0].Value)
+				.ToArray();
+
+			var compileList = exeDllList.Where(fileNative => !soList.Contains(fileNative)).ToArray();
+
+			if (compileList.Count() == 0)
+				_console.Log.WriteLine("All files compiled, nothing to do!");
+
+			foreach (var file in compileList)
+			{
+				string compileTarget = string.Format(@"mono --aot=full {0}{1}", _cmd.DeviceDirectory, file);
+				_console.Log.WriteLine(string.Format("Compiling {0} for AOT execution", file));
+				_sshHelper.WriteSSHCommand(compileTarget, true);
+			}
 		}
+			
 
 	}
 }

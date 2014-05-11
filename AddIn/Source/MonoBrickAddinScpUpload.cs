@@ -28,6 +28,7 @@ using System.Threading;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
@@ -43,7 +44,6 @@ namespace MonoBrickAddin
 		private ScpClient _scpClient = null;
 		private SshCommandHelper _sshHelper = null;
 		private string _fileHash;
-
 		// IAsyncOperation
 		public bool IsCompleted { get; private set; }
 
@@ -126,14 +126,14 @@ namespace MonoBrickAddin
 		private void DoUpload()
 		{
 			string newUploadHash = CreateMd5ForFolder(_localPath);
-			if (newUploadHash == _fileHash)
+			if (newUploadHash == _fileHash && VerifiyRemoteFiles())
 			{
 				_console.Log.WriteLine("Data unchanged, skipping upload!");
 				return;
 			}
 
-			_sshHelper.WriteSSHCommand(GetDirectoryCommand());
-			_sshHelper.WriteSSHCommand(GetCleanCommand());
+			_sshHelper.WriteSSHCommand(_sshHelper.GetDirectoryCommand(_remotePath));
+			_sshHelper.WriteSSHCommand(_sshHelper.GetCleanCommand(_remotePath, _fileHash == ""));
 
 			_scpClient.Connect();
 
@@ -147,18 +147,25 @@ namespace MonoBrickAddin
 			UserSettings.Save();
 		}
 
-		private string GetDirectoryCommand()
+		private bool VerifiyRemoteFiles()
 		{
-			string makeDirString = string.Format("mkdir -p {0}", _remotePath);
-			return makeDirString;
+			string fileListRemote = _sshHelper.WriteSSHCommand(_sshHelper.GetFileListCommand(_remotePath), false, true);
+
+			var usedFileListRemote = _sshHelper.RegexExecutionFiles.Matches(fileListRemote)
+				.OfType<Match>()
+				.Select(m => m.Groups[0].Value)
+				.ToArray();
+				
+			var usedFileListLocal = new DirectoryInfo(_localPath).GetFiles().Select(o => o.Name).Where(f => _sshHelper.RegexExtension.IsMatch(f)).ToArray();
+
+			var missingFileList = usedFileListLocal.Where(file => !usedFileListRemote.Contains(file)).ToArray();
+			string missingFiles = string.Concat(missingFileList.ToArray().Select(a => a += ", ").ToArray());
+			if (missingFileList.Count() > 0)
+				_console.Log.WriteLine("Found missing remote file(s): {0} forcing upload...", missingFiles);
+
+			return (missingFileList.Count() == 0);
 		}
 
-		private string GetCleanCommand()
-		{
-			string makeDirString = string.Format(@"find {0}  -maxdepth 1 -type f -regex "".*/.*\.\(exe\|mdb\|pdb\|so\)"" -delete", _remotePath);
-			return makeDirString;
-		}
-			
 		private static string CreateMd5ForFolder(string path)
 		{
 			string newHash = "";
@@ -171,7 +178,7 @@ namespace MonoBrickAddin
 
 				MD5 md5 = MD5.Create();
 
-				for(int i = 0; i < files.Count; i++)
+				for (int i = 0; i < files.Count; i++)
 				{
 					string file = files[i];
 
