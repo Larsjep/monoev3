@@ -70,7 +70,7 @@ namespace MonoBrickAddin
 		public string DeviceDirectory
 		{
 			get {
-				return "apps/" + Path.GetFileNameWithoutExtension(Config.OutputAssembly) + "/";
+				return "/home/root/apps/" + Path.GetFileNameWithoutExtension(Config.OutputAssembly) + "/";
 			}
 		}
 
