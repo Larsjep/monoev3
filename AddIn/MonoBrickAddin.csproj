@@ -129,6 +129,14 @@
       <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="External\ICSharpCode.NRefactory.dll" />
+    <None Include="External\Mono.Debugging.dll" />
+    <None Include="External\Mono.Debugging.Soft.dll" />
+    <None Include="External\MonoDevelop.Core.dll" />
+    <None Include="External\MonoDevelop.Debugger.dll" />
+    <None Include="External\MonoDevelop.Debugger.Soft.dll" />
+    <None Include="External\MonoDevelop.Ide.dll" />
+    <None Include="External\Renci.SshNet.dll" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
