@@ -59,7 +59,7 @@ namespace MonoBrickHelloWorld
 			};
 
 			LcdConsole.WriteLine("Hello World");
-			 
+			LcdConsole.WriteLine("Esc. terminate");
 			stopped.WaitOne();
 		}
 	}
