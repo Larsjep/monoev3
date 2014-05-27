@@ -79,7 +79,7 @@ namespace MonoBrickFirmware.Movement
 		/// Speed of the vehicle -100 to 100
 		/// </param>
 		public void Backward(sbyte speed){
-			Backward((sbyte)-speed, 0, false);
+			Backward((sbyte)speed, 0, false);
 		}
 	
 		/// <summary>
