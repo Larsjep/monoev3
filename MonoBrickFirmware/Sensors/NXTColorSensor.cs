@@ -131,7 +131,7 @@ namespace MonoBrickFirmware.Sensors
 		public NXTColorSensor (SensorPort port, ColorMode mode) :  base(port)
 		{
 			GetColorData();
-			SetMode(AnalogMode);	
+			SetMode((AnalogMode)mode);	
 		}
 		
 		/// <summary>
