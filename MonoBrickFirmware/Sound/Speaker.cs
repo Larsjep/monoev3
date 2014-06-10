@@ -44,7 +44,7 @@ namespace MonoBrickFirmware.Sound
 		
 		public Speaker (int volume)
 		{
-			currentVolume = Volume;
+			currentVolume = volume;
 		}
 		
 		public int Volume {
