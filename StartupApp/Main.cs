@@ -21,10 +21,10 @@ namespace StartupApp
 	class MainClass
 	{
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
+		static FirmwareSettings settings = new FirmwareSettings();
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
-		static FirmwareSettings settings = new FirmwareSettings();
 		static string versionString = "Firmware: 0.2.0.0";
 		static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
 		
@@ -364,17 +364,17 @@ namespace StartupApp
 			var debugPortItem = new MenuItemWithNumericInput("Debug port",settings.DebugSettings.Port,1, ushort.MaxValue);
 			var checkForUpdate = new MenuItemWithCheckBox("Update check",settings.GeneralSettings.CheckForSwUpdatesAtStartUp);
 			var wifiConnect = new MenuItemWithCheckBox("WiFi auto connect",settings.WiFiSettings.ConnectAtStartUp);
-			var soundVolume = new MenuItemWithNumericInput("Volume",settings.SoundSettings.Volume);
-			var enableSound = new MenuItemWithCheckBox("Enable sound", settings.SoundSettings.EnableSound);
-			
+			//var soundVolume = new MenuItemWithNumericInput("Volume",settings.SoundSettings.Volume);
+			//var enableSound = new MenuItemWithCheckBox("Enable sound", settings.SoundSettings.EnableSound);
 			
 			items.Add(wifiConnect);
 			items.Add(checkForUpdate);
 			items.Add(terminateWithEscapeItem);
 			items.Add (debugPortItem);
-			items.Add(soundVolume);
-			
+			//items.Add(soundVolume);
+			//items.Add(enableSound);
 			//Show the menu
+			
 			Menu m = new Menu ("Settings", items);
 			m.Show ();
 			new Thread(delegate() {
@@ -382,8 +382,8 @@ namespace StartupApp
 				settings.DebugSettings.Port = debugPortItem.Value;
 				settings.GeneralSettings.CheckForSwUpdatesAtStartUp = checkForUpdate.Checked;
 				settings.WiFiSettings.ConnectAtStartUp = wifiConnect.Checked;
-				settings.SoundSettings.Volume = soundVolume.Value;
-				settings.SoundSettings.EnableSound = enableSound.Checked;
+				//settings.SoundSettings.Volume = soundVolume.Value;
+				//settings.SoundSettings.EnableSound = enableSound.Checked;
 				settings.Save();
 			}).Start();
 			return false;
