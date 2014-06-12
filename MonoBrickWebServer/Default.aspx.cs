@@ -124,7 +124,7 @@ namespace MonoBrickWebServer
 				}
 				else 
 				{
-					motorArray[idx].On(speed);	
+					motorArray[idx].SetSpeed(speed);	
 				}
 			}
 		}
@@ -170,7 +170,7 @@ namespace MonoBrickWebServer
 				}
 				else 
 				{
-					motorArray[idx].On(speed);	
+					motorArray[idx].SetSpeed(speed);	
 				}
 			}	
 		}
@@ -180,7 +180,7 @@ namespace MonoBrickWebServer
 			int idx = MotorStringToIdx (((Button)sender).CommandName);
 			if (motorArray [idx] != null) 
 			{
-				motorArray [idx].On(0);
+				motorArray [idx].SetSpeed(0);
 				motorArray [idx].Off();
 				speed = 0;
 			}	
@@ -191,7 +191,7 @@ namespace MonoBrickWebServer
 			int idx = MotorStringToIdx (((Button)sender).CommandName);
 			if (motorArray [idx] != null) 
 			{
-				motorArray [idx].On(0);
+				motorArray [idx].SetSpeed(0);
 				motorArray [idx].Brake();
 				speed = 0;
 			}			
