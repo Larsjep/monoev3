@@ -30,7 +30,7 @@ namespace MonoBrickFirmware.Sensors
 	/// </summary>
 	public enum IRChannel{
 		#pragma warning disable 
-		One = 0, Two = 1, Three = 2, Four = 4
+		One = 0, Two = 1, Three = 2, Four = 3
 		#pragma warning restore
 	};
 	

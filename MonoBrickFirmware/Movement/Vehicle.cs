@@ -79,7 +79,7 @@ namespace MonoBrickFirmware.Movement
 		/// Speed of the vehicle -100 to 100
 		/// </param>
 		public void Backward(sbyte speed){
-			Backward((sbyte)-speed, 0, false);
+			Backward((sbyte)-speed, 0, false, false);
 		}
 	
 		/// <summary>
@@ -92,7 +92,7 @@ namespace MonoBrickFirmware.Movement
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
 		public void Backward(sbyte speed, UInt32 degrees, bool brake, bool waitForCompletion = true){
-			Move((sbyte)-speed,degrees, brake, waitForCompletion);
+			Move((sbyte)-speed, degrees, brake, waitForCompletion);
 		}
 	
 		/// <summary>
@@ -102,7 +102,7 @@ namespace MonoBrickFirmware.Movement
 		/// Speed of the vehicle -100 to 100
 		/// </param>
 		public void Forward(sbyte speed){
-			Forward(speed,0, false, false);
+			Forward(speed, 0, false, false);
 		}
 		
 		/// <summary>

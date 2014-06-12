@@ -11,7 +11,6 @@ namespace MonoBrickFirmware.Sound
 	
 	public class Speaker
 	{
-		
 		private UnixDevice soundDevice = new UnixDevice("/dev/lms_sound");
 		//private MemoryArea soundMemory;
 		private	int currentVolume;
