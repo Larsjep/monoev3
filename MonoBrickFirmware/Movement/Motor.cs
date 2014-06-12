@@ -52,45 +52,15 @@ namespace MonoBrickFirmware.Movement
 		/// <param name='speed'>
 		/// Speed of the motor -100 to 100
 		/// </param>
-		public void On(sbyte speed){
+		public void SetSpeed(sbyte speed){
 			output.Start(speed);
-		}
-		
-		/// <summary>
-		/// Move the motor to a relative position
-		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the motor -100 to 100
-		/// </param>
-		/// <param name='degrees'>
-		/// The relative position of the motor
-		/// </param>
-		/// <param name='brake'>
-		/// Set to <c>true</c> if the motor should brake when done
-		/// </param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
-		/// </param>
-		public void On(sbyte speed, UInt32 degrees, bool brake, bool waitForCompletion = true){
-			UInt64 longDegrees = (UInt64)degrees;
-			UInt32 rampUpDownSteps =(UInt32) (15 *  longDegrees * 100)/10000;
-			UInt32 constantsSteps = (UInt32) (70 *  longDegrees * 100)/10000;
-			if(rampUpDownSteps > 200){//To make sure ramp up is not too long
-				rampUpDownSteps = 200;
-				constantsSteps = degrees - 2*rampUpDownSteps;
-			}
-			output.SetStepPower(0,0, 0, 0, true);
-			WaitForMotorToStop();
-			output.SetStepSpeed(speed,rampUpDownSteps,constantsSteps, rampUpDownSteps, brake);
-			if(waitForCompletion)
-				this.WaitForMotorToStop();
 		}
 		
 		/// <summary>
 		/// Moves the motor to an absolute position
 		/// </summary>
-		/// <param name='speed'>
-		/// Speed of the motor 0 to 100
+		/// <param name='maxPower'>
+		/// maxPower of the motor 0 to 100
 		/// </param>
 		/// <param name='position'>
 		/// Absolute position
@@ -101,37 +71,10 @@ namespace MonoBrickFirmware.Movement
 		/// <param name='waitForCompletion'>
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void MoveTo (byte speed, Int32 position, bool brake, bool waitForCompletion = true)
+		public void MoveTo (sbyte maxPower, Int32 position, bool brake, bool waitForCompletion = true)
 		{
-			Int32 currentPos = GetTachoCount ();
-			UInt32 diff = 0;
-			sbyte motorSpeed = 0;
-			bool moveForward = false; 
-			if (currentPos < position) {
-				diff = (UInt32)(position - currentPos);
-				moveForward = true;
-			} else {
-				diff = (UInt32)(currentPos - position);
-				moveForward = false;
-			}
-			if (Reverse) 
-			{
-				if(moveForward){
-					motorSpeed = (sbyte)-speed;
-				}
-				else{
-					motorSpeed = (sbyte)speed;
-				}
-			}
-			else{
-				if(moveForward){
-					motorSpeed = (sbyte)speed;
-				}
-				else{
-					motorSpeed = (sbyte)-speed;
-				}
-			}
-			this.On(motorSpeed, diff, brake, waitForCompletion);	
+			var controller = new PositionPID(PortList[0], position, brake, maxPower,0.1f,80.1f,1.05f, 40);
+			controller.Run(true);
 		}
 		
 		/// <summary>
@@ -204,7 +147,7 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
 		public void PowerProfileTime (byte power, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool waitForCompletion = true)
 		{
-			On(0);
+			SetSpeed(0);
 			System.Threading.Thread.Sleep (50);
 			output.SetTimePower(power, rampUpTimeMs,constantSpeedTimeMs,rampDownTimeMs, brake);
 			if(waitForCompletion)

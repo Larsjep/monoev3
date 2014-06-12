@@ -100,8 +100,9 @@ namespace MonoBrickFirmware.Movement
 		/// Sets the power of the motor.
 		/// </summary>
 		/// <param name="power">Power to use.</param>
-		public void SetPower(byte power){
+		public void SetPower(sbyte power){
 			output.SetPower(power);
+			output.Start();
 		}
 		
 		

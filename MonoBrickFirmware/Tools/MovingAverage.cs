@@ -8,29 +8,72 @@ namespace MonoBrickFirmware
 		private UInt32 size;
 		private float sum;
 		private int index;
-		float[] val;
+		private float[] val;
+		private bool windowIsFull;
 		
-		public MovingAverage (UInt32 windowSize, float initialValue = 0.0f)
+		public MovingAverage (UInt32 windowSize)
 		{
-			   size = windowSize;
-			   val = new float[size];
-			   SetValue(initialValue);
-
+			sum = 0.0f;
+			size = windowSize;
+			index = 0;
+			val = new float[size];
+			windowIsFull = false;
 		}
 		
-		public float GetAverage()
+		public MovingAverage (UInt32 windowSize, float fillValue)
 		{
-			return sum/size;	
-			
+			size = windowSize;
+			val = new float[size];
+			FillWindow(fillValue);
+		}
+		
+		
+		
+		public void FillWindow(float value)
+		{
+			for(int i = 0; i < size; i++)
+			{
+			     val[i] = value;
+			}
+			sum = value * size;
+			index = 0;
+			windowIsFull = true;
+		}
+		
+		public float GetAverage ()
+		{
+			float average;
+			if (windowIsFull) 
+			{
+				//Console.WriteLine("Get average sum: " + sum + " size: " + size);
+				average = sum / size;
+			} 
+			else 
+			{
+				if (index == 0) 
+				{
+					average = 0.0f;
+				} 
+				else 
+				{
+					//Console.WriteLine("Get average sum: " + sum + " index: " + index);
+					average = sum / index;
+				}
+			}
+			return average;	
 		}
 		
 		public void Update (float newValue)
 		{
-			sum = sum -val[index] + newValue;
-			val[index] = newValue;
+			sum = sum - val [index] + newValue;
+			val [index] = newValue;
 			index++;
-			if(index >= size){
-			  index = 0;
+			if (index >= size) {
+				index = 0;
+				if (!windowIsFull) 
+				{
+					windowIsFull = true;
+				}
 			}
 		}
 		
@@ -40,15 +83,7 @@ namespace MonoBrickFirmware
 			return GetAverage();
 		}
 		
-		private void SetValue (float value)
-		{
-			for(int i = 0; i < size; i++)
-			{
-			     val[i] = value;
-			}
-			sum = value * size;
-			index = 0;
-		}
+		
 	}
 }
 

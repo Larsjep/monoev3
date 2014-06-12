@@ -114,7 +114,7 @@ namespace MonoBrickFirmware.Movement
 		/// Sets the power.
 		/// </summary>
 		/// <param name="power">Power.</param>
-		public void SetPower(byte power){
+		public void SetPower(sbyte power){
 			var command = new ByteArrayCreator();
 			command.Append(KernelByteCodes.OutputPower);
 			command.Append(BitField);

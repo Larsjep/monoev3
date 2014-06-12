@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{67261E03-D263-4C42-A5AD-2A4820231B28}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -90,7 +90,6 @@
     <Compile Include="Display\Dialogs\InfoDialog.cs" />
     <Compile Include="Display\Dialogs\QuestionsDialog.cs" />
     <Compile Include="Display\Dialogs\SelectDialog.cs" />
-    <Compile Include="Movement\PID.cs" />
     <Compile Include="Sound\Speaker.cs" />
     <Compile Include="Services\WebServer.cs" />
     <Compile Include="Tools\XmlHelper.cs" />
@@ -115,6 +114,9 @@
     <Compile Include="Display\Dialogs\ProgressDialog.cs" />
     <Compile Include="Native\AOTHelper.cs" />
     <Compile Include="Connections\WiFiDevice.cs" />
+    <Compile Include="Movement\PositionPID.cs" />
+    <Compile Include="Tools\MovingAverage.cs" />
+    <Compile Include="Tools\PIDAbstraction.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
