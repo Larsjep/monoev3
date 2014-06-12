@@ -14,7 +14,7 @@ namespace example
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		public static void Main (string[] args)
 		{
-			 new Motor(MotorPort.OutA).Off();
+			new Motor(MotorPort.OutA).Off();
 			
 			Lcd.Instance.ShowPicture(MonoPicture.Picture);
 			Font f = Font.MediumFont;
