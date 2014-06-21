@@ -7,6 +7,9 @@ namespace MonoBrickFirmware.Movement
 	/// </summary>
 	public class MotorSync : MotorBase{
 		
+		private const int waitInitialSleep = 300;
+		private const int waitPollTime = 50;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.MotorSync"/> class.
 		/// </summary>
@@ -48,7 +51,7 @@ namespace MonoBrickFirmware.Movement
 		public void StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake, bool waitForCompletion = true){
 			output.SetStepSync(speed, turnRatio, steps, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop();
+				WaitForMotorToStop(waitInitialSleep, waitPollTime);
 		}
 		
 		/// <summary>
@@ -64,7 +67,7 @@ namespace MonoBrickFirmware.Movement
 		public void TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake, bool waitForCompletion = true){
 			output.SetTimeSync(speed, turnRatio, timeInMs, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop();
+				WaitForMotorToStop(waitInitialSleep, waitPollTime);
 		}
 		
 		/// <summary>
@@ -89,19 +92,8 @@ namespace MonoBrickFirmware.Movement
 		public void On (sbyte speed, Int16 turnRatio, uint degrees, bool brake, bool waitForCompletion = true){
 			StepSync(speed, turnRatio , degrees, brake, waitForCompletion);
 			if(waitForCompletion)
-				WaitForMotorToStop();
+				WaitForMotorToStop(waitInitialSleep, waitPollTime);
 		}
-		
-		protected override void WaitForMotorToStop ()
-		{
-			System.Threading.Thread.Sleep (300);
-			foreach (var port in PortList) {
-				do{
-					System.Threading.Thread.Sleep(50);
-				}while(output.GetSpeed(port)!= 0);	
-			}
-		}
-		
 	}
 }
 

@@ -2,6 +2,7 @@ namespace MonoBrickWebServer
 {
 	using System;
 	using System.Web;
+	using System.Threading;
 	using System.Web.UI;
 	using System.Web.UI.WebControls; 
 	using MonoBrickFirmware.Sensors;
@@ -136,7 +137,7 @@ namespace MonoBrickWebServer
 				int position;
 				if (int.TryParse (Motor1PositionText.Text, out position)) 
 				{
-					motorArray[idx].MoveTo(50, position,true, false);
+					motorArray [idx].MoveTo (50, position, true, false);
 				}
 				else
 				{

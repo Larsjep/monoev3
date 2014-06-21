@@ -29,20 +29,16 @@ namespace MonoBrickFirmware.Tools
 	    private float minChange;
 		
 	    private bool maxMinChangeSet;
-		
-		private void update ()
-		{
-			k1 = Kp;
-			if (Ki != 0.0f) 
-			{ 
-				k2 = Kp * (Ts / Ki);
-			} 
-			else 
-			{
-				k2 = 0.0f;
-			}
-	      	k3 = Kp*(Kd/Ts);
-	    }
+		protected float currentError;
+		protected float currentOutput;
+		protected ManualResetEvent killTimer = new ManualResetEvent(false);
+		private System.Timers.Timer timer;
+		protected abstract void ApplyOutput (float output);
+
+		protected abstract float CalculateError ();
+
+		protected abstract bool StopLoop();
+
 		
  	 	public PIDAbstraction(float P, float I, float D, float newSampleTime, float maxOut = 100.0f, float minOut = -100.0f, float maxChangePerSec = 0.0f, float minChangePerSec = 0.0f){
 			Kp = P;
@@ -66,18 +62,13 @@ namespace MonoBrickFirmware.Tools
 			timer = new System.Timers.Timer((double)Ts);
 			timer.Elapsed += ControlFunction;
 		}
-		
-		protected abstract void ApplyOutput (float output);
-		
-		protected abstract float CalculateError ();
-		
-		protected abstract bool StopLoop();
-		
-		protected float currentError;
-		protected float currentOutput;
-		protected ManualResetEvent killTimer = new ManualResetEvent(false);
-		private System.Timers.Timer timer;
-		
+
+		/*public float P { get{return Kp;} set{Kp = value; update ();}}
+		public float I { get{return Ki;} set{Ki = value; update ();}}
+		public float D { get{return Kd;} set{Kd = value; update ();}}*/
+
+		public event Action Completed = delegate(){};
+
 		public void Run (bool waitForCompletion)
 		{
 			if (!timer.Enabled) {
@@ -86,28 +77,60 @@ namespace MonoBrickFirmware.Tools
 			}
 			if (waitForCompletion) 
 			{
-				Console.WriteLine("Wating");
 				killTimer.WaitOne ();
 			}
-			Console.WriteLine("Done");
 		}
 		
+		public void Cancel ()
+		{
+			if (timer.Enabled) 
+			{
+				timer.Stop();
+				Monitor.Enter(this);
+				killTimer.Set();
+				Completed();
+				Monitor.Exit(this);
+			}	
+		}
+		
+		public void Dispose()
+		{
+			Cancel();
+		}
+
+
 		private void ControlFunction (Object source, ElapsedEventArgs e)
 		{
-			lock (this) 
+			if (!Monitor.TryEnter(this))
 			{
-				currentError = CalculateError ();
-				currentOutput = CalculateOutput (currentError);
-				ApplyOutput (currentOutput);
-				if (StopLoop ()) {
-					timer.Stop ();
-					killTimer.Set ();
-					Console.WriteLine ("Timer done");
-				}
+				//cancel has the lock
+				return;
 			}
+			currentError = CalculateError ();
+			currentOutput = CalculateOutput (currentError);
+			ApplyOutput (currentOutput);
+			if (StopLoop ()) {
+				timer.Stop ();
+				killTimer.Set();
+				Completed ();
+			}
+			Monitor.Exit(this);
 		}
-		
-		
+
+		private void update ()
+		{
+			k1 = Kp;
+			if (Ki != 0.0f) 
+			{ 
+				k2 = Kp * (Ts / Ki);
+			} 
+			else 
+			{
+				k2 = 0.0f;
+			}
+			k3 = Kp*(Kd/Ts);
+		}
+
 		private float CalculateOutput (float ek)
 		{
 			uk = uk1 + k1 * (ek - ek1) + k2 * ek + k3 * (ek - 2 * ek1 + ek2);
@@ -120,14 +143,14 @@ namespace MonoBrickFirmware.Tools
 			Console.WriteLine("k2" + k2);
 			Console.WriteLine("k3" + k3);
 			Console.WriteLine("****");*/
-			
+
 			if (uk > max) {
 				uk = max;
 			}
 			if (uk < min) {
 				uk = min;
 			}
-			
+
 			if (maxMinChangeSet) {
 				if ((uk - uk1) > maxChange) {
 					uk = uk1 + maxChange;
@@ -142,20 +165,6 @@ namespace MonoBrickFirmware.Tools
 			ek1 = ek;
 			//Console.WriteLine("Uk" + uk);
 			return uk;
-		}
-		
-		public void Cancel ()
-		{
-			if (timer.Enabled) 
-			{
-				timer.Stop();
-				killTimer.Set();
-			}	
-		}
-		
-		public void Dispose()
-		{
-			Cancel();
 		}
 		
 	}

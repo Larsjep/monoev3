@@ -106,12 +106,14 @@ namespace MonoBrickFirmware.Movement
 		}
 		
 		
-		protected virtual void WaitForMotorToStop ()
+		protected virtual void WaitForMotorToStop (int initialSleep, int pollSleep )
 		{
-			System.Threading.Thread.Sleep(300);
-			do{
-				System.Threading.Thread.Sleep(50);
-			}while(output.GetSpeed(this.PortList[0])!= 0);
+			System.Threading.Thread.Sleep (initialSleep);
+			foreach (var port in PortList) {
+				do{
+					System.Threading.Thread.Sleep(pollSleep);
+				}while(output.GetSpeed(port)!= 0);	
+			}
 		}
 	
 	}

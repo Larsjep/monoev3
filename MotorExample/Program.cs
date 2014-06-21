@@ -14,7 +14,7 @@ namespace MotorExample
 			
 			Motor motor = new Motor (MotorPort.OutA);
 			motor.ResetTacho();
-			motor.MoveTo(25,1000,true,true);
+			motor.MoveTo(25,1000,true);
 			System.Threading.Thread.Sleep(3000);
 			Console.WriteLine(motor.GetTachoCount().ToString());
 			

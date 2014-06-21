@@ -11,15 +11,26 @@ namespace MonoBrickFirmware.Movement
 	/// </summary>
 	public class Motor :  MotorBase
 	{
+		private PositionPID controller = null;
+		private const float standardPValue = 0.1f;
+		private const float standardIValue = 80.1f;
+		private const float standardDValue = 1.05f;
+		private const float controllerSampleTime = 40; 
+		private const int waitInitialSleep = 300;
+		private const int waitPollTime = 50;
+
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.Motor"/> class.
 		/// </summary>
 		/// <param name="port">Port.</param>
-		public Motor(MotorPort port){
+		public Motor(MotorPort port)
+		{
 			this.BitField = MotorPortToBitfield(port);
 			Reverse = false;
+			controller = new PositionPID (port, 0, false, 100, standardPValue, standardIValue, standardIValue, controllerSampleTime);
 		}
-		
+
 		/// <summary>
 		/// The reverse value
 		/// </summary>
@@ -53,6 +64,7 @@ namespace MonoBrickFirmware.Movement
 		/// Speed of the motor -100 to 100
 		/// </param>
 		public void SetSpeed(sbyte speed){
+			controller.Cancel ();
 			output.Start(speed);
 		}
 		
@@ -73,10 +85,16 @@ namespace MonoBrickFirmware.Movement
 		/// </param>
 		public void MoveTo (sbyte maxPower, Int32 position, bool brake, bool waitForCompletion = true)
 		{
-			var controller = new PositionPID(PortList[0], position, brake, maxPower,0.1f,80.1f,1.05f, 40);
-			controller.Run(true);
+			MoveTo (maxPower, position, brake, standardPValue, standardIValue, standardDValue, waitForCompletion);
 		}
-		
+
+		public void  MoveTo (sbyte maxPower, Int32 position, bool brake, float P, float I, float D, bool waitForCompletion = true)
+		{
+			controller.Cancel ();
+			controller = new PositionPID (PortList [0], position, brake, maxPower, P, I, D, controllerSampleTime);
+			controller.Run (waitForCompletion);
+		}
+
 		/// <summary>
 		/// Create a speed profile where ramp up and down is specified in steps
 		/// </summary>
@@ -90,11 +108,11 @@ namespace MonoBrickFirmware.Movement
 		/// </param>
 		public void SpeedProfileStep(sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool waitForCompletion = true)
 		{
-			output.SetStepPower(0,0, 0, 0, true);
-			WaitForMotorToStop();
+			controller.Cancel ();
+			output.SetPower (0);
 			output.SetStepSpeed(speed, rampUpSteps, constantSpeedSteps,rampDownSteps, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop();
+				WaitForMotorToStop(waitInitialSleep, waitPollTime);
 		}
 		
 		/// <summary>
@@ -110,11 +128,12 @@ namespace MonoBrickFirmware.Movement
 		/// </param>
 		public void SpeedProfileTime(sbyte speed, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool waitForCompletion = true)
 		{
-			output.SetStepPower(0,0, 0, 0, true);
-			WaitForMotorToStop();
+			controller.Cancel ();
+			output.SetPower (0);
 			output.SetTimeSpeed(speed, rampUpTimeMs, constantSpeedTimeMs, rampUpTimeMs, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop();
+				WaitForMotorToStop(waitInitialSleep, waitPollTime);
+			
 		}
 		
 		/// <summary>
@@ -130,11 +149,11 @@ namespace MonoBrickFirmware.Movement
 		/// </param>
 		public void PowerProfileStep(sbyte power, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool waitForCompletion = true)
 		{
-			output.SetStepPower(0,0, 0, 0, true);
-			WaitForMotorToStop();
+			controller.Cancel ();
+			output.SetPower (0);
 			output.SetStepPower(power,rampUpSteps, constantSpeedSteps, rampDownSteps, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop();
+				WaitForMotorToStop(waitInitialSleep, waitPollTime);
 		}
 		
 		/// <summary>
@@ -147,11 +166,12 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
 		public void PowerProfileTime (byte power, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool waitForCompletion = true)
 		{
-			SetSpeed(0);
-			System.Threading.Thread.Sleep (50);
+			controller.Cancel();
+			output.SetPower (0);
 			output.SetTimePower(power, rampUpTimeMs,constantSpeedTimeMs,rampDownTimeMs, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop();
+				WaitForMotorToStop(waitInitialSleep, waitPollTime);
+			
 		}
 		
 		/// <summary>
