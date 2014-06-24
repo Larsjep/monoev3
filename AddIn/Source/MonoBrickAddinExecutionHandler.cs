@@ -31,18 +31,41 @@ namespace MonoBrickAddin
 {
 	class MonoBrickExecutionHandler : IExecutionHandler
 	{
+		public bool AOT { get; private set; }
+
+		public MonoBrickExecutionHandler()
+		{
+			AOT = false;
+		}
+
+		public MonoBrickExecutionHandler(bool _aot)
+		{
+			AOT = _aot;
+		}
+
 		public bool CanExecute(ExecutionCommand command)
 		{
-			return command is MonoBrickExecutionCommand;
+			MonoBrickExecutionCommand cmd = command as MonoBrickExecutionCommand;
+			if (cmd == null)
+				return false;
+
+			if (AOT && cmd.Config.Name != "Release")
+				return false;
+
+			return true;
 		}
 
 		public IProcessAsyncOperation Execute(ExecutionCommand command, IConsole console)
 		{
-			var cmd = (MonoBrickExecutionCommand)command;
+			var cmd = command as MonoBrickExecutionCommand;
+			cmd.AOT = AOT;
+
 			string EV3IPAddress = UserSettings.Instance.IPAddress;
 			bool EV3Verbose = UserSettings.Instance.Verbose;
 
-			var proc = MonoBrickUtility.ExecuteCommand(EV3IPAddress, cmd, null, console, EV3Verbose);
+			console.Log.WriteLine(cmd.AOT ? "Running on brick in AOT mode ..." : "Running on brick ...");
+
+			var proc = MonoBrickUtility.ExecuteCommand(EV3IPAddress, cmd, null, EV3Verbose);
 			proc.Execute();
 			return proc;
 		}

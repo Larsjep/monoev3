@@ -1,4 +1,4 @@
-// MonoBrickAddinExecutionCommand.cs
+// MonoBrickAddinExecutionModeSet.cs
 //
 // Author:
 //       Bernhard Straub
@@ -24,67 +24,37 @@
 // 	THE SOFTWARE.
 
 using System;
-using System.IO;
-using System.Collections.Generic;
 using MonoDevelop.Core.Execution;
+using System.Collections.Generic;
 
 namespace MonoBrickAddin
 {
-	public class MonoBrickExecutionCommand: ExecutionCommand
+	public class MonoBrickExecutionModeSet : IExecutionModeSet
 	{
-		public IConsole Console { get; set; }
-		public IList<string> UserAssemblyPaths { get; set; }
-		public bool AOT { get; set; }
-		public int LastError { get; set; }
+		MonoBrickExecutionMode mode;
 
-		public MonoBrickExecutionCommand()
-		{
-			this.Config = null;
-			Console = null;
-			AOT = false;
-			LastError = 0;
-		}
+		public string Name { get { return "MonoBrick"; } }
 
-		public MonoBrickExecutionCommand(MonoBrickProjectConfiguration config)
-		{
-			this.Config = config;
-			Console = null;
-			AOT = false;
-			LastError = 0;
-		}
-
-		public MonoBrickProjectConfiguration Config { get; private set; }
-
-		public string AppName
+		public IEnumerable<IExecutionMode> ExecutionModes
 		{
 			get {
-				return Path.GetFileNameWithoutExtension(Config.OutputAssembly);
+				yield return mode ?? (mode = new MonoBrickExecutionMode());
 			}
 		}
+	}
 
-		public string CommandString
-		{
-			get { return "[MonoBrick]"; }
-		}
+	class MonoBrickExecutionMode : IExecutionMode
+	{
+		MonoBrickExecutionHandler handler;
 
-		public string DeviceDirectory
-		{
-			get {
-				return "/home/root/apps/" + Path.GetFileNameWithoutExtension(Config.OutputAssembly) + "/";
-			}
-		}
+		public string Name { get { return "MonoBrick AOT"; } }
 
-		public string DeviceFileName
+		public string Id { get { return "MonoBrickExecutionMode"; } }
+
+		public IExecutionHandler ExecutionHandler
 		{
 			get {
-				return Config.CompiledOutputName.FileName;
-			}
-		}
-
-		public string DeviceExePath
-		{
-			get {
-				return DeviceDirectory + DeviceFileName;
+				return handler ?? (handler = new MonoBrickExecutionHandler(true));
 			}
 		}
 	}

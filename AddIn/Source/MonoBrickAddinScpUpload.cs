@@ -28,8 +28,10 @@ using System.Threading;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using MonoDevelop.Core;
+using MonoDevelop.Core.Execution;
 using Renci.SshNet;
 
 namespace MonoBrickAddin
@@ -38,10 +40,10 @@ namespace MonoBrickAddin
 	{
 		private string _localPath;
 		private string _remotePath;
+		private IConsole _console = null;
 		private ScpClient _scpClient = null;
 		private SshCommandHelper _sshHelper = null;
 		private string _fileHash;
-
 		// IAsyncOperation
 		public bool IsCompleted { get; private set; }
 
@@ -69,13 +71,14 @@ namespace MonoBrickAddin
 			wait.Set();
 		}
 
-		public ScpUpload(string IPAddress, string localPath, string remotePath)
+		public ScpUpload(string IPAddress, MonoBrickExecutionCommand cmd)
 		{
-			_localPath = localPath;
-			_remotePath = remotePath;
+			_localPath = cmd.Config.OutputDirectory;
+			_remotePath = cmd.DeviceDirectory;
 			_scpClient = new ScpClient(IPAddress, "root", "");
 			_sshHelper = new SshCommandHelper(IPAddress);
 			_fileHash = UserSettings.Instance.LastUploadHash;
+			_console = cmd.Console;
 
 			Success = false;
 			SuccessWithWarnings = false;
@@ -123,10 +126,14 @@ namespace MonoBrickAddin
 		private void DoUpload()
 		{
 			string newUploadHash = CreateMd5ForFolder(_localPath);
-			if (newUploadHash == _fileHash)
-				return; // nothing to do
+			if (newUploadHash == _fileHash && VerifiyRemoteFiles())
+			{
+				_console.Log.WriteLine("Data unchanged, skipping upload!");
+				return;
+			}
 
-			_sshHelper.WriteSSHCommand(GetDirectoryCommand());
+			_sshHelper.WriteSSHCommand(_sshHelper.GetDirectoryCommand(_remotePath));
+			_sshHelper.WriteSSHCommand(_sshHelper.GetCleanCommand(_remotePath, _fileHash == ""));
 
 			_scpClient.Connect();
 
@@ -140,12 +147,25 @@ namespace MonoBrickAddin
 			UserSettings.Save();
 		}
 
-		private string GetDirectoryCommand()
+		private bool VerifiyRemoteFiles()
 		{
-			string makeDirString = string.Format("mkdir -p {0}", _remotePath);
-			return makeDirString;
+			string fileListRemote = _sshHelper.WriteSSHCommand(_sshHelper.GetFileListCommand(_remotePath), false, true);
+
+			var usedFileListRemote = _sshHelper.RegexExecutionFiles.Matches(fileListRemote)
+				.OfType<Match>()
+				.Select(m => m.Groups[0].Value)
+				.ToArray();
+				
+			var usedFileListLocal = new DirectoryInfo(_localPath).GetFiles().Select(o => o.Name).Where(f => _sshHelper.RegexExtension.IsMatch(f)).ToArray();
+
+			var missingFileList = usedFileListLocal.Where(file => !usedFileListRemote.Contains(file)).ToArray();
+			string missingFiles = string.Concat(missingFileList.ToArray().Select(a => a += ", ").ToArray());
+			if (missingFileList.Count() > 0)
+				_console.Log.WriteLine("Found missing remote file(s): {0} forcing upload...", missingFiles);
+
+			return (missingFileList.Count() == 0);
 		}
-			
+
 		private static string CreateMd5ForFolder(string path)
 		{
 			string newHash = "";
@@ -158,7 +178,7 @@ namespace MonoBrickAddin
 
 				MD5 md5 = MD5.Create();
 
-				for(int i = 0; i < files.Count; i++)
+				for (int i = 0; i < files.Count; i++)
 				{
 					string file = files[i];
 

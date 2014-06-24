@@ -10,8 +10,6 @@
     <AssemblyName>MonoBrickAddin</AssemblyName>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <Description>MonoBrick addin for EV3 development.</Description>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -77,6 +75,9 @@
     <Reference Include="Renci.SshNet">
       <HintPath>External\Renci.SshNet.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Addins">
+      <HintPath>External\Mono.Addins.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -95,6 +96,8 @@
     <Compile Include="Source\MonoBrickAddinUtility.cs" />
     <Compile Include="Source\MonoBrickAddinSshExecute.cs" />
     <Compile Include="Source\MonoBrickAddinSettings.cs" />
+    <Compile Include="Source\MonoBrickAddinExecutionModeSet.cs" />
+    <Compile Include="Source\MonoBrickAddinInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\MonoBrickProject.xpt.xml">
@@ -128,6 +131,14 @@
       <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="External\ICSharpCode.NRefactory.dll" />
+    <None Include="External\Mono.Debugging.dll" />
+    <None Include="External\Mono.Debugging.Soft.dll" />
+    <None Include="External\MonoDevelop.Core.dll" />
+    <None Include="External\MonoDevelop.Debugger.dll" />
+    <None Include="External\MonoDevelop.Debugger.Soft.dll" />
+    <None Include="External\MonoDevelop.Ide.dll" />
+    <None Include="External\Renci.SshNet.dll" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -136,10 +147,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <ProjectReference Include="..\MonoBrickFirmware\MonoBrickFirmware.csproj">
-      <Project>{67261E03-D263-4C42-A5AD-2A4820231B28}</Project>
-      <Name>MonoBrickFirmware</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>
