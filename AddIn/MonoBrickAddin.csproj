@@ -46,36 +46,26 @@
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="ICSharpCode.NRefactory">
-      <HintPath>External\ICSharpCode.NRefactory.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Mono.Debugging.Soft">
-      <HintPath>External\Mono.Debugging.Soft.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Mono.Debugging">
-      <HintPath>External\Mono.Debugging.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="MonoDevelop.Core">
       <HintPath>External\MonoDevelop.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MonoDevelop.Debugger.Soft">
-      <HintPath>External\MonoDevelop.Debugger.Soft.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MonoDevelop.Debugger">
-      <HintPath>External\MonoDevelop.Debugger.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="MonoDevelop.Ide">
       <HintPath>External\MonoDevelop.Ide.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Renci.SshNet">
       <HintPath>External\Renci.SshNet.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoDevelop.Debugger">
+      <HintPath>External\MonoDevelop.Debugger.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoDevelop.Debugger.Soft">
+      <HintPath>External\MonoDevelop.Debugger.Soft.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Debugging">
+      <HintPath>External\Mono.Debugging.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Debugging.Soft">
+      <HintPath>External\Mono.Debugging.Soft.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +103,11 @@
       <LogicalName>monobrickaddin-icon-32.png</LogicalName>
       <DeployService-Deploy>True</DeployService-Deploy>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\MonoBrickFirmware\bin\Release\MonoBrickFirmware.dll">
+      <Link>MonoBrickFirmware.dll</Link>
+      <LogicalName>MonoBrick.MonoBrickFirmware.dll</LogicalName>
+      <DeployService-Deploy>True</DeployService-Deploy>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -136,10 +131,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <ProjectReference Include="..\MonoBrickFirmware\MonoBrickFirmware.csproj">
-      <Project>{67261E03-D263-4C42-A5AD-2A4820231B28}</Project>
-      <Name>MonoBrickFirmware</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

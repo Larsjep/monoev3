@@ -5,16 +5,27 @@ namespace MonoBrickAddin
 	public partial class EV3OptionsPanel
 	{
 		private global::Gtk.VBox vbox1;
+		
 		private global::Gtk.Frame frame1;
+		
 		private global::Gtk.Alignment GtkAlignment;
+		
 		private global::Gtk.Table table1;
+		
 		private global::Gtk.HBox hbox2;
+		
 		private global::Gtk.CheckButton wEV3Verbose;
+		
 		private global::Gtk.HSeparator hseparator1;
+		
 		private global::Gtk.Label label2;
+		
 		private global::Gtk.Label label3;
+		
 		private global::Gtk.Entry wEV3DebugPort;
+		
 		private global::Gtk.Entry wEV3IPAddress;
+		
 		private global::Gtk.Label GtkLabel2;
 
 		protected virtual void Build ()
