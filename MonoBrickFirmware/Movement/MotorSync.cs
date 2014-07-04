@@ -51,7 +51,7 @@ namespace MonoBrickFirmware.Movement
 		public void StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake, bool waitForCompletion = true){
 			output.SetStepSync(speed, turnRatio, steps, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop(waitInitialSleep, waitPollTime);
+				WaitForMotorToStop(waitPollTime);
 		}
 		
 		/// <summary>
@@ -67,7 +67,7 @@ namespace MonoBrickFirmware.Movement
 		public void TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake, bool waitForCompletion = true){
 			output.SetTimeSync(speed, turnRatio, timeInMs, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop(waitInitialSleep, waitPollTime);
+				WaitForMotorToStop(waitPollTime);
 		}
 		
 		/// <summary>
@@ -92,7 +92,7 @@ namespace MonoBrickFirmware.Movement
 		public void On (sbyte speed, Int16 turnRatio, uint degrees, bool brake, bool waitForCompletion = true){
 			StepSync(speed, turnRatio , degrees, brake, waitForCompletion);
 			if(waitForCompletion)
-				WaitForMotorToStop(waitInitialSleep, waitPollTime);
+				WaitForMotorToStop(waitPollTime);
 		}
 	}
 }

@@ -16,7 +16,6 @@ namespace MonoBrickFirmware.Movement
 		private const float standardIValue = 80.1f;
 		private const float standardDValue = 1.05f;
 		private const float controllerSampleTime = 40; 
-		private const int waitInitialSleep = 300;
 		private const int waitPollTime = 50;
 
 
@@ -112,7 +111,7 @@ namespace MonoBrickFirmware.Movement
 			output.SetPower (0);
 			output.SetStepSpeed(speed, rampUpSteps, constantSpeedSteps,rampDownSteps, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop(waitInitialSleep, waitPollTime);
+				WaitForMotorToStop(waitPollTime);
 		}
 		
 		/// <summary>
@@ -132,7 +131,7 @@ namespace MonoBrickFirmware.Movement
 			output.SetPower (0);
 			output.SetTimeSpeed(speed, rampUpTimeMs, constantSpeedTimeMs, rampUpTimeMs, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop(waitInitialSleep, waitPollTime);
+				WaitForMotorToStop(waitPollTime);
 			
 		}
 		
@@ -153,7 +152,7 @@ namespace MonoBrickFirmware.Movement
 			output.SetPower (0);
 			output.SetStepPower(power,rampUpSteps, constantSpeedSteps, rampDownSteps, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop(waitInitialSleep, waitPollTime);
+				WaitForMotorToStop(waitPollTime);
 		}
 		
 		/// <summary>
@@ -170,7 +169,7 @@ namespace MonoBrickFirmware.Movement
 			output.SetPower (0);
 			output.SetTimePower(power, rampUpTimeMs,constantSpeedTimeMs,rampDownTimeMs, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop(waitInitialSleep, waitPollTime);
+				WaitForMotorToStop(waitPollTime);
 			
 		}
 		

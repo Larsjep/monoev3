@@ -104,11 +104,18 @@ namespace MonoBrickFirmware.Movement
 			output.SetPower(power);
 			output.Start();
 		}
-		
-		
-		protected virtual void WaitForMotorToStop (int initialSleep, int pollSleep )
+
+		protected void WaitForMotorsToMove(int pollSleep)
 		{
-			System.Threading.Thread.Sleep (initialSleep);
+			foreach (var port in PortList) {
+				do{
+					System.Threading.Thread.Sleep(pollSleep);
+				}while(output.GetSpeed(port)== 0);	
+			}
+		}
+
+		protected void WaitForMotorToStop (int pollSleep)
+		{
 			foreach (var port in PortList) {
 				do{
 					System.Threading.Thread.Sleep(pollSleep);
