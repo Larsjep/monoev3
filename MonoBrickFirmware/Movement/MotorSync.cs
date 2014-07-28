@@ -7,9 +7,6 @@ namespace MonoBrickFirmware.Movement
 	/// </summary>
 	public class MotorSync : MotorBase{
 		
-		private const int waitInitialSleep = 300;
-		private const int waitPollTime = 50;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.MotorSync"/> class.
 		/// </summary>
@@ -49,9 +46,11 @@ namespace MonoBrickFirmware.Movement
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
 		public void StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake, bool waitForCompletion = true){
+			if(!waitForCompletion)
+				CancelPolling();
 			output.SetStepSync(speed, turnRatio, steps, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop(waitPollTime);
+				WaitForMotorsToStartAndStop();
 		}
 		
 		/// <summary>
@@ -65,9 +64,11 @@ namespace MonoBrickFirmware.Movement
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
 		public void TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake, bool waitForCompletion = true){
+			if(!waitForCompletion)
+				CancelPolling();
 			output.SetTimeSync(speed, turnRatio, timeInMs, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop(waitPollTime);
+				WaitForMotorsToStartAndStop();
 		}
 		
 		/// <summary>
@@ -76,6 +77,7 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="speed">Speed of the motors.</param>
 		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
 		public void On(sbyte speed, Int16 turnRatio){
+			CancelPolling();
 			On(speed, turnRatio, 0, false);
 		}
 		
@@ -90,9 +92,11 @@ namespace MonoBrickFirmware.Movement
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
 		public void On (sbyte speed, Int16 turnRatio, uint degrees, bool brake, bool waitForCompletion = true){
+			if(!waitForCompletion)
+				CancelPolling();
 			StepSync(speed, turnRatio , degrees, brake, waitForCompletion);
 			if(waitForCompletion)
-				WaitForMotorToStop(waitPollTime);
+				WaitForMotorsToStartAndStop();
 		}
 	}
 }
