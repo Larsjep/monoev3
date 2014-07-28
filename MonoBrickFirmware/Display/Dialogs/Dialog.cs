@@ -36,7 +36,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private const int buttonEdge = 2;
 		private const int buttonTextOffset = 2;
 		private const int boxMiddleOffset = 8;
-		
+
 		public Action OnShow = delegate {};
 		public Action OnExit = delegate {};
 		
@@ -158,10 +158,21 @@ namespace MonoBrickFirmware.Display.Dialogs
 		protected virtual bool OnEscape(){
 			return false;
 		}
-		
+
 		protected void WriteTextOnLine (string text, int lineIndex, bool color = true, Lcd.Alignment alignment = Lcd.Alignment.Center)
 		{
-			Lcd.Instance.WriteTextBox(font, lines[lineIndex], text, color, alignment); 
+			Font f = font;
+			string s = text;
+			int lineWidth = lines [lineIndex].P2.X - lines [lineIndex].P1.X;
+			if (f.TextSize (text.Remove(text.Length-1)).X > lineWidth)
+			{
+				f = Font.SmallFont;
+				while (f.TextSize (s).X > lineWidth) 
+				{
+					s = s.Remove(s.Length-1);
+				}
+			}
+			Lcd.Instance.WriteTextBox(f, lines[lineIndex], s, color, alignment); 
 		}
 		
 		protected void DrawCenterButton (string text, bool color)
@@ -268,7 +279,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 			if (textRectRatio == 0) {
 				int middle = (lines.Count / 2);
 				Lcd.Instance.WriteTextBox (font, lines [middle], text, true, Lcd.Alignment.Center);
-			} else {
+			} 
+			else 
+			{
 				string[] words = text.Split (' ');
 				int rectIndex = 0;
 				string s = "";
