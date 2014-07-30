@@ -117,6 +117,7 @@
     <Compile Include="Movement\PositionPID.cs" />
     <Compile Include="Tools\MovingAverage.cs" />
     <Compile Include="Tools\PIDAbstraction.cs" />
+    <Compile Include="Tools\VersionHelper.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
