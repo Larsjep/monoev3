@@ -109,11 +109,12 @@ namespace MonoBrickFirmware.Tools
 			currentError = CalculateError ();
 			currentOutput = CalculateOutput (currentError);
 			ApplyOutput (currentOutput);
-			if (StopLoop ()) {
+			if (StopLoop ()) 
+			{
 				timer.Stop ();
-				killTimer.Set();
+				killTimer.Set ();
 				Completed ();
-			}
+			} 
 			Monitor.Exit(this);
 		}
 

@@ -12,10 +12,10 @@ namespace MonoBrickFirmware.Movement
 	public class Motor :  MotorBase
 	{
 		private PositionPID controller = null;
-		private const float standardPValue = 0.1f;
-		private const float standardIValue = 80.1f;
+		private const float standardPValue = 0.5f;
+		private const float standardIValue = 800.1f;
 		private const float standardDValue = 1.05f;
-		private const float controllerSampleTime = 40; 
+		private const float controllerSampleTime = 50; 
 
 
 		/// <summary>
@@ -26,7 +26,7 @@ namespace MonoBrickFirmware.Movement
 		{
 			this.BitField = MotorPortToBitfield(port);
 			Reverse = false;
-			controller = new PositionPID (port, 0, false, 100, standardPValue, standardIValue, standardIValue, controllerSampleTime);
+			controller = new PositionPID (this.output, 0, false, 100, standardPValue, standardIValue, standardIValue, controllerSampleTime);
 		}
 
 		/// <summary>
@@ -61,7 +61,8 @@ namespace MonoBrickFirmware.Movement
 		/// <param name='speed'>
 		/// Speed of the motor -100 to 100
 		/// </param>
-		public void SetSpeed(sbyte speed){
+		public void SetSpeed(sbyte speed)
+		{
 			controller.Cancel ();
 			CancelPolling();
 			output.Start(speed);
@@ -91,7 +92,7 @@ namespace MonoBrickFirmware.Movement
 		{
 			CancelPolling();
 			controller.Cancel ();
-			controller = new PositionPID (PortList [0], position, brake, maxPower, P, I, D, controllerSampleTime);
+			controller = new PositionPID (this.output, position, brake, maxPower, P, I, D, controllerSampleTime);
 			controller.Run (waitForCompletion);
 		}
 
@@ -115,7 +116,6 @@ namespace MonoBrickFirmware.Movement
 			output.SetStepSpeed (speed, rampUpSteps, constantSpeedSteps, rampDownSteps, brake);
 			if (waitForCompletion) 
 				WaitForMotorsToStartAndStop();
-			
 		}
 		
 		/// <summary>
@@ -138,8 +138,6 @@ namespace MonoBrickFirmware.Movement
 			output.SetTimeSpeed(speed, rampUpTimeMs, constantSpeedTimeMs, rampUpTimeMs, brake);
 			if(waitForCompletion)
 				WaitForMotorsToStartAndStop();
-				
-			
 		}
 		
 		/// <summary>
@@ -205,7 +203,8 @@ namespace MonoBrickFirmware.Movement
 		/// <summary>
 		/// Resets the tacho
 		/// </summary>
-		public void ResetTacho(){
+		public void ResetTacho()
+		{
 			output.ClearCount();
 		}
 	

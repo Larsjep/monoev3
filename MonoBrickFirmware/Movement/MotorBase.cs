@@ -196,8 +196,10 @@ namespace MonoBrickFirmware.Movement
 		protected void WaitForMotorsToStartAndStop()
 		{
 			timer.Start();
-			if(!IsRunning())
-				start.WaitOne();
+			if (!IsRunning ()) 
+			{
+				start.WaitOne ();
+			}
 			stop.WaitOne();
 			timer.Stop();
 			start.Reset();
