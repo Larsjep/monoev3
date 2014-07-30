@@ -25,9 +25,8 @@ namespace StartupApp
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
-		static string versionString = "Firmware: 0.2.0.0";
-		static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
-		
+		static string versionString = "Firmware: 1.0.0.0";
+
 		static bool updateProgramList = false;
 		
 		enum ExecutionMode {Normal = 0, Debug = 1, AOT = 2  };
@@ -468,12 +467,11 @@ namespace StartupApp
 			}
 			return false;
 		}
-		
-		
+
 		static bool UpdateAvailable ()
 		{
-			var textFromFile = (new WebClient ()).DownloadString (versionURL).TrimEnd (new char[] { '\r', '\n' });
-			return versionString != textFromFile;
+			var availableVersion = MonoBrickFirmware.Tools.VersionHelper.AvailableFirmwareApp ();
+			return versionString != availableVersion;
 		}
 		#endregion
 		
