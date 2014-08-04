@@ -5,7 +5,7 @@ namespace MonoBrickFirmware.Extensions
 	/// <summary>
 	/// Extensions to get next or previous enum
 	/// </summary>
-	public static class Extensions
+	public static class EnumExtensions
 	{
 
 	    public static T Next<T>(this T src) where T : struct
@@ -25,7 +25,6 @@ namespace MonoBrickFirmware.Extensions
 	        int j = Array.IndexOf<T>(Arr, src) -1;
 	        return (j < 0) ? Arr[Arr.Length-1] : Arr[j];            
 	    }
-	    
 	}
 }
 
