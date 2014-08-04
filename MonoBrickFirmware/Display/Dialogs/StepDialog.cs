@@ -66,18 +66,14 @@ namespace MonoBrickFirmware.Display.Dialogs
 							Buttons.Instance.GetKeypress ();//Wait for any key
 							StartProgressAnimation (progressLine);
 						}
-					
-					
 					}
 				} 
-				catch(Exception e) 
+				catch 
 				{
 					StopProgressAnimation ();
 					ClearContent ();
 					WriteTextOnDialog ("Exception excuting " + steps [stepIndex].StepText);
 					DrawCenterButton ("Ok", false);
-					Console.WriteLine("Exception " + e.Message);
-					Console.WriteLine(e.StackTrace);
 					Lcd.Instance.Update ();
 					Buttons.Instance.GetKeypress ();//Wait for any key
 					errorStep = steps [stepIndex];
