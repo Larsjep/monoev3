@@ -26,7 +26,7 @@ namespace StartupApp
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
-		static string firmwareVersion= "1.0.0.0";
+		static string firmwareVersion= "0.5.0.0";
 
 		static bool updateProgramList = false;
 		
@@ -434,7 +434,7 @@ namespace StartupApp
 			Point startPos = new Point(0,0);
 			Lcd.Instance.Clear();
 			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*0, "Firmware: " + firmwareVersion, true);
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*2, "Image: " + VersionHelper.CurrentImageVersion(), true);
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*1, "Image: " + VersionHelper.CurrentImageVersion(), true);
 			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*2, "Mono version: " + monoVersion.Substring(0,7), true);
 			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*3, "Mono CLR: " + monoCLR, true);			
 			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*4, "IP: " + WiFiDevice.GetIpAddress(), true);			
@@ -487,15 +487,14 @@ namespace StartupApp
 						{
 							var updateHelper = new UpdateHelper (versionInfo.Fimrware);
 							List<IStep> steps = new List<IStep>();
-							steps.Add( new StepContainer(updateHelper.DownloadFirmware, "Downloading fiwmare", "Failed to download files") );
-							steps.Add( new StepContainer(updateHelper.UpdateBootFile, "Updating system", "Failed to update system"));
-							var updateDialog = new StepDialog ("Updating", steps, "Firmware update completed");
+							steps.Add( new StepContainer(updateHelper.DownloadFirmware, "Downloading...", "Failed to download files") );
+							steps.Add( new StepContainer(updateHelper.UpdateBootFile, "Updating system", "Failed to update boot file"));
+							var updateDialog = new StepDialog ("Updating", steps);
 							if (updateDialog.Show ()) 
 							{
-								int seconds;
-								for (seconds = 5; seconds > 0; seconds--) 
+								for (int seconds = 10; seconds > 0; seconds--) 
 								{
-									var rebootDialog = new InfoDialog ("Shutting down in  " + seconds, false, "Reboot required");
+									var rebootDialog = new InfoDialog ("Update completed. Rebooting in  " + seconds, false);
 									rebootDialog.Show();
 									System.Threading.Thread.Sleep (1000);
 								}

@@ -11,14 +11,15 @@ namespace StartupApp
 		private static string DownloadURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/Test/";
 		private static string StartUPAppName = "StartupApp.exe";
 		private static string FirmwareDllName = "MonoBrickFirmware.dll";
-		private static string XmlSerializersName = "XmlSerializers.dll";
-		private static string StartupFile = "startup";
+		private static string XmlSerializersName = "StartupApp.XmlSerializers.dll";
+		private static string StartupFile = @"/home/root/lejos/bin/startup";
 		private static string BinDir = @"/usr/local/bin";
 		private string newDir;
 
 		public UpdateHelper(string version)
 		{
 			newDir = Path.Combine (BinDir, version);
+			Console.WriteLine("NewDir " + newDir);
 		}
 
 		private bool DownloadFile(string file, string url, string downloadPath)
@@ -82,10 +83,6 @@ namespace StartupApp
 					}
 				}
 				File.WriteAllLines(StartupFile, lines);
-				/*for (int i = 0; i < lines.Length; i++) 
-				{
-					Console.WriteLine (lines [i]);
-				}*/
 			}
 			catch
 			{
