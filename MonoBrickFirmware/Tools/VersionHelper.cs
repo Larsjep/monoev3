@@ -2,38 +2,44 @@
 using System.Net;
 namespace MonoBrickFirmware.Tools
 {
+	public class VersionInfo
+	{
+		public VersionInfo(string firmware, string image, string addIn)
+		{
+			Fimrware = firmware;
+			Image = image;
+			AddIn = addIn;
+		}
+
+		public string Fimrware{ get; private set;}
+		public string Image{ get; private set;}
+		public string AddIn{ get; private set;}
+	}
+
 	public static class VersionHelper
 	{
-		private static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
+		private static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/Test/version.txt";
+		private static string versionImagePath = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
 
-		private static string[] ReadURLVersion(string url)
+		public static VersionInfo AvalibleVersions()
 		{
-			return new WebClient ().DownloadString (url).Split (new char[] { '\r', '\n' });
+			VersionInfo info = null;
+			try{
+				string[] downloadInfo = new WebClient ().DownloadString (versionURL).Split (new char[] {'\n' });
+				info = new VersionInfo(downloadInfo[0].Split(new char[] {':'})[1].Trim(),downloadInfo[1].Split(new char[] {':'})[1].Trim(), downloadInfo[2].Split(new char[] {':'})[1].Trim());
+			}
+			catch{}
+			return info;
 		}
 
 		public static string CurrentImageVersion()
 		{
-			return "Image: 1.0.0.0";//read this from a file
+			return "1.0.0.0";//read this from a file
 		}
 
-		public static string AvailableImageVersion()
+		public static string CurrentAddInVersion()
 		{
-			return ReadURLVersion (versionURL)[1];
-		}
-
-		public static string CurrentPluginVersion()
-		{
-			return "Plugin: 1.0.0.0";//read this from a file
-		}
-
-		public static string AvailablePluginVersion()
-		{
-			return ReadURLVersion (versionURL)[2];
-		}
-
-		public static string AvailableFirmwareApp()
-		{
-			return ReadURLVersion (versionURL)[0];
+			return "1.0.0.0";//read this from a file
 		}
 	}
 }

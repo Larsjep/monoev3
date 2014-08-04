@@ -118,6 +118,7 @@
     <Compile Include="Tools\MovingAverage.cs" />
     <Compile Include="Tools\PIDAbstraction.cs" />
     <Compile Include="Tools\VersionHelper.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

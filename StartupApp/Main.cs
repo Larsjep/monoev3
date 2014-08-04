@@ -11,6 +11,7 @@ using MonoBrickFirmware.Display.Dialogs;
 using MonoBrickFirmware.Settings;
 using MonoBrickFirmware.Services;
 using MonoBrickFirmware.Connections;
+using MonoBrickFirmware.Tools;
 
 using System.Reflection;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace StartupApp
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
-		static string versionString = "Firmware: 1.0.0.0";
+		static string firmwareVersion= "1.0.0.0";
 
 		static bool updateProgramList = false;
 		
@@ -158,6 +159,7 @@ namespace StartupApp
 			var dialog = new StepDialog("Compiling",steps);
 			return dialog.Show();
 		}
+
 		
 		
 		static void RunAndWaitForProgram (string programName, ExecutionMode mode)
@@ -431,10 +433,12 @@ namespace StartupApp
 			Point offset = new Point(0, (int)Font.MediumFont.maxHeight);
 			Point startPos = new Point(0,0);
 			Lcd.Instance.Clear();
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*0, versionString, true);
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*1, "Mono version: " + monoVersion.Substring(0,7), true);
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*2, "Mono CLR: " + monoCLR, true);			
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*3, "IP: " + WiFiDevice.GetIpAddress(), true);			
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*0, "Firmware: " + firmwareVersion, true);
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*2, "Image: " + VersionHelper.CurrentImageVersion(), true);
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*2, "Mono version: " + monoVersion.Substring(0,7), true);
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*3, "Mono CLR: " + monoCLR, true);			
+			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*4, "IP: " + WiFiDevice.GetIpAddress(), true);			
+
 			Lcd.Instance.Update();
 			Buttons.Instance.GetKeypress();
 			return false;
@@ -445,20 +449,75 @@ namespace StartupApp
 		static bool ShowUpdatesDialogs ()
 		{
 			if (WiFiDevice.IsLinkUp()) {
+				bool newImage = false;
+				bool newFirmwareApp = false;
+				bool newAddin = false;
+				VersionInfo versionInfo = null;
 				var step = new StepContainer(
 					delegate() 
 					{
 						try{
-							return UpdateAvailable ();
+							versionInfo = VersionHelper.AvalibleVersions();
+							newImage = versionInfo.Image != VersionHelper.CurrentImageVersion();
+							newFirmwareApp = versionInfo.Fimrware != firmwareVersion;
+							string addInVersion = VersionHelper.CurrentAddInVersion();
+							if(addInVersion != null)
+								newAddin = versionInfo.AddIn != VersionHelper.CurrentAddInVersion();
 						}
 						catch
 						{
 							return false;
 						}
+						return true;
 					},
-					"Checking server", "No software updates available", "Software update available. Visit monobrick.dk"); 
-				var dialog = new ProgressDialog("Updates", step);
+					"Checking server", "Failed to check for Updates"); 
+				var dialog = new ProgressDialog ("Updates",step);
 				dialog.Show();
+				if (newImage) 
+				{
+					var visitWebsiteDialog = new InfoDialog ("New image available. Download it at monobrick.dk", true);
+					visitWebsiteDialog.Show ();
+				} 
+				else 
+				{
+					if (newFirmwareApp) 
+					{
+						var updateQuestion = new QuestionDialog ("New firmware available. Update?", "New Fiwmware");
+						if (updateQuestion.Show ()) 
+						{
+							var updateHelper = new UpdateHelper (versionInfo.Fimrware);
+							List<IStep> steps = new List<IStep>();
+							steps.Add( new StepContainer(updateHelper.DownloadFirmware, "Downloading fiwmare", "Failed to download files") );
+							steps.Add( new StepContainer(updateHelper.UpdateBootFile, "Updating system", "Failed to update system"));
+							var updateDialog = new StepDialog ("Updating", steps, "Firmware update completed");
+							if (updateDialog.Show ()) 
+							{
+								int seconds;
+								for (seconds = 5; seconds > 0; seconds--) 
+								{
+									var rebootDialog = new InfoDialog ("Shutting down in  " + seconds, false, "Reboot required");
+									System.Threading.Thread.Sleep (1000);
+								}
+								ProcessHelper.RunAndWaitForProcess("/sbin/shutdown", "-h now");
+								Thread.Sleep(120000);
+								var whyAreYouHereDialog = new InfoDialog ("Cut the power", false, "Reboot failed");
+								whyAreYouHereDialog.Show ();
+								new ManualResetEvent (false).WaitOne();
+							}
+						}
+					} 
+					else 
+					{
+						if (newAddin) {
+						
+						} 
+						else 
+						{
+						
+						}
+					
+					}
+				}
 			} 
 			else 
 			{
@@ -466,12 +525,6 @@ namespace StartupApp
 				dialog.Show();	
 			}
 			return false;
-		}
-
-		static bool UpdateAvailable ()
-		{
-			var availableVersion = MonoBrickFirmware.Tools.VersionHelper.AvailableFirmwareApp ();
-			return versionString != availableVersion;
 		}
 		#endregion
 		
