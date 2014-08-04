@@ -11,18 +11,21 @@ namespace MotorExample
 		public static void Main (string[] args)
 		{
 			
-			Motor motor = new Motor (MotorPort.OutA);
-			motor.ResetTacho();
-			Console.WriteLine(motor.GetTachoCount().ToString());
-			motor.MoveTo(25,1000,true,true);
-			System.Threading.Thread.Sleep(300);
-			Console.WriteLine(motor.GetTachoCount().ToString());
-			motor.ResetTacho();
-			Console.WriteLine(motor.GetTachoCount().ToString());
-			motor.PowerProfileStep (25, 200, 600, 200, true, true);
-			Console.WriteLine(motor.GetTachoCount().ToString());
+			Motor motorA = new Motor (MotorPort.OutA);
+			Motor motorD = new Motor (MotorPort.OutD);
+			
+			motorA.ResetTacho();
+			motorD.ResetTacho ();
+			Console.WriteLine("Motor A: " + motorA.GetTachoCount().ToString());
+			Console.WriteLine("Motor D: " + motorD.GetTachoCount().ToString());
+
+			motorA.MoveTo(25,1000,true,false);
+			motorD.MoveTo(25,1000,true,true);
+
+			Console.WriteLine("Motor A: " + motorA.GetTachoCount().ToString());
 			System.Threading.Thread.Sleep (1000);
-			Console.WriteLine(motor.GetTachoCount().ToString());
+			Console.WriteLine("Motor D: " + motorD.GetTachoCount().ToString());
+
 		}
 	}
 }
