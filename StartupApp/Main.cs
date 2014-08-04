@@ -496,6 +496,7 @@ namespace StartupApp
 								for (seconds = 5; seconds > 0; seconds--) 
 								{
 									var rebootDialog = new InfoDialog ("Shutting down in  " + seconds, false, "Reboot required");
+									rebootDialog.Show();
 									System.Threading.Thread.Sleep (1000);
 								}
 								ProcessHelper.RunAndWaitForProcess("/sbin/shutdown", "-h now");
