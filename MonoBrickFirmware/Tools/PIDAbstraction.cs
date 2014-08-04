@@ -63,10 +63,6 @@ namespace MonoBrickFirmware.Tools
 			timer.Elapsed += ControlFunction;
 		}
 
-		/*public float P { get{return Kp;} set{Kp = value; update ();}}
-		public float I { get{return Ki;} set{Ki = value; update ();}}
-		public float D { get{return Kd;} set{Kd = value; update ();}}*/
-
 		public event Action Completed = delegate(){};
 
 		public void Run (bool waitForCompletion)
@@ -135,16 +131,6 @@ namespace MonoBrickFirmware.Tools
 		private float CalculateOutput (float ek)
 		{
 			uk = uk1 + k1 * (ek - ek1) + k2 * ek + k3 * (ek - 2 * ek1 + ek2);
-			/*Console.WriteLine("****");
-			Console.WriteLine("uk" + uk);
-			Console.WriteLine("ek" + ek);
-			Console.WriteLine("ek1" + ek1);
-			Console.WriteLine("ek2" + ek2);
-			Console.WriteLine("k1" + k1);
-			Console.WriteLine("k2" + k2);
-			Console.WriteLine("k3" + k3);
-			Console.WriteLine("****");*/
-
 			if (uk > max) {
 				uk = max;
 			}
@@ -160,11 +146,9 @@ namespace MonoBrickFirmware.Tools
 					uk = uk1 + minChange;
 				}
 			}
-			//Console.WriteLine("Uk: " + uk);	 
 			uk1 = uk;
 			ek2 = ek1;
 			ek1 = ek;
-			//Console.WriteLine("Uk" + uk);
 			return uk;
 		}
 		
