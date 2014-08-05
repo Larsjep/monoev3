@@ -8,7 +8,7 @@ namespace StartupApp
 {
 	public class UpdateHelper
 	{
-		private static string DownloadURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/Test/";
+		private static string DownloadURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/";
 		private static string StartUPAppName = "StartupApp.exe";
 		private static string FirmwareDllName = "MonoBrickFirmware.dll";
 		private static string XmlSerializersName = "StartupApp.XmlSerializers.dll";
