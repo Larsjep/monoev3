@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using MonoBrickFirmware.Native;
 
@@ -70,14 +71,11 @@ namespace MonoBrickFirmware.Movement
 		/// <param name='waitForCompletion'>
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void SpeedProfileStep (sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool waitForCompletion = true)
+		public WaitHandle SpeedProfile(sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake)
 		{
-			if(!waitForCompletion)
-				CancelPolling();
 			output.SetPower (0);
 			output.SetStepSpeed (speed, rampUpSteps, constantSpeedSteps, rampDownSteps, brake);
-			if (waitForCompletion) 
-				WaitForMotorsToStartAndStop();
+			return WaitForMotorsToStartAndStop();
 		}
 		
 		/// <summary>
@@ -91,14 +89,11 @@ namespace MonoBrickFirmware.Movement
 		/// <param name='waitForCompletion'>
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void SpeedProfileTime(sbyte speed, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool waitForCompletion = true)
+		public WaitHandle SpeedProfileTime(sbyte speed, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake)
 		{
-			if(!waitForCompletion)
-				CancelPolling();
 			output.SetPower (0);
 			output.SetTimeSpeed(speed, rampUpTimeMs, constantSpeedTimeMs, rampUpTimeMs, brake);
-			if(waitForCompletion)
-				WaitForMotorsToStartAndStop();
+			return WaitForMotorsToStartAndStop();
 		}
 		
 		/// <summary>
@@ -112,14 +107,11 @@ namespace MonoBrickFirmware.Movement
 		/// <param name='waitForCompletion'>
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void PowerProfileStep(sbyte power, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool waitForCompletion = true)
+		public WaitHandle PowerProfile(sbyte power, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake)
 		{
-			if(!waitForCompletion)
-				CancelPolling();
 			output.SetPower (0);
 			output.SetStepPower(power,rampUpSteps, constantSpeedSteps, rampDownSteps, brake);
-			if(waitForCompletion)
-				WaitForMotorsToStartAndStop();
+			return WaitForMotorsToStartAndStop();
 		}
 		
 		/// <summary>
@@ -130,14 +122,11 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="constantSpeedTimeMs">Constant speed time ms.</param>
 		/// <param name="rampDownTimeMs">Ramp down time ms.</param>
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
-		public void PowerProfileTime (byte power, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool waitForCompletion = true)
+		public WaitHandle PowerProfileTime (byte power, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool waitForCompletion = true)
 		{
-			if(!waitForCompletion)
-				CancelPolling();
 			output.SetPower (0);
 			output.SetTimePower(power, rampUpTimeMs,constantSpeedTimeMs,rampDownTimeMs, brake);
-			if(waitForCompletion)
-				WaitForMotorsToStartAndStop();
+			return WaitForMotorsToStartAndStop();
 			
 		}
 

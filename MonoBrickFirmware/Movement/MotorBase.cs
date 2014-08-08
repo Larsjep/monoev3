@@ -14,6 +14,7 @@ namespace MonoBrickFirmware.Movement
 		private const double pollRate = 50;
 		private ManualResetEvent stop = new ManualResetEvent(false);
 		private ManualResetEvent start = new ManualResetEvent(false);
+		private ManualResetEvent waitHandle = new ManualResetEvent(false);
 
 		/// <summary>
 		/// The output.
@@ -173,37 +174,23 @@ namespace MonoBrickFirmware.Movement
 			}	
 		}
 
-		protected void WaitForMotorsToStart()
+		protected WaitHandle WaitForMotorsToStartAndStop()
 		{
+			waitHandle.Reset();
 			timer.Start();
-			if(!IsRunning())
-				start.WaitOne();
-			timer.Stop();
-			start.Reset();
-			stop.Reset();
-		}
-
-		protected void WaitForMotorsToStop()
-		{
-			timer.Start();
-			if(IsRunning())
+			//Optimize the poll function to save this exstra thread
+			(new Thread(() => {
+				if (!IsRunning ()) 
+				{
+					start.WaitOne ();
+				}
 				stop.WaitOne();
-			timer.Stop();
-			start.Reset();
-			stop.Reset();
-		}
-
-		protected void WaitForMotorsToStartAndStop()
-		{
-			timer.Start();
-			if (!IsRunning ()) 
-			{
-				start.WaitOne ();
-			}
-			stop.WaitOne();
-			timer.Stop();
-			start.Reset();
-			stop.Reset();
+				timer.Stop();
+				start.Reset();
+				stop.Reset();
+				waitHandle.Set();
+		    })).Start();
+			return waitHandle;
 		}
 	}
 }
