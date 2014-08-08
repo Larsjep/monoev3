@@ -4,33 +4,32 @@ using MonoBrickFirmware.Display;
 
 namespace MonoBrickFirmware.Movement
 {
-	internal class PositionPID: PIDAbstraction 
+	public class PositionPID: PIDAbstraction 
 	{
-		private Output motor;
-		private MotorPort port;
+		private Motor motor;
 		private float target;
 		private bool brake;
-		private MovingAverage movingAverage = new MovingAverage(800);
+		private const float defaultP = 0.5f;
+		private const float defaultI = 800.1f;
+		private const float defaultD = 1.05f;
+		private const float SampleTime = 50; 
+		private MovingAverage movingAverage = null;
+
 		bool setAverage = true;
-		public PositionPID (Output output, Int32 position, bool brake, sbyte maxPower, float P, float I, float D, float sampleTime): 
-		base(P,I,D,sampleTime, (float) maxPower, -((float) maxPower))   
+
+		public PositionPID (Motor motor, Int32 position, bool brake, sbyte maxPower, int settleTimeMs = 2000): 
+		this(motor, position,brake, maxPower, defaultP,defaultI,defaultD, settleTimeMs)   
 		{
-			this.motor = output;
-			switch (output.BitField) 
-			{
-				case OutputBitfield.OutA:
-					port = MotorPort.OutA;
-				break;
-				case OutputBitfield.OutB:
-					port = MotorPort.OutB;
-				break;
-				case OutputBitfield.OutC:
-					port = MotorPort.OutC;
-				break;
-				case OutputBitfield.OutD:
-					port = MotorPort.OutD;
-				break;
-			}
+			this.motor = motor;
+			target = position;
+			this.brake = brake;
+		}
+
+		public PositionPID (Motor motor, Int32 position, bool brake, sbyte maxPower, float P, float I, float D, int settleTimeMs): 
+		base(P,I,D,SampleTime, (float) maxPower, -((float) maxPower))   
+		{
+			movingAverage = new MovingAverage((uint)((uint)settleTimeMs/(uint)SampleTime));
+			this.motor = motor;
 			target = position;
 			this.brake = brake;
 		}
@@ -39,18 +38,17 @@ namespace MonoBrickFirmware.Movement
 		{
 			if (output == 0.0f && brake) 
 			{
-				motor.Stop (true);
+				motor.Brake();
 			} 
 			else 
 			{
 				motor.SetPower((sbyte)output);
-				motor.Start ();
 			}
 		}
 		
 		protected override float CalculateError ()
 		{
-			float currentPosition = ((float)motor.GetCount(port));
+			float currentPosition = ((float)motor.GetTachoCount());
 			return (float)(target - currentPosition);	
 		}
 		
@@ -72,12 +70,12 @@ namespace MonoBrickFirmware.Movement
 				Console.WriteLine("Average " + average);
 				if (brake) 
 				{
-					motor.Stop (true);
+					motor.Brake();
 				}
 				else 
 				{
 					motor.SetPower (0);
-					motor.Stop (false);
+
 				}
 				setAverage = true;
 				return true;

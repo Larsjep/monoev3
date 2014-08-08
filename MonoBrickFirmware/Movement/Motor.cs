@@ -11,13 +11,6 @@ namespace MonoBrickFirmware.Movement
 	/// </summary>
 	public class Motor :  MotorBase
 	{
-		private PositionPID controller = null;
-		private const float standardPValue = 0.5f;
-		private const float standardIValue = 800.1f;
-		private const float standardDValue = 1.05f;
-		private const float controllerSampleTime = 50; 
-
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.Motor"/> class.
 		/// </summary>
@@ -26,7 +19,6 @@ namespace MonoBrickFirmware.Movement
 		{
 			this.BitField = MotorPortToBitfield(port);
 			Reverse = false;
-			controller = new PositionPID (this.output, 0, false, 100, standardPValue, standardIValue, standardIValue, controllerSampleTime);
 		}
 
 		/// <summary>
@@ -63,39 +55,10 @@ namespace MonoBrickFirmware.Movement
 		/// </param>
 		public void SetSpeed(sbyte speed)
 		{
-			controller.Cancel ();
 			CancelPolling();
 			output.Start(speed);
 		}
 		
-		/// <summary>
-		/// Moves the motor to an absolute position
-		/// </summary>
-		/// <param name='maxPower'>
-		/// maxPower of the motor 0 to 100
-		/// </param>
-		/// <param name='position'>
-		/// Absolute position
-		/// </param>
-		/// <param name='brake'>
-		/// Set to <c>true</c> if the motor should brake when done
-		/// </param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
-		/// </param>
-		public void MoveTo (sbyte maxPower, Int32 position, bool brake, bool waitForCompletion = true)
-		{
-			MoveTo (maxPower, position, brake, standardPValue, standardIValue, standardDValue, waitForCompletion);
-		}
-
-		public void  MoveTo (sbyte maxPower, Int32 position, bool brake, float P, float I, float D, bool waitForCompletion = true)
-		{
-			CancelPolling();
-			controller.Cancel ();
-			controller = new PositionPID (this.output, position, brake, maxPower, P, I, D, controllerSampleTime);
-			controller.Run (waitForCompletion);
-		}
-
 		/// <summary>
 		/// Create a speed profile where ramp up and down is specified in steps
 		/// </summary>
@@ -109,7 +72,6 @@ namespace MonoBrickFirmware.Movement
 		/// </param>
 		public void SpeedProfileStep (sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool waitForCompletion = true)
 		{
-			controller.Cancel ();
 			if(!waitForCompletion)
 				CancelPolling();
 			output.SetPower (0);
@@ -131,7 +93,6 @@ namespace MonoBrickFirmware.Movement
 		/// </param>
 		public void SpeedProfileTime(sbyte speed, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool waitForCompletion = true)
 		{
-			controller.Cancel ();
 			if(!waitForCompletion)
 				CancelPolling();
 			output.SetPower (0);
@@ -153,7 +114,6 @@ namespace MonoBrickFirmware.Movement
 		/// </param>
 		public void PowerProfileStep(sbyte power, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake, bool waitForCompletion = true)
 		{
-			controller.Cancel ();
 			if(!waitForCompletion)
 				CancelPolling();
 			output.SetPower (0);
@@ -172,7 +132,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
 		public void PowerProfileTime (byte power, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool waitForCompletion = true)
 		{
-			controller.Cancel();
 			if(!waitForCompletion)
 				CancelPolling();
 			output.SetPower (0);
@@ -180,24 +139,6 @@ namespace MonoBrickFirmware.Movement
 			if(waitForCompletion)
 				WaitForMotorsToStartAndStop();
 			
-		}
-
-		public override void Brake ()
-		{
-			controller.Cancel();
-			base.Brake ();
-		}
-
-		public override void Off ()
-		{
-			controller.Cancel();
-			base.Off ();
-		}
-
-		public override void SetPower (sbyte power)
-		{
-			controller.Cancel();
-			base.SetPower (power);
 		}
 
 		/// <summary>
