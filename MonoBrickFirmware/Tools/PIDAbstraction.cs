@@ -31,7 +31,7 @@ namespace MonoBrickFirmware.Tools
 	    private bool maxMinChangeSet;
 		protected float currentError;
 		protected float currentOutput;
-		protected ManualResetEvent killTimer = new ManualResetEvent(false);
+		protected ManualResetEvent done = new ManualResetEvent(false);
 		private System.Timers.Timer timer;
 		protected abstract void ApplyOutput (float output);
 
@@ -63,18 +63,14 @@ namespace MonoBrickFirmware.Tools
 			timer.Elapsed += ControlFunction;
 		}
 
-		public event Action Completed = delegate(){};
 
-		public void Run (bool waitForCompletion)
+		WaitHandle Run ()
 		{
 			if (!timer.Enabled) {
-				killTimer.Reset ();
+				done.Reset();
 				timer.Start ();
 			}
-			if (waitForCompletion) 
-			{
-				killTimer.WaitOne ();
-			}
+		    return done;
 		}
 		
 		public void Cancel ()
@@ -83,8 +79,7 @@ namespace MonoBrickFirmware.Tools
 			{
 				timer.Stop();
 				Monitor.Enter(this);
-				killTimer.Set();
-				Completed();
+				done.Set();
 				Monitor.Exit(this);
 			}	
 		}
@@ -108,8 +103,7 @@ namespace MonoBrickFirmware.Tools
 			if (StopLoop ()) 
 			{
 				timer.Stop ();
-				killTimer.Set ();
-				Completed ();
+				done.Set ();
 			} 
 			Monitor.Exit(this);
 		}
