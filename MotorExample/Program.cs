@@ -13,7 +13,14 @@ namespace MotorExample
 			
 			Motor motorA = new Motor (MotorPort.OutA);
 			Motor motorD = new Motor (MotorPort.OutD);
-			
+
+			/*Console.WriteLine("Current" + MonoBrickFirmware.Tools.VersionHelper.CurrentImageVersion());
+			MonoBrickFirmware.Tools.VersionInfo info = MonoBrickFirmware.Tools.VersionHelper.AvalibleVersions();
+			Console.WriteLine("Firmware: " +  info.Fimrware);
+			Console.WriteLine("Image: " +  info.Image);
+			Console.WriteLine("Addin: " +  info.AddIn);*/
+
+
 			/*motorA.ResetTacho();
 			motorD.ResetTacho ();
 			Console.WriteLine("Motor A: " + motorA.GetTachoCount().ToString());

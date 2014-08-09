@@ -18,7 +18,7 @@ namespace MonoBrickFirmware.Tools
 
 	public static class VersionHelper
 	{
-		private static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/Test/version.txt";
+		private static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
 		private static string versionPath = @"/usr/local/bin/version.txt";
 
 		public static VersionInfo AvalibleVersions()
