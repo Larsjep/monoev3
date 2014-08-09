@@ -19,7 +19,7 @@ namespace MonoBrickFirmware.Tools
 	public static class VersionHelper
 	{
 		private static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/Test/version.txt";
-		private static string versionImagePath = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
+		private static string versionPath = @"/usr/local/bin/version.txt";
 
 		public static VersionInfo AvalibleVersions()
 		{
@@ -34,12 +34,12 @@ namespace MonoBrickFirmware.Tools
 
 		public static string CurrentImageVersion()
 		{
-			return "1.0.0.0";//read this from a file
+			return System.IO.File.ReadAllLines(versionPath)[1].Split(new char[] {':'})[1].Trim();
 		}
 
 		public static string CurrentAddInVersion()
 		{
-			return "1.0.0.0";//read this from a file
+			return null;//not yet implemented
 		}
 	}
 }

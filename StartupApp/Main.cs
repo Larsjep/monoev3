@@ -26,7 +26,7 @@ namespace StartupApp
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
-		static string firmwareVersion= "0.5.0.0";
+		static string firmwareVersion= "1.0.0.0";
 
 		static bool updateProgramList = false;
 		
