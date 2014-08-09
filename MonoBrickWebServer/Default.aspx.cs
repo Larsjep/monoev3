@@ -137,7 +137,7 @@ namespace MonoBrickWebServer
 				int position;
 				if (int.TryParse (Motor1PositionText.Text, out position)) 
 				{
-					motorArray [idx].MoveTo (50, position, true, false);
+					motorArray [idx].SpeedProfile(50,(uint)100,(uint)position-200,(uint)100,true);
 				}
 				else
 				{

@@ -14,7 +14,7 @@ namespace MotorExample
 			Motor motorA = new Motor (MotorPort.OutA);
 			Motor motorD = new Motor (MotorPort.OutD);
 			
-			motorA.ResetTacho();
+			/*motorA.ResetTacho();
 			motorD.ResetTacho ();
 			Console.WriteLine("Motor A: " + motorA.GetTachoCount().ToString());
 			Console.WriteLine("Motor D: " + motorD.GetTachoCount().ToString());
@@ -24,7 +24,7 @@ namespace MotorExample
 
 			Console.WriteLine("Motor A: " + motorA.GetTachoCount().ToString());
 			System.Threading.Thread.Sleep (1000);
-			Console.WriteLine("Motor D: " + motorD.GetTachoCount().ToString());
+			Console.WriteLine("Motor D: " + motorD.GetTachoCount().ToString());*/
 
 		}
 	}
