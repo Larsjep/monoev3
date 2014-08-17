@@ -5,7 +5,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// HiTechnic gyro sensor
     /// </summary>
-    public class HiTecGyroSensor : AnalogSensor, ISensor {
+    public class HiTecGyroSensor : AnalogSensor{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.NXT.HiTecGyro"/> class without offset
 		/// </summary>
@@ -38,7 +38,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <returns>
 		/// The value as a string.
 		/// </returns>
-		public string ReadAsString()
+		public override string ReadAsString()
         {
             return this.ReadAngularAcceleration().ToString() + " deg/sec";
         }
@@ -50,7 +50,34 @@ namespace MonoBrickFirmware.Sensors
 		/// The offset.
 		/// </value>
 		public int Offset{get;set;}
-
+		
+		
+		public override void SelectNextMode()
+		{
+			return;
+		}
+		
+		public override string GetSensorName ()
+		{
+			return "HT Gyro";
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return 1;
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return "Analog";
+		}
     }
 }
 

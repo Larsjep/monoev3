@@ -14,7 +14,7 @@ class MainClass
 		EventWaitHandle stopped = new ManualResetEvent(false);
 		ColorMode[] modes = {ColorMode.Color, ColorMode.Reflection, ColorMode.Ambient, ColorMode.Blue};
 		int modeIdx = 0;
-		var sensor = new ColorSensor(SensorPort.In1);
+		var sensor = new EV3ColorSensor(SensorPort.In1);
 		ButtonEvents buts = new ButtonEvents ();
 		LcdConsole.WriteLine("Use color on port1");
 		LcdConsole.WriteLine("Up read value");

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{314570C2-D0F1-45D2-868D-FA54E2F538F8}</ProjectGuid>
+    <ProjectTypeGuids>{7DBEB09D-BB9F-4D92-A141-A009135475EF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MonoBrickAddin</RootNamespace>
+    <AssemblyName>MonoBrickAddin</AssemblyName>
+    <SynchReleaseVersion>false</SynchReleaseVersion>
+    <Description>MonoBrick addin for EV3 development.</Description>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="mdtool setup pack ${TargetName}" workingdir="${TargetDir}" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Cairo" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="MonoDevelop.Core">
+      <HintPath>External\MonoDevelop.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoDevelop.Ide">
+      <HintPath>External\MonoDevelop.Ide.dll</HintPath>
+    </Reference>
+    <Reference Include="Renci.SshNet">
+      <HintPath>External\Renci.SshNet.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoDevelop.Debugger">
+      <HintPath>External\MonoDevelop.Debugger.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoDevelop.Debugger.Soft">
+      <HintPath>External\MonoDevelop.Debugger.Soft.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Debugging">
+      <HintPath>External\Mono.Debugging.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Debugging.Soft">
+      <HintPath>External\Mono.Debugging.Soft.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="GUI\EV3OptionsPanel.cs" />
+    <Compile Include="gtk-gui\MonoBrickAddin.EV3OptionsPanel.cs" />
+    <Compile Include="Source\AssemblyInfo.cs" />
+    <Compile Include="Source\MonoBrickAddinScpUpload.cs" />
+    <Compile Include="Source\MonoBrickAddinConfiguration.cs" />
+    <Compile Include="Source\MonoBrickAddinDebuggerEngine.cs" />
+    <Compile Include="Source\MonoBrickAddinDebuggerSession.cs" />
+    <Compile Include="Source\MonoBrickAddinExecutionCommand.cs" />
+    <Compile Include="Source\MonoBrickAddinExecutionHandler.cs" />
+    <Compile Include="Source\MonoBrickAddinProjectBinding.cs" />
+    <Compile Include="Source\MonoBrickAddinProjects.cs" />
+    <Compile Include="Source\MonoBrickAddinSshCommandHelper.cs" />
+    <Compile Include="Source\MonoBrickAddinUtility.cs" />
+    <Compile Include="Source\MonoBrickAddinSshExecute.cs" />
+    <Compile Include="Source\MonoBrickAddinSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\MonoBrickProject.xpt.xml">
+      <DeployService-Deploy>True</DeployService-Deploy>
+      <LogicalName>MonoBrickProject.xpt.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="gtk-gui\gui.stetic">
+      <LogicalName>gui.stetic</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Source\MonoBrickAddin.addin.xml">
+      <DeployService-Deploy>True</DeployService-Deploy>
+      <LogicalName>MonoBrick.addin.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\monobrickaddin-icon-32.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <LogicalName>monobrickaddin-icon-32.png</LogicalName>
+      <DeployService-Deploy>True</DeployService-Deploy>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\MonoBrickFirmware\bin\Release\MonoBrickFirmware.dll">
+      <Link>MonoBrickFirmware.dll</Link>
+      <LogicalName>MonoBrick.MonoBrickFirmware.dll</LogicalName>
+      <DeployService-Deploy>True</DeployService-Deploy>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Templates\" />
+    <Folder Include="GUI\" />
+    <Folder Include="Icons\" />
+    <Folder Include="License\" />
+    <Folder Include="External\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="License\License.txt">
+      <DeployService-Deploy>True</DeployService-Deploy>
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <GtkDesignInfo gettextClass="MonoDevelop.Core.GettextCatalog" />
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>

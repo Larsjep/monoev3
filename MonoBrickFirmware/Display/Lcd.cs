@@ -4,17 +4,21 @@ using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.Display
 {	
-	public class Lcd : IDisposable
+	public class Lcd
 	{
 		public const int Width = 178;
 		public const int Height = 128;
-		const int bytesPrLine = (Width+7)/8;
-		const int bufferSize = bytesPrLine * Height;
-		const int hwBufferLineSize = 60;
-		const int hwBufferSize = hwBufferLineSize*Height;			
+		public enum Alignment { Left, Center, Right };
+		
+		
+		private const int bytesPrLine = ((Width+31)/32)*4;
+		private const int bufferSize = bytesPrLine * Height;
+		private const int hwBufferLineSize = bytesPrLine;
+		private const int hwBufferSize = hwBufferLineSize*Height;			
 		private UnixDevice device;
 		private MemoryArea memory;
-		byte[] displayBuf = new byte[bufferSize];
+		private byte[] displayBuf = new byte[bufferSize];
+		private byte[] savedScreen = new byte[bufferSize];
 		
 		private BmpImage screenshotImage = new BmpImage(bytesPrLine * 8 , Height, ColorDepth.TrueColor);
 		private RGB startColor = new RGB(188,191,161);
@@ -22,6 +26,9 @@ namespace MonoBrickFirmware.Display
 		private float redGradientStep;
 		private float greenGradientStep;  
 		private float blueGradientStep; 
+		private byte[] hwBuffer = new byte[hwBufferSize];
+		
+		private static readonly Lcd instance = new Lcd();
 		
 		public void SetPixel(int x, int y, bool color)
 		{
@@ -43,11 +50,16 @@ namespace MonoBrickFirmware.Display
 			int bit = x & 0x7;
 			return (displayBuf[index] & (1 << bit)) != 0;
 		}
-				
 		
-		byte[] hwBuffer = new byte[hwBufferSize];
+		public static Lcd Instance
+		{
+			get 
+	      	{
+				return instance; 
+	      	}	
+		}
 		
-		public Lcd()
+		private Lcd()
 		{
 			device = new UnixDevice("/dev/fb0");
 			memory =  device.MMap(hwBufferSize, 0);
@@ -59,61 +71,22 @@ namespace MonoBrickFirmware.Display
 			blueGradientStep = (float)(endColor.Blue - startColor.Blue)/Height; 
 		}
 		
-		static byte[] convert = 
-		    {
-		    0x00, // 000 00000000
-		    0xE0, // 001 11100000
-		    0x1C, // 010 00011100
-		    0xFC, // 011 11111100
-		    0x03, // 100 00000011
-		    0xE3, // 101 11100011
-		    0x1F, // 110 00011111
-		    0xFF // 111 11111111
-		    }; 
-		
-		
-		public void Update(int yoffset = 0)
+		public void Update(int yOffset = 0)
 		{
-			const int bytesPrLine = 3*7+2;
-			int inOffset = (yoffset % Lcd.Height)*(bytesPrLine);
-		    int outOffset = 0;
-		    for(int row = 0; row < Height; row++)
-		    {
-		        int pixels;
-		        for(int i = 0; i < 7; i++)
-		        {
-		            pixels = displayBuf[inOffset++] & 0xff;
-		            pixels |= (displayBuf[inOffset++] & 0xff) << 8;
-		            pixels |= (displayBuf[inOffset++] & 0xff) << 16;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		            pixels >>= 3;
-		            hwBuffer[outOffset++] = convert[pixels & 0x7];
-		        }   
-		        pixels = displayBuf[inOffset++] & 0xff;
-		        pixels |= (displayBuf[inOffset++] & 0xff) << 8;
-		        hwBuffer[outOffset++] = convert[pixels & 0x7];
-		        pixels >>= 3;
-		        hwBuffer[outOffset++] = convert[pixels & 0x7];
-		        pixels >>= 3;
-		        hwBuffer[outOffset++] = convert[pixels & 0x7];
-		        pixels >>= 3;
-		        hwBuffer[outOffset++] = convert[pixels & 0x7];
-				if (inOffset >= Height*bytesPrLine)
-					inOffset = 0;
-		    } 
-			memory.Write(0,hwBuffer);
+			int byteOffset = (yOffset % Lcd.Height)*bytesPrLine;
+			Array.Copy(displayBuf, byteOffset, hwBuffer, 0, hwBufferSize-byteOffset);
+			Array.Copy(displayBuf, 0, hwBuffer, hwBufferSize-byteOffset, byteOffset);			
+		    memory.Write(0,hwBuffer);			
+		}
+		
+		public void SaveScreen ()
+		{
+			Array.Copy(displayBuf,savedScreen, bufferSize);
+		}
+		
+		public void LoadScreen()
+		{
+			Array.Copy(savedScreen,displayBuf,bufferSize);
 		}
 		
 		public void ShowPicture(byte[] picture)
@@ -309,9 +282,6 @@ namespace MonoBrickFirmware.Display
 			}
 		}
 		
-		
-		
-		public enum Alignment { Left, Center, Right };
 		public void WriteTextBox(Font f, Rectangle r, string text, bool color)
 		{
 			WriteTextBox(f, r, text, color, Alignment.Left);
@@ -338,14 +308,6 @@ namespace MonoBrickFirmware.Display
 			}
 			WriteText(f, r.P1+new Point(xpos, 0) , text, color);
 		}			
-	
-		#region IDisposable implementation
-		void IDisposable.Dispose ()
-		{
-			device.Dispose();
-			screenshotImage.Dispose();
-		}
-		#endregion
 	}
 }
 

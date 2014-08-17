@@ -8,24 +8,20 @@ namespace MonoBrickFirmware.Display.Menus
 	{
 		private string subject;
 		private string dialogTitle;
-		private Lcd lcd;
-		private UserInput.Buttons btns;
 		private const int lineSize = 2;
 		private const int edgeSize = 2;
 		private bool hide;
 		public Action<Dialogs.CharacterDialog> OnShowDialog = delegate {};
 		public Action<string> OnDialogExit = delegate {};
-		public  MenuItemWithCharacterInput (Lcd lcd, UserInput.Buttons btns, string subject, string dialogTitle, string startText, bool hideInput = false){
+		public  MenuItemWithCharacterInput (string subject, string dialogTitle, string startText, bool hideInput = false){
 			this.dialogTitle = dialogTitle; 
 			this.subject = subject;
 			this.Text = startText;
-			this.lcd = lcd;
-			this.btns = btns;
 			this.hide = hideInput;
 		}
 		public bool EnterAction ()
 		{
-			var dialog = new Dialogs.CharacterDialog(lcd,btns,dialogTitle);
+			var dialog = new Dialogs.CharacterDialog(dialogTitle);
 			dialog.OnShow += delegate{this.OnShowDialog(dialog);};
 			dialog.OnExit += delegate{Text = dialog.GetUserInput();this.OnDialogExit(Text);};
 			dialog.Show();
@@ -65,8 +61,8 @@ namespace MonoBrickFirmware.Display.Menus
 					showTextString = showTextString + "...";
 				}
 			}
-			lcd.WriteTextBox (f, subjectRect,subject + "  ", color);
-			lcd.WriteTextBox(f,textRect,showTextString,color,Lcd.Alignment.Right);
+			Lcd.Instance.WriteTextBox (f, subjectRect,subject + "  ", color);
+			Lcd.Instance.WriteTextBox(f,textRect,showTextString,color,Lcd.Alignment.Right);
 		}
 
 		public string Text{get;private set;}

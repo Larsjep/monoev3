@@ -9,23 +9,32 @@ namespace MonoBrickFirmware.Display.Dialogs
         private int scrollPos;
         int cursorPos;
 		bool allowEsc;
+		int arrowHeight = 5;
+		int arrowWidth = 10;
+		Rectangle arrowRect;
 		
-		public SelectDialog (Font f, Lcd lcd, Buttons btns, SelectionType[] options, string title, bool allowEsc) : base (f, lcd, btns, title, 160,90+(int)f.maxHeight/2,(int)f.maxHeight/4)
+		public SelectDialog (SelectionType[] options, string title, bool allowEsc) : base (Font.MediumFont, title, 160,90+(int)Font.MediumFont.maxHeight/2,(int)Font.MediumFont.maxHeight/4)
 		{
 			this.options = options;
 			cursorPos = 0;
 			scrollPos = 0;
 			this.allowEsc = allowEsc;
 			EscPressed = false;
+			int yEdge = (Lcd.Height - outherWindow.P2.Y);
+			int dialogEdge = outherWindow.P2.Y - innerWindow.P2.Y;
+			arrowRect = new Rectangle (new Point (Lcd.Width / 2 - arrowWidth / 2, Lcd.Height-yEdge-dialogEdge-arrowHeight), new Point (Lcd.Width/ 2 + arrowWidth / 2, Lcd.Height-yEdge-dialogEdge-1));
+			
         }
 
         protected override void OnDrawContent ()
 		{
-			for (int i = 0; i != lines.Count; ++i) {
+			for (int i = 0; i != numberOfLines; ++i) {
 				if (i + scrollPos >= options.Length)
 					break;
-				lcd.WriteTextBox (font, lines [i], options [i + scrollPos].ToString (), i != cursorPos, Lcd.Alignment.Center); 	
+				WriteTextOnLine(options [i + scrollPos].ToString (), i, i != cursorPos);
 			}
+			Lcd.Instance.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + numberOfLines < options.Length);
+			
         }
 
         protected override bool OnUpAction ()
@@ -42,7 +51,7 @@ namespace MonoBrickFirmware.Display.Dialogs
         protected override bool OnDownAction ()
 		{
 			if (scrollPos + cursorPos < options.Length - 1) {
-				if (cursorPos < lines.Count - 1)
+				if (cursorPos < numberOfLines - 1)
 					cursorPos++;
 				else
 					scrollPos++;
@@ -70,6 +79,14 @@ namespace MonoBrickFirmware.Display.Dialogs
 				return default(SelectionType);
 			else
 				return options[cursorPos+scrollPos];
+		}
+		
+		public int GetSelectionIndex ()
+		{
+			if(EscPressed)
+				return -1;
+			else
+				return cursorPos+scrollPos;	
 		}
 		
 		public bool EscPressed{get; private set;}

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using MonoBrickFirmware;
 using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Display;
@@ -11,53 +12,51 @@ namespace MotorExample
 		public static void Main (string[] args)
 		{
 			
-			Buttons btns = new Buttons();
-			Motor motor = new Motor (MotorPort.OutA);
-			MotorSync motorSync = new MotorSync(MotorPort.OutA, MotorPort.OutD);
-			LcdConsole.WriteLine("Use Motor on A");
-			LcdConsole.WriteLine("Use Motor on D");
-			LcdConsole.WriteLine("Press Ent. to start");
-			btns.GetKeypress();
-			motor.ResetTacho ();
-			LcdConsole.WriteLine ("Running forward with 20");
-			motor.On(20);
-			System.Threading.Thread.Sleep(2500);
-			LcdConsole.WriteLine ("Printing motor speed: " + motor.GetSpeed());
-			System.Threading.Thread.Sleep(2500);
-			LcdConsole.WriteLine ("Running backwards with 70");
-			motor.On(-70);
-			System.Threading.Thread.Sleep(3000);
-			LcdConsole.WriteLine ("Reverse direction");
-			motor.Reverse = true;
-			System.Threading.Thread.Sleep(3000);
-			LcdConsole.WriteLine ("Brake");
-			motor.Reverse = false;
-			motor.Brake();
-			System.Threading.Thread.Sleep(3000);			
-			LcdConsole.WriteLine ("Off");
-			motor.Off();
-			System.Threading.Thread.Sleep(3000);			
+			Motor motorA = new Motor (MotorPort.OutA);
+			Motor motorD = new Motor (MotorPort.OutD);
 			
-			LcdConsole.WriteLine ("Move to zero");
-			motor.MoveTo(40, 0, true);
-			LcdConsole.WriteLine("Motor at position: " + motor.GetTachoCount());
-			System.Threading.Thread.Sleep(2000);
+			motorA.Off();
+			motorD.Off();
+
+			motorA.ResetTacho();
+			motorD.ResetTacho();
+
+			LcdConsole.WriteLine("Set speed to 50");
+			motorA.SetSpeed(50);
+			Thread.Sleep(1000);
+			LcdConsole.WriteLine("Speed: " + motorA.GetSpeed());
+			Thread.Sleep(2000);
+			LcdConsole.WriteLine("Break");
+			motorA.Brake();
+
+			Thread.Sleep(3000);
+			motorA.ResetTacho();
+			LcdConsole.WriteLine("Moving motor A to 2000 ");
+			var motorWaitHandle =  motorA.SpeedProfile(50, 200, 1600, 200,true);
+			LcdConsole.WriteLine("Waiting for motor A to stop");
+			//you could do something else here
+			motorWaitHandle.WaitOne();
+			LcdConsole.WriteLine("Done moving motor");
+			LcdConsole.WriteLine("Position A: " + motorA.GetTachoCount());
+
+
+			Thread.Sleep(3000);
+			motorA.ResetTacho();
+			motorD.ResetTacho();
+			LcdConsole.WriteLine("Moving motors A to 2000");
+			LcdConsole.WriteLine("Moving motor B to 1000");
+			WaitHandle[] handles = new WaitHandle[2];
+			handles[0] =  motorA.SpeedProfile(50, 200, 1600, 200,true);
+			handles[1] = motorD.SpeedProfile(50,200,600,200,true);
+			LcdConsole.WriteLine("Waiting for both motors to stop");
+			//you could do something else here
+			WaitHandle.WaitAll(handles);
+			LcdConsole.WriteLine("Done moving both motors");
+			LcdConsole.WriteLine("Position A: " + motorA.GetTachoCount());
+			LcdConsole.WriteLine("Position D: " + motorD.GetTachoCount());
+			motorA.Off();
+			motorD.Off();
 			
-			LcdConsole.WriteLine ("Creating a step profile");
-			motor.SpeedProfileStep(40,100, 1500, 100, true);
-			motor.Off();
-			LcdConsole.WriteLine("Motor at position: " + motor.GetTachoCount());
-			System.Threading.Thread.Sleep(2000);
-			
-			LcdConsole.WriteLine ("Motor " + motorSync.BitField + " synchronised forward for 2500 steps");
-			motorSync.On(50, 0, 2500, true);
-			motorSync.Off();
-			LcdConsole.WriteLine ("Motor " + motorSync.BitField + " synchronised with second motor moving at half speed");
-			motorSync.On(-20,50,2500, false); //coast when done
-			
-			
-			
-			LcdConsole.WriteLine ("Done executing motor test");
 		}
 	}
 }

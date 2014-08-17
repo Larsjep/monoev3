@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using MonoBrickFirmware.Movement;
+using MonoBrickFirmware.Sound;
 using MonoBrickFirmware.Native;
 
 namespace MonoBrickFirmware.Tools
@@ -202,6 +203,11 @@ namespace MonoBrickFirmware.Tools
 		public void Append (OutputBitfield bitField)
 		{
 			Append((byte) bitField);
+		}
+		
+		public void Append (AudioMode mode)
+		{
+			Append((byte) mode);
 		}
 		
 		/// <summary>

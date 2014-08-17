@@ -1,4 +1,5 @@
 using System;
+using MonoBrickFirmware.Extensions;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -9,11 +10,17 @@ namespace MonoBrickFirmware.Sensors
 		/// <summary>
 		/// Result will be in centimeter
 		/// </summary>
-		Centimeter = 1,
+		Centimeter = UARTMode.Mode0,
+		
 		/// <summary>
 		/// Result will be in centi-inch
 		/// </summary>
-		CentiInch = 2 
+		Inch = UARTMode.Mode1,
+		
+		/// <summary>
+		/// Sensor is in listen mode
+		/// </summary>
+		Listen = UARTMode.Mode2
 	};
     
 	internal enum UltraSonicCommand { Off = 00, SingleShot = 0x01, Continuous = 0x02, EventCapture = 0x03, RequestWarmReset = 0x04 };
@@ -53,11 +60,12 @@ namespace MonoBrickFirmware.Sensors
              return "Zero: " + zero.ToString() + " Scale factor: " + scaleFactor.ToString() + " Scale division: " + scaleDivision.ToString();
         }
     }
+    
         
     /// <summary>
     /// Sonar sensor
     /// </summary>
-	public class UltraSonicSensor : I2CSensor, ISensor {
+	public class NXTUltraSonicSensor : I2CSensor{
         private const byte UltraSonicAddress = 0x02;
 		private UltraSonicMode sonarMode;
         
@@ -67,12 +75,15 @@ namespace MonoBrickFirmware.Sensors
 		/// <value>
 		/// The sonar mode 
 		/// </value>
-		public  UltraSonicMode Mode{ get{return sonarMode;} set{sonarMode = value;}}
+		public  UltraSonicMode Mode{ 
+			get{return sonarMode;} 
+			set{sonarMode = value;}
+		}
         
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.NXT.Sonar"/> class in centimeter mode
 		/// </summary>
-		public UltraSonicSensor(SensorPort port) : this(port,UltraSonicMode.Centimeter) { 
+		public NXTUltraSonicSensor(SensorPort port) : this(port,UltraSonicMode.Centimeter) { 
 			
 		}
         
@@ -82,7 +93,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <param name='mode'>
 		/// The sonar mode
 		/// </param>
-		public UltraSonicSensor(SensorPort port, UltraSonicMode mode) : base(port,UltraSonicAddress,I2CMode.LowSpeed9V)
+		public NXTUltraSonicSensor(SensorPort port, UltraSonicMode mode) : base(port,UltraSonicAddress,I2CMode.LowSpeed9V)
 		{ 
 			Mode = mode;
 			base.Initialise(); 
@@ -91,10 +102,10 @@ namespace MonoBrickFirmware.Sensors
 		/// <summary>
 		/// Read the distance in either centiinches or centimeter
 		/// </summary>
-        public int ReadDistance() {
+        public float ReadDistance() {
             int reading = ReadRegister((byte)UltraSonicRegister.Result1, 1)[0];
-            if (Mode == UltraSonicMode.CentiInch)
-                return (reading * 39370) / 1000;
+            if (Mode == UltraSonicMode.Inch)
+                return (reading * 39370) / 100;
             return reading;
         }
         
@@ -175,15 +186,48 @@ namespace MonoBrickFirmware.Sensors
         /// <returns>
         /// The value as a string
         /// </returns>
-		public string ReadAsString()
+		public override string ReadAsString()
         {
             string s = ReadDistance().ToString();
-            if (Mode == UltraSonicMode.CentiInch)
-                s = s + " centi-inches";
+            if (Mode == UltraSonicMode.Inch)
+                s = s + " inch";
             else
-                s = s + " centimeters";
+                s = s + " cm";
             return s;
         }
+        
+        
+        public override string GetSensorName ()
+		{
+			return "NXT Ultrasonic";
+		}
+		
+		public override void SelectNextMode()
+		{
+			Mode = Mode.Next();
+			if(Mode == UltraSonicMode.Listen)
+				Mode = Mode.Next();
+			return;
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			Mode = Mode.Previous();
+			if(Mode == UltraSonicMode.Listen)
+				Mode = Mode.Previous();
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return Enum.GetNames(typeof(UltraSonicMode)).Length-1;//listen mode not supported
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return Mode.ToString();
+		}
         
     }
 }

@@ -1,16 +1,11 @@
 using System;
 using System.Net.NetworkInformation;
+using MonoBrickFirmware.Native;
 
-namespace MonoBrickFirmware.Native
+namespace MonoBrickFirmware.Connections
 {
 	public class WiFiDevice
 	{
-		public WiFiDevice ()
-		{
-						
-		
-		}
-		
 		public static bool IsLinkUp()
 		{
 			bool up = false;
@@ -74,7 +69,7 @@ namespace MonoBrickFirmware.Native
 		public static bool TurnOn (int timeout = 0)
 		{
 			if (!IsLinkUp ()) {
-				if (ProcessHelper.RunAndWaitForProcess ("/lejos/bin/startwlan", "", timeout) == 0) 
+				if (ProcessHelper.RunAndWaitForProcess ("/home/root/lejos/bin/startwlan", "", timeout) == 0) 
 				{
 					return true;
 				}

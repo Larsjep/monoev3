@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MonoBrickFirmware.Native;
+using MonoBrickFirmware.Extensions;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -91,285 +92,12 @@ namespace MonoBrickFirmware.Sensors
 		Blue = AnalogMode.ColorBlue,//Mode 1 for EV3
 	};
 	
-	public interface IColorSensor{
 	
-		/// <summary>
-		/// Reads the sensor value as a string.
-		/// </summary>
-		/// <returns>The value as a string</returns>
-		string ReadAsString ();
-		
-		/// <summary>
-		/// Read the raw value of the reflected or ambient light. In color mode the color index is returned
-		/// </summary>
-		/// <returns>The raw value</returns>
-		int ReadRaw ();
-		
-		/// <summary>
-		/// Read the intensity of the reflected or ambient light in percent. In color mode the color index is returned
-		/// </summary>
-		int Read();
-		
-		/// <summary>
-		/// Gets or sets the color mode.
-		/// </summary>
-		/// <value>The color mode.</value>
-		ColorMode Mode{get;set;}
-		
-		/// <summary>
-		/// Reads the color.
-		/// </summary>
-		/// <returns>The color.</returns>
-		Color ReadColor();
-	}
-	
-	
-	
-	/// <summary>
-	/// Class for color sensor that works with both the EV3 and NXT color sensor.
-	/// </summary>
-	public class ColorSensor : IColorSensor, ISensor{
-		private IColorSensor colorSensor;
-		private SensorPort port;
-		/// <summary>
-		/// Initializes a new instance of the NXTColorSensor class in color mode
-		/// </summary>
-		public ColorSensor (SensorPort port) : this(port, ColorMode.Color)
-		{
-					
-		}
-		
-		/// <summary>
-		/// Initializes a new instance of the NXTColorSensor class.
-		/// </summary>
-		/// <param name="mode">Mode.</param>
-		public ColorSensor (SensorPort port, ColorMode mode)
-		{
-			Initialize();
-			colorSensor.Mode = mode;
-			this.port = port;
-		}
-		
-		public void Initialize ()
-		{
-			ColorMode? mode = null;
-			if(colorSensor != null)
-				mode = colorSensor.Mode;
-				
-			if (SensorManager.Instance.GetConnectionType (this.port) == ConnectionType.NXTColor) {
-				colorSensor = new NXTColorSensor(this.port);
-			
-			} 
-			else {
-				colorSensor = new EV3ColorSensor(this.port);
-			}
-			if(mode.HasValue)
-				colorSensor.Mode = mode.Value;
-		}
-		
-	
-		/// <summary>
-		/// Gets or sets the color mode.
-		/// </summary>
-		/// <value>The color mode.</value>
-		public ColorMode Mode {
-			get{ return colorSensor.Mode;}
-			set{ colorSensor.Mode = value;}
-		
-		}
-		
-		/// <summary>
-		/// Reads the sensor value as a string.
-		/// </summary>
-		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
-		{
-			return colorSensor.ReadAsString();	
-		}
-		
-		/// <summary>
-		/// Read the raw value of the reflected or ambient light. In color mode the color index is returned
-		/// </summary>
-		/// <returns>The raw value</returns>
-		public int ReadRaw ()
-		{
-			return colorSensor.ReadRaw();	
-		}
-		
-		
-		/// <summary>
-		/// Read the intensity of the reflected or ambient light in percent. In color mode the color index is returned
-		/// </summary>
-		public int Read()
-		{
-			return colorSensor.Read();	
-		}
-		
-		/// <summary>
-		/// Reads the color.
-		/// </summary>
-		/// <returns>The color.</returns>
-		public Color ReadColor()
-		{
-			return colorSensor.ReadColor();	
-		}	
-	}
-	
-	public class EV3ColorSensor : UartSensor, IColorSensor{
-		
-		/// <summary>
-		/// Initializes a new instance of the NXTColorSensor class in color mode
-		/// </summary>
-		public EV3ColorSensor (SensorPort port) : this(port, ColorMode.Color)
-		{
-			
-		}
-		
-		/// <summary>
-		/// Initializes a new instance of the NXTColorSensor class.
-		/// </summary>
-		/// <param name="mode">Mode.</param>
-		public EV3ColorSensor (SensorPort port, ColorMode mode) :  base(port)
-		{
-			base.Initialise(base.uartMode);
-			Mode = mode;
-						
-		}
-		
-		/// <summary>
-		/// Gets or sets the color mode.
-		/// </summary>
-		/// <value>The color mode.</value>
-		public ColorMode Mode {
-			get{return SensorModeToColorMode(base.uartMode);}
-			set{
-				base.SetMode(ColorModeToSensorMode(value));
-			}
-		}
-		
-		/// <summary>
-		/// Reads the sensor value as a string.
-		/// </summary>
-		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
-		{
-			string s = "";
-			switch (Mode)
-			{
-			    case ColorMode.Ambient:
-			        s = Read().ToString();
-			        break;
-			   case ColorMode.Color:
-			        s = ReadColor().ToString();
-			        break;
-			   case ColorMode.Reflection:
-			        s = Read().ToString();
-			        break;
-			   case ColorMode.Blue:
-			        s = Read().ToString();
-			        break;
-			   default:
-			   		s = Read().ToString();
-			   		break;
-			}
-			return s;
-		}
-		
-		/// <summary>
-		/// Read the raw value of the reflected or ambient light. In color mode the color index is returned
-		/// </summary>
-		/// <returns>The raw value</returns>
-		public int ReadRaw ()
-		{
-			return Read();
-		}
-		
-		
-		/// <summary>
-		/// Read the intensity of the reflected or ambient light in percent. In color mode the color index is returned
-		/// </summary>
-		public int Read()
-		{
-			int value = 0;
-			switch (Mode)
-			{
-			    case ColorMode.Color:
-			        value = (int)ReadColor();
-			        break;
-			   	default:
-			   		value = CalculateRawAverageAsPct();
-			   		break;
-			}
-			return value;
-		}
-		
-		/// <summary>
-		/// Reads the color.
-		/// </summary>
-		/// <returns>The color.</returns>
-		public Color ReadColor()
-		{
-			Color color = Color.None;
-			if (Mode == ColorMode.Color) {
-				color = (Color) (base.ReadByte());
-			}
-			return color;
-		}
-		
-		protected int CalculateRawAverageAsPct ()
-		{
-			return(int) base.ReadByte();
-		}
-		
-		private UARTMode ColorModeToSensorMode (ColorMode mode)
-		{
-			UARTMode sensorMode = UARTMode.Mode0;
-			switch (mode) {
-				case ColorMode.Ambient:
-					sensorMode = UARTMode.Mode1;
-					break;
-				case ColorMode.Color:
-					sensorMode = UARTMode.Mode2;
-					break;
-				case ColorMode.Blue:
-					sensorMode = UARTMode.Mode1;
-					break;
-				case ColorMode.Green:
-					sensorMode = UARTMode.Mode0;//not supported by the EV3 use relection
-					break;
-				case ColorMode.Reflection:
-					sensorMode = UARTMode.Mode0;
-					break;
-			}
-			return sensorMode;
-		}
-		
-		
-		private ColorMode SensorModeToColorMode (UARTMode mode)
-		{
-			ColorMode colorMode = ColorMode.Reflection;
-			switch (mode) {
-				case UARTMode.Mode1:
-					colorMode = ColorMode.Ambient;
-					break;
-				case UARTMode.Mode2:
-					colorMode = ColorMode.Color;
-					break;
-				case UARTMode.Mode0:
-					colorMode = ColorMode.Reflection;
-					break;
-			}
-			return colorMode;
-		}
-	}
-	
-	
-	
-	public class NXTColorSensor : AnalogSensor, IColorSensor{
+	public class NXTColorSensor : AnalogSensor{
 		
 		//Analog memory offsets
     	private const int ColorOffset = 4856;
-		private const int ColorBufferSize = 18 * NumberOfSenosrPorts;
+		private const int ColorBufferSize = 18 * NumberOfSensorPorts;
 		private const int ColorRawOffset = 54;
 		
 		private const int RedIndex = 0;
@@ -403,7 +131,7 @@ namespace MonoBrickFirmware.Sensors
 		public NXTColorSensor (SensorPort port, ColorMode mode) :  base(port)
 		{
 			GetColorData();
-			SetMode(AnalogMode);	
+			SetMode((AnalogMode)mode);	
 		}
 		
 		/// <summary>
@@ -422,7 +150,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
+		public override string ReadAsString ()
 		{
 			string s = "";
 			switch (Mode)
@@ -639,6 +367,35 @@ namespace MonoBrickFirmware.Sensors
 	            blankVal = SensorResolution;
 	        vals[BackgroundIndex] = (Int16) ((blankVal * calibrationValues[calTab,BackgroundIndex]) >> 16);
 	    }
+	    
+	    public override string GetSensorName ()
+		{
+			return "NXT Color";
+		}
+		
+		public override void SelectNextMode()
+		{
+			Mode = Mode.Next();
+			return;
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			Mode = Mode.Previous();
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return Enum.GetNames(typeof(ColorMode)).Length;
+		}
+        
+        public override string SelectedMode ()
+		{
+			return Mode.ToString();
+		}
+	    
+	    
 	}
 }
 

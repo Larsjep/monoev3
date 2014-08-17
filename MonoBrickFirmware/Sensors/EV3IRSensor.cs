@@ -1,4 +1,5 @@
 using System;
+using MonoBrickFirmware.Extensions;
 
 
 namespace MonoBrickFirmware.Sensors
@@ -29,7 +30,7 @@ namespace MonoBrickFirmware.Sensors
 	/// </summary>
 	public enum IRChannel{
 		#pragma warning disable 
-		One = 0, Two = 1, Three = 2, Four = 4
+		One = 0, Two = 1, Three = 2, Four = 3
 		#pragma warning restore
 	};
 	
@@ -62,14 +63,14 @@ namespace MonoBrickFirmware.Sensors
 	
 	
 	/// <summary>
-	/// Class for the EV3 IR sensor - In seek or remote mode it only works with channel 0
+	/// Class for the EV3 IR sensor
 	/// </summary>
-	public class IRSensor :UartSensor{
+	public class EV3IRSensor : UartSensor{
 		
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.IRSensor"/> class.
 		/// </summary>
-		public IRSensor (SensorPort port) : this(port, IRMode.Proximity)
+		public EV3IRSensor (SensorPort port) : this(port, IRMode.Proximity)
 		{
 				
 		}
@@ -78,7 +79,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.IRSensor"/> class.
 		/// </summary>
 		/// <param name="mode">Mode.</param>
-		public IRSensor (SensorPort port, IRMode mode) :  base(port)
+		public EV3IRSensor (SensorPort port, IRMode mode) :  base(port)
 		{
 			base.Initialise(base.uartMode);
 			Mode = mode;
@@ -98,7 +99,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
+		public override string ReadAsString ()
 		{
 			string s = "";
 			switch ((IRMode)base.uartMode)
@@ -178,6 +179,36 @@ namespace MonoBrickFirmware.Sensors
 		/// </summary>
 		/// <value>The channel.</value>
 		public IRChannel Channel{get;set;}
+		
+		public override string GetSensorName ()
+		{
+			return "EV3 IR";
+		}
+		
+		public override void SelectNextMode()
+		{
+			Mode = Mode.Next();
+			return;
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			Mode = Mode.Previous();
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return Enum.GetNames(typeof(IRMode)).Length;
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return Mode.ToString();
+		}
+		
+		
 	}
 }
 

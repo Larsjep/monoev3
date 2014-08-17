@@ -46,9 +46,11 @@ namespace MonoBrickFirmware.Movement
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
 		public void StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake, bool waitForCompletion = true){
+			if(!waitForCompletion)
+				CancelPolling();
 			output.SetStepSync(speed, turnRatio, steps, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop();
+				WaitForMotorsToStartAndStop();
 		}
 		
 		/// <summary>
@@ -62,9 +64,11 @@ namespace MonoBrickFirmware.Movement
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
 		public void TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake, bool waitForCompletion = true){
+			if(!waitForCompletion)
+				CancelPolling();
 			output.SetTimeSync(speed, turnRatio, timeInMs, brake);
 			if(waitForCompletion)
-				WaitForMotorToStop();
+				WaitForMotorsToStartAndStop();
 		}
 		
 		/// <summary>
@@ -73,6 +77,7 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="speed">Speed of the motors.</param>
 		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
 		public void On(sbyte speed, Int16 turnRatio){
+			CancelPolling();
 			On(speed, turnRatio, 0, false);
 		}
 		
@@ -87,21 +92,12 @@ namespace MonoBrickFirmware.Movement
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
 		public void On (sbyte speed, Int16 turnRatio, uint degrees, bool brake, bool waitForCompletion = true){
+			if(!waitForCompletion)
+				CancelPolling();
 			StepSync(speed, turnRatio , degrees, brake, waitForCompletion);
 			if(waitForCompletion)
-				WaitForMotorToStop();
+				WaitForMotorsToStartAndStop();
 		}
-		
-		protected override void WaitForMotorToStop ()
-		{
-			System.Threading.Thread.Sleep (300);
-			foreach (var port in PortList) {
-				do{
-					System.Threading.Thread.Sleep(50);
-				}while(output.GetSpeed(port)!= 0);	
-			}
-		}
-		
 	}
 }
 

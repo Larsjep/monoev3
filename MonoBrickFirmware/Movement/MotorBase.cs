@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Timers;
+using System.Threading;
 
 namespace MonoBrickFirmware.Movement
 {
@@ -8,6 +10,12 @@ namespace MonoBrickFirmware.Movement
 	/// </summary>
 	public class MotorBase{
 		
+		private System.Timers.Timer timer;
+		private const double pollRate = 50;
+		private ManualResetEvent stop = new ManualResetEvent(false);
+		private ManualResetEvent start = new ManualResetEvent(false);
+		private ManualResetEvent waitHandle = new ManualResetEvent(false);
+
 		/// <summary>
 		/// The output.
 		/// </summary>
@@ -80,38 +88,110 @@ namespace MonoBrickFirmware.Movement
 			return OutputBitfield.OutD;
 			
 		}
-		
+
+		public MotorBase ()
+		{
+			timer = new System.Timers.Timer(pollRate);
+			timer.Elapsed += PollFunction;
+		}
+
+		/// <summary>
+		/// Determines whether the motor(s) are running.
+		/// </summary>
+		/// <returns>
+		/// <c>true</c> if this motor is moving; otherwise, <c>false</c>.
+		/// </returns>
+	    public bool IsRunning()
+		{
+			bool status = true;
+			foreach (var port in PortList) {
+				if (output.GetSpeed (port) == 0) 
+				{
+					status = false;
+					break;
+				} 
+			}
+			return status;
+		}
+
 		/// <summary>
 		/// Brake the motor (is still on but does not move)
 		/// </summary>
-		public void Brake(){
+		public virtual void Brake(){
+			CancelPolling();
 			output.Stop(true);
 		}
 		
 		/// <summary>
 		/// Turn the motor off
 		/// </summary>
-		public void Off(){
+		public virtual void Off(){
+			CancelPolling();
 			output.Stop (false);
+			output.SetPower(0);
 		}
 		
 		/// <summary>
 		/// Sets the power of the motor.
 		/// </summary>
 		/// <param name="power">Power to use.</param>
-		public void SetPower(byte power){
-			output.SetPower(power);
-		}
-		
-		
-		protected virtual void WaitForMotorToStop ()
+		public virtual void SetPower(sbyte power)
 		{
-			System.Threading.Thread.Sleep(300);
-			do{
-				System.Threading.Thread.Sleep(50);
-			}while(output.GetSpeed(this.PortList[0])!= 0);
+			CancelPolling();
+			output.SetPower(power);
+			output.Start();
 		}
-	
+
+		private void PollFunction (Object source, ElapsedEventArgs e)
+		{
+			if (!Monitor.TryEnter (this)) {
+				//cancel has the lock
+				return;
+			}
+			//Do the polling
+			if (IsRunning ()) {
+				stop.Reset ();
+				start.Set ();
+			} 
+			else 
+			{
+				stop.Set ();
+				start.Reset ();
+			}
+			Monitor.Exit(this);
+
+		}
+
+		protected void CancelPolling()
+		{
+			if (timer.Enabled) 
+			{
+				timer.Stop();
+				Monitor.Enter(this);
+				stop.Set();
+				start.Set();
+				Monitor.Exit(this);
+			}	
+		}
+
+		protected WaitHandle WaitForMotorsToStartAndStop()
+		{
+			waitHandle.Reset();
+			timer.Start();
+			//Optimize the poll function to save this exstra thread
+			(new Thread(() => {
+				if (!IsRunning ()) 
+				{
+					start.WaitOne ();
+				}
+				stop.WaitOne();
+				timer.Stop();
+				start.Reset();
+				stop.Reset();
+				waitHandle.Set();
+		    })).Start();
+			return waitHandle;
+		}
 	}
 }
 

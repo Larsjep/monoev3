@@ -15,13 +15,13 @@ namespace MonoBrickFirmware.Sensors
 		#pragma warning restore
 	};
 	
-	public abstract class AnalogSensor{
+	public abstract class AnalogSensor: ISensor{
 		private MemoryArea analogMemory;
 		
 		
 		protected const int ADCResolution = 4095;//12-bit
 		protected AnalogMode AnalogMode{get;private set;}
-		protected const int NumberOfSenosrPorts = SensorManager.NumberOfSenosrPorts;
+		protected const int NumberOfSensorPorts = SensorManager.NumberOfSensorPorts;
 		protected SensorPort port;
 		
 		
@@ -90,9 +90,22 @@ namespace MonoBrickFirmware.Sensors
 		
 		private int ReadOffset (int offset)
 		{
-			 return (int)BitConverter.ToInt16(analogMemory.Read(offset, NumberOfSenosrPorts*2),(int) port * 2);
+			 return (int)BitConverter.ToInt16(analogMemory.Read(offset, NumberOfSensorPorts*2),(int) port * 2);
 		}
 		
+		public abstract string ReadAsString ();
+    	
+		public abstract void SelectNextMode();
+		
+		public abstract string GetSensorName();
+		
+		public abstract void SelectPreviousMode();
+		
+		public abstract int NumberOfModes();
+        
+        public abstract string SelectedMode();
+        
+		public SensorPort Port{ get {return port;}}
 		
 	}
 }

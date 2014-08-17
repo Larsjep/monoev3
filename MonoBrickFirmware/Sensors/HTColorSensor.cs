@@ -13,7 +13,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// HiTechnic color sensor
 	/// </summary>
-    public class HiTecColorSensor : I2CSensor, ISensor
+    public class HiTecColorSensor : I2CSensor
     {
         private const byte ColorAddress = 0x02;
         
@@ -63,11 +63,38 @@ namespace MonoBrickFirmware.Sensors
 		/// <returns>
 		/// The value as a string
 		/// </returns>
-        public string ReadAsString()
+        public override string ReadAsString()
         {
             RGBColor color = ReadRGBColor();
             return "Red:" + color.Red + " green:" + color.Green + " blue:" + color.Blue;
         }
+        
+        public override string GetSensorName ()
+		{
+			return "HT Color";
+		}
+		
+		public override void SelectNextMode()
+		{
+			return;
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return 1;
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return "Color";
+		}
+        
     }
 }
 

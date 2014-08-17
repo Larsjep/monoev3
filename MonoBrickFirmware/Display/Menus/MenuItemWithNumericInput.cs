@@ -7,7 +7,6 @@ namespace MonoBrickFirmware.Display.Menus
 	public class MenuItemWithNumericInput : IMenuItem
 	{
 		private string text;
-		private Lcd lcd;
 		private int min;
 		private int max;
 		private const int rightArrowOffset = 4;
@@ -20,10 +19,9 @@ namespace MonoBrickFirmware.Display.Menus
 		
 		private Font font;
 		private Rectangle rect;
-		private bool drawDataSaved = false;
-		public MenuItemWithNumericInput (Lcd lcd, string text, int startValue, int min = int.MinValue, int max= int.MaxValue){
+		public Action<int> OnValueChanged = delegate {};
+		public MenuItemWithNumericInput (string text, int startValue, int min = int.MinValue, int max= int.MaxValue){
 			this.text = text;
-			this.lcd = lcd;
 			this.Value = startValue;
 			this.min = min;
 			this.max = max;
@@ -35,77 +33,71 @@ namespace MonoBrickFirmware.Display.Menus
 		public bool LeftAction ()
 		{
 			int counter = 0;
-			using (Buttons btns = new Buttons ()) {
-				Value--;
-				do{
-					if(counter < holdSingleWait ){
-						counter++;
-					}
-					if(counter >= holdSingleWait  && counter < holdTenWait){
-						counter++;
-						Value--;
-					}
-					if(counter >= holdTenWait && counter < holdHundredWait){
-						Value = Value -10;
-						counter++;
-					}
-					if(counter >= holdHundredWait && counter < holdFiveHundredWait){
-						Value = Value -100;
-						counter++;
-					}
-					if(counter >= holdFiveHundredWait){
-						Value=Value - 500;
-					}
-					if(Value<min)
-						Value = max;
-					this.Draw(font,rect,false);
-					lcd.Update();
-					System.Threading.Thread.Sleep(holdSleepTime);
-				}while (btns.GetButtonStates()== Buttons.ButtonStates.Left);
-			}
+			Value--;
+			do{
+				if(counter < holdSingleWait ){
+					counter++;
+				}
+				if(counter >= holdSingleWait  && counter < holdTenWait){
+					counter++;
+					Value--;
+				}
+				if(counter >= holdTenWait && counter < holdHundredWait){
+					Value = Value -10;
+					counter++;
+				}
+				if(counter >= holdHundredWait && counter < holdFiveHundredWait){
+					Value = Value -100;
+					counter++;
+				}
+				if(counter >= holdFiveHundredWait){
+					Value=Value - 500;
+				}
+				if(Value<min)
+					Value = max;
+				this.Draw(font,rect,false);
+				Lcd.Instance.Update();
+				System.Threading.Thread.Sleep(holdSleepTime);
+			}while (Buttons.Instance.GetStates()== Buttons.ButtonStates.Left);
+			OnValueChanged(Value);
 			return false;
 		}
 		
 		public bool RightAction(){
 			int counter = 0;
-			using (Buttons btns = new Buttons ()) {
-				Value++;
-				do{
-					if(counter < holdSingleWait ){
-						counter++;
-					}
-					if(counter >= holdSingleWait  && counter < holdTenWait){
-						counter++;
-						Value++;
-					}
-					if(counter >= holdTenWait && counter < holdHundredWait){
-						Value=Value +10;
-						counter++;
-					}
-					if(counter >= holdHundredWait && counter < holdFiveHundredWait){
-						Value = Value +100;
-						counter++;
-					}
-					if(counter >= holdFiveHundredWait){
-						Value=Value + 500;
-					}
-					if(Value>max)
-						Value = min;
-					this.Draw(font,rect,false);
-					lcd.Update();
-					System.Threading.Thread.Sleep(holdSleepTime);
-				}while (btns.GetButtonStates()== Buttons.ButtonStates.Right);
-			}
+			Value++;
+			do{
+				if(counter < holdSingleWait ){
+					counter++;
+				}
+				if(counter >= holdSingleWait  && counter < holdTenWait){
+					counter++;
+					Value++;
+				}
+				if(counter >= holdTenWait && counter < holdHundredWait){
+					Value=Value +10;
+					counter++;
+				}
+				if(counter >= holdHundredWait && counter < holdFiveHundredWait){
+					Value = Value +100;
+					counter++;
+				}
+				if(counter >= holdFiveHundredWait){
+					Value=Value + 500;
+				}
+				if(Value>max)
+					Value = min;
+				this.Draw(font,rect,false);
+				Lcd.Instance.Update();
+				System.Threading.Thread.Sleep(holdSleepTime);
+			}while (Buttons.Instance.GetStates()== Buttons.ButtonStates.Right);
+			OnValueChanged(Value);
 			return false;
 		}
 		public void Draw (Font f, Rectangle r, bool color)
 		{
-			if (!drawDataSaved) 
-			{
-				font = f;
-				rect = r;
-				drawDataSaved = true;
-			}
+			font = f;
+			rect = r;
 			
 			int arrowWidth = (int)f.maxWidth / 4;
 			
@@ -116,10 +108,10 @@ namespace MonoBrickFirmware.Display.Menus
 			Rectangle leftArrowRect = new Rectangle(new Point(numericRect.P1.X, numericRect.P1.Y+arrowEdge), new Point(numericRect.P1.X+ arrowWidth, numericRect.P2.Y-arrowEdge));
 			Rectangle rightArrowRect = new Rectangle( new Point(numericRect.P2.X-(arrowWidth + rightArrowOffset), numericRect.P1.Y+arrowEdge) , new Point(numericRect.P2.X-rightArrowOffset,numericRect.P2.Y-arrowEdge));
 			
-			lcd.WriteTextBox (f, textRect, text, color, Lcd.Alignment.Left);
-			lcd.WriteTextBox (f, numericRect, valueAsString, color, Lcd.Alignment.Right);
-			lcd.DrawArrow(leftArrowRect, Lcd.ArrowOrientation.Left, color);
-			lcd.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
+			Lcd.Instance.WriteTextBox (f, textRect, text, color, Lcd.Alignment.Left);
+			Lcd.Instance.WriteTextBox (f, numericRect, valueAsString, color, Lcd.Alignment.Right);
+			Lcd.Instance.DrawArrow(leftArrowRect, Lcd.ArrowOrientation.Left, color);
+			Lcd.Instance.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
 		}
 		public int Value{get;private set;}
 	}

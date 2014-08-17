@@ -9,12 +9,19 @@ namespace MonoBrickFirmware.UserInput
 	{
 		EventWaitHandle stopPolling = new ManualResetEvent (false);
 		const int pollTime = 50;
-		Buttons btns = new Buttons ();
 		QueueThread queue = new QueueThread ();
-
+		Thread pollThread = null;
+		
 		public ButtonEvents ()
 		{
-			new Thread (ButtonPollThread).Start ();
+			pollThread = new Thread(ButtonPollThread);
+			pollThread.Start ();
+		}
+		
+		public void Kill()
+		{
+			stopPolling.Set();
+			pollThread.Join();		
 		}
 
 		public event Action UpPressed = delegate {};
@@ -33,9 +40,9 @@ namespace MonoBrickFirmware.UserInput
 		void ButtonPollThread ()
 		{	
 			Thread.CurrentThread.IsBackground = true;
-			Buttons.ButtonStates lastState = btns.GetDebounced ();
+			Buttons.ButtonStates lastState = Buttons.Instance.GetDebounced();
 			while (!stopPolling.WaitOne (pollTime)) {
-				Buttons.ButtonStates bs = btns.GetDebounced ();
+				Buttons.ButtonStates bs = Buttons.Instance.GetDebounced ();
 				if (bs != lastState) {
 					Buttons.ButtonStates pressed = (bs ^ lastState) & (~lastState);
 					switch (pressed) {
@@ -85,16 +92,13 @@ namespace MonoBrickFirmware.UserInput
 				
 			}
 		}
-
-		#region IDisposable implementation
-
-		void IDisposable.Dispose ()
-		{
-			((IDisposable)btns).Dispose ();
-		}
-
-		#endregion
-
+		
+		public void Dispose ()
+ 		{
+			Kill();
+ 		}
+ 
+ 		
 	}
 
 }

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{67261E03-D263-4C42-A5AD-2A4820231B28}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -42,6 +43,11 @@
     <Folder Include="Sensors\" />
     <Folder Include="Movement\" />
     <Folder Include="UserInput\" />
+    <Folder Include="Sound\" />
+    <Folder Include="Services\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Display\Animation\" />
+    <Folder Include="Connections\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Native\Libc.cs" />
@@ -55,14 +61,8 @@
     <Compile Include="Sensors\HTGyroSensor.cs" />
     <Compile Include="Sensors\HTCompassSensor.cs" />
     <Compile Include="Sensors\HTTiltSensor.cs" />
-    <Compile Include="Sensors\UltraSonicSensor.cs" />
-    <Compile Include="Sensors\TouchSensor.cs" />
-    <Compile Include="Sensors\SoundSensor.cs" />
     <Compile Include="Sensors\SensorManager.cs" />
-    <Compile Include="Sensors\LightSensor.cs" />
     <Compile Include="Sensors\ISensor.cs" />
-    <Compile Include="Sensors\IRSensor.cs" />
-    <Compile Include="Sensors\ColorSensor.cs" />
     <Compile Include="Movement\Output.cs" />
     <Compile Include="Movement\Vehicle.cs" />
     <Compile Include="Movement\MotorBase.cs" />
@@ -78,7 +78,6 @@
     <Compile Include="Sensors\I2CSensor.cs" />
     <Compile Include="Sensors\UARTSensor.cs" />
     <Compile Include="Native\ProcessHelper.cs" />
-    <Compile Include="Native\WiFiDevice.cs" />
     <Compile Include="Display\Menus\IMenuItem.cs" />
     <Compile Include="Display\Menus\Menu.cs" />
     <Compile Include="Display\Menus\MenuItemWithAction.cs" />
@@ -91,6 +90,35 @@
     <Compile Include="Display\Dialogs\InfoDialog.cs" />
     <Compile Include="Display\Dialogs\QuestionsDialog.cs" />
     <Compile Include="Display\Dialogs\SelectDialog.cs" />
+    <Compile Include="Sound\Speaker.cs" />
+    <Compile Include="Services\WebServer.cs" />
+    <Compile Include="Tools\XmlHelper.cs" />
+    <Compile Include="Extensions\EnumExtension.cs" />
+    <Compile Include="Sensors\SensorFactory.cs" />
+    <Compile Include="Sensors\EV3GyroSensor.cs" />
+    <Compile Include="Sensors\EV3IRSensor.cs" />
+    <Compile Include="Sensors\NXTLightSensor.cs" />
+    <Compile Include="Sensors\NXTUltraSonicSensor.cs" />
+    <Compile Include="Sensors\NXTSoundSensor.cs" />
+    <Compile Include="Sensors\NXTTouchSensor.cs" />
+    <Compile Include="Sensors\EV3TouchSensor.cs" />
+    <Compile Include="Sensors\EV3ColorSensor.cs" />
+    <Compile Include="Sensors\NXTColorSensor.cs" />
+    <Compile Include="Sensors\EV3UltraSonicSensor.cs" />
+    <Compile Include="Sensors\SensorListner.cs" />
+    <Compile Include="Display\Dialogs\StepDialog.cs" />
+    <Compile Include="Display\Animation\IAnimation.cs" />
+    <Compile Include="Display\Animation\ProgressAnimation.cs" />
+    <Compile Include="Display\Dialogs\StepContainer.cs" />
+    <Compile Include="Display\Dialogs\IStep.cs" />
+    <Compile Include="Display\Dialogs\ProgressDialog.cs" />
+    <Compile Include="Native\AOTHelper.cs" />
+    <Compile Include="Connections\WiFiDevice.cs" />
+    <Compile Include="Movement\PositionPID.cs" />
+    <Compile Include="Tools\MovingAverage.cs" />
+    <Compile Include="Tools\PIDAbstraction.cs" />
+    <Compile Include="Tools\VersionHelper.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

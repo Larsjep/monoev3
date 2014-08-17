@@ -7,7 +7,6 @@ namespace MonoBrickFirmware.Display
 	{		
 		private class ConsoleWriter
 		{
-			Lcd lcd = new Lcd();
 			Font f = Font.SmallFont;
 			int scrollPos = 0;
 			int lines;
@@ -29,17 +28,17 @@ namespace MonoBrickFirmware.Display
 			public void WriteLine(string line)
 			{
 				Point p = new Point(0, (int)(scrollPos * lineHeigth));
-				lcd.WriteTextBox(f, lineSize + p, line, true);
+				Lcd.Instance.WriteTextBox(f, lineSize + p, line, true);
 				scrollPos++;
 				
-				lcd.Update((int)(scrollPos * lineHeigth));				
+				Lcd.Instance.Update((int)(scrollPos * lineHeigth));				
 				if (scrollPos >= lines)
 					scrollPos = 0;
 			}
 			
 			public void Clear ()
 			{
-				lcd.Clear();
+				Lcd.Instance.Clear();
 				Reset();
 			}
 			

@@ -10,7 +10,6 @@ namespace MonoBrickFirmware.Display.Menus
 	public class Menu
 	{
 		IMenuItem[] menuItems;
-		Lcd lcd;
 		Font font;
 		string title;
 		Point itemSize;
@@ -18,31 +17,34 @@ namespace MonoBrickFirmware.Display.Menus
 		int itemsOnScreen;
 		int cursorPos;
 		int scrollPos;
-		Buttons btns;
 		int arrowHeight = 5;
 		int arrowWidth = 10;
 		
-		public Menu (Font f, Lcd lcd, Buttons btns, string title, IEnumerable<IMenuItem> items)
+		public Menu (string title, IEnumerable<IMenuItem> items):this(Font.MediumFont, title,items)
+		{
+			
+		}
+		
+		
+		public Menu (Font f, string title, IEnumerable<IMenuItem> items)
 		{
 			this.font = f;
-			this.lcd = lcd;
 			this.title = title;
 			this.menuItems = items.ToArray ();			
 			this.itemSize = new Point (Lcd.Width, (int)font.maxHeight);
 			this.itemHeight = new Point (0, (int)font.maxHeight);
 			this.itemsOnScreen = (int)((Lcd.Height-arrowHeight)/ font.maxHeight - 1); // -1 Because of the title
-			this.btns = btns;
 			cursorPos = 0;
 			scrollPos = 0;
 		}
 		
 		private void RedrawMenu ()
 		{
-			lcd.Clear ();
+			Lcd.Instance.Clear ();
 			Rectangle currentPos = new Rectangle (new Point (0, 0), itemSize);
 			Rectangle arrowRect = new Rectangle (new Point (Lcd.Width / 2 - arrowWidth / 2, Lcd.Height - arrowHeight), new Point (Lcd.Width / 2 + arrowWidth / 2, Lcd.Height-1));
 
-			lcd.WriteTextBox (font, currentPos, title, true, Lcd.Alignment.Center);
+			Lcd.Instance.WriteTextBox (font, currentPos, title, true, Lcd.Alignment.Center);
 			int i = 0;
 			while (i != itemsOnScreen) {
 				if (i + scrollPos >= menuItems.Length)
@@ -50,8 +52,8 @@ namespace MonoBrickFirmware.Display.Menus
 				menuItems [i + scrollPos].Draw (font, currentPos + itemHeight * (i + 1), i != cursorPos);
 				i++;
 			}
-			lcd.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + itemsOnScreen < menuItems.Length);
-			lcd.Update();
+			Lcd.Instance.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + itemsOnScreen < menuItems.Length);
+			Lcd.Instance.Update();
 		}
 		
 		private void MoveUp()
@@ -82,7 +84,7 @@ namespace MonoBrickFirmware.Display.Menus
 			while (!exit)
 			{
 			  	RedrawMenu();
-				switch (btns.GetKeypress())
+				switch (Buttons.Instance.GetKeypress())
 				{
 					case Buttons.ButtonStates.Down: 
 					  MoveDown();

@@ -1,5 +1,5 @@
 using System;
-
+using MonoBrickFirmware.Extensions;
 namespace MonoBrickFirmware.Sensors
 {
 	/// <summary>
@@ -20,11 +20,11 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class for the NXT light sensor
 	/// </summary>
-	public class LightSensor : AnalogSensor, ISensor{
+	public class NXTLightSensor : AnalogSensor{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.LightSensor"/> class.
 		/// </summary>
-		public LightSensor (SensorPort port) : this(port, LightMode.Ambient)
+		public NXTLightSensor (SensorPort port) : this(port, LightMode.Ambient)
 		{
 			
 		}
@@ -33,7 +33,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Initializes a new instance of the <see cref="MonoBrick.EV3.LightSensor"/> class.
 		/// </summary>
 		/// <param name="mode">Mode.</param>
-		public LightSensor (SensorPort port, LightMode  mode) :  base(port)
+		public NXTLightSensor (SensorPort port, LightMode  mode) :  base(port)
 		{
 			Mode = mode;
 		}
@@ -50,7 +50,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Reads the sensor value as a string.
 		/// </summary>
 		/// <returns>The value as a string</returns>
-		public string ReadAsString ()
+		public override string ReadAsString ()
 		{
 			string s = "";
 			switch (AnalogMode)
@@ -81,6 +81,35 @@ namespace MonoBrickFirmware.Sensors
 		{
 			return base.ReadPin1As10Bit();
 		}
+		
+		public override string GetSensorName ()
+		{
+			return "NXT Light";
+		}
+		
+		public override void SelectNextMode()
+		{
+			Mode = Mode.Next();
+			return;
+		}
+		
+		public override void SelectPreviousMode ()
+		{
+			Mode = Mode.Next();
+			return;
+		}
+		
+		public override int NumberOfModes ()
+		{
+			return Enum.GetNames(typeof(LightMode)).Length;;
+		
+		}
+        
+        public override string SelectedMode ()
+		{
+			return Mode.ToString();
+		}
+		
 		
 	}
 }

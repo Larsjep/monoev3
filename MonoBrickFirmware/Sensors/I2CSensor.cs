@@ -16,7 +16,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Base class for all I2C sensors. This should be used when implementing a new I2C sensor
 	/// </summary>
-	public abstract class I2CSensor
+	public abstract class I2CSensor:ISensor
 	{
 		private UnixDevice I2CDevice;
 		//private MemoryArea I2CMemory;
@@ -30,7 +30,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		protected byte I2CAddress = 0x00;
 		
-		protected const int NumberOfSenosrPorts = SensorManager.NumberOfSenosrPorts;
+		protected const int NumberOfSensorPorts = SensorManager.NumberOfSensorPorts;
 		protected SensorPort port;
 		protected UARTMode uartMode{get; private set;}
 		protected I2CMode mode;
@@ -168,6 +168,21 @@ namespace MonoBrickFirmware.Sensors
 			}
         	throw new TimeoutException("I2C timeout");
     	}
+    	
+    	public abstract string ReadAsString ();
+    	
+		public abstract void SelectNextMode();
+		
+		public abstract string GetSensorName();
+		
+		public abstract void SelectPreviousMode();
+		
+		public abstract int NumberOfModes();
+        
+        public abstract string SelectedMode();
+        
+        public SensorPort Port{ get {return port;}}
+    	
 	}
 }
 

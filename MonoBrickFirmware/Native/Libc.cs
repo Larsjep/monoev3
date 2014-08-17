@@ -47,11 +47,6 @@ namespace MonoBrickFirmware.Native
 		
 		[DllImport("libc.so.6")]
 		public static extern int close(int fd);
-		
-		
-		
-		
-		
 	}
 	
 	public class UnixDevice : IDisposable

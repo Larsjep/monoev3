@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using System;
 using System.Collections.Generic;
 using MonoBrickFirmware.Native;
+using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -17,7 +18,7 @@ namespace MonoBrickFirmware.Sensors
 	/// <summary>
 	/// Class for reading and writing data to a UART sensor
 	/// </summary>
-	public abstract class UartSensor
+	public abstract class UartSensor:ISensor
 	{
 		private MemoryArea uartMemory;
 		
@@ -33,6 +34,10 @@ namespace MonoBrickFirmware.Sensors
     	private const int UartActualOffset = 42592;
     	private const int UartRawOffset = 4192;
     	
+    	// UART IO control
+    	private const UInt32 UartIOReadModeInfo = 0xc03c7501;
+		private const UInt32 SensorInfoLength = 56;
+    	
     	private const int UartRawDataSize = 32; 
 		private const int UartRawBufferLength = 300;
 		private const int UartRawBufferSize = UartRawDataSize * UartRawBufferLength;
@@ -41,8 +46,9 @@ namespace MonoBrickFirmware.Sensors
     	private const byte UartDataReady = 8;
 		private const byte UartPortChanged = 1;
 		
+		private UnixDevice UartDevice;
 		
-		protected const int NumberOfSenosrPorts = SensorManager.NumberOfSenosrPorts;
+		protected const int NumberOfSensorPorts = SensorManager.NumberOfSensorPorts;
 		protected SensorPort port;
 		protected UARTMode uartMode{get; private set;}
 		
@@ -50,7 +56,22 @@ namespace MonoBrickFirmware.Sensors
 		{
 			this.port = port;
 			uartMemory = SensorManager.Instance.UartMemory;
+			UartDevice = SensorManager.Instance.UartDevice;
 		}
+		
+		public abstract string ReadAsString ();
+    	
+		public abstract void SelectNextMode();
+		
+		public abstract string GetSensorName();
+		
+		public abstract void SelectPreviousMode();
+		
+		public abstract int NumberOfModes();
+        
+        public abstract string SelectedMode();
+        
+        public SensorPort Port{ get {return port;}}
 		
 		protected void Reset()
 	    {
@@ -58,6 +79,46 @@ namespace MonoBrickFirmware.Sensors
 			uartMode = UARTMode.Mode0; 
 	        WaitZeroStatus(WaitTimout);
 	    }
+	    
+	    
+	    /// <summary>
+	    /// Gets the sensor info based on the mode
+	    /// </summary>
+	    /// <returns>Raw Sensor info data</returns>
+		protected byte[] GetSensorInfo()
+		{
+			ByteArrayCreator command = new ByteArrayCreator ();
+			command.Append (new Byte[SensorInfoLength]);
+			/*command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Byte());
+			command.Append(new Single());
+			command.Append(new Single());
+			command.Append(new Single());
+			command.Append(new Single());
+			command.Append(new Single());
+			command.Append(new Single());
+			
+			
+			command.Append(new Int16());
+			command.Append(new Int16());
+			command.Append(new Byte());
+			command.Append (new Byte[5]);
+			command.Append(new Int16());*/
+			
+			command.Append ((byte)this.port);
+			command.Append ((byte)this.uartMode);
+			byte[] uartData = command.Data;
+			unchecked {
+				UartDevice.IoCtl ((Int32)UartIOReadModeInfo, uartData);
+			}
+			return uartData;
+		}
 		
 		
 	    protected bool Initialise(UARTMode mode)
@@ -88,7 +149,6 @@ namespace MonoBrickFirmware.Sensors
 	            return Initialise(mode);
 	    }
 	
-	   	
 	    protected byte ReadByte()
 	    {
 	        //CheckSensor();
@@ -107,15 +167,16 @@ namespace MonoBrickFirmware.Sensors
 			return uartMemory.Read(UartRawOffset + idx,  length);
 		}
 		
-		private byte[] GetActualData ()
+		private int GetActualData ()
 		{
-			return uartMemory.Read(UartActualOffset, NumberOfSenosrPorts * 2); 
+			byte[] temp = uartMemory.Read (UartActualOffset, NumberOfSensorPorts * 2);
+			return (int) BitConverter.ToInt16(temp,(int) port * 2);
 		}
 		
 		
 		private byte GetStatus()
 	    {
-	        return uartMemory.Read(UartStatusOffset, NumberOfSenosrPorts)[(int)port];
+	        return uartMemory.Read(UartStatusOffset, NumberOfSensorPorts)[(int)port];
 	    }
 		
 		
@@ -127,7 +188,7 @@ namespace MonoBrickFirmware.Sensors
 	    
 		private int CalcRawOffset()
     	{
-        	return  (int)port * UartRawBufferSize + GetActualData()[(int) port * 2] * UartRawDataSize;
+			return (int)port * UartRawBufferSize + GetActualData() * UartRawDataSize;
     	}
     	
 	    private byte WaitNonZeroStatus (int timeout)
@@ -174,7 +235,7 @@ namespace MonoBrickFirmware.Sensors
 		private void ClearPortChanged()
 		{
 			SensorManager.Instance.ClearUartPortChanged(this.port);
-			uartMemory.Write (UartStatusOffset, new byte[] { (byte)(uartMemory.Read ((int)port, 1) [0] & ~UartPortChanged) });
+			uartMemory.Write (UartStatusOffset + (int) port, new byte[] { (byte)(uartMemory.Read (UartStatusOffset +(int)port, 1) [0] & ~UartPortChanged) });
 			this.uartMode = UARTMode.Mode0;
 	    }
 		

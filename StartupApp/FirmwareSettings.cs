@@ -3,9 +3,21 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Collections.Specialized;
 using System.Xml;
+using MonoBrickFirmware.Tools;
 
-namespace StartupApp
+namespace MonoBrickFirmware.Settings
 {
+	public class WebServerSettings{
+		[XmlElement("Port")]
+		private int port = 80;
+		
+		public int Port
+		{
+			get { return port; }
+			set { port = value; }
+		}
+	}
+	
 	
 	public class DebugSettings{
 		[XmlElement("Port")]
@@ -73,9 +85,34 @@ namespace StartupApp
 		}
 	}
 	
+	public class SoundSettings{
+		[XmlElement("Volume")]
+		private int volume = 60;
+		
+		[XmlElement("EnableSound")]
+		private bool enableSound = true;
+		
+		public bool EnableSound	
+		{
+			get { return enableSound; }
+			set { enableSound = value; }
+		}
+
+		
+		public int Volume	
+		{
+			get { return volume; }
+			set { volume = value; }
+		}
+	}
+	
 	[XmlRoot("ConfigRoot")]
 	public class FirmwareSettings
 	{
+		private static object readWriteLock = new object();
+		private static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
+		
+		
 		[XmlElement("GeneralSettings")]
 		public GeneralSettings GeneralSettings { get; set; }
 		
@@ -85,35 +122,65 @@ namespace StartupApp
 		[XmlElement("DebugSettings")]
 		public DebugSettings DebugSettings{ get; set; }
 
+		[XmlElement("SoundSettings")]
+		public SoundSettings SoundSettings{ get; set; }
 		
+		[XmlElement("WebServerSettings")]
+		public WebServerSettings WebServerSettings{ get; set; }
+		
+
 		public FirmwareSettings ()
 		{
 			GeneralSettings = new GeneralSettings();
 			WiFiSettings = new WiFiSettings();
-			DebugSettings = new DebugSettings();	
+			DebugSettings = new DebugSettings();
+			SoundSettings = new SoundSettings();
+			WebServerSettings = new WebServerSettings();	
 		}
 		
-		public bool SaveToXML (String filepath)
+		public bool Save()
 		{
-			try {
-				XmlSerializer serializer = new XmlSerializer (typeof(FirmwareSettings));
-				TextWriter textWriter = new StreamWriter (filepath);
-				serializer.Serialize (textWriter, this);
-				textWriter.Close ();
-				return true;
-			} 
-			catch{}
+			lock (readWriteLock) {
+				TextWriter textWriter = null;
+				try {
+					XmlSerializer serializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
+					textWriter = new StreamWriter (SettingsFileName);
+					serializer.Serialize (textWriter, this);
+					textWriter.Close ();
+					return true;
+				} 
+				catch (Exception exp) 
+				{ 
+					Console.WriteLine("Exception during settings save: " + exp.Message);
+					Console.WriteLine(exp.StackTrace);
+				}
+				if(textWriter!= null)
+					textWriter.Close();
+			}
 			return false;
 		}
 		
-		public FirmwareSettings LoadFromXML (String filepath)
+		public FirmwareSettings Load()
 		{
-			XmlSerializer deserializer = new XmlSerializer (typeof(FirmwareSettings));
-			TextReader textReader = new StreamReader (filepath);
-			Object obj = deserializer.Deserialize (textReader);
-			FirmwareSettings myNewSettings = (FirmwareSettings)obj;
-			textReader.Close ();
-			return myNewSettings;
+			lock (readWriteLock) {
+				TextReader textReader = null;
+				try{
+					XmlSerializer deserializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
+					textReader = new StreamReader (SettingsFileName);
+					Object obj = deserializer.Deserialize (textReader);
+					FirmwareSettings myNewSettings = (FirmwareSettings)obj;
+					textReader.Close ();
+					return myNewSettings;
+				}
+				catch (Exception exp) 
+				{ 
+					Console.WriteLine("Exception during settings load: " + exp.Message);
+					Console.WriteLine(exp.StackTrace);
+				}
+				if(textReader!= null)
+					textReader.Close();
+			}
+			return null;
 		}
 	}
 }
