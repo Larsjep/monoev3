@@ -64,7 +64,7 @@ namespace MonoBrickFirmware.Tools
 		}
 
 
-		WaitHandle Run ()
+		public WaitHandle Run ()
 		{
 			if (!timer.Enabled) {
 				done.Reset();

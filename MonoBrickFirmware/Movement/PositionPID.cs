@@ -9,21 +9,10 @@ namespace MonoBrickFirmware.Movement
 		private Motor motor;
 		private float target;
 		private bool brake;
-		private const float defaultP = 0.5f;
-		private const float defaultI = 800.1f;
-		private const float defaultD = 1.05f;
 		private const float SampleTime = 50; 
 		private MovingAverage movingAverage = null;
 
 		bool setAverage = true;
-
-		public PositionPID (Motor motor, Int32 position, bool brake, sbyte maxPower, int settleTimeMs = 2000): 
-		this(motor, position,brake, maxPower, defaultP,defaultI,defaultD, settleTimeMs)   
-		{
-			this.motor = motor;
-			target = position;
-			this.brake = brake;
-		}
 
 		public PositionPID (Motor motor, Int32 position, bool brake, sbyte maxPower, float P, float I, float D, int settleTimeMs): 
 		base(P,I,D,SampleTime, (float) maxPower, -((float) maxPower))   
@@ -66,8 +55,6 @@ namespace MonoBrickFirmware.Movement
 			}
 			average = movingAverage.GetAverage();	
 			if (average <= 1.0f && average >= -1.0f) {
-				Console.WriteLine("Within limits");
-				Console.WriteLine("Average " + average);
 				if (brake) 
 				{
 					motor.Brake();
