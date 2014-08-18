@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace MonoBrickFirmware.Movement
 {
@@ -45,12 +46,9 @@ namespace MonoBrickFirmware.Movement
 		/// <param name='waitForCompletion'>
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake, bool waitForCompletion = true){
-			if(!waitForCompletion)
-				CancelPolling();
+		public WaitHandle StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake){
 			output.SetStepSync(speed, turnRatio, steps, brake);
-			if(waitForCompletion)
-				WaitForMotorsToStartAndStop();
+			return WaitForMotorsToStartAndStop();
 		}
 		
 		/// <summary>
@@ -63,12 +61,9 @@ namespace MonoBrickFirmware.Movement
 		/// <param name='waitForCompletion'>
 		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake, bool waitForCompletion = true){
-			if(!waitForCompletion)
-				CancelPolling();
+		public WaitHandle TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake){
 			output.SetTimeSync(speed, turnRatio, timeInMs, brake);
-			if(waitForCompletion)
-				WaitForMotorsToStartAndStop();
+			return WaitForMotorsToStartAndStop();
 		}
 		
 		/// <summary>
@@ -76,27 +71,14 @@ namespace MonoBrickFirmware.Movement
 		/// </summary>
 		/// <param name="speed">Speed of the motors.</param>
 		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
-		public void On(sbyte speed, Int16 turnRatio){
+		public void SetSpeed(sbyte speed, Int16 turnRatio){
 			CancelPolling();
-			On(speed, turnRatio, 0, false);
+			output.SetStepSync(speed, turnRatio, 0, false);
 		}
-		
-		/// <summary>
-		/// Move both motors with the same speed a given number of steps
-		/// </summary>
-		/// <param name="speed">Speed of the motors.</param>
-		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
-		/// <param name="degrees">Degrees to move.</param>
-		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
-		/// </param>
-		public void On (sbyte speed, Int16 turnRatio, uint degrees, bool brake, bool waitForCompletion = true){
-			if(!waitForCompletion)
-				CancelPolling();
-			StepSync(speed, turnRatio , degrees, brake, waitForCompletion);
-			if(waitForCompletion)
-				WaitForMotorsToStartAndStop();
+
+		internal new void CancelPolling ()
+		{
+			CancelPolling();
 		}
 	}
 }
