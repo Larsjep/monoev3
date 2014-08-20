@@ -101,17 +101,17 @@ namespace MonoBrickFirmware.Movement
 		/// <returns>
 		/// <c>true</c> if this motor is moving; otherwise, <c>false</c>.
 		/// </returns>
-	    public bool IsRunning()
+	    public bool IsRunning ()
 		{
-			bool status = true;
+			bool running = true;
 			foreach (var port in PortList) {
 				if (output.GetSpeed (port) == 0) 
 				{
-					status = false;
+					running = false;
 					break;
 				} 
 			}
-			return status;
+			return running;
 		}
 
 		/// <summary>
@@ -172,6 +172,24 @@ namespace MonoBrickFirmware.Movement
 				start.Set();
 				Monitor.Exit(this);
 			}	
+		}
+
+		protected WaitHandle WaitForMotorsToStop()
+		{
+			waitHandle.Reset();
+			timer.Start();
+			//Optimize the poll function to save this exstra thread
+			(new Thread(() => {
+				System.Threading.Thread.Sleep(100);
+				stop.WaitOne();
+				timer.Stop();
+				start.Reset();
+				stop.Reset();
+				waitHandle.Set();
+		    })).Start();
+			return waitHandle;	
+
+
 		}
 
 		protected WaitHandle WaitForMotorsToStartAndStop()

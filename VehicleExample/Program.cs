@@ -11,7 +11,7 @@ namespace VehicleExample
 		{
 			
 			Vehicle vehicle = new Vehicle (MotorPort.OutA, MotorPort.OutD);
-			
+			WaitHandle waitHandle;
 			const int speed = 40;
 			const int moveSteps = 2000;//You need to adjust this
 			const int spinSteps = 500;//You need to adjust this
@@ -22,16 +22,19 @@ namespace VehicleExample
 			//Make a square
 			for (int i = 0; i < 4; i++) {
 				LcdConsole.WriteLine ("Spin left");
-				vehicle.SpinLeft (speed, spinSteps, true);
+				waitHandle = vehicle.SpinLeft (speed, spinSteps, true);
+				waitHandle.WaitOne();
 				LcdConsole.WriteLine ("Move forward");
-				vehicle.Forward (speed, moveSteps, true);
+				waitHandle = vehicle.Forward (speed, moveSteps, true);
+				waitHandle.WaitOne();
 			}
 			vehicle.Off ();
 			
 			Thread.Sleep(3000);
 			LcdConsole.WriteLine("Make a soft turn to the left");
-			vehicle.TurnLeftForward (speed, 50, moveSteps, false);
-			
+			waitHandle = vehicle.TurnLeftForward (speed, 50, moveSteps, false);
+			waitHandle.WaitOne();
+			LcdConsole.WriteLine("Make a soft turn to the left");
 		}
 	}
 }

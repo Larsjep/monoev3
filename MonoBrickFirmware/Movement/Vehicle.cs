@@ -1,5 +1,5 @@
 using System;
-
+using System.Threading;
 namespace MonoBrickFirmware.Movement
 {
 	/// <summary>
@@ -79,7 +79,8 @@ namespace MonoBrickFirmware.Movement
 		/// Speed of the vehicle -100 to 100
 		/// </param>
 		public void Backward(sbyte speed){
-			Backward((sbyte)-speed, 0, false, false);
+			Backward((sbyte)-speed, 0, false);
+			motorSync.CancelPolling();
 		}
 	
 		/// <summary>
@@ -88,11 +89,9 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void Backward(sbyte speed, UInt32 degrees, bool brake, bool waitForCompletion = true){
-			Move((sbyte)-speed, degrees, brake, waitForCompletion);
+		public WaitHandle Backward(sbyte speed, UInt32 degrees, bool brake){
+			return Move((sbyte)-speed, degrees, brake);
 		}
 	
 		/// <summary>
@@ -102,7 +101,8 @@ namespace MonoBrickFirmware.Movement
 		/// Speed of the vehicle -100 to 100
 		/// </param>
 		public void Forward(sbyte speed){
-			Forward(speed, 0, false, false);
+			Forward(speed, 0, false);
+			motorSync.CancelPolling();
 		}
 		
 		/// <summary>
@@ -111,11 +111,9 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void Forward(sbyte speed, UInt32 degrees, bool brake, bool waitForCompletion = true){
-			Move(speed,degrees, brake, waitForCompletion);
+		public WaitHandle Forward(sbyte speed, UInt32 degrees, bool brake){
+			return Move(speed,degrees, brake);
 		}
 	
 		/// <summary>
@@ -123,7 +121,8 @@ namespace MonoBrickFirmware.Movement
 		/// </summary>
 		/// <param name="speed">Speed of the vehicle -100 to 100</param>
 		public void SpinLeft(sbyte speed){
-			SpinLeft(speed,0, false, false);
+			SpinLeft(speed,0, false);
+			motorSync.CancelPolling();
 		}
 		
 		/// <summary>
@@ -132,16 +131,16 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void SpinLeft(sbyte speed, UInt32 degrees, bool brake, bool waitForCompletion = true){
+		public WaitHandle SpinLeft(sbyte speed, UInt32 degrees, bool brake){
+			WaitHandle handle;
 			if(leftPort < rightPort){
-				HandleSpinLeft(speed, degrees,  brake, waitForCompletion);	
+				handle = HandleSpinLeft(speed, degrees,  brake);	
 			}
 			else{
-				HandleSpinRight(speed, degrees, brake, waitForCompletion);	
+				handle = HandleSpinRight(speed, degrees, brake);	
 			}
+			return handle;
 		}
 		
 		/// <summary>
@@ -151,7 +150,8 @@ namespace MonoBrickFirmware.Movement
 		/// Speed -100 to 100
 		/// </param>
 		public void SpinRight(sbyte speed){
-			SpinRight(speed,0, false, false );
+			SpinRight(speed,0, false);
+			motorSync.CancelPolling();
 		}
 		
 		/// <summary>
@@ -160,16 +160,16 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void SpinRight(sbyte speed, UInt32 degrees, bool brake, bool waitForCompletion = true){
+		public WaitHandle SpinRight(sbyte speed, UInt32 degrees, bool brake){
+			WaitHandle handle;
 			if(leftPort < rightPort){
-				HandleSpinRight(speed, degrees, brake, waitForCompletion);	
+				handle = HandleSpinRight(speed, degrees, brake);	
 			}
 			else{
-				HandleSpinLeft(speed, degrees, brake, waitForCompletion);	
+				handle = HandleSpinLeft(speed, degrees, brake);	
 			}
+			return handle;
 		}
 	
 		/// <summary>
@@ -196,10 +196,11 @@ namespace MonoBrickFirmware.Movement
 		/// Turn percent 
 		/// </param>
 		public void TurnRightForward(sbyte speed, sbyte turnPercent){
-			TurnRightForward(speed, turnPercent,0,false,false);
+			TurnRightForward(speed, turnPercent,0,false);
+			motorSync.CancelPolling();
 		}
 		
-		
+
 		/// <summary>
 		/// Turns the vehicle right
 		/// </summary>
@@ -207,16 +208,16 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void TurnRightForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake, bool waitForCompletion = true){
+		public WaitHandle TurnRightForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
+			WaitHandle handle;
 			if(leftPort < rightPort){
-				HandleRightForward(speed, turnPercent, degrees, brake, waitForCompletion);	
+				handle = HandleRightForward(speed, turnPercent, degrees, brake);	
 			}
 			else{
-				HandleLeftForward(speed,turnPercent, degrees, brake, waitForCompletion);	
+				handle = HandleLeftForward(speed,turnPercent, degrees, brake);	
 			}
+			return handle;
 		}
 	
 		/// <summary>
@@ -229,7 +230,8 @@ namespace MonoBrickFirmware.Movement
 		/// Turn percent.
 		/// </param>
 		public void TurnRightReverse(sbyte speed, sbyte turnPercent){
-			TurnRightReverse(speed,turnPercent,0, false, false);
+			TurnRightReverse(speed,turnPercent,0, false);
+			motorSync.CancelPolling();
 		}
 		
 		/// <summary>
@@ -239,16 +241,16 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void TurnRightReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake, bool waitForCompletion = true){
+		public WaitHandle TurnRightReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
+			WaitHandle handle;
 			if(leftPort < rightPort){
-				HandleRightReverse(speed, turnPercent, degrees, brake, waitForCompletion);	
+				handle = HandleRightReverse(speed, turnPercent, degrees, brake);	
 			}
 			else{
-				HandleLeftReverse(speed,turnPercent, degrees, brake, waitForCompletion);	
+				handle = HandleLeftReverse(speed,turnPercent, degrees, brake);	
 			}
+			return handle;
 		}
 	
 		/// <summary>
@@ -261,7 +263,8 @@ namespace MonoBrickFirmware.Movement
 		/// Turn percent.
 		/// </param>
 		public void TurnLeftForward(sbyte speed, sbyte turnPercent){
-			TurnLeftForward(speed,turnPercent, 0, false, false);
+			TurnLeftForward(speed,turnPercent, 0, false);
+			motorSync.CancelPolling();
 		}
 		
 		
@@ -272,16 +275,16 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void TurnLeftForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake, bool waitForCompletion = true){
+		public WaitHandle TurnLeftForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
+			WaitHandle handle;
 			if(leftPort < rightPort){
-				HandleLeftForward(speed, turnPercent, degrees, brake, waitForCompletion);	
+				handle = HandleLeftForward(speed, turnPercent, degrees, brake);	
 			}
 			else{
-				HandleRightForward(speed,turnPercent, degrees, brake, waitForCompletion);
+				handle = HandleRightForward(speed,turnPercent, degrees, brake);
 			}
+			return handle;
 		}
 	
 		/// <summary>
@@ -294,7 +297,8 @@ namespace MonoBrickFirmware.Movement
 		/// Turn percent.
 		/// </param>
 		public void TurnLeftReverse(sbyte speed, sbyte turnPercent){
-			TurnLeftReverse(speed,turnPercent, 0, false, false);
+			TurnLeftReverse(speed,turnPercent, 0, false);
+			motorSync.CancelPolling();
 		}
 		
 		
@@ -305,123 +309,137 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
-		public void TurnLeftReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake, bool waitForCompletion = true){
+		public WaitHandle TurnLeftReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
+			WaitHandle handle;
 			if(leftPort < rightPort){
-				HandleLeftReverse(speed, turnPercent, degrees, brake, waitForCompletion);	
+				handle = HandleLeftReverse(speed, turnPercent, degrees, brake);	
 			}
 			else{
-				HandleRightReverse(speed,turnPercent, degrees, brake, waitForCompletion);
+				handle = HandleRightReverse(speed,turnPercent, degrees, brake);
 			}
+			return handle;
 		}
 		
-		private void HandleLeftForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake, bool waitForCompletion){
+		private WaitHandle HandleLeftForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
+			WaitHandle handle = null;
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On(speed, (short) -turnPercent, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync(speed, (short) -turnPercent, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, (short) ((short)-200+ (short)turnPercent), degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync((sbyte)-speed, (short) ((short)-200+ (short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On(speed, (short) ((short)-200+(short)turnPercent), degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync(speed, (short) ((short)-200+(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, (short) -turnPercent, degrees, brake, waitForCompletion);				
+				handle = motorSync.StepSync((sbyte)-speed, (short) -turnPercent, degrees, brake);				
 			}
+		    return handle;
 		}
 		
-		private void HandleRightForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake, bool waitForCompletion){
+		private WaitHandle HandleRightForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
+			WaitHandle handle = null;
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On(speed, (short) turnPercent, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync(speed, (short) turnPercent, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On(speed, (short) ((short)200- (short)turnPercent), degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync(speed, (short) ((short)200- (short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)-speed, (short) ((short)200-(short)turnPercent), degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync((sbyte)-speed, (short) ((short)200-(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, (short) turnPercent, degrees, brake, waitForCompletion);				
+				handle = motorSync.StepSync((sbyte)-speed, (short) turnPercent, degrees, brake);				
 			}
+			return handle;
 		}
 		
-		private void HandleLeftReverse (sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake, bool waitForCompletion)
+		private WaitHandle HandleLeftReverse (sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake)
 		{
+			WaitHandle handle = null;
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)-speed, (short) -turnPercent, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync((sbyte)-speed, (short) -turnPercent, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)speed,(short) ( (short)-200+(short)turnPercent), degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync((sbyte)speed,(short) ( (short)-200+(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)-speed, (short) ( (short)-200+(short)turnPercent), degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync((sbyte)-speed, (short) ( (short)-200+(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On(speed, (short) -turnPercent, degrees, brake, waitForCompletion);				
+				handle = motorSync.StepSync(speed, (short) -turnPercent, degrees, brake);				
 			}
+			return handle;
 		}
 		
-		private void HandleRightReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake, bool waitForCompletion){
+		private WaitHandle HandleRightReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
+			WaitHandle handle = null;
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)-speed, (short) turnPercent, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync((sbyte)-speed, (short) turnPercent, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed,(short) ( (short)200-(short)turnPercent), degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync((sbyte)-speed,(short) ( (short)200-(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)speed, (short) ( (short)200-(short)turnPercent), degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync((sbyte)speed, (short) ( (short)200-(short)turnPercent), degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On(speed, (short) turnPercent, degrees, brake, waitForCompletion);				
+				handle = motorSync.StepSync(speed, (short) turnPercent, degrees, brake);				
 			}
+			return handle;
 	
 		}
 		
-		private void HandleSpinRight(sbyte speed, UInt32 degrees, bool brake, bool waitForCompletion){
+		private WaitHandle HandleSpinRight(sbyte speed, UInt32 degrees, bool brake){
+			WaitHandle handle = null;
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On(speed, 200, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync(speed, 200, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On(speed, (short) 0, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync(speed, (short) 0, degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On((sbyte)-speed, 0, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync((sbyte)-speed, 0, degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, 200, degrees, brake, waitForCompletion);				
+				handle = motorSync.StepSync((sbyte)-speed, 200, degrees, brake);				
 			}
+			return handle;
 		}
 		
-		private void HandleSpinLeft(sbyte speed, UInt32 degrees, bool brake, bool waitForCompletion){
+		private WaitHandle HandleSpinLeft(sbyte speed, UInt32 degrees, bool brake){
+			WaitHandle handle = null;
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On(speed, -200, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync(speed, -200, degrees, brake);
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, (short) 0, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync((sbyte)-speed, (short) 0, degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On(speed, 0, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync(speed, 0, degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, -200, degrees, brake, waitForCompletion);				
+				handle = motorSync.StepSync((sbyte)-speed, -200, degrees, brake);				
 			}
+			return handle; 
 		}
 		
-		private void Move(sbyte speed, UInt32 degrees, bool brake, bool waitForCompletion){
+		private WaitHandle Move(sbyte speed, UInt32 degrees, bool brake){
+			WaitHandle handle = null;
 			if(!ReverseLeft && !ReverseRight){
-				motorSync.On(speed, 0, degrees, brake, waitForCompletion); 
+				handle = motorSync.StepSync(speed, 0, degrees, brake); 
 			}
 			if(!ReverseLeft && ReverseRight){
-				motorSync.On(speed, (short) 200, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync(speed, (short) 200, degrees, brake);
 			}
 			if(ReverseLeft && !ReverseRight){
-				motorSync.On(speed, -200, degrees, brake, waitForCompletion);
+				handle = motorSync.StepSync(speed, -200, degrees, brake);
 			}
 			if(ReverseLeft && ReverseRight){
-				motorSync.On((sbyte)-speed, 0, degrees, brake, waitForCompletion);				
+				handle = motorSync.StepSync((sbyte)-speed, 0, degrees, brake);				
 			}
+			return handle;
 		}
 	}
 }
