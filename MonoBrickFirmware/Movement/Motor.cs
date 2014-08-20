@@ -25,7 +25,7 @@ namespace MonoBrickFirmware.Movement
 		/// <summary>
 		/// The reverse value
 		/// </summary>
-		protected bool reverse = false;
+		private bool reverse = false;
 		
 		/// <summary>
 		/// Gets or sets a value indicating whether motor runs in reverse direction
@@ -33,7 +33,7 @@ namespace MonoBrickFirmware.Movement
 		/// <value>
 		/// <c>true</c> if reverse; otherwise, <c>false</c>.
 		/// </value>
-		public bool Reverse {
+		private bool Reverse {
 			get {
 				return reverse;
 			} 
@@ -68,8 +68,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="constantSpeedSteps">Constant speed steps.</param>
 		/// <param name="rampDownSteps">Ramp down steps.</param>
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
 		public WaitHandle SpeedProfile(sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake)
 		{
@@ -86,8 +84,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="constantSpeedTimeMs">Constant speed time ms.</param>
 		/// <param name="rampDownTimeMs">Ramp down time ms.</param>
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
 		public WaitHandle SpeedProfileTime(sbyte speed, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake)
 		{
@@ -104,8 +100,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="constantSpeedSteps">Constant speed steps.</param>
 		/// <param name="rampDownSteps">Ramp down steps.</param>
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
-		/// <param name='waitForCompletion'>
-		/// Set to <c>true</c> to wait for movement to be completed before returning
 		/// </param>
 		public WaitHandle PowerProfile(sbyte power, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake)
 		{
@@ -122,7 +116,7 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="constantSpeedTimeMs">Constant speed time ms.</param>
 		/// <param name="rampDownTimeMs">Ramp down time ms.</param>
 		/// <param name="brake">If set to <c>true</c> the motor will brake when movement is done.</param>
-		public WaitHandle PowerProfileTime (byte power, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake, bool waitForCompletion = true)
+		public WaitHandle PowerProfileTime (byte power, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake)
 		{
 			output.SetPower (0);
 			output.SetTimePower(power, rampUpTimeMs,constantSpeedTimeMs,rampDownTimeMs, brake);
