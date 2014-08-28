@@ -141,10 +141,17 @@ namespace MonoBrickAddin
 						monitor.ReportError(configError, null);
 						return;
 					}
-
-					console.Log.WriteLine("Upload to brick...");
-
 					string EV3IPAddress = UserSettings.Instance.IPAddress;
+
+					console.Log.WriteLine("Killing any program already running on the brick");
+					MonoBrickUtility.KillMonoApp(EV3IPAddress);
+
+					//console.Log.WriteLine("Clearing LCD");
+					//MonoBrickUtility.ClearScreen(EV3IPAddress);
+
+
+					console.Log.WriteLine("Upload program to brick...");
+
 
 					var uploadOp = MonoBrickUtility.Upload(EV3IPAddress, cmd);
 					opMon.AddOperation(uploadOp);

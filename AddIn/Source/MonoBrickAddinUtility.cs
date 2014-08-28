@@ -28,11 +28,37 @@ using System.Net;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Core;
 using Renci.SshNet;
+using System.Text;
 
 namespace MonoBrickAddin
 {
 	class MonoBrickUtility
 	{
+		public static void ClearScreen(string IPAddress)
+		{
+			int Width = 178;
+			int Height = 128;
+			int bytesPrLine = ((Width+31)/32)*4;
+			int bufferSize = bytesPrLine * Height;
+			var handle = new System.Threading.ManualResetEvent(false);
+			var helper = new SshCommandHelper(IPAddress, handle);
+			StringBuilder lcdStringBuilder = new StringBuilder();
+			for (uint i = 0; i < bufferSize; i++)
+				lcdStringBuilder.Append("1");
+			helper.WriteSSHCommand("echo " + lcdStringBuilder.ToString() + @" >/dev/tb0", true);
+			handle.WaitOne();
+		}
+
+
+		public static void KillMonoApp(string IPAddress)
+		{
+			var handle = new System.Threading.ManualResetEvent(false);
+			var helper = new SshCommandHelper(IPAddress, handle);
+			helper.WriteSSHCommand("kill -9 `ps | grep mono | awk '{{print $1}}'`", true);
+			handle.WaitOne();
+		}
+
+
 		public static ScpUpload Upload(string IPAddress, MonoBrickExecutionCommand cmd)
 		{
 			var scp = new ScpUpload(IPAddress, cmd.Config.OutputDirectory, cmd.DeviceDirectory);
