@@ -20,6 +20,8 @@ namespace MonoBrickFirmware.Tools
 	{
 		private static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
 		private static string versionPath = @"/usr/local/bin/version.txt";
+		private static string addInVersionPath = @"/usr/local/bin/add-inVersion.txt";
+
 
 		public static VersionInfo AvalibleVersions()
 		{
@@ -39,7 +41,7 @@ namespace MonoBrickFirmware.Tools
 
 		public static string CurrentAddInVersion()
 		{
-			return null;//not yet implemented
+			return System.IO.File.ReadAllLines(addInVersionPath)[0].Split(new char[] {':'})[1].Trim();
 		}
 	}
 }

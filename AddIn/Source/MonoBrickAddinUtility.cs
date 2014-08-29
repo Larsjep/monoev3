@@ -52,6 +52,10 @@ namespace MonoBrickAddin
 			ExecuteAndWaitForSSHCommand(IPAddress,"kill -9 `ps | grep mono | awk '{{print $1}}'`");
 		}
 
+		public static void CreateVersionFile(string IPAddress, string version)
+		{
+			ExecuteAndWaitForSSHCommand(IPAddress,@"echo " + version + @" > " + @"/usr/local/bin/add-inVersion.txt" );
+		}
 
 		public static ScpUpload Upload(string IPAddress, MonoBrickExecutionCommand cmd)
 		{
