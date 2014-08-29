@@ -34,28 +34,22 @@ namespace MonoBrickAddin
 {
 	class MonoBrickUtility
 	{
-		public static void ClearScreen(string IPAddress)
+		private static void ExecuteAndWaitForSSHCommand(string IPAddress,string command)
 		{
-			int Width = 178;
-			int Height = 128;
-			int bytesPrLine = ((Width+31)/32)*4;
-			int bufferSize = bytesPrLine * Height;
 			var handle = new System.Threading.ManualResetEvent(false);
 			var helper = new SshCommandHelper(IPAddress, handle);
-			StringBuilder lcdStringBuilder = new StringBuilder();
-			for (uint i = 0; i < bufferSize; i++)
-				lcdStringBuilder.Append("1");
-			helper.WriteSSHCommand("echo " + lcdStringBuilder.ToString() + @" >/dev/tb0", true);
+			helper.WriteSSHCommand(command, true);
 			handle.WaitOne();
 		}
 
+		public static void ShowMonoBrickLogo(string IPAddress)
+		{
+			ExecuteAndWaitForSSHCommand(IPAddress,@"cat /home/root/lejos/images/monobrick_logo.ev3i > /dev/fb0");
+		}
 
 		public static void KillMonoApp(string IPAddress)
 		{
-			var handle = new System.Threading.ManualResetEvent(false);
-			var helper = new SshCommandHelper(IPAddress, handle);
-			helper.WriteSSHCommand("kill -9 `ps | grep mono | awk '{{print $1}}'`", true);
-			handle.WaitOne();
+			ExecuteAndWaitForSSHCommand(IPAddress,"kill -9 `ps | grep mono | awk '{{print $1}}'`");
 		}
 
 
