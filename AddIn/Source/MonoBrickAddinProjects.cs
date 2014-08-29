@@ -38,7 +38,7 @@ namespace MonoBrickAddin
 	public class MonoBrickProject : DotNetAssemblyProject
 	{
 		FilePath referencePath = "";
-
+		static string versionString  = "AddIn: 1.0.0.0";
 		#region Constructors
 
 		public MonoBrickProject()
@@ -147,9 +147,9 @@ namespace MonoBrickAddin
 					MonoBrickUtility.KillMonoApp(EV3IPAddress);
 
 					MonoBrickUtility.ShowMonoBrickLogo(EV3IPAddress);
+					MonoBrickUtility.CreateVersionFile(EV3IPAddress, versionString);
 
 					console.Log.WriteLine("Upload program to brick...");
-
 
 					var uploadOp = MonoBrickUtility.Upload(EV3IPAddress, cmd);
 					opMon.AddOperation(uploadOp);
