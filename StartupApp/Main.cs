@@ -508,14 +508,11 @@ namespace StartupApp
 					} 
 					else 
 					{
-						if (newAddin) {
-						
-						} 
-						else 
+						if (newAddin) 
 						{
-						
-						}
-					
+							var visitWebsiteDialog = new InfoDialog ("New Xamarin Add-in. Download it at monobrick.dk", true);
+							visitWebsiteDialog.Show ();	
+						} 
 					}
 				}
 			} 
