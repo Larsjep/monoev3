@@ -39,9 +39,17 @@ namespace MonoBrickFirmware.Tools
 			return System.IO.File.ReadAllLines(versionPath)[1].Split(new char[] {':'})[1].Trim();
 		}
 
-		public static string CurrentAddInVersion()
+		public static string CurrentAddInVersion ()
 		{
-			return System.IO.File.ReadAllLines(addInVersionPath)[0].Split(new char[] {':'})[1].Trim();
+			string val = null;
+			try 
+			{
+				val = System.IO.File.ReadAllLines (addInVersionPath) [0].Split (new char[] { ':' }) [1].Trim ();
+			} 
+			catch 
+			{
+			}
+			return val;
 		}
 	}
 }
