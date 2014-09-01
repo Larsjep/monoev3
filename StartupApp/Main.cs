@@ -26,7 +26,7 @@ namespace StartupApp
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 		static string ProgramPathSdCard = "/mnt/bootpar/apps";
 		static string ProgramPathEV3 = "/home/root/apps/";
-		static string firmwareVersion= "1.0.0.0";
+		static string firmwareVersion= "1.0.1.0";
 
 		static bool updateProgramList = false;
 		
@@ -448,74 +448,62 @@ namespace StartupApp
 		#region Update Menu
 		static bool ShowUpdatesDialogs ()
 		{
-			if (WiFiDevice.IsLinkUp()) {
+			if (WiFiDevice.IsLinkUp ()) {
 				bool newImage = false;
 				bool newFirmwareApp = false;
 				bool newAddin = false;
 				VersionInfo versionInfo = null;
-				var step = new StepContainer(
-					delegate() 
-					{
-						try{
-							versionInfo = VersionHelper.AvalibleVersions();
-							newImage = versionInfo.Image != VersionHelper.CurrentImageVersion();
+				var step = new StepContainer (
+					           delegate() {
+						try {
+							versionInfo = VersionHelper.AvailableVersions ();
+							newImage = versionInfo.Image != VersionHelper.CurrentImageVersion ();
 							newFirmwareApp = versionInfo.Fimrware != firmwareVersion;
-							string addInVersion = VersionHelper.CurrentAddInVersion();
-							if(addInVersion != null)
-								newAddin = versionInfo.AddIn != VersionHelper.CurrentAddInVersion();
-						}
-						catch
-						{
+							string addInVersion = VersionHelper.CurrentAddInVersion ();
+							if (addInVersion != null)
+								newAddin = versionInfo.AddIn != VersionHelper.CurrentAddInVersion ();
+						} catch {
 							return false;
 						}
 						return true;
 					},
-					"Checking server", "Failed to check for Updates"); 
-				var dialog = new ProgressDialog ("Updates",step);
-				dialog.Show();
-				if (newImage) 
-				{
+					           "Checking server", "Failed to check for Updates"); 
+				var dialog = new ProgressDialog ("Updates", step);
+				dialog.Show ();
+				if (newImage) {
 					var visitWebsiteDialog = new InfoDialog ("New image available. Download it at monobrick.dk", true);
 					visitWebsiteDialog.Show ();
-				} 
-				else 
-				{
-					if (newFirmwareApp) 
-					{
+				} else {
+					if (newFirmwareApp) {
 						var updateQuestion = new QuestionDialog ("New firmware available. Update?", "New Fiwmware");
-						if (updateQuestion.Show ()) 
-						{
+						if (updateQuestion.Show ()) {
 							var updateHelper = new UpdateHelper (versionInfo.Fimrware);
-							List<IStep> steps = new List<IStep>();
-							steps.Add( new StepContainer(updateHelper.DownloadFirmware, "Downloading...", "Failed to download files") );
-							steps.Add( new StepContainer(updateHelper.UpdateBootFile, "Updating system", "Failed to update boot file"));
+							List<IStep> steps = new List<IStep> ();
+							steps.Add (new StepContainer (updateHelper.DownloadFirmware, "Downloading...", "Failed to download files"));
+							steps.Add (new StepContainer (updateHelper.UpdateBootFile, "Updating system", "Failed to update boot file"));
 							var updateDialog = new StepDialog ("Updating", steps);
-							if (updateDialog.Show ()) 
-							{
-								for (int seconds = 10; seconds > 0; seconds--) 
-								{
+							if (updateDialog.Show ()) {
+								for (int seconds = 10; seconds > 0; seconds--) {
 									var rebootDialog = new InfoDialog ("Update completed. Rebooting in  " + seconds, false);
-									rebootDialog.Show();
+									rebootDialog.Show ();
 									System.Threading.Thread.Sleep (1000);
 								}
-								ProcessHelper.RunAndWaitForProcess("/sbin/shutdown", "-h now");
-								Thread.Sleep(120000);
+								ProcessHelper.RunAndWaitForProcess ("/sbin/shutdown", "-h now");
+								Thread.Sleep (120000);
 								var whyAreYouHereDialog = new InfoDialog ("Cut the power", false, "Reboot failed");
 								whyAreYouHereDialog.Show ();
-								new ManualResetEvent (false).WaitOne();
+								new ManualResetEvent (false).WaitOne ();
 							}
 						}
-					} 
-					else 
-					{
+					} else {
 						if (newAddin) {
-						
-						} 
-						else 
+							var visitWebsiteDialog = new InfoDialog ("New Xamarin Add-in. Download it at monobrick.dk", true);
+							visitWebsiteDialog.Show ();	
+						} else 
 						{
-						
-						}
-					
+							var noUpdateDialog = new InfoDialog ("No updates available", true);
+							noUpdateDialog.Show ();	
+						} 
 					}
 				}
 			} 
