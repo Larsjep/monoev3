@@ -23,7 +23,7 @@ namespace MonoBrickFirmware.Tools
 		private static string addInVersionPath = @"/usr/local/bin/add-inVersion.txt";
 
 
-		public static VersionInfo AvalibleVersions()
+		public static VersionInfo AvailableVersions()
 		{
 			VersionInfo info = null;
 			try{

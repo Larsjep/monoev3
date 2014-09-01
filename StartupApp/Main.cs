@@ -456,7 +456,7 @@ namespace StartupApp
 				var step = new StepContainer (
 					           delegate() {
 						try {
-							versionInfo = VersionHelper.AvalibleVersions ();
+							versionInfo = VersionHelper.AvailableVersions ();
 							newImage = versionInfo.Image != VersionHelper.CurrentImageVersion ();
 							newFirmwareApp = versionInfo.Fimrware != firmwareVersion;
 							string addInVersion = VersionHelper.CurrentAddInVersion ();
