@@ -30,8 +30,21 @@ namespace MonoBrickFirmware.Display
 		
 		private static readonly Lcd instance = new Lcd();
 		
+		public static bool IsPixelInLcd(Point pixel)
+		{
+			return (pixel.X >= 0) && (pixel.Y >= 0) && (pixel.X <= Lcd.Width) && (pixel.Y <= Lcd.Height);
+		}
+
+		public static bool IsPixelInLcd(int x, int y)
+		{
+			return	(x >= 0) && (y >= 0) && (x <= Lcd.Width) && (y <= Lcd.Height);
+		}
+
 		public void SetPixel(int x, int y, bool color)
 		{
+			if (!IsPixelInLcd (x, y))
+				return;
+
 			int index = (x/8)+ y * bytesPrLine;
 			int bit = x & 0x7;
 			if (color)
@@ -46,7 +59,7 @@ namespace MonoBrickFirmware.Display
 		
 		public bool IsPixelSet (int x, int y)
 		{
-			int index = (x / 8) + y * 23;
+			int index = (x / 8) + y * bytesPrLine;
 			int bit = x & 0x7;
 			return (displayBuf[index] & (1 << bit)) != 0;
 		}
@@ -172,45 +185,12 @@ namespace MonoBrickFirmware.Display
 			for (int y = r.P1.Y; y <= r.P2.Y; ++y)
 				DrawHLine(new Point(r.P1.X, y), length, setOrClear);
 		}
-		
+
 		public void DrawBitmap(Bitmap bm, Point p)
 		{
 			DrawBitmap(bm.GetStream(), p, bm.Width, bm.Height, true);
 		}
 
-		public void DrawLine (Point start, Point end, bool color)
-		{
-			int height = Math.Abs (end.Y - start.Y);
-			int width = Math.Abs (end.X - start.X);
-
-			int ix = start.X;
-			int iy = start.Y;
-			int sx = start.X < end.X ? 1 : -1;
-			int sy = start.Y < end.Y ? 1 : -1;
-
-			int err = width + (-height);
-			int e2;
-
-			do {
-				SetPixel (ix, iy, color);
-
-				if (ix == end.X && iy == end.Y)
-					break;
-
-				e2 = 2 * err;
-				if (e2 > (-height)) {
-					err += (-height);
-					ix += sx;
-				}
-				if (e2 < width) {
-					err += width;
-					iy += sy;
-				}
-
-			} while (true);
-
-		}
-		
 		public void DrawBitmap(BitStreamer bs, Point p, uint xsize, uint ysize, bool color)
 		{
 			for (int yPos = p.Y; yPos != p.Y+ysize; yPos++)
