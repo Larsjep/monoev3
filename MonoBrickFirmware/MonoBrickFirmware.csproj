@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>MonoBrickFirmware</RootNamespace>
     <AssemblyName>MonoBrickFirmware</AssemblyName>
+    <UseMSBuildEngine>False</UseMSBuildEngine>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -119,6 +120,10 @@
     <Compile Include="Tools\PIDAbstraction.cs" />
     <Compile Include="Tools\VersionHelper.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
+    <Compile Include="Display\LcdDrawCircle.cs" />
+    <Compile Include="Display\LcdDrawEllipse.cs" />
+    <Compile Include="Display\LcdDrawLine.cs" />
+    <Compile Include="Display\LcdDrawRectangle.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
