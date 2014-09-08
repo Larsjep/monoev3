@@ -120,10 +120,6 @@
     <Compile Include="Tools\PIDAbstraction.cs" />
     <Compile Include="Tools\VersionHelper.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
-    <Compile Include="Display\LcdDrawCircle.cs" />
-    <Compile Include="Display\LcdDrawEllipse.cs" />
-    <Compile Include="Display\LcdDrawLine.cs" />
-    <Compile Include="Display\LcdDrawRectangle.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
