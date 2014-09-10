@@ -1,5 +1,5 @@
 ﻿using System;
-using MonoBrickFirmware.Display.Dialogs;
+using MonoBrickFirmware.Display;
 
 namespace LcdDraw
 {
@@ -7,8 +7,9 @@ namespace LcdDraw
 	{
 		public static void Main (string[] args)
 		{
-			var examplesDialog = new ExamplesDialog ("Draw example");
-			examplesDialog.Show ();
+			Lcd.Instance.Clear();
+			Lcd.Instance.DrawCircle(new Point(Lcd.Width/2,Lcd.Height/2), 100, true);
+			Lcd.Instance.Update();
 		}
 	}
 }

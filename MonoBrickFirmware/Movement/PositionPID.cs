@@ -1,6 +1,8 @@
 ﻿using System;
 using MonoBrickFirmware.Tools;
 using MonoBrickFirmware.Display;
+using System.Threading;
+using System.Timers;
 
 namespace MonoBrickFirmware.Movement
 {
@@ -21,6 +23,13 @@ namespace MonoBrickFirmware.Movement
 			this.motor = motor;
 			target = position;
 			this.brake = brake;
+		}
+
+
+		public WaitHandle Run(Int32 position)
+		{
+			target = position;
+			return base.Run();	
 		}
 
 		protected override void ApplyOutput (float output)

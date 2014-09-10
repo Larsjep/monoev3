@@ -215,7 +215,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle buttonRect = new Rectangle(buttonP1, buttonP2);
 			Rectangle buttonRectEdge = new Rectangle(buttonP1Outer, buttonp2Outer);
 			
-			Lcd.Instance.DrawBox(buttonRectEdge,true);
+			Lcd.Instance.DrawRectangle(buttonRectEdge,true, true);
 			Lcd.Instance.WriteTextBox(font,buttonRect,text, color, Lcd.Alignment.Center);		
 		}
 		
@@ -240,7 +240,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle leftRect = new Rectangle(left1, left2);
 			Rectangle leftOuterRect = new Rectangle(leftOuter1, leftOuter2);
 			
-			Lcd.Instance.DrawBox(leftOuterRect,true);
+			Lcd.Instance.DrawRectangle(leftOuterRect,true, true);
 			Lcd.Instance.WriteTextBox(font, leftRect, text, color, Lcd.Alignment.Center);
 		
 		}
@@ -266,7 +266,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle rightRect = new Rectangle(right1, right2);
 			Rectangle rightOuterRect = new Rectangle(rightOuter1, rightOuter2);
 			
-			Lcd.Instance.DrawBox(rightOuterRect, true);
+			Lcd.Instance.DrawRectangle(rightOuterRect, true, true);
 			
 			Lcd.Instance.WriteTextBox(font, rightRect, text, color, Lcd.Alignment.Center);
 		
@@ -312,15 +312,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 		protected void ClearContent ()
 		{
 			Lcd.Instance.LoadScreen();
-			Lcd.Instance.DrawBox(outherWindow, true);
-			Lcd.Instance.DrawBox(innerWindow, false);
+			Lcd.Instance.DrawRectangle(outherWindow, true, true);
+			Lcd.Instance.DrawRectangle(innerWindow, false, true);
 			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 		}
 		
 		protected virtual void Draw ()
 		{
-			Lcd.Instance.DrawBox(outherWindow, true);
-			Lcd.Instance.DrawBox(innerWindow, false);
+			Lcd.Instance.DrawRectangle(outherWindow, true, true);
+			Lcd.Instance.DrawRectangle(innerWindow, false, true);
 			OnDrawContent();
 			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 			Lcd.Instance.Update();
