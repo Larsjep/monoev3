@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MonoBrickFirmware.Display.Dialogs
 {
-	public class ProgressDialog : Dialog
+	public class ProgressDialog : DialogWithProgessAnimation
 	{
 		private IStep step;
 		private int progressLine;

@@ -4,20 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
-using MonoBrickFirmware.Display.Animation;
 
 namespace MonoBrickFirmware.Display.Dialogs
 {
     public abstract class Dialog
 	{
 		
-		protected int numberOfLines;
 		protected Font font;
 		protected Rectangle outherWindow; 
 		protected Rectangle innerWindow;
+		protected List<Rectangle> lines;
+        
 				
 		private string title;
-        private List<Rectangle> lines;
         
 		private Rectangle titleRect;
 		private Point bottomLineCenter;
@@ -28,10 +27,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
 		private CancellationToken token;
 		
-		private ProgressAnimation progress = null;
-		private int animationLine = -1;
-		private const int progressEdgeX = 10;
-		private const int progressEdgeY = 8;
 		private const int dialogEdge = 5;
 		private const int buttonEdge = 2;
 		private const int buttonTextOffset = 2;
@@ -64,7 +59,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				middel = middel-(int)f.maxHeight;
 				count ++;
 			}
-			numberOfLines = count*2+1;
+			int numberOfLines = count*2+1;
 			Point start1 = new Point (innerWindow.P1.X, topOffset+  innerWindow.P1.Y  + ((innerWindow.P2.Y - innerWindow.P1.Y) / 2) - (int)f.maxHeight/2 - count*((int)f.maxHeight) );
 			Point start2 = new Point (innerWindow.P2.X, start1.Y + (int)f.maxHeight);
 			lines = new List<Rectangle>();
@@ -180,25 +175,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 			DrawCenterButton(text,color,0);
 		}
 		
-		protected void StartProgressAnimation (int lineIndex)
-		{
-			if (progress != null || lineIndex != animationLine) 
-			{
-				Rectangle progressRect = lines [lineIndex];
-				animationLine = lineIndex;
-				progressRect = new Rectangle (progressRect.P1 + new Point (progressEdgeX, progressEdgeY), progressRect.P2 + new Point (-progressEdgeX, -progressEdgeY));
-				if (progress != null && progress.IsRunning)
-					progress.Stop ();
-				progress = new ProgressAnimation (progressRect);
-			}
-			progress.Start();
-		}
-		
-		protected void StopProgressAnimation ()
-		{
-			progress.Stop();
-		}
-		
 		protected void DrawCenterButton (string text, bool color, int textSize)
 		{
 			if (textSize == 0) 
@@ -271,7 +247,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Lcd.Instance.WriteTextBox(font, rightRect, text, color, Lcd.Alignment.Center);
 		
 		}
-		
+
 		protected void WriteTextOnDialog (string text)
 		{
 			int width = lines [0].P2.X - lines [0].P1.X;

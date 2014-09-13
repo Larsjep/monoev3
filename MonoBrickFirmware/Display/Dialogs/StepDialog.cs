@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MonoBrickFirmware.Display.Dialogs
 {
-	public class StepDialog : Dialog 
+	public class StepDialog : DialogWithProgessAnimation 
 	{
 		private List<IStep> steps;
 		private int stepIndex = 0;

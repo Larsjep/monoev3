@@ -120,6 +120,7 @@
     <Compile Include="Tools\PIDAbstraction.cs" />
     <Compile Include="Tools\VersionHelper.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
+    <Compile Include="Display\Dialogs\DialogWithProgessAnimation.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
