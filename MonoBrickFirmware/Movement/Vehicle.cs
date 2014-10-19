@@ -125,7 +125,9 @@ namespace MonoBrickFirmware.Movement
 		/// </summary>
 		/// <param name="speed">Speed of the vehicle -100 to 100</param>
 		public void SpinLeft(sbyte speed){
-			SpinLeft(speed,0, false);
+			new Thread(delegate() {
+				SpinLeft(speed,0, false);
+			}).Start();
 			motorSync.CancelPolling();
 		}
 		
@@ -154,7 +156,9 @@ namespace MonoBrickFirmware.Movement
 		/// Speed -100 to 100
 		/// </param>
 		public void SpinRight(sbyte speed){
-			SpinRight(speed,0, false);
+			new Thread(delegate() {
+				SpinRight(speed,0, false);
+			}).Start();
 			motorSync.CancelPolling();
 		}
 		
@@ -200,7 +204,9 @@ namespace MonoBrickFirmware.Movement
 		/// Turn percent 
 		/// </param>
 		public void TurnRightForward(sbyte speed, sbyte turnPercent){
-			TurnRightForward(speed, turnPercent,0,false);
+			new Thread(delegate() {
+				TurnRightForward(speed, turnPercent,0,false);
+			}).Start();
 			motorSync.CancelPolling();
 		}
 		
@@ -234,7 +240,9 @@ namespace MonoBrickFirmware.Movement
 		/// Turn percent.
 		/// </param>
 		public void TurnRightReverse(sbyte speed, sbyte turnPercent){
-			TurnRightReverse(speed,turnPercent,0, false);
+			new Thread(delegate() {
+				TurnRightReverse(speed,turnPercent,0, false);
+			}).Start();
 			motorSync.CancelPolling();
 		}
 		
@@ -267,7 +275,9 @@ namespace MonoBrickFirmware.Movement
 		/// Turn percent.
 		/// </param>
 		public void TurnLeftForward(sbyte speed, sbyte turnPercent){
-			TurnLeftForward(speed,turnPercent, 0, false);
+			new Thread(delegate() {
+				TurnLeftForward(speed,turnPercent, 0, false);
+			}).Start();
 			motorSync.CancelPolling();
 		}
 		
@@ -301,7 +311,9 @@ namespace MonoBrickFirmware.Movement
 		/// Turn percent.
 		/// </param>
 		public void TurnLeftReverse(sbyte speed, sbyte turnPercent){
-			TurnLeftReverse(speed,turnPercent, 0, false);
+			new Thread(delegate() {
+				TurnLeftReverse(speed,turnPercent, 0, false);
+			}).Start();
 			motorSync.CancelPolling();
 		}
 		
