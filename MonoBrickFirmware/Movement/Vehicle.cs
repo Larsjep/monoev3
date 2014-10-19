@@ -79,7 +79,9 @@ namespace MonoBrickFirmware.Movement
 		/// Speed of the vehicle -100 to 100
 		/// </param>
 		public void Backward(sbyte speed){
-			Backward((sbyte)-speed, 0, false);
+			new Thread(delegate() {
+				Backward((sbyte)-speed, 0, false);
+			}).Start();
 			motorSync.CancelPolling();
 		}
 	
@@ -101,7 +103,9 @@ namespace MonoBrickFirmware.Movement
 		/// Speed of the vehicle -100 to 100
 		/// </param>
 		public void Forward(sbyte speed){
-			Forward(speed, 0, false);
+			new Thread(delegate() {
+				Forward(speed, 0, false);
+			}).Start();
 			motorSync.CancelPolling();
 		}
 		
