@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 
@@ -10,9 +11,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private int textSize = 0;
 		private string question;
 		
-		public override bool Show ()
+		public override bool Show (CancellationToken token)
 		{
-			base.Show ();
+			base.Show (token);
 			return IsPositiveSelected;
 		}
 		
