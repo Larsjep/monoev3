@@ -74,7 +74,7 @@ namespace MonoBrickFirmware.Movement
 
 		internal new void CancelPolling ()
 		{
-			CancelPolling();
+			base.CancelPolling();
 		}
 	}
 }
