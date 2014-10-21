@@ -2,7 +2,7 @@
 	<HEAD>
 		<TITLE>MonBrick Webserver</TITLE>
 		<style type="text/css">
-			body {background-image:url('http://cdn3.crunchify.com/wp-content/uploads/2013/03/Crunchify.bg_.300.png');}
+			body {background-image:url('Images/background.jpg');}
 			table.inner
 			{
 				text-align: left;
@@ -124,39 +124,39 @@
 			{
 				    var speed = document.getElementById("motor" + index + "SetSpeed").value;
 				    var steps = document.getElementById("motor" + index + "SetPosition").value;
-				    $.post("/motor/" + index + "/move/" + speed + "/" + steps, {}, function(data,status){});
+				    $.get("/motor/" + index + "/move/" + speed + "/" + steps, {}, function(data,status){});
 			}
 		</script>
 		<script>
 			function forward(index)
 			{
 				    var speed = document.getElementById("motor" + index + "SetSpeed").value;
-				    $.post("/motor/" + index + "/forward/" + speed, {}, function(data,status){});
+				    $.get("/motor/" + index + "/forward/" + speed, {}, function(data,status){});
 			}
 		</script>
 		<script>
 			function reverse(index)
 			{
 				     var speed = document.getElementById("motor" + index + "SetSpeed").value;
-				     $.post("/motor/"+ index + "/reverse/" + speed, {}, function(data,status){});
+				     $.get("/motor/"+ index + "/reverse/" + speed, {}, function(data,status){});
 			}
 		</script>
 		<script>
 			function stop(index)
 			{
-				     $.post("/motor/"+ index + "/off", {}, function(data,status){});
+				     $.get("/motor/"+ index + "/off", {}, function(data,status){});
 			}
 		</script>
 		<script>
 			function holdPower(index)
 			{
-				     $.post("/motor/"+ index + "/break", {}, function(data,status){});
+				     $.get("/motor/"+ index + "/break", {}, function(data,status){});
 			}
 		</script>
 		<script>
 			function resetTacho(index)
 			{
-				     $.post("/motor/"+ index + "/reset", {}, function(data,status){});
+				     $.get("/motor/"+ index + "/reset", {}, function(data,status){});
 			}
 		</script>
 		<script>
@@ -219,7 +219,7 @@
 	</HEAD>
 	<BODY>
 
-
+		<center><img src="Images/Title.png"/></center>
 		<p style="border-top-width: 1px; border-top-style: solid; border-top-color: #f26100; padding-top: 10px;"></p>
 		<div id="dialog-modal" title="Motor speed out of range" style="display: none;">    
 			 		<font color="black">
@@ -265,7 +265,7 @@
 								<th class="inner" id="motorAPosition"></th>
 							</tr>
 							<tr class="inner">
-								<th class="inner">Current speed: </th>
+								<th class="inner">Speed: </th>
 								<th class="inner"></th>
 								<th class="inner" id="motorASpeed"></th>
 							</tr>
@@ -294,7 +294,7 @@
 								<th class="inner" id="motorBPosition"></th>
 							</tr>
 							<tr class="inner">
-								<th class="inner">Current speed: </th>
+								<th class="inner">Speed: </th>
 								<th class="inner"></th>
 								<th class="inner" id="motorBSpeed"></th>
 							</tr>
@@ -323,7 +323,7 @@
 								<th class="inner" id="motorCPosition"></th>
 							</tr>
 							<tr class="inner">
-								<th class="inner">Current speed: </th>
+								<th class="inner">Speed: </th>
 								<th class="inner"></th>
 								<th class="inner" id="motorCSpeed"></th>
 							</tr>
@@ -352,7 +352,7 @@
 								<th class="inner" id="motorDPosition"></th>
 							</tr>
 							<tr class="inner">
-								<th class="inner">Current speed: </th>
+								<th class="inner">Speed: </th>
 								<th class="inner"></th>
 								<th class="inner" id="motorDSpeed"></th>
 							</tr>
@@ -360,7 +360,8 @@
 					</td>		
 				</tr>
 			</table>
-
+			<br>
+			<br>
 			<table class="outer" id="sensorTable">
 				<tr class="outer">
 						<th class="outer width="25%">Sensor 1</th>
@@ -492,11 +493,14 @@
 					</td>		
 				</tr>
 			</table>
-
-		</center>
+		<br>
+		<sup><font color="#999999">Powered by</font></sup>
+		<br>
+		<a href="http://nancyfx.org/"><img src="Images/nancyLogo.png"/></a>
 		
+		</center>
 		<p align="right">
-			<sup><font color="#999999">Powered by Mono and <a href="http://en.wikipedia.org/wiki/XSP_(software)" target="_blank">XSP</a></font></sup>
+			
 		</p>
 	</BODY>
 </HTML>

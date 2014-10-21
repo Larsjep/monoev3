@@ -46,46 +46,51 @@ namespace StartupApp.WebServer
 
 	    public EV3Module()
 	    {
-	        Get["/"] = _ =>
+			Get["/Images/{title}"] = parameter =>
+			{
+				return Response.AsImage(@"Images/" + (string)parameter.title);
+			};
+
+			Get["/"] = _ =>
 	        {
 	            Model.Motors = Motors;
 				return View["index", Model];
 	        };
 			Get	["/status"] = parameter =>
 			{
-			    return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(Motors);//JSON
+				return Response.AsJson(Motors, HttpStatusCode.OK);
 			};
-			Post	["/motor/{index}/break/"] = parameter =>
+			Get	["/motor/{index}/break/"] = parameter =>
 			{
 				Motors[MotorIndexToInt((string)parameter.index)].Break();
-				return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(Motors);//JSON
+				return "Motor " + (string)parameter.index + " was set to break";
 			};
-			Post	["/motor/{index}/off/"] = parameter =>
+			Get	["/motor/{index}/off/"] = parameter =>
 			{
 				Motors[MotorIndexToInt((string)parameter.index)].Stop();
-				return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(Motors);//JSON
+				return "Motor " + (string)parameter.index + " was set to off ";
 			};
-			Post	["/motor/{index}/forward/{speed}"] = parameter =>
+			Get	["/motor/{index}/forward/{speed}"] = parameter =>
 			{
 				Motors[MotorIndexToInt((string)parameter.index)].Forward((int)parameter.speed);
-				return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(Motors);//JSON
+				return "Motor " + (string)parameter.index + " set to move forward with speed " + (string) parameter.speed;
 			};
-			Post	["/motor/{index}/reverse/{speed}"] = parameter =>
+			Get	["/motor/{index}/reverse/{speed}"] = parameter =>
 			{
 				Motors[MotorIndexToInt((string)parameter.index)].Reverse((int)parameter.speed);
-				return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(Motors);//JSON
+				return "Motor " + (string)parameter.index + " set to move in reverse with speed " + (string) parameter.speed;
 			};
 
-			Post	["/motor/{index}/move/{speed}/{steps}"] = parameter =>
+			Get	["/motor/{index}/move/{speed}/{steps}"] = parameter =>
 			{
 				Motors[MotorIndexToInt((string)parameter.index)].Move((int)parameter.speed, (int)parameter.steps);
-				return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(Motors);//JSON
+				return "Motor " + (string)parameter.index + " set to move " + (string) parameter.steps + " steps with speed " + (string) parameter.speed;
 			};
 
-			Post	["/motor/{index}/reset"] = parameter =>
+			Get	["/motor/{index}/reset"] = parameter =>
 			{
 				Motors[MotorIndexToInt((string)parameter.index)].Reset();
-				return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(Motors);//JSON
+				return "Motor " + (string)parameter.index + " reset it's tachometer";
 			};
 	    }
 	}
