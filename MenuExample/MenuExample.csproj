@@ -9,6 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>MenuExample</RootNamespace>
     <AssemblyName>MenuExample</AssemblyName>
+    <ReleaseVersion>1.1</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
