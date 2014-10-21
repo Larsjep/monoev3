@@ -4,20 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
-using MonoBrickFirmware.Display.Animation;
 
 namespace MonoBrickFirmware.Display.Dialogs
 {
     public abstract class Dialog
 	{
 		
-		protected int numberOfLines;
 		protected Font font;
 		protected Rectangle outherWindow; 
 		protected Rectangle innerWindow;
+		protected List<Rectangle> lines;
+        
 				
 		private string title;
-        private List<Rectangle> lines;
         
 		private Rectangle titleRect;
 		private Point bottomLineCenter;
@@ -25,13 +24,7 @@ namespace MonoBrickFirmware.Display.Dialogs
         private int titleSize;
 		private int dialogWidth;
 		private int dialogHeight;
-		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
-		private CancellationToken token;
-		
-		private ProgressAnimation progress = null;
-		private int animationLine = -1;
-		private const int progressEdgeX = 10;
-		private const int progressEdgeY = 8;
+
 		private const int dialogEdge = 5;
 		private const int buttonEdge = 2;
 		private const int buttonTextOffset = 2;
@@ -54,9 +47,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 			outherWindow = new Rectangle (startPoint1, startPoint2);
 			innerWindow = new Rectangle (new Point (startPoint1.X + dialogEdge, startPoint1.Y + dialogEdge), new Point (startPoint2.X - dialogEdge, startPoint2.Y - dialogEdge));
 			titleRect = new Rectangle (new Point ((int)(Lcd.Width / 2 - titleSize / 2), (int)(startPoint1.Y - (font.maxHeight / 2))), new Point ((int)(Lcd.Width / 2 + titleSize / 2), (int)(startPoint1.Y + (font.maxHeight / 2))));
-			token = cancelTokenSource.Token;
-			
-						
 			int top = innerWindow.P1.Y + (int)( f.maxHeight/2) + topOffset;
 			int middel = innerWindow.P1.Y  + ((innerWindow.P2.Y - innerWindow.P1.Y) / 2) - (int)(f.maxHeight)/2;
 			int count = 0;
@@ -64,7 +54,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				middel = middel-(int)f.maxHeight;
 				count ++;
 			}
-			numberOfLines = count*2+1;
+			int numberOfLines = count*2+1;
 			Point start1 = new Point (innerWindow.P1.X, topOffset+  innerWindow.P1.Y  + ((innerWindow.P2.Y - innerWindow.P1.Y) / 2) - (int)f.maxHeight/2 - count*((int)f.maxHeight) );
 			Point start2 = new Point (innerWindow.P2.X, start1.Y + (int)f.maxHeight);
 			lines = new List<Rectangle>();
@@ -75,13 +65,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 			OnShow += delegate {Lcd.Instance.SaveScreen();};
 			OnExit += delegate {Lcd.Instance.LoadScreen();};	
 		}
-		
-		protected void Cancel()
+
+		public bool Show ()
 		{
-			cancelTokenSource.Cancel();	
+			return Show(CancellationToken.None);
 		}
-		
-		public virtual bool Show()
+
+
+
+		public virtual bool Show(CancellationToken token)
 		{
 			bool exit = false;
 			OnShow();
@@ -180,25 +172,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 			DrawCenterButton(text,color,0);
 		}
 		
-		protected void StartProgressAnimation (int lineIndex)
-		{
-			if (progress != null || lineIndex != animationLine) 
-			{
-				Rectangle progressRect = lines [lineIndex];
-				animationLine = lineIndex;
-				progressRect = new Rectangle (progressRect.P1 + new Point (progressEdgeX, progressEdgeY), progressRect.P2 + new Point (-progressEdgeX, -progressEdgeY));
-				if (progress != null && progress.IsRunning)
-					progress.Stop ();
-				progress = new ProgressAnimation (progressRect);
-			}
-			progress.Start();
-		}
-		
-		protected void StopProgressAnimation ()
-		{
-			progress.Stop();
-		}
-		
 		protected void DrawCenterButton (string text, bool color, int textSize)
 		{
 			if (textSize == 0) 
@@ -215,7 +188,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle buttonRect = new Rectangle(buttonP1, buttonP2);
 			Rectangle buttonRectEdge = new Rectangle(buttonP1Outer, buttonp2Outer);
 			
-			Lcd.Instance.DrawBox(buttonRectEdge,true);
+			Lcd.Instance.DrawRectangle(buttonRectEdge,true, true);
 			Lcd.Instance.WriteTextBox(font,buttonRect,text, color, Lcd.Alignment.Center);		
 		}
 		
@@ -240,7 +213,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle leftRect = new Rectangle(left1, left2);
 			Rectangle leftOuterRect = new Rectangle(leftOuter1, leftOuter2);
 			
-			Lcd.Instance.DrawBox(leftOuterRect,true);
+			Lcd.Instance.DrawRectangle(leftOuterRect,true, true);
 			Lcd.Instance.WriteTextBox(font, leftRect, text, color, Lcd.Alignment.Center);
 		
 		}
@@ -266,12 +239,12 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle rightRect = new Rectangle(right1, right2);
 			Rectangle rightOuterRect = new Rectangle(rightOuter1, rightOuter2);
 			
-			Lcd.Instance.DrawBox(rightOuterRect, true);
+			Lcd.Instance.DrawRectangle(rightOuterRect, true, true);
 			
 			Lcd.Instance.WriteTextBox(font, rightRect, text, color, Lcd.Alignment.Center);
 		
 		}
-		
+
 		protected void WriteTextOnDialog (string text)
 		{
 			int width = lines [0].P2.X - lines [0].P1.X;
@@ -312,15 +285,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 		protected void ClearContent ()
 		{
 			Lcd.Instance.LoadScreen();
-			Lcd.Instance.DrawBox(outherWindow, true);
-			Lcd.Instance.DrawBox(innerWindow, false);
+			Lcd.Instance.DrawRectangle(outherWindow, true, true);
+			Lcd.Instance.DrawRectangle(innerWindow, false, true);
 			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 		}
 		
 		protected virtual void Draw ()
 		{
-			Lcd.Instance.DrawBox(outherWindow, true);
-			Lcd.Instance.DrawBox(innerWindow, false);
+			Lcd.Instance.DrawRectangle(outherWindow, true, true);
+			Lcd.Instance.DrawRectangle(innerWindow, false, true);
 			OnDrawContent();
 			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 			Lcd.Instance.Update();

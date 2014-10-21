@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 
@@ -21,10 +22,10 @@ namespace MonoBrickFirmware.Display.Dialogs
 		/// <summary>
 		/// Show the dialog - this does not block only draws the dialog if wait for OK is disabled
 		/// </summary>
-		public override bool Show ()
+		public override bool Show (CancellationToken token)
 		{
 			if (waitForOk) {
-				base.Show ();
+				base.Show (token);
 			} 
 			else {
 				OnShow();

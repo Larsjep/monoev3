@@ -38,7 +38,7 @@ namespace MonoBrickAddin
 	public class MonoBrickProject : DotNetAssemblyProject
 	{
 		FilePath referencePath = "";
-		static string versionString  = "AddIn: 1.0.0.0";
+		static string versionString  = "AddIn: 1.1.0.0";
 		#region Constructors
 
 		public MonoBrickProject()

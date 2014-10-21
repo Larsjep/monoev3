@@ -17,6 +17,9 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 
+using Nancy;
+using Nancy.Hosting.Self;
+
 namespace StartupApp
 {
 	class MainClass
@@ -307,7 +310,7 @@ namespace StartupApp
 		#endregion
 		
 		#region WebServer Menu
-		static bool ShowWebServerMenu ()
+		/*static bool ShowWebServerMenu ()
 		{
 			List<IMenuItem> items = new List<IMenuItem> ();
 			var portItem = new MenuItemWithNumericInput("Port", settings.WebServerSettings.Port, 1, ushort.MaxValue);
@@ -353,7 +356,7 @@ namespace StartupApp
 			Menu m = new Menu ("Web Server", items);
 			m.Show ();
 			return false;
-		}
+		}*/
 		#endregion
 		
 		#region Settings Menu
@@ -534,9 +537,13 @@ namespace StartupApp
 		#endregion
 		
 		#region Main Program
+
+		static internal ManualResetEvent terminateProgram = new ManualResetEvent(false);
+
+
 		public static void Main (string[] args)
 		{
-			Lcd.Instance.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
+			/*Lcd.Instance.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
 			Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 			
 			Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
@@ -606,7 +613,15 @@ namespace StartupApp
 			while(true)
 			{
 				ShowMainMenu();
-			}
+			}*/
+			var nancyHost = new NancyHost(new Uri("http://127.0.0.1:8080/"));
+
+			nancyHost.Start();
+			
+			Console.WriteLine("Nancy now listening - navigating to http://localhost:8888/. Press enter to stop");
+			//Process.Start("http://localhost:8080/");
+			terminateProgram.WaitOne();
+			//Console.WriteLine("Stopped. Good bye!");
 		}
 		#endregion
 	}

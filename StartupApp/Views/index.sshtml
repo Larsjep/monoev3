@@ -1,0 +1,506 @@
+﻿<HTML>
+	<HEAD>
+		<TITLE>MonBrick Webserver</TITLE>
+		<style type="text/css">
+			body {background-image:url('Images/background.jpg');}
+			table.inner
+			{
+				text-align: left;
+				vertical-align: middle;
+				border:none;
+				border-collapse: collapse;
+			}
+			tr.inner:nth-child(even)
+			{
+				background: #d7d7d7;
+			}
+			tr.inner:nth-child(odd)
+			{
+				background: #e9e9e9;
+			}
+			th.inner
+			{
+				padding: 4px;
+				font-weight: normal;
+			}
+
+			table.outer
+			{
+				width: 800px;
+				color: white;
+				align: center;
+				vertical-align: middle;
+			}
+
+			th.outer
+			{
+				background: #f2690d;
+				vertical-align: middle;
+				border-collapse: separate;
+			}
+			td.outer
+			{
+				padding: 0px;
+				color: black;
+				text-align: center;
+				vertical-align: middle;
+			}
+			tr.outer:nth-child(odd)
+			{
+				background: #d7d7d7;
+			}
+			tr.outer:nth-child(even)
+			{
+				background: #e9e9e9;
+			}
+
+			.ui-widget.motor-dialog {
+			    font-family: Verdana,Arial,sans-serif;
+			    font-size: .8em;
+			}
+
+			.ui-widget-content.motor-dialog {
+			    background: #F9F9F9;
+			    border: 1px solid #f2690d;
+			    color: black;
+			    text-color: black;
+			}
+
+			.ui-dialog.motor-dialog {
+			    left: 0;
+			    outline: 0 none;
+			    padding: 0 !important;
+			    position: absolute;
+			    top: 0;
+			}
+
+			.ui-dialog.motor-dialog .ui-widget-header {
+			    background: #f2690d;
+			    border: 0;
+			    font-weight: normal;
+			    color: white;
+			}
+
+			.ui-dialog.motor-dialog .ui-dialog-titlebar {
+			    padding: 0.1em .5em;
+			    position: relative;
+			    font-size: 1em;
+			}
+
+			position: {
+				my: "center",
+				at: "center",
+				of: $("body"),
+				within: $("body")
+			}
+		</style>
+		<link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.min.css" rel="stylesheet">
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+	    <script>
+	        function showMotorDialog()
+			{
+			    $("#dialog-modal").dialog(
+			    {
+			        modal: true,
+				    draggable: true,
+				    resizable: false,
+				    show: 'blind',
+				    hide: 'blind',
+				    width: 200,
+				    height: 100,
+				    dialogClass: 'no-close motor-dialog',
+				    position: {
+	                    my: "center",
+	                    at: "center",
+	                    of: $("body"),
+	                    within: $("body")
+                	},
+			     });
+			}
+	    </script>
+		<script>
+			function moveSteps(index)
+			{
+				    var speed = document.getElementById("motor" + index + "SetSpeed").value;
+				    var steps = document.getElementById("motor" + index + "SetPosition").value;
+				    $.get("/motor/" + index + "/move/" + speed + "/" + steps, {}, function(data,status){});
+			}
+		</script>
+		<script>
+			function forward(index)
+			{
+				    var speed = document.getElementById("motor" + index + "SetSpeed").value;
+				    $.get("/motor/" + index + "/forward/" + speed, {}, function(data,status){});
+			}
+		</script>
+		<script>
+			function reverse(index)
+			{
+				     var speed = document.getElementById("motor" + index + "SetSpeed").value;
+				     $.get("/motor/"+ index + "/reverse/" + speed, {}, function(data,status){});
+			}
+		</script>
+		<script>
+			function stop(index)
+			{
+				     $.get("/motor/"+ index + "/off", {}, function(data,status){});
+			}
+		</script>
+		<script>
+			function holdPower(index)
+			{
+				     $.get("/motor/"+ index + "/break", {}, function(data,status){});
+			}
+		</script>
+		<script>
+			function resetTacho(index)
+			{
+				     $.get("/motor/"+ index + "/reset", {}, function(data,status){});
+			}
+		</script>
+		<script>
+			function isValidSpeed(evt, port){
+			    var charCode = (evt.which) ? evt.which : event.keyCode
+				if (charCode > 31 && (charCode < 48 || charCode > 57))
+			    {
+			        return false;
+			    }
+ 				var currentValue = document.getElementById("motor" + port + "SetSpeed").value + parseInt(charCode-48);
+				if(currentValue > 100)
+				{
+					showMotorDialog();
+					return false;
+				}
+				return true;
+			}    
+		</script>
+		<script>
+	        function GetIndex(val, e) {
+	            alert(val.toLowerCase().indexOf(String.fromCharCode(e.keyCode).toLowerCase()));
+	        }
+    	</script>
+
+		<script>
+			function isValidPosition(evt,index){
+			    var charCode = (evt.which) ? evt.which : event.keyCode
+				if(charCode == 45)
+				{
+					if(index == 0)
+						return true;
+					return false;
+				}
+				if (charCode > 31 && (charCode < 48 || charCode > 57))
+			    {
+			        return false;
+			    }
+				return true;
+			}    
+		</script>
+		<script>
+			$(document).ready(function()
+			{
+				setInterval(function()
+				{
+					$.ajax({url: "status",dataType: "JSON"}).success(function(data)
+					{
+							for (var i = 0; i < data.length; i++)
+							{
+								var positionText = document.getElementById("motor" + data[i].port + "Position");
+								positionText.innerHTML = "<p align=\"right\">" + data[i].position + "</p>";
+								var speedText = document.getElementById("motor" + data[i].port + "Speed");
+								speedText.innerHTML = "<p align=\"right\">" + data[i].speed + "</p>";
+							}
+					});
+					return false;
+				}, 100);
+			});
+		</script>
+	</HEAD>
+	<BODY>
+
+		<center><img src="Images/Title.png"/></center>
+		<p style="border-top-width: 1px; border-top-style: solid; border-top-color: #f26100; padding-top: 10px;"></p>
+		<div id="dialog-modal" title="Motor speed out of range" style="display: none;">    
+			 		<font color="black">
+			    	<div style="margin-left: 23px;">
+			        <p>
+			            Motor speed must be between 0 and 100
+			        </p>
+					</div>
+					</font>
+		</div>
+
+
+		<center>
+			
+			<table class="outer" id="motorTable">
+				<tr class="outer">
+						<th class="outer width="25%">Motor A</th>
+						<th class="outer width="25%">Motor B</th>
+						<th class="outer width="25%">Motor C</th>
+						<th class="outer width="25%">Motor D</th>
+				</tr>
+				<tr class="outer">
+					<td>
+						<table  class="inner" >
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"><input type="text" size="5" value="50" id="motorASetSpeed" onkeypress="return isValidSpeed(event,'A')"></th>
+								<th class="inner"><input type="button" value="Rev" onclick=reverse('A')><input type="button" value="Fwd" onclick=forward('A')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Steps: </th>
+								<th class="inner"><input type="text" size="5" value="600" id="motorASetPosition" onkeypress="return isValidPosition(event,this.selectionStart)"></th>
+								<th class="inner"><input type="button" value="Move steps" onclick=moveSteps('A')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner"><input type="button" value="Break" onclick=holdPower('A')></th>
+								<th class="inner"><input type="button" value="Stop" onclick=stop('A')></th>
+								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('A')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Position: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorAPosition"></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorASpeed"></th>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table  class="inner" >
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"><input type="text" size="5" value="50" id="motorBSetSpeed" onkeypress="return isValidSpeed(event,'B')"></th>
+								<th class="inner"><input type="button" value="Rev" onclick=reverse('B')><input type="button" value="Fwd" onclick=forward('B')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Steps: </th>
+								<th class="inner"><input type="text" size="5" value="600" id="motorBSetPosition" onkeypress="return isValidPosition(event,this.selectionStart)"></th>
+								<th class="inner"><input type="button" value="Move steps" onclick=moveSteps('B')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner"><input type="button" value="Break" onclick=holdPower('B')></th>
+								<th class="inner"><input type="button" value="Stop" onclick=stop('B')></th>
+								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('B')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Position: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorBPosition"></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorBSpeed"></th>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table  class="inner" >
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"><input type="text" size="5" value="50" id="motorCSetSpeed" onkeypress="return isValidSpeed(event,'C')"></th>
+								<th class="inner"><input type="button" value="Rev" onclick=reverse('C')><input type="button" value="Fwd" onclick=forward('C')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Steps: </th>
+								<th class="inner"><input type="text" size="5" value="600" id="motorCSetPosition" onkeypress="return isValidPosition(event,this.selectionStart)"></th>
+								<th class="inner"><input type="button" value="Move steps" onclick=moveSteps('C')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner"><input type="button" value="Break" onclick=holdPower('C')></th>
+								<th class="inner"><input type="button" value="Stop" onclick=stop('C')></th>
+								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('C')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Position: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorCPosition"></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorCSpeed"></th>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table  class="inner" >
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"><input type="text" size="5" value="50" id="motorDSetSpeed" onkeypress="return isValidSpeed(event,'D')"></th>
+								<th class="inner"><input type="button" value="Rev" onclick=reverse('D')><input type="button" value="Fwd" onclick=forward('D')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Steps: </th>
+								<th class="inner"><input type="text" size="5" value="600" id="motorDSetPosition" onkeypress="return isValidPosition(event,this.selectionStart)"></th>
+								<th class="inner"><input type="button" value="Move steps" onclick=moveSteps('D')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner"><input type="button" value="Break" onclick=holdPower('D')></th>
+								<th class="inner"><input type="button" value="Stop" onclick=stop('D')></th>
+								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('D')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Position: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorDPosition"></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorDSpeed"></th>
+							</tr>
+						</table>
+					</td>		
+				</tr>
+			</table>
+			<br>
+			<br>
+			<table class="outer" id="sensorTable">
+				<tr class="outer">
+						<th class="outer width="25%">Sensor 1</th>
+						<th class="outer width="25%">Sensor 2</th>
+						<th class="outer width="25%">Sensor 3</th>
+						<th class="outer width="25%">Sensor 4</th>
+				</tr>
+				<tr class="outer">
+					<td>
+						<table  class="inner" >
+							<tr class="inner">
+								<th class="inner">Type: </th>
+								<th class="inner"></th>
+								<th class="inner" id="sensor1Type"></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Mode: </th>
+								<th class="inner"></th>
+								<th class="inner" id="sensor1Type"></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Steps: </th>
+								<th class="inner"><input type="text" size="5" value="600" id="motorASetPosition" onkeypress="return isValidPosition(event,this.selectionStart)"></th>
+								<th class="inner"><input type="button" value="Move steps" onclick=moveSteps('A')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner"><input type="button" value="Break" onclick=holdPower('A')></th>
+								<th class="inner"><input type="button" value="Stop" onclick=stop('A')></th>
+								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('A')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Position: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorAPosition"></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Current speed: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorASpeed"></th>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table  class="inner" >
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"><input type="text" size="5" value="50" id="motorBSetSpeed" onkeypress="return isValidSpeed(event,'B')"></th>
+								<th class="inner"><input type="button" value="Rev" onclick=reverse('B')><input type="button" value="Fwd" onclick=forward('B')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Steps: </th>
+								<th class="inner"><input type="text" size="5" value="600" id="motorBSetPosition" onkeypress="return isValidPosition(event,this.selectionStart)"></th>
+								<th class="inner"><input type="button" value="Move steps" onclick=moveSteps('B')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner"><input type="button" value="Break" onclick=holdPower('B')></th>
+								<th class="inner"><input type="button" value="Stop" onclick=stop('B')></th>
+								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('B')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Position: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorBPosition"></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Current speed: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorBSpeed"></th>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table  class="inner" >
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"><input type="text" size="5" value="50" id="motorCSetSpeed" onkeypress="return isValidSpeed(event,'C')"></th>
+								<th class="inner"><input type="button" value="Rev" onclick=reverse('C')><input type="button" value="Fwd" onclick=forward('C')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Steps: </th>
+								<th class="inner"><input type="text" size="5" value="600" id="motorCSetPosition" onkeypress="return isValidPosition(event,this.selectionStart)"></th>
+								<th class="inner"><input type="button" value="Move steps" onclick=moveSteps('C')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner"><input type="button" value="Break" onclick=holdPower('C')></th>
+								<th class="inner"><input type="button" value="Stop" onclick=stop('C')></th>
+								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('C')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Position: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorCPosition"></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Current speed: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorCSpeed"></th>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table  class="inner" >
+							<tr class="inner">
+								<th class="inner">Speed: </th>
+								<th class="inner"><input type="text" size="5" value="50" id="motorDSetSpeed" onkeypress="return isValidSpeed(event,'D')"></th>
+								<th class="inner"><input type="button" value="Rev" onclick=reverse('D')><input type="button" value="Fwd" onclick=forward('D')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Steps: </th>
+								<th class="inner"><input type="text" size="5" value="600" id="motorDSetPosition" onkeypress="return isValidPosition(event,this.selectionStart)"></th>
+								<th class="inner"><input type="button" value="Move steps" onclick=moveSteps('D')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner"><input type="button" value="Break" onclick=holdPower('D')></th>
+								<th class="inner"><input type="button" value="Stop" onclick=stop('D')></th>
+								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('D')></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Position: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorDPosition"></th>
+							</tr>
+							<tr class="inner">
+								<th class="inner">Current speed: </th>
+								<th class="inner"></th>
+								<th class="inner" id="motorDSpeed"></th>
+							</tr>
+						</table>
+					</td>		
+				</tr>
+			</table>
+		<br>
+		<sup><font color="#999999">Powered by</font></sup>
+		<br>
+		<a href="http://nancyfx.org/"><img src="Images/nancyLogo.png"/></a>
+		
+		</center>
+		<p align="right">
+			
+		</p>
+	</BODY>
+</HTML>

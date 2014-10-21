@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading;
 using MonoBrickFirmware.UserInput;
 using System.Collections.Generic;
 
 namespace MonoBrickFirmware.Display.Dialogs
 {
-	public class ProgressDialog : Dialog
+	public class ProgressDialog : DialogWithProgessAnimation
 	{
 		private IStep step;
 		private int progressLine;
@@ -15,7 +16,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			progressLine = 1;
 		}
 		
-		public override bool Show ()
+		public override bool Show (CancellationToken token)
 		{
 			bool ok = true;
 			string endText;
@@ -23,9 +24,12 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Draw ();
 			StartProgressAnimation (progressLine);
 			try {
-				if (step.Execute ()) {
+				if (step.Execute ()) 
+				{
 					endText = step.OkText;
-				} else {
+				} 
+				else 
+				{
 					ok = false;
 					endText = step.ErrorText;
 				}

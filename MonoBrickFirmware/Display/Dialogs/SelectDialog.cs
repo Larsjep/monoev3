@@ -28,12 +28,12 @@ namespace MonoBrickFirmware.Display.Dialogs
 
         protected override void OnDrawContent ()
 		{
-			for (int i = 0; i != numberOfLines; ++i) {
+			for (int i = 0; i != lines.Count; ++i) {
 				if (i + scrollPos >= options.Length)
 					break;
 				WriteTextOnLine(options [i + scrollPos].ToString (), i, i != cursorPos);
 			}
-			Lcd.Instance.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + numberOfLines < options.Length);
+			Lcd.Instance.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + lines.Count < options.Length);
 			
         }
 
@@ -51,7 +51,7 @@ namespace MonoBrickFirmware.Display.Dialogs
         protected override bool OnDownAction ()
 		{
 			if (scrollPos + cursorPos < options.Length - 1) {
-				if (cursorPos < numberOfLines - 1)
+				if (cursorPos < lines.Count - 1)
 					cursorPos++;
 				else
 					scrollPos++;
