@@ -39,6 +39,20 @@ namespace MonoBrickFirmware.Extensions
 			return value.Substring(adjustedPosA);
 		}
 
+		public static Boolean ToBoolean(this string str)
+		{
+			bool result = false;
+			if(!Boolean.TryParse(str,out result))
+			{
+				int asInt;
+				if(int.TryParse(str,out asInt))
+				{
+					result = Convert.ToBoolean(asInt);
+				}
+			}
+			return result;
+		}
+
 	}
 }
 

@@ -5,16 +5,17 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E5C67E4C-5BDE-419A-9014-241E4FCFD2E8}</ProjectGuid>
+    <ProjectGuid>{89D9CC07-BD5F-4A5E-A27E-BEECFAEC6213}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>PositionPIDExample</RootNamespace>
-    <AssemblyName>PositionPIDExample</AssemblyName>
+    <RootNamespace>MonoBrickWebserverPCTest</RootNamespace>
+    <AssemblyName>MonoBrickWebserverPCTest</AssemblyName>
     <ReleaseVersion>1.1</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -30,9 +31,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\MonoBrickFirmware\MonoBrickFirmware.csproj">
-      <Project>{67261E03-D263-4C42-A5AD-2A4820231B28}</Project>
-      <Name>MonoBrickFirmware</Name>
+    <ProjectReference Include="..\MonoBrickWebServer\MonoBrickWebServer.csproj">
+      <Project>{46A2BC89-7B2D-40CC-84D2-67A145924A0B}</Project>
+      <Name>MonoBrickWebServer</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
