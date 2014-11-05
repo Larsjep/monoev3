@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Linq;
 namespace MonoBrickWebserverDynamicTest
 {
 	class MainClass
@@ -10,21 +11,8 @@ namespace MonoBrickWebserverDynamicTest
 			var dllPath = System.IO.Directory.GetCurrentDirectory() + @"\MonoBrickWebServer.dll";
 			Console.WriteLine (dllPath);
 			var DLL = Assembly.LoadFile(dllPath);
-			object webServerInstance = null;
-			Type webServerType = null;
-			foreach(Type type in DLL.GetExportedTypes())
-			{
-				if (type.IsClass && type.FullName.Contains("Webserver")) 
-				{
-					var props = type.GetProperties();
-					webServerType = type;
-					FieldInfo field = type.GetField("instance", BindingFlags.Static | BindingFlags.NonPublic);
-					webServerInstance = field.GetValue(null);
-
-				}
-			}
-			if(webServerInstance == null)
-				Console.WriteLine ("Is null");
+			Type webServerType = Assembly.LoadFile (dllPath).GetExportedTypes ().First(type => type.FullName.Contains("Webserver"));  
+			object webServerInstance = webServerType.GetProperty("Instance").GetValue(null);;
 			webServerType.InvokeMember ("Start", BindingFlags.Default | BindingFlags.InvokeMethod, null, webServerInstance, new object[]{port, (bool) true});
 			Console.WriteLine ("Started web server on port " + port);
 			Console.ReadLine();
