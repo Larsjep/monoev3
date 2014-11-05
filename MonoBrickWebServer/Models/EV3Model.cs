@@ -27,12 +27,8 @@ namespace MonoBrickWebServer.Models
 			{
 				detector.Update();
 			}
-
-			for (int i = 0; i < 4; i++) 
-			{
-				Motors [i].Update ();
-				Sensors [i].Update ();
-			}
+			Motors.Update ();
+			Sensors.Update ();
 		}
 
 		private void HandleSensorAttached (ISensor sensor)

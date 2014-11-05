@@ -26,7 +26,7 @@
 
 			table.outer
 			{
-				width: 950px;
+				width: 930px;
 				color: white;
 				align: center;
 				vertical-align: middle;
@@ -139,54 +139,38 @@
 						rampSteps = 360;
 					}
 					steps = steps - 2* rampSteps;
-				    $.get("/motor/" + index + "/speedprofile/speed=" + speed + "&rampup=" + rampSteps + "&constant=" + steps + "&rampdown=" + rampSteps + "&brake=true", {}, function(data,status){});
+				    $.get("ev3/motor/" + index + "/speedprofile/speed=" + speed + "&rampup=" + rampSteps + "&constant=" + steps + "&rampdown=" + rampSteps + "&brake=true", {}, function(data,status){});
 			}
-		</script>
-        <script>
 		    function forward(index)
 			{
 				    var speed = document.getElementById("motor" + index + "SetSpeed").value;
-				    $.get("/motor/" + index + "/setspeed/" + speed, {}, function(data,status){});
+				    $.get("ev3/motor/" + index + "/setspeed/" + speed, {}, function(data,status){});
 			}
-		</script>
-        <script>
 		    function reverse(index)
 			{
 				     var speed = document.getElementById("motor" + index + "SetSpeed").value;
-				     $.get("/motor/"+ index + "/setspeed/" + -speed, {}, function(data,status){});
+				     $.get("ev3/motor/"+ index + "/setspeed/" + -speed, {}, function(data,status){});
 			}
-		</script>
-        <script>
 		    function stop(index)
 			{
-				     $.get("/motor/"+ index + "/off", {}, function(data,status){});
+				     $.get("ev3/motor/"+ index + "/off", {}, function(data,status){});
 			}
-		</script>
-        <script>
 		    function holdPower(index)
 			{
-				     $.get("/motor/"+ index + "/break", {}, function(data,status){});
+				     $.get("ev3/motor/"+ index + "/break", {}, function(data,status){});
 			}
-		</script>
-        <script>
 		    function resetTacho(index)
 			{
-				     $.get("/motor/"+ index + "/resettacho", {}, function(data,status){});
+				     $.get("ev3/motor/"+ index + "/resettacho", {}, function(data,status){});
 			}
-		</script>
-        <script>
 		    function previousMode(index)
 			{
-				     $.get("/sensor/"+ index + "/previousmode", {}, function(data,status){});
+				     $.get("ev3/sensor/"+ index + "/previousmode", {}, function(data,status){});
 			}
-		</script>
-        <script>
 		    function nextMode(index)
 			{
-				     $.get("/sensor/"+ index + "/nextmode", {}, function(data,status){});
+				     $.get("ev3/sensor/"+ index + "/nextmode", {}, function(data,status){});
 			}
-		</script>
-        <script>
 		    function isValidSpeed(evt, port){
 			    var charCode = (evt.which) ? evt.which : event.keyCode
 				if (charCode > 31 && (charCode < 48 || charCode > 57))
@@ -201,15 +185,6 @@
 				}
 				return true;
 			}    
-		</script>
-
-		<script>
-		    function GetIndex(val, e) {
-	            alert(val.toLowerCase().indexOf(String.fromCharCode(e.keyCode).toLowerCase()));
-	        }
-    	</script>
-
-		<script>
 			function isValidPosition(evt,index){
 			    var charCode = (evt.which) ? evt.which : event.keyCode
 				if(charCode == 45)
@@ -230,7 +205,7 @@
 			{
 				setInterval(function()
 				{
-					$.ajax({url: "status",dataType: "JSON"}).success(function(data)
+					$.ajax({url: "ev3",dataType: "JSON"}).success(function(data)
 					{
 							var motorData = data.motors;
 							for (var i = 0; i < motorData.length; i++)
@@ -255,7 +230,7 @@
 
 					});
 					return false;
-				}, 100);
+				}, 300);
 			});
 		</script>
 	</HEAD>
@@ -427,8 +402,8 @@
 								<th class="inner" id="In1Mode" width="90%"></th>
 							</tr>
 							<tr class="inner">
-								<th class="inner"><input type="button" value="Previous Mode" onclick=previousMode('In1')>  </th>
-								<th class="inner"><input type="button" value="  Next Mode  " onclick=nextMode('In1')></th>
+								<th class="inner" align="center"><input type="button" value="Previous Mode" onclick=previousMode('In1')>  </th>
+								<th class="inner" align="center"><input type="button" value="  Next Mode  " onclick=nextMode('In1')></th>
 							</tr>
 						</table>
 					</td>
@@ -447,8 +422,8 @@
 								<th class="inner" id="In2Mode" width="90%"></th>
 							</tr>
 							<tr class="inner">
-								<th class="inner"><input type="button" value="Previous Mode" onclick=previousMode('In2')>  </th>
-								<th class="inner"><input type="button" value="  Next Mode  " onclick=nextMode('In2')></th>
+								<th class="inner" align="center"><input type="button" value="Previous Mode" onclick=previousMode('In2')>  </th>
+								<th class="inner" align="center"><input type="button" value="  Next Mode  " onclick=nextMode('In2')></th>
 							</tr>
 						</table>
 					</td>
@@ -467,8 +442,8 @@
 								<th class="inner" id="In3Mode" width="90%"></th>
 							</tr>
 							<tr class="inner">
-								<th class="inner"><input type="button" value="Previous Mode" onclick=previousMode('In3')>  </th>
-								<th class="inner"><input type="button" value="  Next Mode  " onclick=nextMode('In3')></th>
+								<th class="inner" align="center"><input type="button" value="Previous Mode" onclick=previousMode('In3')>  </th>
+								<th class="inner" align="center"><input type="button" value="  Next Mode  " onclick=nextMode('In3')></th>
 							</tr>
 						</table>					
 					<td>
@@ -486,8 +461,8 @@
 								<th class="inner" id="In4Mode" width="90%"></th>
 							</tr>
 							<tr class="inner">
-								<th class="inner"><input type="button" value="Previous Mode" onclick=previousMode('In4')>  </th>
-								<th class="inner"><input type="button" value="  Next Mode  " onclick=nextMode('In4')></th>
+								<th class="inner" align="center"><input type="button" value="Previous Mode" onclick=previousMode('In4')>  </th>
+								<th class="inner" align="center"><input type="button" value="  Next Mode  " onclick=nextMode('In4')></th>
 							</tr>
 						</table>
 					</td>		

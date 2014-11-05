@@ -59,6 +59,14 @@ namespace MonoBrickWebServer.Models
 			}
 		}
 
+		public void Update()
+		{
+			foreach (var motor in motors) 
+			{
+				motor.Update ();
+			}
+		}
+
 		private int MotorIndexToInt (string index)
 		{
 			int motorIndex = 0;

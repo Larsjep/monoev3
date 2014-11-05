@@ -5,21 +5,27 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{89D9CC07-BD5F-4A5E-A27E-BEECFAEC6213}</ProjectGuid>
+    <ProjectGuid>{74BA831E-D185-47CB-B892-97DFDF2EEBCF}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MonoBrickWebserverPCTest</RootNamespace>
-    <AssemblyName>MonoBrickWebserverPCTest</AssemblyName>
-    <ReleaseVersion>1.1</ReleaseVersion>
+    <RootNamespace>MonoBrickWebserverDynamicTest</RootNamespace>
+    <AssemblyName>MonoBrickWebserverDynamicTest</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>false</Optimize>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
   </PropertyGroup>

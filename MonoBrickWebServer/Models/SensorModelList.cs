@@ -52,6 +52,14 @@ namespace MonoBrickWebServer.Models
 			}
 		}
 
+		public void Update()
+		{
+			foreach (var sensor in sensors) 
+			{
+				sensor.Update ();
+			}
+		}
+
 		private int SensorIndexToInt (string index)
 		{
 			int sensorIndex = 0;

@@ -14,7 +14,7 @@ namespace MonoBrickWebserverPCTest
 			var server = new Webserver(true);
 			server.Start(80);
 			Console.WriteLine("Press any key to end...");
-			Console.ReadKey();
+			Console.ReadKey ();
 			server.Stop();
 		}
 	}
