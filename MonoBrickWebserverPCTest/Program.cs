@@ -11,11 +11,10 @@ namespace MonoBrickWebserverPCTest
 	{
 		static void Main(string[] args)
 		{
-			var server = new Webserver(true);
-			server.Start(80);
+			Webserver.Instance.Start(80, true);
 			Console.WriteLine("Press any key to end...");
 			Console.ReadKey ();
-			server.Stop();
+			Webserver.Instance.Stop();
 		}
 	}
 }

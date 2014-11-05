@@ -13,11 +13,20 @@ namespace MonoBrickWebServer
 		private ManualResetEvent terminateServer = new ManualResetEvent(false);
 		private Thread serverThread;
 		private bool running = false;
+		private static Webserver instance = new Webserver();
+		public static Webserver Instance
+		{
+			get 
+			{
+				if (instance == null)
+					instance = new Webserver ();
+				return instance;
+			}
+		}
 
-		public Webserver (bool useDummy = false)
+		private Webserver ()
 		{
 			serverThread = new Thread(MainThread);
-			EV3Module.EV3 = new EV3Model (useDummy);
 		}
 
 		private void MainThread()
@@ -32,9 +41,10 @@ namespace MonoBrickWebServer
 		}
 
 
-		public void Start(int port)
+		public void Start(int port, bool useDummyEV3 = false)
 		{
 			Port = port;
+			EV3Module.EV3 = new EV3Model(useDummyEV3);
 			serverThread.Start();
 		}
 
