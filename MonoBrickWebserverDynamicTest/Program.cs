@@ -13,7 +13,7 @@ namespace MonoBrickWebserverDynamicTest
 			var DLL = Assembly.LoadFile(dllPath);
 			Type webServerType = Assembly.LoadFile (dllPath).GetExportedTypes ().First(type => type.FullName.Contains("Webserver"));  
 			object webServerInstance = webServerType.GetProperty("Instance").GetValue(null);;
-			webServerType.InvokeMember ("Start", BindingFlags.Default | BindingFlags.InvokeMethod, null, webServerInstance, new object[]{port, (bool) true});
+			webServerType.InvokeMember ("Start", BindingFlags.OptionalParamBinding | BindingFlags.Default | BindingFlags.InvokeMethod, null, webServerInstance, new object[]{port, Type.Missing});
 			Console.WriteLine ("Started web server on port " + port);
 			Console.ReadLine();
 			webServerType.InvokeMember ("Stop", BindingFlags.Default | BindingFlags.InvokeMethod, null, webServerInstance, new object[]{});
