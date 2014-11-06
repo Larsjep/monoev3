@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Reflection;
 using System.Linq;
-namespace MonoBrickWebserverDynamicTest
+
+namespace StartupApp
 {
-	class MainClass
-	{
-		
-		public class Webserver
+	public class Webserver
 	{
 		
 		private static Webserver instance = new Webserver();
@@ -70,22 +68,5 @@ namespace MonoBrickWebserverDynamicTest
 		}
 
 	}
-
-
-
-
-		public static void Main (string[] args)
-		{
-			Console.WriteLine("Loaded:" + Webserver.Instance.IsAssemblyLoaded);
-			Webserver.Instance.LoadAssembly();
-			Console.WriteLine("Loaded:" + Webserver.Instance.IsAssemblyLoaded);
-			Console.WriteLine(Webserver.Instance.IsRunning);
-			Webserver.Instance.Start(8080, true);
-			Console.WriteLine ("Started webserver");
-			System.Threading.Thread.Sleep(5000);
-			Console.WriteLine(Webserver.Instance.IsRunning);
-			Console.ReadLine();
-			Webserver.Instance.Stop();
-		}
-	}
 }
+

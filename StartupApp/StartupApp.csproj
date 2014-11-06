@@ -42,6 +42,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="FirmwareSettings.cs" />
     <Compile Include="UpdateHelper.cs" />
+    <Compile Include="Webserver.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

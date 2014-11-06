@@ -457,7 +457,7 @@ namespace StartupApp
 				bool newAddin = false;
 				VersionInfo versionInfo = null;
 				var step = new StepContainer (
-					           delegate() {
+					delegate() {
 						try {
 							versionInfo = VersionHelper.AvailableVersions ();
 							newImage = versionInfo.Image != VersionHelper.CurrentImageVersion ();

@@ -56,7 +56,7 @@ namespace MonoBrickWebServer
 
 		public int Port{ get; private set;}
 
-		public bool Running 
+		public bool IsRunning 
 		{
 			get { return running; }
 		}
