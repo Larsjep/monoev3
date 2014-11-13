@@ -11,6 +11,7 @@ namespace MonoBrickWebServer
 	{
 
 		private ManualResetEvent terminateServer = new ManualResetEvent(false);
+		private ManualResetEvent serverStarted = new ManualResetEvent(false);
 		private Thread serverThread;
 		private bool running = false;
 		private static Webserver instance = new Webserver();
@@ -34,6 +35,7 @@ namespace MonoBrickWebServer
 			running = true;
 			var nancyHost = new NancyHost(new Uri("http://127.0.0.1:" + Port + "/"));
 			nancyHost.Start();
+			serverStarted.Set();
 			Console.WriteLine("Nancy now listening at port: " + Port);
 			terminateServer.WaitOne();
 			nancyHost.Stop ();
@@ -41,11 +43,18 @@ namespace MonoBrickWebServer
 		}
 
 
-		public void Start(int port, bool useDummyEV3 = false)
+		public void Start (int port, bool useDummyEV3 = false)
 		{
+			if (IsRunning) 
+			{
+				Stop();
+			}
 			Port = port;
+			serverStarted.Reset();
 			EV3Module.EV3 = new EV3Model(useDummyEV3);
 			serverThread.Start();
+			serverStarted.WaitOne();
+
 		}
 
 		public void Stop()

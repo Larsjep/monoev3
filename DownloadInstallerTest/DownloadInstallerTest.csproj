@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{74BA831E-D185-47CB-B892-97DFDF2EEBCF}</ProjectGuid>
+    <ProjectGuid>{86B004D1-B578-4C41-9AAB-277339FC1195}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MonoBrickWebserverDynamicTest</RootNamespace>
-    <AssemblyName>MonoBrickWebserverDynamicTest</AssemblyName>
+    <RootNamespace>DownloadInstallerTest</RootNamespace>
+    <AssemblyName>DownloadInstallerTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <ReleaseVersion>1.1</ReleaseVersion>
   </PropertyGroup>
@@ -32,16 +32,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\StartupApp\InstallPackage.cs">
+      <Link>InstallPackage.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <ProjectReference Include="..\MonoBrickWebServer\MonoBrickWebServer.csproj">
-      <Project>{46A2BC89-7B2D-40CC-84D2-67A145924A0B}</Project>
-      <Name>MonoBrickWebServer</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

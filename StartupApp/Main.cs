@@ -9,7 +9,6 @@ using MonoBrickFirmware.Native;
 using MonoBrickFirmware.Display.Menus;
 using MonoBrickFirmware.Display.Dialogs;
 using MonoBrickFirmware.Settings;
-using MonoBrickFirmware.Services;
 using MonoBrickFirmware.Connections;
 using MonoBrickFirmware.Tools;
 
@@ -248,13 +247,15 @@ namespace StartupApp
 				delegate(bool WiFiOn)
          		{ 
 					bool isOn = WiFiOn;
-					var createFileStep = new StepContainer( 
+					var createFileStep = new StepContainer
+					( 
 						delegate() 
 						{
 							WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID,settings.WiFiSettings.Password,settings.WiFiSettings.Encryption);
 							return true;
 						},
-						"Creating file", "Error creating WPA file");
+						"Creating file", "Error creating WPA file"
+					);
 					var progressDialog = new ProgressDialog("WiFi", createFileStep);
 					progressDialog.Show();
 					if(WiFiOn){
@@ -310,7 +311,7 @@ namespace StartupApp
 		#endregion
 		
 		#region WebServer Menu
-		/*static bool ShowWebServerMenu ()
+		static bool ShowWebServerMenu ()
 		{
 			List<IMenuItem> items = new List<IMenuItem> ();
 			var portItem = new MenuItemWithNumericInput("Port", settings.WebServerSettings.Port, 1, ushort.MaxValue);
@@ -321,7 +322,7 @@ namespace StartupApp
 					settings.Save();
 				}).Start();
 			};
-			var startItem = new MenuItemWithCheckBox("Start server", WebServer.IsRunning(),
+			var startItem = new MenuItemWithCheckBox("Start server", Webserver.Instance.IsRunning,
 				delegate(bool running)
        	 		{ 
 					
@@ -330,20 +331,18 @@ namespace StartupApp
 						var step = new StepContainer(
 							delegate() 
 							{
-								WebServer.StopAll();
-								System.Threading.Thread.Sleep(2000);
+								Webserver.Instance.Stop();
 								return true;
 							},
 							"Stopping", "Failed to stop");
 						var dialog = new ProgressDialog("Web Server",step);
 						dialog.Show();
-						isRunning = WebServer.IsRunning();
+						isRunning = Webserver.Instance.IsRunning;
 					}
 					else{
-						var step1 = new StepContainer(()=>{return WebServer.StartFastCGI();}, "Init CGI Server", "Failed to start CGI Server");
-						var step2 = new StepContainer(()=>{return WebServer.StartLighttpd();}, "Initializing", "Failed to start server");
-						var step3 = new StepContainer(()=>{return WebServer.LoadPage();}, "Loading page", "Failed to load page");
-						var stepDialog = new StepDialog("Web Server", new List<IStep>{step1,step2,step3}, "Webserver started");
+						var step1 = new StepContainer(()=>{Webserver.Instance.Start(portItem.Value); return true;}, "Starting REST", "Failed To Start REST");
+						var step2 = new StepContainer(()=>{return Webserver.Instance.LoadPage();}, "Loading Webpage", "Failed to load page");
+						var stepDialog = new StepDialog("Web Server", new List<IStep>{step1,step2}, "Webserver started");
 						isRunning = stepDialog.Show();
 					}
 					return isRunning;
@@ -356,7 +355,7 @@ namespace StartupApp
 			Menu m = new Menu ("Web Server", items);
 			m.Show ();
 			return false;
-		}*/
+		}
 		#endregion
 		
 		#region Settings Menu

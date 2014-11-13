@@ -36,7 +36,6 @@
     <Folder Include="Movement\" />
     <Folder Include="UserInput\" />
     <Folder Include="Sound\" />
-    <Folder Include="Services\" />
     <Folder Include="Extensions\" />
     <Folder Include="Display\Animation\" />
     <Folder Include="Connections\" />
@@ -83,7 +82,6 @@
     <Compile Include="Display\Dialogs\QuestionsDialog.cs" />
     <Compile Include="Display\Dialogs\SelectDialog.cs" />
     <Compile Include="Sound\Speaker.cs" />
-    <Compile Include="Services\WebServer.cs" />
     <Compile Include="Tools\XmlHelper.cs" />
     <Compile Include="Extensions\EnumExtension.cs" />
     <Compile Include="Sensors\SensorFactory.cs" />

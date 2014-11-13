@@ -35,7 +35,6 @@
     <Reference Include="Nancy.Hosting.Self">
       <HintPath>..\packages\Nancy.Hosting.Self.0.23.2\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -43,12 +42,17 @@
     <Compile Include="FirmwareSettings.cs" />
     <Compile Include="UpdateHelper.cs" />
     <Compile Include="Webserver.cs" />
+    <Compile Include="InstallPackage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\MonoBrickFirmware\MonoBrickFirmware.csproj">
       <Project>{67261E03-D263-4C42-A5AD-2A4820231B28}</Project>
       <Name>MonoBrickFirmware</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MonoBrickWebServer\MonoBrickWebServer.csproj">
+      <Project>{46A2BC89-7B2D-40CC-84D2-67A145924A0B}</Project>
+      <Name>MonoBrickWebServer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

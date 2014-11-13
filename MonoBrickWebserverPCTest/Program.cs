@@ -11,7 +11,7 @@ namespace MonoBrickWebserverPCTest
 	{
 		static void Main(string[] args)
 		{
-			Webserver.Instance.Start(80, true);
+			Webserver.Instance.Start(8080, true);
 			Console.WriteLine("Press any key to end...");
 			Console.ReadKey ();
 			Webserver.Instance.Stop();
