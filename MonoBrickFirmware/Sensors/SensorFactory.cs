@@ -6,6 +6,17 @@ namespace MonoBrickFirmware.Sensors
 {
 	public class SensorFactory
 	{
+		public static ISensor[] GetSensorArray()
+		{
+			SensorPort[] ports = new SensorPort[]{ SensorPort.In1, SensorPort.In2, SensorPort.In3, SensorPort.In4 };
+			ISensor[] sensors = new ISensor[ports.Length];
+			for(int i = 0; i < ports.Length; i++)
+			{
+				sensors[i] = GetSensor(ports[i]);
+			}
+			return sensors;
+		}
+
 		public static ISensor GetSensor (SensorPort port)
 		{
 			ISensor sensor = null;
@@ -81,7 +92,7 @@ namespace MonoBrickFirmware.Sensors
 					
 					break;
 				case SensorType.None:
-					
+					sensor = new NoSensor(port);
 					break;
 			}
 			return sensor;

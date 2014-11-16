@@ -55,7 +55,6 @@ namespace MonoBrickWebserverDynamicTest
 			while(attemps < 2 && !loaded){
 				try 
 				{
-					port = 59;
 					HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(@"http://127.0.0.1:"+ port);
 					myRequest.Method = "GET";
 					WebResponse myResponse = myRequest.GetResponse();

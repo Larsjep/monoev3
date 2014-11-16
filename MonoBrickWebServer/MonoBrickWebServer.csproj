@@ -121,10 +121,10 @@
     <Compile Include="Modules\EV3Module.cs" />
     <Compile Include="Modules\HTTPModule.cs" />
     <Compile Include="MonoBrickWebserver.cs" />
-    <Compile Include="Models\DummySemsor.cs" />
     <Compile Include="Models\EV3Model.cs" />
     <Compile Include="Models\MotorModelList.cs" />
     <Compile Include="Models\SensorModelList.cs" />
+    <Compile Include="Models\DummySensor.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\index.sshtml">

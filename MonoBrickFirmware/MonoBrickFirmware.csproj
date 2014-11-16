@@ -110,6 +110,7 @@
     <Compile Include="Tools\VersionHelper.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Display\Dialogs\DialogWithProgessAnimation.cs" />
+    <Compile Include="Sensors\NoSensor.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

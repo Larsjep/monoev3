@@ -62,6 +62,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstallCreator", "InstallCr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadInstallerTest", "DownloadInstallerTest\DownloadInstallerTest.csproj", "{86B004D1-B578-4C41-9AAB-277339FC1195}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLiteExample", "SQLiteExample\SQLiteExample.csproj", "{2667A207-FB21-4A6E-9DAE-847478B6B3F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,10 @@ Global
 		{11C84BA4-9A8A-4BF2-AA7B-2D45AC63ACAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11C84BA4-9A8A-4BF2-AA7B-2D45AC63ACAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11C84BA4-9A8A-4BF2-AA7B-2D45AC63ACAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2667A207-FB21-4A6E-9DAE-847478B6B3F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2667A207-FB21-4A6E-9DAE-847478B6B3F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2667A207-FB21-4A6E-9DAE-847478B6B3F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2667A207-FB21-4A6E-9DAE-847478B6B3F9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2730A667-E9ED-4CA7-8281-CF04EB9707BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2730A667-E9ED-4CA7-8281-CF04EB9707BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2730A667-E9ED-4CA7-8281-CF04EB9707BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -178,7 +184,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = MonoBrickWebserverDynamicTest\MonoBrickWebserverDynamicTest.csproj
+		StartupItem = SQLiteExample\SQLiteExample.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2
