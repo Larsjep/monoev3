@@ -56,6 +56,9 @@ namespace MonoBrickFirmware.Sensors
 			   case ColorMode.Blue:
 			        s = Read().ToString();
 			        break;
+                case ColorMode.RGB:
+			        s = ReadRGB().ToString();
+			        break;
 			   default:
 			   		s = Read().ToString();
 			   		break;
@@ -103,7 +106,22 @@ namespace MonoBrickFirmware.Sensors
 			}
 			return color;
 		}
-		
+
+        /// <summary>
+        /// Reads the RGB color.
+        /// </summary>
+        /// <returns>The RGB color.</returns>
+        public RGBColor ReadRGB()
+        {
+            RGBColor rgbColor = null;
+            if (uartMode == UARTMode.Mode4)
+            {
+                byte[] rawBytes = ReadBytes(6);
+                rgbColor = new RGBColor(rawBytes[0], rawBytes[2], rawBytes[4]);
+            }
+            return rgbColor;
+        }
+
 		protected int CalculateRawAverageAsPct ()
 		{
 			return(int) base.ReadByte();
@@ -128,6 +146,9 @@ namespace MonoBrickFirmware.Sensors
 				case ColorMode.Reflection:
 					sensorMode = UARTMode.Mode0;
 					break;
+                case ColorMode.RGB:
+                    sensorMode = UARTMode.Mode4;
+                    break;
 			}
 			return sensorMode;
 		}
@@ -146,6 +167,9 @@ namespace MonoBrickFirmware.Sensors
 				case UARTMode.Mode0:
 					colorMode = ColorMode.Reflection;
 					break;
+                case UARTMode.Mode4:
+                    colorMode = ColorMode.RGB;
+                    break;
 			}
 			return colorMode;
 		}

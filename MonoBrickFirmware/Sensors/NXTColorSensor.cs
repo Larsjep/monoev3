@@ -60,6 +60,11 @@ namespace MonoBrickFirmware.Sensors
 		/// The blue value
 		/// </value>
 		public byte Blue { get { return blue; } }
+
+	    public override string ToString()
+	    {
+	        return string.Format("{0} {1} {2}", red, green, blue);
+	    }
     }
 	
 	/// <summary>
@@ -90,6 +95,11 @@ namespace MonoBrickFirmware.Sensors
 		/// Activate the green blue on the color sensor. 
 		/// </summary>
 		Blue = AnalogMode.ColorBlue,//Mode 1 for EV3
+
+        /// <summary>
+        /// Use the color sensor to read RGB values
+        /// </summary>
+        RGB = AnalogMode.None,//Mode 4 for EV3
 	};
 	
 	
