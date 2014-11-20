@@ -5,6 +5,7 @@ using MonoBrickFirmware.Movement;
 using MonoBrickFirmware.Extensions;
 using MonoBrickWebServer.Models;
 using Nancy;
+using System.IO;
 
 namespace MonoBrickWebServer.Modules
 {
@@ -19,6 +20,14 @@ namespace MonoBrickWebServer.Modules
 				EV3.Update();
 				return Response.AsJson(EV3, HttpStatusCode.OK);
 		    };
+
+			Get	["/ev3/lcd/screenshot"] = parameter =>
+		    {
+				string directory = Directory.GetCurrentDirectory();
+				EV3.LCD.TakeScreenShot(directory, "screenshot");
+				return Response.AsImage(Path.Combine(directory, "screenshot"));
+		    };
+
 
 			Get	["ev3/sensor"] = parameter =>
 			{
