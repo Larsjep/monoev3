@@ -107,34 +107,46 @@ namespace MonoBrickFirmware.Display
 			Array.Copy(picture, displayBuf, picture.Length);
 			Update();
 		}
-		
-		public void TakeScreenShot (string directory = "")
+
+
+		/// <summary>
+		/// Takes the screen shot.
+		/// </summary>
+		/// <param name="directory">Directory.</param>
+		/// <param name="fileName">File name.</param>
+		public void TakeScreenShot (string directory, string fileName )
 		{
 			screenshotImage.Clear ();
-			float redActual = (float) endColor.Red;
-			float greenActual = (float) endColor.Green;
-			float blueActual = (float) endColor.Blue;
+			float redActual = (float)endColor.Red;
+			float greenActual = (float)endColor.Green;
+			float blueActual = (float)endColor.Blue;
 			
 			RGB color = new RGB ();
-			for (int y = Height -1; y >= 0; y--) {
+			for (int y = Height - 1; y >= 0; y--) {
 				for (int x = 0; x < bytesPrLine * 8; x++) {
 					if (IsPixelSet (x, y)) {
 						color.Blue = 0x00;
 						color.Green = 0x00;
 						color.Red = 0x00;	
-					} 
-					else {
+					} else {
 						color.Red = (byte)redActual;
 						color.Green = (byte)greenActual;
 						color.Blue = (byte)blueActual;
 					}
-					screenshotImage.AppendRGB(color);
+					screenshotImage.AppendRGB (color);
 				}
 				redActual -= redGradientStep;
-				greenActual-= greenGradientStep;
+				greenActual -= greenGradientStep;
 				blueActual -= blueGradientStep;
 			}
-			screenshotImage.WriteToFile(System.IO.Path.Combine(directory,"ScreenShot") + string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}",DateTime.Now)+ ".bmp");
+			if (fileName == "") {
+				fileName = "ScreenShot" + string.Format ("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now) + ".bmp";
+			}
+			if (!fileName.ToLower ().EndsWith (".bmp")) 
+			{
+				fileName = fileName + ".bmp";
+			}
+			screenshotImage.WriteToFile(System.IO.Path.Combine(directory,fileName));
 		}
 		
 		
