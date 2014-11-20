@@ -108,6 +108,11 @@ namespace MonoBrickFirmware.Display
 			Update();
 		}
 
+		public void TakeScreenShot ()
+		{
+			TakeScreenShot(System.IO.Directory.GetCurrentDirectory(), "ScreenShot-" + string.Format ("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now) + ".bmp");
+		}
+
 
 		/// <summary>
 		/// Takes the screen shot.
