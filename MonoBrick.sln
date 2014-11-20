@@ -184,7 +184,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = SQLiteExample\SQLiteExample.csproj
+		StartupItem = MonoBrickWebserverPCTest\MonoBrickWebserverPCTest.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2
