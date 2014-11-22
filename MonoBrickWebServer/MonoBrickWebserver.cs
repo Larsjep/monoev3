@@ -12,6 +12,7 @@ namespace MonoBrickWebServer
 
 		private ManualResetEvent terminateServer = new ManualResetEvent(false);
 		private ManualResetEvent serverStarted = new ManualResetEvent(false);
+		NancyHost nancyHost = null;
 		private Thread serverThread;
 		private bool running = false;
 		private static Webserver instance = new Webserver();
@@ -30,31 +31,43 @@ namespace MonoBrickWebServer
 			serverThread = new Thread(MainThread);
 		}
 
-		private void MainThread()
+		private void MainThread ()
 		{
 			running = true;
-			var nancyHost = new NancyHost(new Uri("http://127.0.0.1:" + Port + "/"));
-			nancyHost.Start();
-			serverStarted.Set();
-			Console.WriteLine("Nancy now listening at port: " + Port);
-			terminateServer.WaitOne();
-			nancyHost.Stop ();
+			try 
+			{
+				nancyHost = new NancyHost (new Uri ("http://127.0.0.1:" + Port + "/"));
+				nancyHost.Start ();
+				serverStarted.Set ();
+			} 
+			catch {}
+			terminateServer.WaitOne ();
 			running = false;
+			try 
+			{
+				nancyHost.Stop ();
+			} 
+			catch{}
 		}
 
 
-		public void Start (int port, bool useDummyEV3 = false)
+		public bool Start (int port, int timeout = Timeout.Infinite, bool useDummyEV3 = false)
 		{
-			if (IsRunning) 
-			{
-				Stop();
+			if (IsRunning) {
+				Stop ();
 			}
 			Port = port;
-			serverStarted.Reset();
-			EV3Module.EV3 = new EV3Model(useDummyEV3);
-			serverThread.Start();
-			serverStarted.WaitOne();
-
+			serverStarted.Reset ();
+			EV3Module.EV3 = new EV3Model (useDummyEV3);
+			serverThread.Start ();
+			if (!serverStarted.WaitOne (timeout)) 
+			{
+				if(nancyHost != null)
+					nancyHost.Stop();
+				Stop();	
+			}
+			System.Threading.Thread.Sleep(500);
+			return IsRunning;
 		}
 
 		public void Stop()
