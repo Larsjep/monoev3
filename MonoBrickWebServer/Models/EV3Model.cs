@@ -10,6 +10,7 @@ namespace MonoBrickWebServer.Models
 		{
 			Motors = new MotorModelList (useDummy);
 			Sensors = new SensorModelList (useDummy);
+			LCD = new LcdModel();
 			if (!useDummy) 
 			{
 				detector = new SensorDetector ();
@@ -17,10 +18,9 @@ namespace MonoBrickWebServer.Models
 				detector.SensorDetached += HandleSensorDetached;
 			}
 		}
-
 		public MotorModelList Motors{ get; private set;}
 		public SensorModelList Sensors{ get; private set;}
-
+		public LcdModel LCD{get; private set;}
 		public void Update()
 		{
 			if (detector != null) 

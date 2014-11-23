@@ -5,6 +5,7 @@ using MonoBrickFirmware.Sensors;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SQLiteExample
 {
@@ -16,10 +17,9 @@ namespace SQLiteExample
 	    public String Port{get; set;}
 		public string Mode { get; set; }
 		public string Name { get; set; }
-
 	}
 
-	public class SensorValue
+	public class SensorReading
 	{
 	    [PrimaryKey, AutoIncrement]
 	    public int Id { get; set; }
@@ -33,33 +33,53 @@ namespace SQLiteExample
 	{
 		private static Dictionary<int, ISensor>  sensorsDictionary = new Dictionary<int, ISensor>();		
 		private static SQLiteConnection db;
+		private const int NumberOfReadings = 10; 
 		public static void Main (string[] args)
 		{
 			db = new SQLiteConnection ("MySensorDb");
 			CreateDb ();
-			for (int i = 0; i < 1; i++) {
-				Console.WriteLine ("Reading sensor values " + (i + 1) + " out of 10");
-				foreach (KeyValuePair<int,ISensor> keyPair in sensorsDictionary) {
-					AddSensorValue (keyPair.Key, keyPair.Value.ReadAsString ());
-				}
-				System.Threading.Thread.Sleep (1000);
-			}
-			var q = db.Query<SensorValue> ("select V.* from SensorValue V inner join Sensor S" + " on V.SensorId = S.Id where S.Port =?", "In1");
-			foreach (var v in q) 
-			{
-				Console.WriteLine(v.Value);
-			}
-			Console.ReadLine();
 
+			for(int i = 0; i < NumberOfReadings; i++)
+			{
+				System.Threading.Thread.Sleep (1000);
+				Console.WriteLine ("Reading and storing sensor reading (" + (i + 1) + " out of " + NumberOfReadings + ")");
+				foreach (KeyValuePair<int,ISensor> keyPair in sensorsDictionary) {
+					AddSensorValueToDb(keyPair.Key, keyPair.Value.ReadAsString ());
+				}
+			}
+
+			Console.WriteLine ("Viewing all sensor values that are less than 5 seconds old");
+			DateTime compareTime = DateTime.Now.Subtract (new TimeSpan (0, 0, 0, 0, 5000));//Now minus 5500ms
+			var timeQuery = db.Table<SensorReading> ().Where (s => s.Time > compareTime);
+			foreach (var val in timeQuery) 
+			{
+				Console.WriteLine (val.Time.ToLongTimeString ().PadRight (20) + val.Value);
+			}
+
+			Console.WriteLine ("Viewing all sensor values on port 2 that are less than 5 seconds old");
+			int port2Id = sensorsDictionary.ElementAt(1).Key;
+			var portQuery = timeQuery.Where(s => s.SensorId == port2Id);
+			foreach (var val in portQuery) 
+			{
+				Console.WriteLine (val.Time.ToLongTimeString().PadRight (20) + val.Value);
+			}
+
+			Console.WriteLine ("Viewing all sensor values on port 1 ever recorded (including other times the program was run)");
+			var joinQuery = db.Query<SensorReading> ("select V.* from SensorValue V inner join Sensor S" + " on V.SensorId = S.Id where S.Port =?", "In1");
+			foreach (var val in joinQuery) 
+			{
+				Console.WriteLine (val.Time.ToLongTimeString().PadRight (20) + val.Value);
+			}
 		}
 
 		public static void CreateDb ()
 		{
 			Console.WriteLine ("Creating tables in database");
 			db.CreateTable<Sensor> ();
-			db.CreateTable<SensorValue> ();
 			Console.WriteLine ("Creating sensors in database");
-			ISensor[] sensors = new ISensor[]{new DummySensor(SensorPort.In1), new DummySensor(SensorPort.In2), new DummySensor(SensorPort.In3), new DummySensor(SensorPort.In4)};
+			db.CreateTable<SensorReading> ();
+			Console.WriteLine ("Storing sensor indexes");
+			ISensor[] sensors = SensorFactory.GetSensorArray();
 			foreach (var sensor in sensors) 
 			{
 				var sensorToInsert = new Sensor(){Port = sensor.Port.ToString(), Mode = sensor.SelectedMode(), Name = sensor.GetSensorName() };
@@ -68,9 +88,9 @@ namespace SQLiteExample
 			}
 		}
 
-		public static void AddSensorValue(int id, string sensorValue)
+		public static void AddSensorValueToDb(int id, string sensorValue)
 		{
-			db.Insert(new SensorValue() 
+			db.Insert(new SensorReading() 
 			{
 					SensorId = id,
 	   		 		Time = DateTime.Now,
@@ -78,75 +98,4 @@ namespace SQLiteExample
     		});								
 		}
 	}
-
-	public class DummySensor : ISensor
-	{
-		private SensorPort port;
-		private enum DummyMode { Raw = 1, Digital = 2 };
-		private DummyMode mode = DummyMode.Raw;
-		Random rnd = new Random();
-		public DummySensor(SensorPort port)
-		{
-			this.port = port;
-		}
-
-		/// <summary>
-		/// Reads the sensor value as a string.
-		/// </summary>
-		/// <returns>
-		/// The value as a string
-		/// </returns>
-		public string ReadAsString()
-		{
-			if (mode == DummyMode.Digital)
-				return rnd.Next(1).ToString();
-			return rnd.Next(1024) + " A/D value";
-		}
-
-		/// <summary>
-		/// Gets the name of the sensor.
-		/// </summary>
-		/// <returns>The sensor name.</returns>
-		public string GetSensorName()
-		{
-			return "Dummy Sensor";
-		}
-
-		/// <summary>
-		/// Selects the next mode.
-		/// </summary>
-		public void SelectNextMode()
-		{
-			mode = mode.Next();
-		}
-
-		/// <summary>
-		/// Selects the previous mode.
-		/// </summary>
-		public void SelectPreviousMode()
-		{
-			mode = mode.Previous();
-		}
-
-		/// <summary>
-		/// Numbers the of modes.
-		/// </summary>
-		/// <returns>The number of modes</returns>
-		public int NumberOfModes()
-		{
-			return Enum.GetNames(typeof(DummyMode)).Length;
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns>The mode.</returns>
-		public string SelectedMode()
-		{
-			return mode.ToString();
-		}
-
-		public SensorPort Port { get { return port; } }
-	}
-
 }

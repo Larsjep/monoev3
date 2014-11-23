@@ -45,9 +45,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.0.23.2\lib\net40\Nancy.dll</HintPath>
@@ -60,7 +57,8 @@
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Web.Entity" />
+    <Reference Include="Mono.CSharp" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\background.jpg">
@@ -125,6 +123,7 @@
     <Compile Include="Models\MotorModelList.cs" />
     <Compile Include="Models\SensorModelList.cs" />
     <Compile Include="Models\DummySensor.cs" />
+    <Compile Include="Models\LcdModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\index.sshtml">

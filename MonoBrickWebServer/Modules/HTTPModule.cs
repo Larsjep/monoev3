@@ -11,15 +11,15 @@ namespace MonoBrickWebServer.Modules
 
     public HTTPModule()
     {
-      Get["/Images/{title}"] = parameter =>
-      {
-        return Response.AsImage(@"Images/" + (string) parameter.title);
-      };
+		Get["/Images/{title}"] = parameter =>
+		{
+			return Response.AsImage(@"Images/" + (string) parameter.title);
+		};
 
-      Get["/"] = _ =>
-      {
-        return View["index"];
-      };
+		Get["/"] = _ =>
+		{
+			return View["index"];
+		};
 
     }
   }
