@@ -14,73 +14,22 @@ namespace MonoBrickWebServer.Modules
 		public static EV3Model EV3;
 		public EV3Module ()
 		{
-			
-			urlActionDictionary.Add ("/ev3", p => {}); 
-			urlActionDictionary.Add ("/ev3/motor", p => {}); 
-			urlActionDictionary.Add ("ev3/motor/{index}", p => {}); 
-			urlActionDictionary.Add ("ev3/motor/{index}/setpower/{power}", p => {}); 
-			urlActionDictionary.Add ("ev3/motor/{index}/powerprofile/power={power}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", p => {}); 
-			urlActionDictionary.Add ("ev3/motor/{index}/setspeed/{speed}", p => {}); 
-			urlActionDictionary.Add ("ev3/motor/{index}/speedprofile/speed={speed}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", p => {var m = EV3.Motors[(string)p.index]; bool brake = ((string)p.brake).ToBoolean(); m.SpeedProfile((sbyte)p.speed, (uint)p.rampup, (uint)p.constant, (uint)p.rampdown, brake); return "Motor " + m.Port + " power profile with speed " + (string) p.speed + " and " +  ((uint)p.rampup + (uint)p.constant + (uint)p.rampdown) + " steps. Brake set to " + brake;}); 	
-			urlActionDictionary.Add ("ev3/motor/{index}/break/", p => {var m = EV3.Motors[(string)p.index]; m.Break(); return "Motor " + m.Port + " was set to break";}); 
-			urlActionDictionary.Add ("ev3/motor/{index}/resettacho/", p => {var m = EV3.Motors[(string)p.index]; m.ResetTacho(); return "Motor " + m.Port + " was reset it's tachometer";}); 
+			AddGetRequest ("/ev3", GetEV3Info); 
+			AddGetRequest ("/ev3/motor", GetAllMotorInfo);
+			AddGetRequest ("/ev3/motor/{index}", GetMotorInfo);
+			AddGetRequest ("ev3/motor/{index}/setpower/{power}", SetMotorPower); 
+			AddGetRequest (@"ev3/motor/{index}/powerprofile/power={power}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", SetMotorPowerProfile ); 
+			AddGetRequest ("ev3/motor/{index}/setspeed/{speed}",SetMotorSpeed); 
+			AddGetRequest ("ev3/motor/{index}/speedprofile/speed={speed}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", SetMotorSpeedProfile); 
+			AddGetRequest ("ev3/motor/{index}/break", SetMotorSpeedBrake); 
+			AddGetRequest ("ev3/motor/{index}/off", SetMotorOff); 
+			AddGetRequest ("ev3/motor/{index}/resettacho", ResetMotorTacho);
 
-		    foreach (KeyValuePair<string,Func<dynamic,dynamic>> pair in urlActionDictionary) 
-			{
-				this.Get[pair.Key] = parameter =>
-		    	{
-					return pair.Value(parameter);
-		    	};
-		    	Console.WriteLine(pair.Key);
-			}
-
-			Get	["/ev3"] = parameter =>
-		    {
-				EV3.Update();
-				return Response.AsJson(EV3, HttpStatusCode.OK);
-		    };
-
-			/*Get	["/ev3/lcd/screenshot"] = parameter =>
-		    {
-				string directory = Directory.GetCurrentDirectory();
-				EV3.LCD.TakeScreenShot(directory, "screenshot");
-				return Response.AsImage(Path.Combine(directory, "screenshot"));
-		    };
-
-
-			Get	["ev3/sensor"] = parameter =>
-			{
-				EV3.Sensors.Update();
-				return Response.AsJson(EV3.Sensors, HttpStatusCode.OK);
-			};
-
-			Get	["ev3/sensor/{index}"] = parameter =>
-			{
-				ISensorModel s = EV3.Sensors[(string)parameter.index];
-				s.Update();
-				return Response.AsJson(s, HttpStatusCode.OK);
-			};
-
-
-			Get	["ev3/sensor/{index}/nextmode"] = parameter =>
-			{
-				ISensorModel s = EV3.Sensors[(string)parameter.index];
-				s.NextMode();
-				return "Selected next mode on sensor " + s.Port;
-			};
-
-			Get	["ev3/sensor/{index}/previousmode"] = parameter =>
-			{
-				ISensorModel s = EV3.Sensors[(string)parameter.index];
-				s.PreviousMode();
-				return "Previous next mode on sensor " + s.Port;
-			};*/
-
-			/*Get ["ev3/motor"] = parameter =>
-			{
-				EV3.Motors.Update();
-				return Response.AsJson(EV3.Motors, HttpStatusCode.OK);
-			};*/
+			AddGetRequest ("ev3/sensor", GetAllSensors);
+			AddGetRequest ("ev3/sensor/{index}", GetSensor);
+			AddGetRequest ("ev3/sensor/{index}/nextmode", GetSensorNextMode);
+			AddGetRequest ("ev3/sensor/{index}/previousmode", GetSensorPreviousMode);
+			AddGetRequest ("/ev3/lcd/screenshot", GetSecreenShot);
 	  	}
 
 		private dynamic GetEV3Info (dynamic parameters)
@@ -104,9 +53,8 @@ namespace MonoBrickWebServer.Modules
 
 		private dynamic SetMotorPower (dynamic parameters)
 		{
-			var m = EV3.Motors[(string)parameters.index]; 
-			m.SetPower((sbyte)parameters.power); 
-			return "Motor " + m.Port + " power set to " + (string) parameters.power;
+			EV3.Motors[(string)parameters.index].SetPower((sbyte)parameters.power); 
+			return HttpStatusCode.OK;
 		}
 
 		private dynamic SetMotorPowerProfile (dynamic parameters)
@@ -114,17 +62,72 @@ namespace MonoBrickWebServer.Modules
 			var m = EV3.Motors[(string)parameters.index]; 
 			bool brake = ((string)parameters.brake).ToBoolean(); 
 			m.PowerProfile((sbyte)parameters.power, (uint)parameters.rampup, (uint)parameters.constant, (uint)parameters.rampdown, brake); 
-			return "Motor " + m.Port + " power profile with power " + (string) parameters.power + " and " +  ((uint)parameters.rampup + (uint)parameters.constant + (uint)parameters.rampdown) + " steps. Brake set to " + brake;
+			return HttpStatusCode.OK;		
 		}
 
 		private dynamic SetMotorSpeed (dynamic parameters)
 		{
-			var m = EV3.Motors[(string)parameters.index]; 
-			m.SetSpeed((sbyte)parameters.speed); 
-			return "Motor " + m.Port + " speed set to " +  (string)parameters.speed;
+			EV3.Motors[(string)parameters.index].SetSpeed((sbyte)parameters.speed); 
+			return HttpStatusCode.OK;		
 		}
 
+		private dynamic SetMotorSpeedProfile (dynamic parameters)
+		{
+			var m = EV3.Motors[(string)parameters.index]; 
+			bool brake = ((string)parameters.brake).ToBoolean(); 
+			m.SpeedProfile((sbyte)parameters.speed, (uint)parameters.rampup, (uint)parameters.constant, (uint)parameters.rampdown, brake); 
+			return HttpStatusCode.OK;		
+		}
 
+		private dynamic SetMotorSpeedBrake (dynamic parameters)
+		{
+			EV3.Motors[(string)parameters.index].Break(); 
+			return HttpStatusCode.OK;		
+		}
+
+		private dynamic SetMotorOff (dynamic parameters)
+		{
+			EV3.Motors[(string)parameters.index].Off (); 
+			return HttpStatusCode.OK;		
+		}
+
+		private dynamic ResetMotorTacho (dynamic parameters)
+		{
+			EV3.Motors[(string)parameters.index].ResetTacho(); 
+			return HttpStatusCode.OK;		
+		}
+
+		private dynamic GetAllSensors(dynamic parameters)
+		{
+			EV3.Sensors.Update();
+			return Response.AsJson(EV3.Sensors, HttpStatusCode.OK);
+		}
+
+		private dynamic GetSensor(dynamic parameters)
+		{
+			ISensorModel s = EV3.Sensors[(string)parameters.index];
+			s.Update();
+			return Response.AsJson(s, HttpStatusCode.OK);
+		}
+
+		private dynamic GetSensorNextMode (dynamic parameters)
+		{
+			EV3.Sensors[(string)parameters.index].NextMode();
+			return HttpStatusCode.OK;		
+		}
+
+		private dynamic GetSensorPreviousMode(dynamic parameters)
+		{
+			EV3.Sensors[(string)parameters.index].PreviousMode();
+			return HttpStatusCode.OK;		
+		}
+
+		private dynamic GetSecreenShot (dynamic parameters)
+		{
+			string directory = Directory.GetCurrentDirectory();
+			EV3.LCD.TakeScreenShot(directory, "screenshot");
+			return Response.AsImage(Path.Combine(directory, "screenshot"));
+		}
 	}
 }
 
