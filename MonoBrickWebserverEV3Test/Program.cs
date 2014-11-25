@@ -14,7 +14,7 @@ namespace MonoBrickWebserverEV3Test
 	{
 		static bool StartWebserver ()
 		{
-			return Webserver.Instance.Start(80, 120 * 1000);
+			return Webserver.Instance.Start(8080, 3 * 60000);
 		}
 
 		static void StopWebserver ()
