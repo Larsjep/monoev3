@@ -9,19 +9,38 @@ using System.IO;
 
 namespace MonoBrickWebServer.Modules
 {
-	
-	public class EV3Module : NancyModule
+	public class EV3Module : MonoBrickModule
 	{
 		public static EV3Model EV3;
-    	public EV3Module()
+		public EV3Module ()
 		{
+			
+			urlActionDictionary.Add ("/ev3", p => {}); 
+			urlActionDictionary.Add ("/ev3/motor", p => {}); 
+			urlActionDictionary.Add ("ev3/motor/{index}", p => {}); 
+			urlActionDictionary.Add ("ev3/motor/{index}/setpower/{power}", p => {}); 
+			urlActionDictionary.Add ("ev3/motor/{index}/powerprofile/power={power}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", p => {}); 
+			urlActionDictionary.Add ("ev3/motor/{index}/setspeed/{speed}", p => {}); 
+			urlActionDictionary.Add ("ev3/motor/{index}/speedprofile/speed={speed}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", p => {var m = EV3.Motors[(string)p.index]; bool brake = ((string)p.brake).ToBoolean(); m.SpeedProfile((sbyte)p.speed, (uint)p.rampup, (uint)p.constant, (uint)p.rampdown, brake); return "Motor " + m.Port + " power profile with speed " + (string) p.speed + " and " +  ((uint)p.rampup + (uint)p.constant + (uint)p.rampdown) + " steps. Brake set to " + brake;}); 	
+			urlActionDictionary.Add ("ev3/motor/{index}/break/", p => {var m = EV3.Motors[(string)p.index]; m.Break(); return "Motor " + m.Port + " was set to break";}); 
+			urlActionDictionary.Add ("ev3/motor/{index}/resettacho/", p => {var m = EV3.Motors[(string)p.index]; m.ResetTacho(); return "Motor " + m.Port + " was reset it's tachometer";}); 
+
+		    foreach (KeyValuePair<string,Func<dynamic,dynamic>> pair in urlActionDictionary) 
+			{
+				this.Get[pair.Key] = parameter =>
+		    	{
+					return pair.Value(parameter);
+		    	};
+		    	Console.WriteLine(pair.Key);
+			}
+
 			Get	["/ev3"] = parameter =>
 		    {
 				EV3.Update();
 				return Response.AsJson(EV3, HttpStatusCode.OK);
 		    };
 
-			Get	["/ev3/lcd/screenshot"] = parameter =>
+			/*Get	["/ev3/lcd/screenshot"] = parameter =>
 		    {
 				string directory = Directory.GetCurrentDirectory();
 				EV3.LCD.TakeScreenShot(directory, "screenshot");
@@ -55,72 +74,57 @@ namespace MonoBrickWebServer.Modules
 				ISensorModel s = EV3.Sensors[(string)parameter.index];
 				s.PreviousMode();
 				return "Previous next mode on sensor " + s.Port;
-			};
+			};*/
 
-			Get	["ev3/motor"] = parameter =>
+			/*Get ["ev3/motor"] = parameter =>
 			{
 				EV3.Motors.Update();
 				return Response.AsJson(EV3.Motors, HttpStatusCode.OK);
-			};
-
-			Get	["ev3/motor/{index}"] = parameter =>
-			{
-				IMotorModel m = EV3.Motors[(string)parameter.index];
-				m.Update();
-				return Response.AsJson(m, HttpStatusCode.OK);
-			};
-
-			Get	["ev3/motor/{index}/setpower/{power}"] = parameter =>
-			{
-				IMotorModel m = EV3.Motors[(string)parameter.index];
-				m.SetPower((sbyte)parameter.power);
-				return "Motor " + m.Port + " power set to " + (string) parameter.power;
-			};
-
-			Get	["ev3/motor/{index}/powerprofile/power={power}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}"] = parameter =>
-			{
-				IMotorModel m = EV3.Motors[(string)parameter.index];
-				bool brake = ((string)parameter.brake).ToBoolean();
-				m.SpeedProfile((sbyte)parameter.power, (uint)parameter.rampup, (uint)parameter.constant, (uint)parameter.rampdown, brake);
-				return "Motor " + m.Port + " power profile with power " + (string) parameter.power + " and " +  ((uint)parameter.rampup + (uint)parameter.constant + (uint)parameter.rampdown) + " steps. Brake set to " + brake;
-			};
-
-			Get["ev3/motor/{index}/setspeed/{speed}"] = parameter =>
-			{
-				IMotorModel m = EV3.Motors[(string)parameter.index];
-				m.SetSpeed((sbyte)parameter.speed);
-				return "Motor " + m.Port + " speed set to " +  (string)parameter.speed;
-			};
-
-			Get	["ev3/motor/{index}/speedprofile/speed={speed}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}"] = parameter =>
-			{
-				IMotorModel m = EV3.Motors[(string)parameter.index];
-				bool brake = ((string)parameter.brake).ToBoolean();
-				m.SpeedProfile((sbyte)parameter.speed, (uint)parameter.rampup, (uint)parameter.constant, (uint)parameter.rampdown, brake);
-				return "Motor " + m.Port + " power profile with speed " + (string) parameter.speed + " and " +  ((uint)parameter.rampup + (uint)parameter.constant + (uint)parameter.rampdown) + " steps. Brake set to " + brake;
-			};
-
-			Get	["ev3/motor/{index}/break/"] = parameter =>
-		    {
-				IMotorModel m = EV3.Motors[(string)parameter.index];
-				m.Break();
-				return "Motor " + m.Port + " was set to break";
-		    };
-		    
-		    Get	["ev3/motor/{index}/off/"] = parameter =>
-		    {
-				IMotorModel m = EV3.Motors[(string)parameter.index];
-				m.Off();
-				return "Motor " + m.Port + " was set to off ";
-		    };
-
-		    Get	["ev3/motor/{index}/resettacho"] = parameter =>
-		    {
-				IMotorModel m = EV3.Motors[(string)parameter.index];
-				m.ResetTacho();
-				return "Motor " + m.Port + " reset it's tachometer";
-		    };
+			};*/
 	  	}
+
+		private dynamic GetEV3Info (dynamic parameters)
+		{
+			EV3.Update (); 
+			return Response.AsJson (EV3, HttpStatusCode.OK);
+		}
+
+	  	private dynamic GetAllMotorInfo (dynamic parameters)
+		{
+			EV3.Update (); 
+			return Response.AsJson (EV3.Motors, HttpStatusCode.OK);
+		}
+
+		private dynamic GetMotorInfo (dynamic parameters)
+		{
+			var m = EV3.Motors[(string)parameters.index];
+			m.Update(); 
+			return Response.AsJson(m, HttpStatusCode.OK);
+		}
+
+		private dynamic SetMotorPower (dynamic parameters)
+		{
+			var m = EV3.Motors[(string)parameters.index]; 
+			m.SetPower((sbyte)parameters.power); 
+			return "Motor " + m.Port + " power set to " + (string) parameters.power;
+		}
+
+		private dynamic SetMotorPowerProfile (dynamic parameters)
+		{
+			var m = EV3.Motors[(string)parameters.index]; 
+			bool brake = ((string)parameters.brake).ToBoolean(); 
+			m.PowerProfile((sbyte)parameters.power, (uint)parameters.rampup, (uint)parameters.constant, (uint)parameters.rampdown, brake); 
+			return "Motor " + m.Port + " power profile with power " + (string) parameters.power + " and " +  ((uint)parameters.rampup + (uint)parameters.constant + (uint)parameters.rampdown) + " steps. Brake set to " + brake;
+		}
+
+		private dynamic SetMotorSpeed (dynamic parameters)
+		{
+			var m = EV3.Motors[(string)parameters.index]; 
+			m.SetSpeed((sbyte)parameters.speed); 
+			return "Motor " + m.Port + " speed set to " +  (string)parameters.speed;
+		}
+
+
 	}
 }
 

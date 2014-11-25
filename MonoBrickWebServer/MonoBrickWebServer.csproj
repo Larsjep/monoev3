@@ -124,6 +124,7 @@
     <Compile Include="Models\SensorModelList.cs" />
     <Compile Include="Models\DummySensor.cs" />
     <Compile Include="Models\LcdModel.cs" />
+    <Compile Include="Modules\MonoBrickModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\index.sshtml">

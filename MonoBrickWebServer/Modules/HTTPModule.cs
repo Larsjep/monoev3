@@ -8,19 +8,19 @@ namespace MonoBrickWebServer.Modules
 {
   public class HTTPModule: NancyModule
   {
-
+	private Dictionary<string,Func<dynamic,dynamic>> urlActionDictionary = new Dictionary<string, Func<dynamic,dynamic>>();
     public HTTPModule()
     {
-		Get["/Images/{title}"] = parameter =>
+		urlActionDictionary.Add ("/Images/{title}", p => {return Response.AsImage(@"Images/" + (string) p.title);}); 
+		urlActionDictionary.Add ("/", p => {return View["index"];});
+		foreach (KeyValuePair<string,Func<dynamic,dynamic>> pair in urlActionDictionary) 
 		{
-			return Response.AsImage(@"Images/" + (string) parameter.title);
-		};
-
-		Get["/"] = _ =>
-		{
-			return View["index"];
-		};
-
+			this.Get[pair.Key] = parameter =>
+	    	{
+				return pair.Value(parameter);
+	    	};
+	    	Console.WriteLine(pair.Key);
+		} 
     }
   }
 }
