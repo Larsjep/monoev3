@@ -63,9 +63,7 @@ namespace MonoBrickFirmware.Connections
 			}
 			return "Unknown";
 		}
-		
-		
-		
+
 		public static bool TurnOn (int timeout = 0)
 		{
 			if (!IsLinkUp ()) {

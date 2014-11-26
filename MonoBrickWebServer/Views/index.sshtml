@@ -264,7 +264,7 @@
 							<tr class="inner">
 								<th class="inner">Speed: </th>
 								<th class="inner"><input type="text" size="5" value="50" id="motorOutASetSpeed" onkeypress="return isValidSpeed(event,'OutA')"></th>
-								<th class="inner"><input type="button" value="Rev" onclick=reverse('OutA')><input type="button" value="Fwd" onclick=forward('OutA')></th>
+								<th class="inner" align="center"><input type="button" value="Rev" onclick=reverse('OutA')><input type="button" value="Fwd" onclick=forward('OutA')></th>
 							</tr>
 							<tr class="inner">
 								<th class="inner">Steps: </th>
@@ -273,7 +273,7 @@
 							</tr>
 							<tr class="inner">
 								<th class="inner"><input type="button" value="Break" onclick=holdPower('OutA')></th>
-								<th class="inner"><input type="button" value="Stop" onclick=stop('OutA')></th>
+								<th class="inner" align="center"><input type="button" value="Stop" onclick=stop('OutA')></th>
 								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('OutA')></th>
 							</tr>
 							<tr class="inner">
@@ -293,7 +293,7 @@
 							<tr class="inner">
 								<th class="inner">Speed: </th>
 								<th class="inner"><input type="text" size="5" value="50" id="motorOutBSetSpeed" onkeypress="return isValidSpeed(event,'OutB')"></th>
-								<th class="inner"><input type="button" value="Rev" onclick=reverse('OutB')><input type="button" value="Fwd" onclick=forward('OutB')></th>
+								<th class="inner" align="center"><input type="button" value="Rev" onclick=reverse('OutB')><input type="button" value="Fwd" onclick=forward('OutB')></th>
 							</tr>
 							<tr class="inner">
 								<th class="inner">Steps: </th>
@@ -302,7 +302,7 @@
 							</tr>
 							<tr class="inner">
 								<th class="inner"><input type="button" value="Break" onclick=holdPower('OutB')></th>
-								<th class="inner"><input type="button" value="Stop" onclick=stop('OutB')></th>
+								<th class="inner" align="center"><input type="button" value="Stop" onclick=stop('OutB')></th>
 								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('OutB')></th>
 							</tr>
 							<tr class="inner">
@@ -322,7 +322,7 @@
 							<tr class="inner">
 								<th class="inner">Speed: </th>
 								<th class="inner"><input type="text" size="5" value="50" id="motorOutCSetSpeed" onkeypress="return isValidSpeed(event,'OutC')"></th>
-								<th class="inner"><input type="button" value="Rev" onclick=reverse('OutC')><input type="button" value="Fwd" onclick=forward('OutC')></th>
+								<th class="inner" align="center"><input type="button" value="Rev" onclick=reverse('OutC')><input type="button" value="Fwd" onclick=forward('OutC')></th>
 							</tr>
 							<tr class="inner">
 								<th class="inner">Steps: </th>
@@ -331,7 +331,7 @@
 							</tr>
 							<tr class="inner">
 								<th class="inner"><input type="button" value="Break" onclick=holdPower('OutC')></th>
-							 	<th class="inner"><input type="button" value="Stop" onclick=stop('OutC')></th>
+							 	<th class="inner" align="center"><input type="button" value="Stop" onclick=stop('OutC')></th>
 								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('OutC')></th>
 							</tr>
 							<tr class="inner">
@@ -351,7 +351,7 @@
 							<tr class="inner">
 								<th class="inner">Speed: </th>
 								<th class="inner"><input type="text" size="5" value="50" id="motorOutDSetSpeed" onkeypress="return isValidSpeed(event,'OutD')"></th>
-								<th class="inner"><input type="button" value="Rev" onclick=reverse('D')><input type="button" value="Fwd" onclick=forward('OutD')></th>
+								<th class="inner" align="center"><input type="button" value="Rev" onclick=reverse('OutD')><input type="button" value="Fwd" onclick=forward('OutD')></th>
 							</tr>
 							<tr class="inner">
 								<th class="inner">Steps: </th>
@@ -360,7 +360,7 @@
 							</tr>
 							<tr class="inner">
 								<th class="inner"><input type="button" value="Break" onclick=holdPower('OutD')></th>
-								<th class="inner"><input type="button" value="Stop" onclick=stop('OutD')></th>
+								<th class="inner" align="center"><input type="button" value="Stop" onclick=stop('OutD')></th>
 								<th class="inner"><input type="button" value="Reset tacho" onclick=resetTacho('OutD')></th>
 							</tr>
 							<tr class="inner">

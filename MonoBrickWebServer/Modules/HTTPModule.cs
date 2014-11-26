@@ -6,21 +6,12 @@ using Nancy;
 
 namespace MonoBrickWebServer.Modules
 {
-  public class HTTPModule: NancyModule
+  public class HTTPModule: MonoBrickModule
   {
-
     public HTTPModule()
     {
-		Get["/Images/{title}"] = parameter =>
-		{
-			return Response.AsImage(@"Images/" + (string) parameter.title);
-		};
-
-		Get["/"] = _ =>
-		{
-			return View["index"];
-		};
-
+		AddGetRequest ("/Images/{title}", p => Response.AsImage (@"Images/" + (string)p.title)); 
+		AddGetRequest ("/", p => View["index"]); 
     }
   }
 }

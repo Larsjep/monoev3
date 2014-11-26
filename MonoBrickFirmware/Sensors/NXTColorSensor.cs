@@ -165,7 +165,7 @@ namespace MonoBrickFirmware.Sensors
 			string s = "";
 			switch (Mode)
 			{
-			    case ColorMode.Ambient:
+			   case ColorMode.Ambient:
 			        s = Read().ToString();
 			        break;
 			   case ColorMode.Color:
@@ -173,6 +173,9 @@ namespace MonoBrickFirmware.Sensors
 			        break;
 			   case ColorMode.Reflection:
 			        s = Read().ToString();
+			        break;
+				case ColorMode.RGB:
+			        s = ReadRGBColor().ToString();
 			        break;
 			   default:
 			   		s = Read().ToString();
