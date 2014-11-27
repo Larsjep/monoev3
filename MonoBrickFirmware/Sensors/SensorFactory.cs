@@ -24,76 +24,80 @@ namespace MonoBrickFirmware.Sensors
 			SensorType sensorType = SensorManager.Instance.GetSensorType (port);
 			ConnectionType connectionType = SensorManager.Instance.GetConnectionType (port);
 			switch (sensorType) {
-				case SensorType.Color:
-					sensor = new EV3ColorSensor (port); 
-					break;
-				case SensorType.Gyro:
-					sensor = new EV3GyroSensor (port); 
-					break;
-				case SensorType.IR:
-					sensor = new EV3IRSensor (port);
-					break;
-				case SensorType.NXTColor:
-					sensor = new NXTColorSensor (port);
-					break;
-				case SensorType.NXTLight:
-					sensor = new NXTLightSensor (port);
-					break;
-				case SensorType.NXTSound:
-					sensor = new NXTSoundSensor (port);
-					break;
-				case SensorType.NXTTouch:
-					sensor = new NXTTouchSensor (port);
-					break;
-				case SensorType.NXTUltraSonic:
-					sensor = new NXTUltraSonicSensor (port);
-					break;
-				case SensorType.Touch:
+			case SensorType.Color:
+				sensor = new EV3ColorSensor (port); 
+				break;
+			case SensorType.Gyro:
+				sensor = new EV3GyroSensor (port); 
+				break;
+			case SensorType.IR:
+				sensor = new EV3IRSensor (port);
+				break;
+			case SensorType.NXTColor:
+				sensor = new NXTColorSensor (port);
+				break;
+			case SensorType.NXTLight:
+				sensor = new NXTLightSensor (port);
+				break;
+			case SensorType.NXTSound:
+				sensor = new NXTSoundSensor (port);
+				break;
+			case SensorType.NXTTouch:
+				sensor = new NXTTouchSensor (port);
+				break;
+			case SensorType.NXTUltraSonic:
+				sensor = new NXTUltraSonicSensor (port);
+				break;
+			case SensorType.Touch:
+				sensor = new EV3TouchSensor (port);
+				break;
+			case SensorType.UltraSonic:
+				sensor = new EV3UltrasonicSensor (port);
+				break;
+			case SensorType.NXTI2c:
+				var helper = new I2CHelper (port);
+				sensor = helper.GetSensor ();
+				break;
+			case SensorType.Unknown:
+				if (connectionType == ConnectionType.UART) {
+					var uartHelper = new UARTHelper (port);
+					sensor = uartHelper.GetSensor ();
+				}
+				if (connectionType == ConnectionType.InputResistor) {
 					sensor = new EV3TouchSensor (port);
-					break;
-				case SensorType.UltraSonic:
-					sensor = new EV3UltrasonicSensor (port);
-					break;
-				case SensorType.NXTI2c:
-					var helper = new I2CHelper (port);
-					sensor = helper.GetSensor ();
-					break;
-				case SensorType.Unknown:
-					if (connectionType == ConnectionType.UART) {
-						var uartHelper = new UARTHelper (port);
-						sensor = uartHelper.GetSensor ();
-					}
-					if (connectionType == ConnectionType.InputResistor) {
-						sensor  = new EV3TouchSensor(port);
-					}
-					break;
-				case SensorType.I2CUnknown:
+				}
+				break;
+			case SensorType.I2CUnknown:
 						
-					break;
-				case SensorType.NXTTemperature:
+				break;
+			case SensorType.NXTTemperature:
 						
-					break;
-				case SensorType.LMotor:
+				break;
+			case SensorType.LMotor:
 						
-					break;
-				case SensorType.MMotor:
+				break;
+			case SensorType.MMotor:
 						
-					break;
-				case SensorType.NXTTest:
+				break;
+			case SensorType.NXTTest:
 						
-					break;
-				case SensorType.Terminal:
+				break;
+			case SensorType.Terminal:
 						
-					break;
-				case SensorType.Test:
+				break;
+			case SensorType.Test:
 						
-					break;
-				case SensorType.Error:
+				break;
+			case SensorType.Error:
 					
-					break;
-				case SensorType.None:
-					sensor = new NoSensor(port);
-					break;
+				break;
+			case SensorType.None:
+				sensor = new NoSensor (port);
+				break;
+			}
+			if (sensor == null) 
+			{
+				sensor = new UnknownSensor(port);
 			}
 			return sensor;
 		}

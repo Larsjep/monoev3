@@ -54,7 +54,6 @@ namespace MonoBrickFirmware.Sensors
 				ResetSensor(sensorPort[i]);
 				sensor[i] = null;
 			}
-			Update();
 		}
 	}
   
