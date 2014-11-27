@@ -10,7 +10,7 @@ namespace MonoBrickWebServer.Models
 		{
 			Motors = new MotorModelList (useDummy);
 			Sensors = new SensorModelList (useDummy);
-			LCD = new LcdModel();
+			LCD = new LcdModel(useDummy);
 			if (!useDummy) 
 			{
 				detector = new SensorDetector ();

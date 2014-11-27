@@ -17,7 +17,8 @@ namespace MonoBrickWebServer.Models
 		{
 			Port = port.ToString();
 			this.isDummy = isDummy;
-			if (isDummy) {
+			if (isDummy) 
+			{
 				sensor = new DummySensor(port);
 			} 
 			else 

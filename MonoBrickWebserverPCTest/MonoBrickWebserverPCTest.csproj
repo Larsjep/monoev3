@@ -29,6 +29,7 @@
     <Reference Include="Mono.CSharp">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

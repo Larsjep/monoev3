@@ -117,14 +117,13 @@
     <Compile Include="Models\NoSensor.cs" />
     <Compile Include="Models\SensorModel.cs" />
     <Compile Include="Modules\EV3Module.cs" />
-    <Compile Include="Modules\HTTPModule.cs" />
     <Compile Include="MonoBrickWebserver.cs" />
     <Compile Include="Models\EV3Model.cs" />
     <Compile Include="Models\MotorModelList.cs" />
     <Compile Include="Models\SensorModelList.cs" />
     <Compile Include="Models\DummySensor.cs" />
     <Compile Include="Models\LcdModel.cs" />
-    <Compile Include="Modules\MonoBrickModule.cs" />
+    <Compile Include="Models\DokumentationModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\index.sshtml">

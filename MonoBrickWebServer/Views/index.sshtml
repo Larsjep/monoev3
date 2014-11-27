@@ -230,7 +230,7 @@
 
 					});
 					return false;
-				}, 300);
+				}, 500);
 			});
 		</script>
 	</HEAD>

@@ -4,6 +4,7 @@ using MonoBrickFirmware.Movement;
 using MonoBrickWebServer.Models;
 using MonoBrickWebServer.Modules;
 using Nancy.Hosting.Self;
+using System.Linq;
 
 namespace MonoBrickWebServer
 {
@@ -12,7 +13,7 @@ namespace MonoBrickWebServer
 
 		private ManualResetEvent terminateServer = new ManualResetEvent(false);
 		private ManualResetEvent serverStarted = new ManualResetEvent(false);
-		private static NancyHost nancyHost = null;
+		private NancyHost nancyHost = null;
 		private Thread serverThread;
 		private bool running = false;
 		private static Webserver instance = new Webserver();
@@ -55,7 +56,8 @@ namespace MonoBrickWebServer
 
 		public bool Start (int port, int timeout = Timeout.Infinite, bool useDummyEV3 = false)
 		{
-			if (IsRunning) {
+			if (IsRunning) 
+			{
 				Stop ();
 			}
 			Port = port;
@@ -72,6 +74,13 @@ namespace MonoBrickWebServer
 			}
 			System.Threading.Thread.Sleep(500);
 			return IsRunning;
+		}
+
+		public string[] Urls{ 
+			get 
+			{
+				return EV3Module.DokumentationList.Select(x => x.URL).ToArray();
+			}
 		}
 
 		public void Stop()
