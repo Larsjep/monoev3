@@ -9,7 +9,7 @@ namespace MonoBrickFirmware.Management
     /// <summary>
     /// Battery information
     /// </summary>
-    public class Battery
+    public static class Battery
     {
         private const int batteryCurrentOffset = 28;
         private const int batteryVoltageOffset = 30;
@@ -29,7 +29,7 @@ namespace MonoBrickFirmware.Management
         /// <returns></returns>
         private static float Convert(int val)
         {
-            return ((float) val*adcRef)/(adcRes);
+            return (val*adcRef)/adcRes;
         }
 
         public static float Current
@@ -41,19 +41,25 @@ namespace MonoBrickFirmware.Management
         {
             get
             {
-                float CinV = Convert(CurrentRaw)/ampCin;
-                return Convert(VoltageRaw)/ampVin + CinV + vce;
+                float cinV = Convert(CurrentRaw)/ampCin;
+                return Convert(VoltageRaw)/ampVin + cinV + vce;
             }
         }
 
-        public static byte CurrentRaw
+        private static short CurrentRaw
         {
-            get { return SensorManager.Instance.AnalogMemory.Read(batteryCurrentOffset, 1)[0]; }
+            get
+            {
+                return BitConverter.ToInt16(SensorManager.Instance.AnalogMemory.Read(batteryCurrentOffset, 2), 0);
+            }
         }
 
-        public static byte VoltageRaw
+        private static short VoltageRaw
         {
-            get { return SensorManager.Instance.AnalogMemory.Read(batteryVoltageOffset, 1)[0]; }
+            get
+            {
+                return BitConverter.ToInt16(SensorManager.Instance.AnalogMemory.Read(batteryVoltageOffset, 2), 0);
+            }
         }
     }
 }
