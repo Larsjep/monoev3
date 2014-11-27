@@ -48,7 +48,10 @@ namespace MonoBrickFirmware.Display
 		{
 			if (cw == null)
 				cw = new ConsoleWriter();
-			cw.WriteLine(string.Format (format, arg));
+		    lock (cw)
+		    {
+		        cw.WriteLine(string.Format(format, arg));
+		    }
 		}
 		
 		static public void Clear ()

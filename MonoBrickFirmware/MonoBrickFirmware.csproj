@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -27,20 +27,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Native\" />
-    <Folder Include="Tools\" />
-    <Folder Include="Display\" />
-    <Folder Include="Display\Resources\" />
-    <Folder Include="Sensors\" />
-    <Folder Include="Movement\" />
-    <Folder Include="UserInput\" />
-    <Folder Include="Sound\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Display\Animation\" />
-    <Folder Include="Connections\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Management\Battery.cs" />
     <Compile Include="Native\Libc.cs" />
     <Compile Include="Tools\QueueThread.cs" />
     <Compile Include="Display\Console.cs" />
