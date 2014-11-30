@@ -65,7 +65,7 @@ namespace SQLiteExample
 			}
 
 			Console.WriteLine ("Viewing all sensor values on port 1 ever recorded (including other times the program was run)");
-			var joinQuery = db.Query<SensorReading> ("select V.* from SensorValue V inner join Sensor S" + " on V.SensorId = S.Id where S.Port =?", "In1");
+			var joinQuery = db.Query<SensorReading> ("select V.* from SensorReading V inner join Sensor S" + " on V.SensorId = S.Id where S.Port =?", "In1");
 			foreach (var val in joinQuery) 
 			{
 				Console.WriteLine (val.Time.ToLongTimeString().PadRight (20) + val.Value);
