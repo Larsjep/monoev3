@@ -10,7 +10,7 @@ namespace MonoBrickFirmware.Movement
 	/// <summary>
 	/// Class for EV3 motor
 	/// </summary>
-	public class Motor :  MotorBase
+	public class Motor :  IMotor
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.Motor"/> class.
