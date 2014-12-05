@@ -26,7 +26,7 @@ namespace MonoBrickWebserverEV3Test
 			while(attemps < 2 && !loaded){
 				try 
 				{
-					HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(@"http://127.0.0.1:8080" + url);
+					HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(url);
 					myRequest.Method = "GET";
 					WebResponse myResponse = myRequest.GetResponse();
 					StreamReader sr = new StreamReader(myResponse.GetResponseStream(), System.Text.Encoding.UTF8);
@@ -52,23 +52,20 @@ namespace MonoBrickWebserverEV3Test
 
 		static void Main (string[] args)
 		{
-			IStep startStep = new StepContainer (StartWebserver, "Starting", "Failed to start");
-			Dialog dialog = new ProgressDialog("Starting", startStep);
-			if(dialog.Show())
-			{ 
-				List<IStep> steps = new List<IStep> ();
-				/*Console.WriteLine("Adding urls to list");
-				foreach (var url in Webserver.Instance.Urls) 
-				{
-					Console.WriteLine("Adding: " +  url);
-					steps.Add (new StepContainer (delegate() {return LoadPage(url);}, "url", "Load failed"));
-				}
-				dialog = new StepDialog("Webserver", steps);
-				dialog.Show();*/
-				dialog = new InfoDialog("Press enter to stop", true, "Webserver");
-				dialog.Show();
-				StopWebserver();
+			List<IStep> steps = new List<IStep> ();
+			Console.WriteLine ("Adding tasks to list");
+			steps.Add (new StepContainer (StartWebserver, "Starting server", "Failed to start"));
+			steps.Add (new StepContainer (delegate() 
+			{
+				return LoadPage ("http://127.0.0.1:8080/");
+			}, "Loading pages", "Load failed"));
+			Dialog dialog = new StepDialog ("Webserver", steps);
+			if (dialog.Show ()) {
+				dialog = new InfoDialog ("Press enter to stop", true, "Webserver");
+				dialog.Show ();
+				StopWebserver ();
 			}
+			
 		}
 	}
 }

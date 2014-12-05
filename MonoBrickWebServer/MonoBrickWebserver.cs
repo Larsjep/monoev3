@@ -53,7 +53,6 @@ namespace MonoBrickWebServer
 			catch{}
 		}
 
-
 		public bool Start (int port, int timeout = Timeout.Infinite, bool useDummyEV3 = false)
 		{
 			if (IsRunning) 
@@ -74,13 +73,6 @@ namespace MonoBrickWebServer
 			}
 			System.Threading.Thread.Sleep(500);
 			return IsRunning;
-		}
-
-		public string[] Urls{ 
-			get 
-			{
-				return EV3Module.DokumentationList.Select(x => x.URL).ToArray();
-			}
 		}
 
 		public void Stop()

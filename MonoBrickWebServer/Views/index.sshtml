@@ -103,7 +103,7 @@
 			    $("#dialog-modal").dialog(
 			    {
 			        modal: true,
-				    draggable: true,
+				    draggable: false,
 				    resizable: false,
 				    show: 'blind',
 				    hide: 'blind',
@@ -117,6 +117,33 @@
 	                    within: $("body")
                 	},
 			     });
+			}
+			function showLoadDialog()
+			{
+			    $("#dialog-loading").dialog(
+			    {
+			        closeOnEscape: false,
+			        close: false,
+			        modal: true,
+				    draggable: false,
+				    resizable: false,
+				    show: 'blind',
+				    hide: 'blind',
+				    width: 200,
+				    height: 100,
+				    dialogClass: 'no-close motor-dialog',
+				    position: {
+	                    my: "center",
+	                    at: "center",
+	                    of: $("body"),
+	                    within: $("body")
+                	},
+                	open: function(event, ui) { jQuery('.ui-dialog-titlebar-close').hide(); },
+			     });
+			}
+			function hideLoadDialog()
+			{
+			   	$("#dialog-loading").dialog( "close" );
 			}
 	    </script>
         <script>
@@ -227,14 +254,15 @@
 								var valueText = document.getElementById(sensorData[i].port + "Value");
 								valueText.innerHTML = "<p align=\"right\">" + sensorData[i].value + "</p>";
 							}
+							hideLoadDialog();
 
 					});
 					return false;
-				}, 500);
+				}, 300);
 			});
 		</script>
 	</HEAD>
-	<BODY>
+	<BODY onLoad="showLoadDialog()">
 
 		<center><img src="Images/Title.png"/></center>
 		<p style="border-top-width: 1px; border-top-style: solid; border-top-color: #f26100; padding-top: 10px;"></p>
@@ -248,15 +276,24 @@
 					</font>
 		</div>
 
+		<div id="dialog-loading" title="Loading webpage" style="display: none;">    
+			 		<font color="black">
+			    	<div style="margin-left: 23px;">
+			        <p>
+			            Waiting for EV3...
+			        </p>
+					</div>
+					</font>
+		</div>
 
 		<center>
 			
 			<table class="outer" id="motorTable">
 				<tr class="outer">
-						<th class="outer width="25%">Motor A</th>
-						<th class="outer width="25%">Motor B</th>
-						<th class="outer width="25%">Motor C</th>
-						<th class="outer width="25%">Motor D</th>
+						<th class="outer" width="25%">Motor A</th>
+						<th class="outer" width="25%">Motor B</th>
+						<th class="outer" width="25%">Motor C</th>
+						<th class="outer" width="25%">Motor D</th>
 				</tr>
 				<tr class="outer">
 					<td>
@@ -471,8 +508,9 @@
 		<br>
 		<sup><font color="#999999">Powered by</font></sup>
 		<br>
+
 		<a href="http://nancyfx.org/"><img src="Images/nancyLogo.png"/></a>
-		
+
 		</center>
 		<p align="right">
 			

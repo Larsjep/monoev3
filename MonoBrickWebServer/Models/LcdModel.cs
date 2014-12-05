@@ -20,6 +20,7 @@ namespace MonoBrickWebServer
 			} 
 			else 
 			{
+				//Code is taken from the firmware code and simply returns a blank LCD
 				int Width = 178;
 				int Height = 128;
 				BmpImage screenshotImage = new BmpImage(24 * 8 , (uint)Height, ColorDepth.TrueColor);

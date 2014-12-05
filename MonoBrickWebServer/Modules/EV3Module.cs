@@ -13,31 +13,34 @@ namespace MonoBrickWebServer.Modules
 	public class EV3Module : NancyModule
 	{
 		internal static EV3Model EV3;
-		internal static List<DokumentationModel> DokumentationList = new List<DokumentationModel>();
+		internal static List<UrlModel> UrlList = new List<UrlModel>();
 		private static bool isInitialized = false;
 		public EV3Module ()
 		{
-			AddGetRequest ("/ev3", GetEV3Info, ""); 
-			AddGetRequest ("/ev3/motor", GetAllMotorInfo, "");
-			AddGetRequest ("/ev3/motor/{index}", GetMotorInfo, "", "OutA");
-			AddGetRequest ("/ev3/motor/{index}/setpower/{power}", SetMotorPower, "", "OutA", "50"); 
-			AddGetRequest (@"/ev3/motor/{index}/powerprofile/power={power}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", SetMotorPowerProfile, "", "OutA", "50", "100", "300", "100", "true"); 
-			AddGetRequest ("/ev3/motor/{index}/setspeed/{speed}", SetMotorSpeed, "", "OutA", "50"); 
-			AddGetRequest ("/ev3/motor/{index}/speedprofile/speed={speed}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", SetMotorSpeedProfile, "", "OutA", "80", "150", "400", "150", "true");
-			AddGetRequest ("/ev3/motor/{index}/break", SetMotorSpeedBrake, "", "OutA"); 
-			AddGetRequest ("/ev3/motor/{index}/off", SetMotorOff, "", "OutA"); 
-			AddGetRequest ("/ev3/motor/{index}/resettacho", ResetMotorTacho, "", "OutA");
-
-			AddGetRequest ("/ev3/sensor", GetAllSensors, "");
-			AddGetRequest ("/ev3/sensor/{index}", GetSensor, "", "In1");
-			AddGetRequest ("/ev3/sensor/{index}/nextmode", GetSensorNextMode, "", "In1");
-			AddGetRequest ("/ev3/sensor/{index}/previousmode", GetSensorPreviousMode, "", "In1");
-			AddGetRequest ("/ev3/lcd/screenshot", GetSecreenShot, "");
-
 			//HTTP requests
+			AddGetRequest ("/", p => View ["index"], "Websever frontpage");
 			AddGetRequest ("/Images/{title}", p => Response.AsImage (@"Images/" + (string)p.title)); 
-			AddGetRequest ("/", p => View ["index"], "");
-			AddGetRequest ("/dokumentation", p => Response.AsJson (DokumentationList, HttpStatusCode.OK));
+			AddGetRequest ("/documentation",  p => View ["documentation"]);
+
+			AddGetRequest ("/ev3", GetEV3Info, "Get sensor and motor info"); 
+			AddGetRequest ("/ev3/motor", GetAllMotorInfo, "Get motor info");
+			AddGetRequest ("/ev3/motor/{index}", GetMotorInfo, "Get specific motor info ", "OutA");
+			AddGetRequest ("/ev3/motor/{index}/setpower/{power}", SetMotorPower, "Set motor power", "OutA", "50"); 
+			AddGetRequest (@"/ev3/motor/{index}/powerprofile/power={power}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", SetMotorPowerProfile, "Start a motor power profile", "OutA", "50", "100", "300", "100", "true"); 
+			AddGetRequest ("/ev3/motor/{index}/setspeed/{speed}", SetMotorSpeed, "Set motor speed", "OutA", "50"); 
+			AddGetRequest ("/ev3/motor/{index}/speedprofile/speed={speed}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", SetMotorSpeedProfile, "Start a motor speed profile", "OutA", "80", "150", "400", "150", "true");
+			AddGetRequest ("/ev3/motor/{index}/break", SetMotorSpeedBrake, "Break motor", "OutA"); 
+			AddGetRequest ("/ev3/motor/{index}/off", SetMotorOff, "Turn motor off", "OutA"); 
+			AddGetRequest ("/ev3/motor/{index}/resettacho", ResetMotorTacho, "Reset motor tacho ", "OutA");
+
+			AddGetRequest ("/ev3/sensor", GetAllSensors, "Get all sensor info");
+			AddGetRequest ("/ev3/sensor/{index}", GetSensor, "Get specific sensor info", "In1");
+			AddGetRequest ("/ev3/sensor/{index}/nextmode", GetSensorNextMode, "Select next sensor mode", "In1");
+			AddGetRequest ("/ev3/sensor/{index}/previousmode", GetSensorPreviousMode, "Select previous sensor mode", "In1");
+			AddGetRequest ("/ev3/lcd/screenshot", GetSecreenShot, "Get LCD screenshot");
+
+			AddGetRequest ("/urls", p => Response.AsJson (UrlList, HttpStatusCode.OK), "Get a list of URLS");
+
 			isInitialized = true;
 	  	}
 
@@ -56,11 +59,11 @@ namespace MonoBrickWebServer.Modules
 			if (!isInitialized && description != null) {
 				if (args == null) 
 				{
-					DokumentationList.Add (new DokumentationModel (url, description)); 	
+					UrlList.Add (new UrlModel (url, description)); 	
 				} 
 				else 
 				{
-					DokumentationList.Add (new DokumentationModel (ReplaceURLWithArgs (url, args), description)); 	
+					UrlList.Add (new UrlModel (ReplaceURLWithArgs (url, args), description)); 	
 				}
 			}
     	}

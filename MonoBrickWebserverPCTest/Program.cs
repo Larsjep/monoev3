@@ -27,13 +27,6 @@ namespace MonoBrickWebserverPCTest
 		static void Main (string[] args)
 		{
 			Webserver.Instance.Start (8080, -1, true);
-			var urls = Webserver.Instance.Urls;
-			foreach (var s in urls) 
-			{
-				LoadPage(s);
-			}
-
-
 			Console.WriteLine("Press any key to end...");
 			Console.ReadKey ();
 			Webserver.Instance.Stop();

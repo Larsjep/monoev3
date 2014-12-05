@@ -114,7 +114,6 @@
     <Compile Include="Models\IMotorModel.cs" />
     <Compile Include="Models\ISensorModel.cs" />
     <Compile Include="Models\MotorModel.cs" />
-    <Compile Include="Models\NoSensor.cs" />
     <Compile Include="Models\SensorModel.cs" />
     <Compile Include="Modules\EV3Module.cs" />
     <Compile Include="MonoBrickWebserver.cs" />
@@ -123,11 +122,16 @@
     <Compile Include="Models\SensorModelList.cs" />
     <Compile Include="Models\DummySensor.cs" />
     <Compile Include="Models\LcdModel.cs" />
-    <Compile Include="Models\DokumentationModel.cs" />
+    <Compile Include="Models\UrlModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\index.sshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Views\documentation.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
