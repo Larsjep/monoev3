@@ -166,37 +166,37 @@
 						rampSteps = 360;
 					}
 					steps = steps - 2* rampSteps;
-				    $.get("ev3/motor/" + index + "/speedprofile/speed=" + speed + "&rampup=" + rampSteps + "&constant=" + steps + "&rampdown=" + rampSteps + "&brake=true", {}, function(data,status){});
+				    $.get("motor/" + index + "/speedprofile/speed=" + speed + "&rampup=" + rampSteps + "&constant=" + steps + "&rampdown=" + rampSteps + "&brake=true", {}, function(data,status){});
 			}
 		    function forward(index)
 			{
 				    var speed = document.getElementById("motor" + index + "SetSpeed").value;
-				    $.get("ev3/motor/" + index + "/setspeed/" + speed, {}, function(data,status){});
+				    $.get("motor/" + index + "/setspeed/" + speed, {}, function(data,status){});
 			}
 		    function reverse(index)
 			{
 				     var speed = document.getElementById("motor" + index + "SetSpeed").value;
-				     $.get("ev3/motor/"+ index + "/setspeed/" + -speed, {}, function(data,status){});
+				     $.get("motor/"+ index + "/setspeed/" + -speed, {}, function(data,status){});
 			}
 		    function stop(index)
 			{
-				     $.get("ev3/motor/"+ index + "/off", {}, function(data,status){});
+				     $.get("motor/"+ index + "/off", {}, function(data,status){});
 			}
 		    function holdPower(index)
 			{
-				     $.get("ev3/motor/"+ index + "/break", {}, function(data,status){});
+				     $.get("motor/"+ index + "/break", {}, function(data,status){});
 			}
 		    function resetTacho(index)
 			{
-				     $.get("ev3/motor/"+ index + "/resettacho", {}, function(data,status){});
+				     $.get("motor/"+ index + "/resettacho", {}, function(data,status){});
 			}
 		    function previousMode(index)
 			{
-				     $.get("ev3/sensor/"+ index + "/previousmode", {}, function(data,status){});
+				     $.get("sensor/"+ index + "/previousmode", {}, function(data,status){});
 			}
 		    function nextMode(index)
 			{
-				     $.get("ev3/sensor/"+ index + "/nextmode", {}, function(data,status){});
+				     $.get("sensor/"+ index + "/nextmode", {}, function(data,status){});
 			}
 		    function isValidSpeed(evt, port){
 			    var charCode = (evt.which) ? evt.which : event.keyCode

@@ -123,6 +123,8 @@
     <Compile Include="Models\DummySensor.cs" />
     <Compile Include="Models\LcdModel.cs" />
     <Compile Include="Models\UrlModel.cs" />
+    <Compile Include="Models\DummyLcdModel.cs" />
+    <Compile Include="Models\ILcdModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\index.sshtml">
@@ -131,6 +133,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Views\documentation.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\lcd.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

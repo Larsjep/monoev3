@@ -18,28 +18,42 @@ namespace MonoBrickWebServer.Modules
 		public EV3Module ()
 		{
 			//HTTP requests
-			AddGetRequest ("/", p => View ["index"], "Websever frontpage");
-			AddGetRequest ("/Images/{title}", p => Response.AsImage (@"Images/" + (string)p.title)); 
-			AddGetRequest ("/documentation",  p => View ["documentation"]);
+			AddGetRequest ("/", p => View ["index"], "Webpage for motor and sensor");
+			AddGetRequest ("/lcd", p => View ["lcd"], "Webpage for LCD control");
+			AddGetRequest ("/documentation",  p => View ["documentation"], "This documentation");
+			AddGetRequest ("/Images/{title}", p => Response.AsImage (@"Images/" + (string)p.title));//Not added to URL list 
 
-			AddGetRequest ("/ev3", GetEV3Info, "Get sensor and motor info"); 
-			AddGetRequest ("/ev3/motor", GetAllMotorInfo, "Get motor info");
-			AddGetRequest ("/ev3/motor/{index}", GetMotorInfo, "Get specific motor info ", "OutA");
-			AddGetRequest ("/ev3/motor/{index}/setpower/{power}", SetMotorPower, "Set motor power", "OutA", "50"); 
-			AddGetRequest (@"/ev3/motor/{index}/powerprofile/power={power}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", SetMotorPowerProfile, "Start a motor power profile", "OutA", "50", "100", "300", "100", "true"); 
-			AddGetRequest ("/ev3/motor/{index}/setspeed/{speed}", SetMotorSpeed, "Set motor speed", "OutA", "50"); 
-			AddGetRequest ("/ev3/motor/{index}/speedprofile/speed={speed}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", SetMotorSpeedProfile, "Start a motor speed profile", "OutA", "80", "150", "400", "150", "true");
-			AddGetRequest ("/ev3/motor/{index}/break", SetMotorSpeedBrake, "Break motor", "OutA"); 
-			AddGetRequest ("/ev3/motor/{index}/off", SetMotorOff, "Turn motor off", "OutA"); 
-			AddGetRequest ("/ev3/motor/{index}/resettacho", ResetMotorTacho, "Reset motor tacho ", "OutA");
 
-			AddGetRequest ("/ev3/sensor", GetAllSensors, "Get all sensor info");
-			AddGetRequest ("/ev3/sensor/{index}", GetSensor, "Get specific sensor info", "In1");
-			AddGetRequest ("/ev3/sensor/{index}/nextmode", GetSensorNextMode, "Select next sensor mode", "In1");
-			AddGetRequest ("/ev3/sensor/{index}/previousmode", GetSensorPreviousMode, "Select previous sensor mode", "In1");
-			AddGetRequest ("/ev3/lcd/screenshot", GetSecreenShot, "Get LCD screenshot");
+			AddGetRequest ("/ev3", GetEV3Info, "Get sensor and motor info as JSON"); 
+			AddGetRequest ("/motor", GetAllMotorInfo, "Get all motor info as JSON");
+			AddGetRequest ("/motor/{index}", GetMotorInfo, "Get specific motor info as JSON", "OutA");
+			AddGetRequest ("/motor/{index}/setpower/{power}", SetMotorPower, "Set motor power", "OutA", "50"); 
+			AddGetRequest ("/motor/{index}/powerprofile/power={power}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", SetMotorPowerProfile, "Start a motor power profile", "OutA", "50", "100", "300", "100", "true"); 
+			AddGetRequest ("/motor/{index}/setspeed/{speed}", SetMotorSpeed, "Set motor speed", "OutA", "50"); 
+			AddGetRequest ("/motor/{index}/speedprofile/speed={speed}&rampup={rampup}&constant={constant}&rampdown={rampdown}&brake={brake}", SetMotorSpeedProfile, "Start a motor speed profile", "OutA", "80", "150", "400", "150", "true");
+			AddGetRequest ("/motor/{index}/break", SetMotorSpeedBrake, "Break motor", "OutA"); 
+			AddGetRequest ("/motor/{index}/off", SetMotorOff, "Turn motor off", "OutA"); 
+			AddGetRequest ("/motor/{index}/resettacho", ResetMotorTacho, "Reset motor tacho ", "OutA");
 
-			AddGetRequest ("/urls", p => Response.AsJson (UrlList, HttpStatusCode.OK), "Get a list of URLS");
+			AddGetRequest ("/sensor", GetAllSensors, "Get all sensor info as JSON");
+			AddGetRequest ("/sensor/{index}", GetSensor, "Get specific sensor info as JSON", "In1");
+			AddGetRequest ("/sensor/{index}/nextmode", GetSensorNextMode, "Select next sensor mode", "In1");
+			AddGetRequest ("/sensor/{index}/previousmode", GetSensorPreviousMode, "Select previous sensor mode", "In1");
+
+			AddGetRequest ("/lcd/circle/x={x}&y={y}&radius={radius}&color={color}&fill={fill}", DrawCircle, "Draw a circle on the LCD", "89", "64", "40","true", "true");
+			AddGetRequest ("/lcd/clear", ClearLcd, "Clear the LCD", "5", "23");
+			AddGetRequest ("/lcd/clearlines/y={y}&count={count}", ClearLine , "Clear lines on the LCD", "5", "23");
+			AddGetRequest ("/lcd/ellipse/x={x}&y={y}&radius1={radius1}&radius2={radius2}&color={color}&fill={fill}", DrawEllipse, "Draw an ellipse on the LCD", "89", "64", "40", "20", "true", "true");
+			AddGetRequest ("/lcd/hline/x={x}&y={y}&length={length}&color={color}", DrawHLine, "Draw a H line in the LCD", "35", "50", "8","true");
+			AddGetRequest ("/lcd/line/xstart={xstart}&ystart={ystart}&xend={xend}&yend={yend}&color={color}", DrawLine, "Draw a line on the LCD", "0", "0", "60", "60", "true");
+			AddGetRequest ("/lcd/rectangle/xstart={xstart}&ystart={ystart}&xend={xend}&yend={yend}&color={color}&fill={fill}", DrawRectangle, "Draw a rectable on the LCD", "0", "0", "80", "80", "true", "true");
+			AddGetRequest ("/lcd/setpixel/x={x}&y={y}&color={color}", SetPixel , "Set a pixel on the LCD", "10", "34", "true");
+			AddGetRequest ("/lcd/screenshot", GetSecreenShot, "Get LCD screenshot as BMP image");
+			AddGetRequest ("/lcd/text/x={x}&y={y}&text={text}&color={color}", WriteText, "Write text on the LCD", "20", "10", "Text","true");
+			AddGetRequest ("/lcd/textbox/xstart={xstart}&ystart={ystart}&xend={xend}&yend={yend}&text={text}&color={color}&align={align}", WriteTextBox, "Write text in a box on the LCD", "0", "0", "100", "100", "Text","true", "center");
+			AddGetRequest ("/lcd/vline/x={x}&y={y}&height={height}&color={color}", DrawVLine, "Draw a V line in the LCD", "30", "20", "4","true");
+
+			AddGetRequest ("/urls", p => Response.AsJson (UrlList, HttpStatusCode.OK), "Get a list of urls as JSON");
 
 			isInitialized = true;
 	  	}
@@ -163,6 +177,72 @@ namespace MonoBrickWebServer.Modules
 			string directory = Directory.GetCurrentDirectory();
 			EV3.LCD.TakeScreenShot(directory, "screenshot.bmp");
 			return Response.AsImage(Path.Combine(directory, "screenshot.bmp"));
+		}
+
+		private dynamic SetPixel (dynamic parameters)
+		{
+			EV3.LCD.SetPixel((int) parameters.x, (int) parameters.y, ((string)parameters.color).ToBoolean());
+			return ""; 
+		}
+
+		private dynamic ClearLine (dynamic parameters)
+		{
+			EV3.LCD.ClearLines((int) parameters.y, (int) parameters.count);
+			return "";
+		}
+
+		private dynamic ClearLcd (dynamic parameters)
+		{
+			EV3.LCD.Clear();
+			return ""; 
+		}
+
+		private dynamic DrawVLine (dynamic parameters)
+		{
+			EV3.LCD.DrawVLine((int)parameters.x,(int)parameters.y, (int)parameters.height, ((string)parameters.color).ToBoolean());
+			return ""; 
+		}
+
+		private dynamic DrawHLine (dynamic parameters)
+		{
+			EV3.LCD.DrawHLine((int)parameters.x,(int)parameters.y, (int)parameters.length, ((string)parameters.color).ToBoolean());
+			return ""; 
+		}
+
+		private dynamic WriteText (dynamic parameters)
+		{
+			EV3.LCD.WriteText((int)parameters.x,(int)parameters.y, parameters.text, ((string)parameters.color).ToBoolean());
+			return ""; 
+		}
+
+		private dynamic WriteTextBox (dynamic parameters)
+		{
+			EV3.LCD.WriteTextBox((int)parameters.xstart,(int)parameters.ystart, (int) parameters.xend, (int) parameters.yend, (string) parameters.text, ((string)parameters.color).ToBoolean(), (string)parameters.align);
+			return ""; 
+		}
+
+		private dynamic DrawCircle (dynamic parameters)
+		{
+			EV3.LCD.DrawCircle((int)parameters.x,(int)parameters.y, (ushort) parameters.radius, ((string)parameters.color).ToBoolean(),((string)parameters.fill).ToBoolean() ); 
+			return "";
+		}
+
+		private dynamic DrawEllipse (dynamic parameters)
+		{
+			EV3.LCD.DrawEllipse((int)parameters.x,(int)parameters.y, (ushort) parameters.radius1, (ushort) parameters.radius2, ((string)parameters.color).ToBoolean(), ((string)parameters.fill).ToBoolean() );
+			return ""; 
+		}
+
+		private dynamic DrawLine (dynamic parameters)
+		{
+			EV3.LCD.DrawLine((int)parameters.xstart,(int)parameters.ystart, (int) parameters.xend, (int) parameters.yend, ((string)parameters.color).ToBoolean());
+			return ""; 
+		}
+
+		private dynamic DrawRectangle(dynamic parameters)
+		{
+			EV3.LCD.DrawRectangle((int)parameters.xstart,(int)parameters.ystart, (int) parameters.xend, (int) parameters.yend, ((string)parameters.color).ToBoolean(), ((string)parameters.fill).ToBoolean());
+			return ""; 
 		}
 
 		private IEnumerable<string> GetSubStrings(string input, string start, string end)
