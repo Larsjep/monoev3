@@ -3,7 +3,7 @@ using System.IO;
 
 namespace MonoBrickFirmware.Native
 {
-	public class AOTHelper
+	internal class AOTHelper
 	{
 		public static bool IsFileCompiled (string fileName)
 		{

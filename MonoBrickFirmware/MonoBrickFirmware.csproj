@@ -101,6 +101,7 @@
     <Compile Include="Display\Dialogs\DialogWithProgessAnimation.cs" />
     <Compile Include="Sensors\NoSensor.cs" />
     <Compile Include="Sensors\UnknownSensor.cs" />
+    <Compile Include="FileSystem\EV3Program.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -120,5 +121,8 @@
     <EmbeddedResource Include="Display\Resources\profont_7.bin">
       <LogicalName>font.profont_7</LogicalName>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FileSystem\" />
   </ItemGroup>
 </Project>

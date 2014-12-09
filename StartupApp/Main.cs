@@ -11,7 +11,7 @@ using MonoBrickFirmware.Display.Dialogs;
 using MonoBrickFirmware.Settings;
 using MonoBrickFirmware.Connections;
 using MonoBrickFirmware.Tools;
-
+using MonoBrickFirmware.FileSystem;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,13 +26,9 @@ namespace StartupApp
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		static FirmwareSettings settings = new FirmwareSettings();
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
-		static string ProgramPathSdCard = "/mnt/bootpar/apps";
-		static string ProgramPathEV3 = "/home/root/apps/";
 		static string firmwareVersion= "1.0.0.0";
 
 		static bool updateProgramList = false;
-		
-		enum ExecutionMode {Normal = 0, Debug = 1, AOT = 2  };
 		
 		#region Main Menu
 		static void ShowMainMenu()
@@ -57,35 +53,32 @@ namespace StartupApp
 			do
 			{
 				updateProgramList = false;
+				List<MenuItemWithAction> actionList = new List<MenuItemWithAction>();
+				List<EV3Program> programs = EV3Program.GetProgramList();
+				foreach(var program in programs)
+				{
+					actionList.Add( new MenuItemWithAction(program.Name, () => ShowProgramOptions (program)));
+				}
+
+				/*IEnumerable<MenuItemWithAction> 
+
 				IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateDirectories(ProgramPathEV3)
 					.Select((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
 				IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateDirectories(ProgramPathSdCard)
-					.Select ((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
+					.Select ((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));*/
 				
 				
-				Menu m = new Menu ("Run program:", itemsFromEV3.Concat (itemsFromSD));
+				Menu m = new Menu ("Run program:", actionList);
 				m.Show ();//block
 			}while (updateProgramList); 
 			return false;
 		}
 		
 		
-		static bool ShowProgramOptions (string programFolder)
+		static bool ShowProgramOptions (EV3Program program)
 		{
-			string fileName = "";
-			try {
-				fileName = Directory.EnumerateFiles (programFolder, "*.exe").First ();	
-			} catch {
-				var info = new InfoDialog (programFolder + "is not executable", true, "Program");
-				info.Show ();
-				Directory.Delete (programFolder, true);
-				updateProgramList = true;
-				return true;
-			}
-			
 			var dialog = new SelectDialog<string> (new string[] {
 				"Run Program",
-				"Debug Program",
 				"Run In AOT",
 				"AOT Compile",
 				"Delete Program",
@@ -100,38 +93,39 @@ namespace StartupApp
 					Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 					Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Running...", true, Lcd.Alignment.Center);
 					Lcd.Instance.Update ();						
-					programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.Normal);	
+					programAction = () => program.Run(false);	
 					break;
 				case 1:
-					programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.Debug);
-					break;
-				case 2:
-					if (!AOTHelper.IsFileCompiled (fileName)) {
-						if (AOTCompileAndShowDialog (programFolder)) {
-							programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.AOT);	
+					if (!program.IsAOTCompiled) 
+					{
+						if (AOTCompileAndShowDialog (program)) 
+						{
+							programAction = () => program.Run(true);	
 						}
-					} else {
-						programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.AOT);
+					} 
+					else 
+					{
+						programAction = () => program.Run(true);
 					}
 					break;
 				case 3:
 						
-					if (AOTHelper.IsFileCompiled (fileName)) {
+					if (program.IsAOTCompiled) {
 						var questionDialog = new QuestionDialog ("Progran already compiled. Recompile?", "AOT recompile");
 						if (questionDialog.Show ()) {
-							AOTCompileAndShowDialog (programFolder);
+							AOTCompileAndShowDialog (program);
 						}
-					} else {
-						AOTCompileAndShowDialog (programFolder);
+					} 
+					else 
+					{
+						AOTCompileAndShowDialog (program);
 					}
 					break;
 				case 4:
 					var question = new QuestionDialog ("Are you sure?", "Delete");
-					if (question.Show ()) {
-						var step = new StepContainer (() => {
-							Directory.Delete (programFolder, true);
-							return true;
-						}, "Deleting ", "Error deleting program"); 
+					if (question.Show ()) 
+					{
+						var step = new StepContainer (() => {program.Delete(); return true;}, "Deleting ", "Error deleting program"); 
 						var progressDialog = new ProgressDialog ("Program", step);
 						progressDialog.Show ();
 						updateProgramList = true;
@@ -150,68 +144,17 @@ namespace StartupApp
 			
 		}
 		
-		static bool AOTCompileAndShowDialog(string programFolder)
+		static bool AOTCompileAndShowDialog(EV3Program program)
 		{
 			List<IStep> steps = new List<IStep> ();
-			foreach (string file in Directory.EnumerateFiles(programFolder,"*.*").Where(s => s.EndsWith(".exe") || s.EndsWith(".dll"))) {
+			steps.Add(new StepContainer (delegate() {return program.AOTCompile();}, "compiling program", "Failed to compile"));
+			/*foreach (string file in Directory.EnumerateFiles(programFolder,"*.*").Where(s => s.EndsWith(".exe") || s.EndsWith(".dll"))) {
 				steps.Add (new StepContainer (delegate() {
 					return AOTHelper.Compile (file);
 				}, new FileInfo(file).Name, "Failed to compile"));
-			}
+			}*/
 			var dialog = new StepDialog("Compiling",steps);
 			return dialog.Show();
-		}
-
-		
-		
-		static void RunAndWaitForProgram (string programName, ExecutionMode mode)
-		{
-			switch (mode) 
-			{
-				case ExecutionMode.Debug:
-					programName = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugSettings.Port + ",server=y " + programName;
-					System.Diagnostics.Process proc = new System.Diagnostics.Process ();
-					Dialog dialog = null;
-					Thread escapeThread = null;
-					CancellationTokenSource cts = new CancellationTokenSource();
-					CancellationToken token = cts.Token;
-					string portString  = ("Port: " + settings.DebugSettings.Port).PadRight(6).PadRight(6);
-					if (settings.DebugSettings.TerminateWithEscape) {
-						escapeThread = new System.Threading.Thread (delegate() {
-							while (!token.IsCancellationRequested) {
-								if (Buttons.Instance.GetKeypress (token) == Buttons.ButtonStates.Escape) {
-									proc.Kill ();
-									Console.WriteLine ("Killing process");
-									cts.Cancel();
-								}
-							}
-						});
-						escapeThread.Start();
-						dialog = new InfoDialog (portString + " Press escape to terminate", false, "Debug Mode");
-					} 
-					else 
-					{
-						dialog = new InfoDialog (portString + " Waiting for connection.", false, "Debug Mode");	
-					}
-					dialog.Show ();
-					proc.EnableRaisingEvents = false; 
-					Console.WriteLine ("Starting process: {0} with arguments: {1}", "/usr/local/bin/mono", programName);
-					proc.StartInfo.FileName = "/usr/local/bin/mono";
-					proc.StartInfo.Arguments = programName;
-					proc.Start ();
-					proc.WaitForExit ();
-					if (escapeThread != null && !token.IsCancellationRequested) {
-						cts.Cancel();
-						escapeThread.Join();
-					}
-					break;
-				case ExecutionMode.Normal:
-					ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono", programName); 
-					break;
-				case ExecutionMode.AOT:
-					ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono", "--full-aot " + programName);	
-					break;
-			}
 		}
 		#endregion
 		
