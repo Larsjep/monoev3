@@ -482,6 +482,7 @@ namespace StartupApp
 			Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
 			Lcd.Instance.Update ();						
 			WiFiDevice.TurnOff ();
+			EV3Program.CreateSDCardFolder ();
 
 			// JIT work-around remove when JIT problem is fixed
 			System.Threading.Thread.Sleep (10);
