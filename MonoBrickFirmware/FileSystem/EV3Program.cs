@@ -103,9 +103,16 @@ namespace MonoBrickFirmware.FileSystem
 			return CreateProgram(programFolder, ProgramLocation.Custom);		
 		}
 
+
+		public static void CreateSDCardFolder ()
+		{
+			if (!Directory.Exists (ProgramPathSdCard))
+				Directory.CreateDirectory (ProgramPathSdCard);
+			
+		}
+
 		public static List<EV3Program> GetProgramList()
 		{
-			
 			var media = new string[]{ ProgramPathSdCard, ProgramPathEV3 };
 			List<EV3Program> programList = new List<EV3Program>();
 			foreach (var mediaPath in media) 
