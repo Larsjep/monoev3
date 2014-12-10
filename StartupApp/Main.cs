@@ -59,15 +59,6 @@ namespace StartupApp
 				{
 					actionList.Add( new MenuItemWithAction(program.Name, () => ShowProgramOptions (program)));
 				}
-
-				/*IEnumerable<MenuItemWithAction> 
-
-				IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateDirectories(ProgramPathEV3)
-					.Select((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
-				IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateDirectories(ProgramPathSdCard)
-					.Select ((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));*/
-				
-				
 				Menu m = new Menu ("Run program:", actionList);
 				m.Show ();//block
 			}while (updateProgramList); 
@@ -485,15 +476,13 @@ namespace StartupApp
 
 		public static void Main (string[] args)
 		{
-			/*Lcd.Instance.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
+			Lcd.Instance.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
 			Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 			
 			Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
 			Lcd.Instance.Update ();						
 			WiFiDevice.TurnOff ();
-			if (!Directory.Exists (ProgramPathSdCard))
-				Directory.CreateDirectory (ProgramPathSdCard);
-			
+
 			// JIT work-around remove when JIT problem is fixed
 			System.Threading.Thread.Sleep (10);
 			Console.WriteLine ("JIT workaround - please remove!!!");
@@ -555,15 +544,7 @@ namespace StartupApp
 			while(true)
 			{
 				ShowMainMenu();
-			}*/
-			var nancyHost = new NancyHost(new Uri("http://127.0.0.1:8080/"));
-
-			nancyHost.Start();
-			
-			Console.WriteLine("Nancy now listening - navigating to http://localhost:8888/. Press enter to stop");
-			//Process.Start("http://localhost:8080/");
-			terminateProgram.WaitOne();
-			//Console.WriteLine("Stopped. Good bye!");
+			}
 		}
 		#endregion
 	}
