@@ -103,6 +103,7 @@
     <Compile Include="Sensors\UnknownSensor.cs" />
     <Compile Include="FileSystem\ProgramManager.cs" />
     <Compile Include="FileSystem\ProgramInformation.cs" />
+    <Compile Include="Sensors\MSGlideWheel.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
