@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using MonoBrickFirmware.Sensors;
+using MonoBrickFirmware.FileSystem;
+
 namespace MonoBrickWebServer.Models
 {
 	public class EV3Model
@@ -12,19 +14,13 @@ namespace MonoBrickWebServer.Models
 			Sensors = new SensorModelList (useDummy);
 			if (!useDummy) 
 			{
-				LCD = new LcdModel ();
 				detector = new SensorDetector ();
 				detector.SensorAttached += HandleSensorAttached;
 				detector.SensorDetached += HandleSensorDetached;
 			} 
-			else 
-			{
-				LCD = new DummyLcdModel();
-			}
 		}
 		public MotorModelList Motors{ get; private set;}
 		public SensorModelList Sensors{ get; private set;}
-		public ILcdModel LCD{get; private set;}
 		public void Update()
 		{
 			if (detector != null) 

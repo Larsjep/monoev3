@@ -55,13 +55,21 @@ namespace MonoBrickWebServer
 
 		public bool Start (int port, int timeout = Timeout.Infinite, bool useDummyEV3 = false)
 		{
-			if (IsRunning) 
-			{
+			if (IsRunning) {
 				Stop ();
 			}
 			Port = port;
 			serverStarted.Reset ();
 			EV3Module.EV3 = new EV3Model (useDummyEV3);
+			EV3Module.Programs = new ProgramModelList (useDummyEV3);
+			if (useDummyEV3) 
+			{
+				EV3Module.LCD = new DummyLcdModel ();
+			} 
+			else 
+			{
+				EV3Module.LCD = new LcdModel ();	
+			}
 			serverThread.Start ();
 			Console.WriteLine("Starting web server");
 			if (!serverStarted.WaitOne (timeout)) 

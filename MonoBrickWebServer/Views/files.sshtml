@@ -126,23 +126,53 @@
 			{
 			   	$("#dialog-loading").dialog( "close" );
 			}
+
+			function startProgram(fileName)
+			{
+				$.get("program/"+ fileName + "/start/", {}, function(data,status){});
+				updateTable();
+			}
+		    
+		    function stopProgram(fileName)
+			{
+   			     $.get("program/"+ fileName + "/stop/", {}, function(data,status){});
+   			     updateTable();
+			}
+
+			function deleteProgram(fileName)
+			{
+   			     $.get("program/"+ fileName + "/delete/", {}, function(data,status){});
+   			     updateTable();
+			}
+			function updateTable()
+			{
+				$.ajax({url: "/program",dataType: "JSON"}).success(function(data)
+					{
+							showLoadDialog();
+							$("#dataTable td").parent().remove();
+							for (var i = 0; i < data.length; i++) 
+							{
+	    						 var row = $("<tr class=\"outer\" />")
+	    						 $("#dataTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+	    						 row.append($("<td class=\"inner\" align=\"center\"><font color=black>" + data[i].name + "</font></td>"));
+	    						 row.append($("<td class=\"inner\" align=\"center\"><font color=black>" + data[i].isRunning + "</font></td>"));
+	    						 row.append($("<td class=\"inner\" align=\"center\"><font color=black>" + data[i].programLocation + "</font></td>"));
+	    						 row.append($("<td class=\"inner\" align=\"center\"><input type=\"button\" name=\""+ data[i].name +"\"  id=\"" + data[i].name + "start\" value=\"Start\")>&nbsp;&nbsp;<input type=\"button\" name=\""+ data[i].name +"\"  id=\"" + data[i].name + "stop\" value=\"Stop\">&nbsp;&nbsp;<input type=\"button\" name=\""+ data[i].name +"\"  id=\"" + data[i].name + "delete\" value=\"Delete\"></td>"));
+	    						 document.getElementById(data[i].name + "start").onclick = function(){startProgram(this.name);};
+	    						 document.getElementById(data[i].name + "stop").onclick = function(){stopProgram(this.name);};
+	    						 document.getElementById(data[i].name + "delete").onclick = function(){deleteProgram(this.name);};
+	    						 
+	    					}
+							hideLoadDialog();
+					});
+			}
+
+
 	    </script>
         <script>
 			$(document).ready(function()
 			{
-				$.ajax({url: "/urls",dataType: "JSON"}).success(function(data)
-				{
-						for (var i = 0; i < data.length; i++) 
-						{
-    						 var row = $("<tr class=\"outer\" />")
-    						 $("#dataTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
-    						 row.append($("<td class=\"inner\"><font color=black>" + data[i].description + "</font></td>"));
-    						 row.append($("<td class=\"inner\"><font color=black><a href=\"" + data[i].url + "\" target=\"_blank\">" + data[i].url + "</a></font></td>"));
-    						 
-    					}
-						hideLoadDialog();
-				});
-				return false;
+				updateTable();
 			});
 		</script>
 	</HEAD>
@@ -150,24 +180,30 @@
 
 		<center><img src="Images/Title.png"/></center>
 		<p style="border-top-width: 1px; border-top-style: solid; border-top-color: #f26100; padding-top: 10px;"></p>
-		<div id="dialog-loading" title="Loading webpage" style="display: none;">    
+		<div id="dialog-loading" title="Updating program list" style="display: none;">    
 			 		<font color="black">
 			    	<div style="margin-left: 23px;">
 			        <p>
-			            Waiting for EV3...
+			            Please wait...
 			        </p>
 					</div>
 					</font>
 		</div>
 
 		<center>
-		   
-		 	<table class="outer" id="dataTable">
-			    <tr class="outer">
-			        <th class="outer" width="50%">Description</th>
-					<th class="outer" width="50%">Example URL</th>
+			<table class="outer" id="dataTable">
+				<tr class="outer">
+			        <th class="outer" width="25%">Program Name</th>
+					<th class="outer" width="25%">Is Running</th>
+					<th class="outer" width="25%">Location</th>
+					<th class="outer" width="25%">Actions</th>
 			    </tr>
+			    <td>
+			    </td>
 			</table>
+			<br>
+			<input type="button" value="Refresh program list" onclick=updateTable()> 
+			<br>
 		<br>
 		<sup><font color="#999999">Powered by</font></sup>
 		<br>

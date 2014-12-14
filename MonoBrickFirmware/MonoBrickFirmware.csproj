@@ -101,7 +101,8 @@
     <Compile Include="Display\Dialogs\DialogWithProgessAnimation.cs" />
     <Compile Include="Sensors\NoSensor.cs" />
     <Compile Include="Sensors\UnknownSensor.cs" />
-    <Compile Include="FileSystem\EV3Program.cs" />
+    <Compile Include="FileSystem\ProgramManager.cs" />
+    <Compile Include="FileSystem\ProgramInformation.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

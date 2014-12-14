@@ -13,13 +13,25 @@ namespace MonoBrickWebServer.Modules
 	public class EV3Module : NancyModule
 	{
 		internal static EV3Model EV3;
+		internal static ProgramModelList Programs;
 		internal static List<UrlModel> UrlList = new List<UrlModel>();
+		internal static ILcdModel LCD;
+
 		private static bool isInitialized = false;
+		private static string firstProgramName;
+
 		public EV3Module ()
 		{
+			if (!isInitialized) 
+			{
+				firstProgramName = Programs[0].Name;
+			}
+
 			//HTTP requests
 			AddGetRequest ("/", p => View ["index"], "Webpage for motor and sensor");
 			AddGetRequest ("/lcd", p => View ["lcd"], "Webpage for LCD control");
+			AddGetRequest ("/files", p => View ["files"], "Webpage for Program control");
+
 			AddGetRequest ("/documentation",  p => View ["documentation"], "This documentation");
 			AddGetRequest ("/Images/{title}", p => Response.AsImage (@"Images/" + (string)p.title));//Not added to URL list 
 
@@ -52,6 +64,12 @@ namespace MonoBrickWebServer.Modules
 			AddGetRequest ("/lcd/text/x={x}&y={y}&text={text}&color={color}", WriteText, "Write text on the LCD", "20", "10", "Text","true");
 			AddGetRequest ("/lcd/textbox/xstart={xstart}&ystart={ystart}&xend={xend}&yend={yend}&text={text}&color={color}&align={align}", WriteTextBox, "Write text in a box on the LCD", "0", "0", "100", "100", "Text","true", "center");
 			AddGetRequest ("/lcd/vline/x={x}&y={y}&height={height}&color={color}", DrawVLine, "Draw a V line in the LCD", "30", "20", "4","true");
+
+			AddGetRequest ("/program/", GetAllPrograms, "Get all program info as JSON");
+			AddGetRequest ("/program/{name}", this.GetProgram, "Get specific program info as JSON", firstProgramName);
+			AddGetRequest ("/program/{name}/start", StartProgram, "Start program", firstProgramName);
+			AddGetRequest ("/program/{name}/stop", StopProgram, "Stop program", firstProgramName);
+			AddGetRequest ("/program/{name}/delete", DeleteProgram, "Delete program", firstProgramName);
 
 			AddGetRequest ("/urls", p => Response.AsJson (UrlList, HttpStatusCode.OK), "Get a list of urls as JSON");
 
@@ -175,75 +193,110 @@ namespace MonoBrickWebServer.Modules
 		private dynamic GetSecreenShot (dynamic parameters)
 		{
 			string directory = Directory.GetCurrentDirectory();
-			EV3.LCD.TakeScreenShot(directory, "screenshot.bmp");
+			LCD.TakeScreenShot(directory, "screenshot.bmp");
 			return Response.AsImage(Path.Combine(directory, "screenshot.bmp"));
 		}
 
 		private dynamic SetPixel (dynamic parameters)
 		{
-			EV3.LCD.SetPixel((int) parameters.x, (int) parameters.y, ((string)parameters.color).ToBoolean());
+			LCD.SetPixel((int) parameters.x, (int) parameters.y, ((string)parameters.color).ToBoolean());
 			return ""; 
 		}
 
 		private dynamic ClearLine (dynamic parameters)
 		{
-			EV3.LCD.ClearLines((int) parameters.y, (int) parameters.count);
+			LCD.ClearLines((int) parameters.y, (int) parameters.count);
 			return "";
 		}
 
 		private dynamic ClearLcd (dynamic parameters)
 		{
-			EV3.LCD.Clear();
+			LCD.Clear();
 			return ""; 
 		}
 
 		private dynamic DrawVLine (dynamic parameters)
 		{
-			EV3.LCD.DrawVLine((int)parameters.x,(int)parameters.y, (int)parameters.height, ((string)parameters.color).ToBoolean());
+			LCD.DrawVLine((int)parameters.x,(int)parameters.y, (int)parameters.height, ((string)parameters.color).ToBoolean());
 			return ""; 
 		}
 
 		private dynamic DrawHLine (dynamic parameters)
 		{
-			EV3.LCD.DrawHLine((int)parameters.x,(int)parameters.y, (int)parameters.length, ((string)parameters.color).ToBoolean());
+			LCD.DrawHLine((int)parameters.x,(int)parameters.y, (int)parameters.length, ((string)parameters.color).ToBoolean());
 			return ""; 
 		}
 
 		private dynamic WriteText (dynamic parameters)
 		{
-			EV3.LCD.WriteText((int)parameters.x,(int)parameters.y, parameters.text, ((string)parameters.color).ToBoolean());
+			LCD.WriteText((int)parameters.x,(int)parameters.y, parameters.text, ((string)parameters.color).ToBoolean());
 			return ""; 
 		}
 
 		private dynamic WriteTextBox (dynamic parameters)
 		{
-			EV3.LCD.WriteTextBox((int)parameters.xstart,(int)parameters.ystart, (int) parameters.xend, (int) parameters.yend, (string) parameters.text, ((string)parameters.color).ToBoolean(), (string)parameters.align);
+			LCD.WriteTextBox((int)parameters.xstart,(int)parameters.ystart, (int) parameters.xend, (int) parameters.yend, (string) parameters.text, ((string)parameters.color).ToBoolean(), (string)parameters.align);
 			return ""; 
 		}
 
 		private dynamic DrawCircle (dynamic parameters)
 		{
-			EV3.LCD.DrawCircle((int)parameters.x,(int)parameters.y, (ushort) parameters.radius, ((string)parameters.color).ToBoolean(),((string)parameters.fill).ToBoolean() ); 
+			LCD.DrawCircle((int)parameters.x,(int)parameters.y, (ushort) parameters.radius, ((string)parameters.color).ToBoolean(),((string)parameters.fill).ToBoolean() ); 
 			return "";
 		}
 
 		private dynamic DrawEllipse (dynamic parameters)
 		{
-			EV3.LCD.DrawEllipse((int)parameters.x,(int)parameters.y, (ushort) parameters.radius1, (ushort) parameters.radius2, ((string)parameters.color).ToBoolean(), ((string)parameters.fill).ToBoolean() );
+			LCD.DrawEllipse((int)parameters.x,(int)parameters.y, (ushort) parameters.radius1, (ushort) parameters.radius2, ((string)parameters.color).ToBoolean(), ((string)parameters.fill).ToBoolean() );
 			return ""; 
 		}
 
 		private dynamic DrawLine (dynamic parameters)
 		{
-			EV3.LCD.DrawLine((int)parameters.xstart,(int)parameters.ystart, (int) parameters.xend, (int) parameters.yend, ((string)parameters.color).ToBoolean());
+			LCD.DrawLine((int)parameters.xstart,(int)parameters.ystart, (int) parameters.xend, (int) parameters.yend, ((string)parameters.color).ToBoolean());
 			return ""; 
 		}
 
 		private dynamic DrawRectangle(dynamic parameters)
 		{
-			EV3.LCD.DrawRectangle((int)parameters.xstart,(int)parameters.ystart, (int) parameters.xend, (int) parameters.yend, ((string)parameters.color).ToBoolean(), ((string)parameters.fill).ToBoolean());
+			LCD.DrawRectangle((int)parameters.xstart,(int)parameters.ystart, (int) parameters.xend, (int) parameters.yend, ((string)parameters.color).ToBoolean(), ((string)parameters.fill).ToBoolean());
 			return ""; 
 		}
+
+		private dynamic GetAllPrograms(dynamic parameters)
+		{
+			Programs.Update();
+			return Response.AsJson(Programs, HttpStatusCode.OK);
+		}
+
+		private dynamic GetProgram(dynamic parameters)
+		{
+			Programs.Update();
+			return Response.AsJson(Programs[(string)parameters.name], HttpStatusCode.OK);
+		}
+
+		private dynamic StartProgram(dynamic parameters)
+		{
+			Programs[(string)parameters.name].Start();
+			return "";
+		}
+
+		private dynamic StopProgram(dynamic parameters)
+		{
+			Programs[(string)parameters.name].Stop();
+			return "";
+		}
+
+		private dynamic DeleteProgram(dynamic parameters)
+		{
+			Programs[(string)parameters.name].Delete();
+			Programs.Update();
+			firstProgramName = Programs[0].Name;
+			return "";
+		}
+
+
+
 
 		private IEnumerable<string> GetSubStrings(string input, string start, string end)
 		{

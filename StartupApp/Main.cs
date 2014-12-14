@@ -54,7 +54,7 @@ namespace StartupApp
 			{
 				updateProgramList = false;
 				List<MenuItemWithAction> actionList = new List<MenuItemWithAction>();
-				List<EV3Program> programs = EV3Program.GetProgramList();
+				List<ProgramInformation> programs = ProgramManager.Instance.GetProgramInformationList();
 				foreach(var program in programs)
 				{
 					actionList.Add( new MenuItemWithAction(program.Name, () => ShowProgramOptions (program)));
@@ -66,7 +66,7 @@ namespace StartupApp
 		}
 		
 		
-		static bool ShowProgramOptions (EV3Program program)
+		static bool ShowProgramOptions (ProgramInformation program)
 		{
 			var dialog = new SelectDialog<string> (new string[] {
 				"Run Program",
@@ -84,19 +84,19 @@ namespace StartupApp
 					Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 					Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Running...", true, Lcd.Alignment.Center);
 					Lcd.Instance.Update ();						
-					programAction = () => program.Run(false);	
+					programAction = () => ProgramManager.Instance.StartProgram(program,false);	
 					break;
 				case 1:
 					if (!program.IsAOTCompiled) 
 					{
 						if (AOTCompileAndShowDialog (program)) 
 						{
-							programAction = () => program.Run(true);	
+							programAction = () => ProgramManager.Instance.StartProgram(program,true);	
 						}
 					} 
 					else 
 					{
-						programAction = () => program.Run(true);
+						programAction = () => ProgramManager.Instance.StartProgram(program, true);
 					}
 					break;
 				case 3:
@@ -116,7 +116,7 @@ namespace StartupApp
 					var question = new QuestionDialog ("Are you sure?", "Delete");
 					if (question.Show ()) 
 					{
-						var step = new StepContainer (() => {program.Delete(); return true;}, "Deleting ", "Error deleting program"); 
+						var step = new StepContainer (() => {ProgramManager.Instance.DeleteProgram(program); return true;}, "Deleting ", "Error deleting program"); 
 						var progressDialog = new ProgressDialog ("Program", step);
 						progressDialog.Show ();
 						updateProgramList = true;
@@ -135,10 +135,10 @@ namespace StartupApp
 			
 		}
 		
-		static bool AOTCompileAndShowDialog(EV3Program program)
+		static bool AOTCompileAndShowDialog(ProgramInformation program)
 		{
 			List<IStep> steps = new List<IStep> ();
-			steps.Add(new StepContainer (delegate() {return program.AOTCompile();}, "compiling program", "Failed to compile"));
+			steps.Add(new StepContainer (delegate() {return ProgramManager.Instance.AOTCompileProgram(program);}, "compiling program", "Failed to compile"));
 			/*foreach (string file in Directory.EnumerateFiles(programFolder,"*.*").Where(s => s.EndsWith(".exe") || s.EndsWith(".dll"))) {
 				steps.Add (new StepContainer (delegate() {
 					return AOTHelper.Compile (file);
@@ -482,7 +482,7 @@ namespace StartupApp
 			Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
 			Lcd.Instance.Update ();						
 			WiFiDevice.TurnOff ();
-			EV3Program.CreateSDCardFolder ();
+			ProgramManager.Instance.CreateSDCardFolder();
 
 			// JIT work-around remove when JIT problem is fixed
 			System.Threading.Thread.Sleep (10);

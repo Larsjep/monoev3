@@ -125,6 +125,10 @@
     <Compile Include="Models\UrlModel.cs" />
     <Compile Include="Models\DummyLcdModel.cs" />
     <Compile Include="Models\ILcdModel.cs" />
+    <Compile Include="Models\ProgramModel.cs" />
+    <Compile Include="Models\ProgramModelList.cs" />
+    <Compile Include="Models\IprogramModel.cs" />
+    <Compile Include="Models\DummyProgramModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\index.sshtml">
@@ -136,6 +140,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Views\lcd.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\files.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
