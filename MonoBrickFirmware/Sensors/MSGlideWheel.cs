@@ -14,8 +14,9 @@ namespace MonoBrickFirmware.Sensors
 
 		private static byte ResetCommand = (byte)'r';
 
-		public MSGlideWheel (SensorPort Port) : base (Port, (byte)0x30, I2CMode.LowSpeed9V)
+		public MSGlideWheel (SensorPort Port) : base (Port, (byte)0x30, I2CMode.LowSpeed)
 		{
+			base.Initialise();
 			base.Initialise();
 		}
 
@@ -29,18 +30,17 @@ namespace MonoBrickFirmware.Sensors
 
 		public int ReadAngle ()
 		{
-			return (int) BitConverter.ToInt32(ReadRegister(ReadRegister((byte)GlideWheelRegister.Angle, 4)));
+			return (int) BitConverter.ToInt32(ReadRegister((byte)GlideWheelRegister.Angle, 4),0);
 		}
 
 		public int ReadRAW ()
 		{
-			return (int) BitConverter.ToInt32(ReadRegister(ReadRegister((byte)GlideWheelRegister.RAW, 4)));
+			return (int) BitConverter.ToInt32(ReadRegister((byte)GlideWheelRegister.RAW, 4),0);
 		}
 
-		public int ReadRPM()
+		public int ReadRPM ()
 		{
-			return (int) BitConverter.ToInt32(ReadRegister(ReadRegister((byte)GlideWheelRegister.RPM, 4)));
-
+			return (int) BitConverter.ToInt16(ReadRegister((byte)GlideWheelRegister.RPM, 2),0);
 		}
 
 		public override string ReadAsString()
@@ -70,7 +70,7 @@ namespace MonoBrickFirmware.Sensors
 
 		public override string SelectedMode()
 		{
-			return ("Mode 1");
+			return ("Angle mode");
 		}
 	}
 }
