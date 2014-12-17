@@ -3,9 +3,9 @@
 namespace MonoBrickFirmware.Sensors
 {
 	/// <summary>
-	/// Class for the Mindsensor glideWheel angle sensor (Visit www.mindsensor.com for more info)
+	/// Class for the Mindsensor glideWheel angle sensor
 	/// </summary>
-	public class MSGlideWheel : I2CSensor
+	public class MSAngleSensor : I2CSensor
 	{
 		private enum GlideWheelRegister : byte
 		{
@@ -14,7 +14,7 @@ namespace MonoBrickFirmware.Sensors
 
 		private static byte ResetCommand = (byte)'r';
 
-		public MSGlideWheel (SensorPort Port) : base (Port, (byte)0x30, I2CMode.LowSpeed)
+		public MSAngleSensor (SensorPort Port) : base (Port, (byte)0x30, I2CMode.LowSpeed)
 		{
 			base.Initialise();
 			base.Initialise();
@@ -22,10 +22,7 @@ namespace MonoBrickFirmware.Sensors
 
 		public void ResetAngle()
 		{
-			byte[] BytesToWrite = {(byte)0};
-			BytesToWrite[0] = (byte)ResetCommand;
-			WriteRegister((byte)GlideWheelRegister.Command, BytesToWrite);
-			return;
+			WriteRegister((byte)GlideWheelRegister.Command, (byte)ResetCommand);
 		}
 
 		public int ReadAngle ()
@@ -50,7 +47,7 @@ namespace MonoBrickFirmware.Sensors
 
 		public override string GetSensorName()
 		{
-			return "Mindsensors GlideWheel";
+			return "Mindsensors Angle";
 		}
 
 		public override int NumberOfModes()
