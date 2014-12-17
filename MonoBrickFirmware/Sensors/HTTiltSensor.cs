@@ -117,7 +117,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		public override string GetSensorName ()
 		{
-			return "HT Tilt Sensor";
+			return "HiTechnic Tilt Sensor";
 		}
 		
 		public override void SelectPreviousMode ()

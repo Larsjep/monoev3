@@ -71,7 +71,7 @@ namespace MonoBrickFirmware.Sensors
         
         public override string GetSensorName ()
 		{
-			return "HT Color";
+			return "HiTechnic Color";
 		}
 		
 		public override void SelectNextMode()

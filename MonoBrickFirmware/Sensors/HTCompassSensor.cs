@@ -48,7 +48,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		public override string GetSensorName ()
 		{
-			return "HT Compass";
+			return "HiTechnic Compass";
 		}
 		
 		public override void SelectPreviousMode ()
