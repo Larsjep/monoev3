@@ -103,7 +103,10 @@
     <Compile Include="Sensors\UnknownSensor.cs" />
     <Compile Include="FileSystem\ProgramManager.cs" />
     <Compile Include="FileSystem\ProgramInformation.cs" />
-    <Compile Include="Sensors\MSGlideWheel.cs" />
+    <Compile Include="Sensors\MSDistanceSensor.cs" />
+    <Compile Include="Sensors\MSAngleSensor.cs" />
+    <Compile Include="Sensors\SensorAttachment.cs" />
+    <Compile Include="Sensors\SensorDetector.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
