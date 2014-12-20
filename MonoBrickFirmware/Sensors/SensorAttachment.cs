@@ -6,34 +6,6 @@ namespace MonoBrickFirmware.Sensors
 	public class SensorAttachment
 	{
 		private static int PollInterval = 500;
-		/// <summary>
-		/// Wait for a sensor on a specified port.
-		/// </summary>
-		/// <param name="port">Port the sensor should be acctached to</param>
-		/// <typeparam name="SensorType">The sensor type to wait for</typeparam>
-		public static SensorType Wait<SensorType> (SensorPort port)
-			where SensorType : ISensor
-		{
-			ManualResetEvent sensorAttached = new ManualResetEvent(false);
-			SensorDetector detector = new SensorDetector();
-			bool run = true;
-			SensorType newSensor = default(SensorType);
-			detector.SensorAttached += delegate(ISensor sensor) 
-			{
-				if(sensor.Port == port && sensor.GetType() == typeof(SensorType))
-				{
-					newSensor = (SensorType)sensor;
-					sensorAttached.Set();
-					run = false;
-				}		
-			};
-			while (run) 
-			{
-		    	detector.Update();
-				sensorAttached.WaitOne(PollInterval);
-			}
-			return newSensor;
-		}
 
 		/// <summary>
 		/// Wait for a sensor on any port.
@@ -42,25 +14,72 @@ namespace MonoBrickFirmware.Sensors
 		public static SensorType Wait<SensorType>()
 			where SensorType : ISensor
 		{
-			ManualResetEvent sensorAttached = new ManualResetEvent(false);
-			SensorDetector detector = new SensorDetector();
+			return WaitForSensor<SensorType>(null, new CancellationToken(false));
+		}
+
+		/// <summary>
+		/// Wait for a sensor on any port with ability to cancel.
+		/// </summary>
+		/// <param name="token">Token to cancel</param>
+		/// <typeparam name="SensorType">The sensor type to wait for</typeparam>
+		public static SensorType Wait<SensorType>(CancellationToken token)
+			where SensorType : ISensor
+		{
+			return WaitForSensor<SensorType>(null, token);
+		}
+
+
+		/// <summary>
+		/// Wait for a sensor on a specified port.
+		/// </summary>
+		/// <param name="port">Port sensor should be attached to.</param>
+		/// <typeparam name="SensorType">The sensor type to wait for</typeparam>
+		public static SensorType Wait<SensorType>(SensorPort port)
+			where SensorType : ISensor
+		{
+			return WaitForSensor<SensorType>(port, new CancellationToken(false));
+		}
+
+		/// <summary>
+		/// Wait the specified port and token with ability to cancel.
+		/// </summary>
+		/// <param name="port">Port sensor should be attached to.</param>
+		/// <param name="token">Token to cancel</param>
+		/// <typeparam name="SensorType">The sensor type to wait for</typeparam>
+		public static SensorType Wait<SensorType>(SensorPort port, CancellationToken token)
+			where SensorType : ISensor
+		{
+			return WaitForSensor<SensorType>(port, token);
+		}
+
+
+		private static SensorType WaitForSensor<SensorType>(SensorPort? port, CancellationToken token)
+			where SensorType : ISensor
+		{
+			ManualResetEvent sensorAttached = new ManualResetEvent (false);
+			SensorDetector detector = new SensorDetector ();
 			bool run = true;
+			bool checkForPort = port != null;
 			SensorType newSensor = default(SensorType);
-			detector.SensorAttached += delegate(ISensor sensor) 
-			{
-				if(sensor.GetType() == typeof(SensorType))
-				{
-					sensorAttached.Set();
-					newSensor = (SensorType)sensor;
-					run = false;
+
+			detector.SensorAttached += delegate(ISensor sensor) {
+				if (sensor.GetType () == typeof(SensorType)) {
+					if (!checkForPort || sensor.Port == port.Value) {
+						newSensor = (SensorType)sensor;
+						sensorAttached.Set ();
+						run = false;
+					}
 				}		
 			};
-			while (run) 
-			{
-		    	detector.Update();
-				sensorAttached.WaitOne(PollInterval);
+			WaitHandle[] handles = new WaitHandle[]{sensorAttached, token.WaitHandle};
+			while (run) {
+				detector.Update ();
+				if (token.IsCancellationRequested) 
+				{
+					run = false;
+				}
+				WaitHandle.WaitAny(handles, PollInterval);
 			}
-			sensorAttached.WaitOne();
 			return newSensor;
 		}
 
