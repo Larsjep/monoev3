@@ -18,8 +18,9 @@ namespace MonoBrickFirmware.Sensors
         private const byte ColorAddress = 0x02;
         
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.NXT.HiTecColor"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.HiTecColorSensor"/> class.
 		/// </summary>
+		/// <param name="port">Port.</param>
 		public HiTecColorSensor(SensorPort port) : base(port, ColorAddress, I2CMode.LowSpeed9V) 
 		{ 
 			base.Initialise();

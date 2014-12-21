@@ -23,8 +23,9 @@ namespace MonoBrickFirmware.Sensors
         private byte red;
         private byte green;
         private byte blue;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoBrick.NXT.RGBColor"/> class.
+        /// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.RGBColor"/> class.
         /// </summary>
         /// <param name='red'>
         /// Red value

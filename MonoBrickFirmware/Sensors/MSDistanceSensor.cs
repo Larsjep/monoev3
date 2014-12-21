@@ -26,6 +26,11 @@ namespace MonoBrickFirmware.Sensors
 			base.Initialise();
 		}
 
+
+		/// <summary>
+		/// Gets the range type of the sensor.
+		/// </summary>
+		/// <returns>The range.</returns>
 		public Range GetRange ()
 		{
 			string deviceId = base.GetDeviceId ();
@@ -47,22 +52,35 @@ namespace MonoBrickFirmware.Sensors
 			return range.Value;		
 		}
 
+		/// <summary>
+		/// Gets the distance in mm.
+		/// </summary>
+		/// <returns>The distance in mm.</returns>
 		public int GetDistance()
 		{
 			return (int) BitConverter.ToInt16(ReadRegister((byte)DistanceRegister.DistanceLsb, 2),0);
 		}
 
-
+		/// <summary>
+		/// Gets the volgage consumption in mA.
+		/// </summary>
+		/// <returns>The volgage consumption in mA.</returns>
 		public int GetVolgage ()
 		{
 			return (int) BitConverter.ToInt16(ReadRegister((byte)DistanceRegister.DistanceLsb, 2),0);
 		}
 
+		/// <summary>
+		/// Powers the sensor on.
+		/// </summary>
 		public void PowerOn()
 		{
 			WriteRegister((byte)DistanceRegister.Command, (byte)PowerOnCommand);
 		}
 
+		/// <summary>
+		/// Powers the sensor off.
+		/// </summary>
 		public void PowerOff()
 		{
 			WriteRegister((byte)DistanceRegister.Command, (byte)PowerOffCommand);
@@ -71,7 +89,7 @@ namespace MonoBrickFirmware.Sensors
 
 		public override string ReadAsString()
 		{
-			return("Distance: " + GetDistance());
+			return("Distance: " + GetDistance() + " mm");
 		}
 
 		public override string GetSensorName()

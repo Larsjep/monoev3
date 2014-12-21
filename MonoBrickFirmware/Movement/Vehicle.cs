@@ -89,7 +89,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// </param>
 		public WaitHandle Backward(sbyte speed, UInt32 degrees, bool brake){
 			return Move((sbyte)-speed, degrees, brake);
 		}
@@ -111,7 +110,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// </param>
 		public WaitHandle Forward(sbyte speed, UInt32 degrees, bool brake){
 			return Move(speed,degrees, brake);
 		}
@@ -131,7 +129,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// </param>
 		public WaitHandle SpinLeft(sbyte speed, UInt32 degrees, bool brake){
 			WaitHandle handle;
 			if(leftPort < rightPort){
@@ -160,7 +157,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="speed">Speed.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// </param>
 		public WaitHandle SpinRight(sbyte speed, UInt32 degrees, bool brake){
 			WaitHandle handle;
 			if(leftPort < rightPort){
@@ -208,7 +204,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// </param>
 		public WaitHandle TurnRightForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			WaitHandle handle;
 			if(leftPort < rightPort){
@@ -241,7 +236,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// </param>
 		public WaitHandle TurnRightReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			WaitHandle handle;
 			if(leftPort < rightPort){
@@ -275,7 +269,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// </param>
 		public WaitHandle TurnLeftForward(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			WaitHandle handle;
 			if(leftPort < rightPort){
@@ -309,7 +302,6 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="turnPercent">Turn percent.</param>
 		/// <param name="degrees">Degrees.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// </param>
 		public WaitHandle TurnLeftReverse(sbyte speed, sbyte turnPercent, UInt32 degrees, bool brake){
 			WaitHandle handle;
 			if(leftPort < rightPort){

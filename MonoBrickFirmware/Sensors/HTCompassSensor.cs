@@ -15,8 +15,9 @@ namespace MonoBrickFirmware.Sensors
         private const byte CompassAddress = 0x02;
         
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.NXT.HiTecCompass"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.HiTecCompassSensor"/> class.
 		/// </summary>
+		/// <param name="port">Port.</param>
 		public HiTecCompassSensor(SensorPort port) : base(port, CompassAddress, I2CMode.LowSpeed9V) { 
 			base.Initialise();
 		}
