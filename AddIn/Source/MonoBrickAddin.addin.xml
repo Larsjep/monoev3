@@ -7,7 +7,7 @@
 		copyright="MIT X11" 
 		description="MonoBrick solution and debugging" 
 		category="Mindstorms" 
-		version="0.1">
+		version="1.1.1">
 
 	<Dependencies>
 		<Addin id="::MonoDevelop.Core" version="5.0" />
@@ -34,6 +34,7 @@
 
 	<Extension path = "/MonoDevelop/Ide/ProjectTemplates">
 		<ProjectTemplate id = "MonoBrickProject" resource = "MonoBrickProject.xpt.xml"/>
+		<ProjectTemplate id = "MonoBrickFSharpProject" resource = "MonoBrickFSharpProject.xpt.xml"/>
 	</Extension>
 
 	<Extension path = "/MonoDevelop/ProjectModel/ProjectBindings">
