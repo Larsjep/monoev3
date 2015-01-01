@@ -59,6 +59,7 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Mono.CSharp" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\background.jpg">

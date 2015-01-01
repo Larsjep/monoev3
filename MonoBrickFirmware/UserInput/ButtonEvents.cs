@@ -8,16 +8,17 @@ namespace MonoBrickFirmware.UserInput
 	public class ButtonEvents : IDisposable
 	{
 		EventWaitHandle stopPolling = new ManualResetEvent (false);
-		const int pollTime = 50;
+		private int pollTime = 50;
 		QueueThread queue = new QueueThread ();
 		Thread pollThread = null;
-		
-		public ButtonEvents ()
+
+		public ButtonEvents (int pollInterval = 50)
 		{
+			this.pollTime = pollTime;
 			pollThread = new Thread(ButtonPollThread);
 			pollThread.Start ();
 		}
-		
+
 		public void Kill()
 		{
 			stopPolling.Set();
