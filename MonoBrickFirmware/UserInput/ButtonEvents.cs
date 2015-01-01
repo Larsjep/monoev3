@@ -14,7 +14,7 @@ namespace MonoBrickFirmware.UserInput
 
 		public ButtonEvents (int pollInterval = 50)
 		{
-			this.pollTime = pollTime;
+			this.pollTime = pollInterval;
 			pollThread = new Thread(ButtonPollThread);
 			pollThread.Start ();
 		}
