@@ -71,8 +71,9 @@ namespace MonoBrickFirmware.Movement
 		public WaitHandle SpeedProfile(sbyte speed, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake)
 		{
 			output.SetPower (0);
+			StartPooling();
 			output.SetStepSpeed (speed, rampUpSteps, constantSpeedSteps, rampDownSteps, brake);
-			return WaitForMotorsToStartAndStop();
+			return WaitForMotorsToComplete();
 		}
 		
 		/// <summary>
@@ -86,8 +87,9 @@ namespace MonoBrickFirmware.Movement
 		public WaitHandle SpeedProfileTime(sbyte speed, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake)
 		{
 			output.SetPower (0);
+			StartPooling();
 			output.SetTimeSpeed(speed, rampUpTimeMs, constantSpeedTimeMs, rampUpTimeMs, brake);
-			return WaitForMotorsToStartAndStop();
+			return WaitForMotorsToComplete();
 		}
 		
 		/// <summary>
@@ -101,8 +103,9 @@ namespace MonoBrickFirmware.Movement
 		public WaitHandle PowerProfile(sbyte power, UInt32 rampUpSteps, UInt32 constantSpeedSteps, UInt32 rampDownSteps, bool brake)
 		{
 			output.SetPower (0);
+			StartPooling();
 			output.SetStepPower(power,rampUpSteps, constantSpeedSteps, rampDownSteps, brake);
-			return WaitForMotorsToStartAndStop();
+			return WaitForMotorsToComplete();
 		}
 		
 		/// <summary>
@@ -116,8 +119,9 @@ namespace MonoBrickFirmware.Movement
 		public WaitHandle PowerProfileTime (byte power, UInt32 rampUpTimeMs, UInt32 constantSpeedTimeMs, UInt32 rampDownTimeMs, bool brake)
 		{
 			output.SetPower (0);
+			StartPooling();
 			output.SetTimePower(power, rampUpTimeMs,constantSpeedTimeMs,rampDownTimeMs, brake);
-			return WaitForMotorsToStartAndStop();
+			return WaitForMotorsToComplete();
 			
 		}
 

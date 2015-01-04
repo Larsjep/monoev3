@@ -44,8 +44,9 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="steps">Steps to move.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
 		public WaitHandle StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake){
+			StartPooling();
 			output.SetStepSync(speed, turnRatio, steps, brake);
-			return  WaitForMotorsToStop();
+			return  WaitForMotorsToComplete();
 		}
 		
 		/// <summary>
@@ -56,8 +57,9 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="timeInMs">Time in ms to move.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
 		public WaitHandle TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake){
+			StartPooling();
 			output.SetTimeSync(speed, turnRatio, timeInMs, brake);
-			return  WaitForMotorsToStop();
+			return  WaitForMotorsToComplete();
 		}
 		
 		/// <summary>
