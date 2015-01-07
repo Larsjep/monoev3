@@ -46,7 +46,7 @@ namespace MonoBrickFirmware.Movement
 		public WaitHandle StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake){
 			StartPooling();
 			output.SetStepSync(speed, turnRatio, steps, brake);
-			return  WaitForMotorsToComplete();
+			return  WaitForMotorsToStop();
 		}
 		
 		/// <summary>
@@ -59,7 +59,7 @@ namespace MonoBrickFirmware.Movement
 		public WaitHandle TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake){
 			StartPooling();
 			output.SetTimeSync(speed, turnRatio, timeInMs, brake);
-			return  WaitForMotorsToComplete();
+			return  WaitForMotorsToStop();
 		}
 		
 		/// <summary>

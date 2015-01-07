@@ -188,11 +188,11 @@ namespace MonoBrickFirmware.Movement
 			}	
 		}
 
-		protected WaitHandle WaitForMotorsToComplete()
+		protected WaitHandle WaitForMotorsToStop()
 		{
 			//Optimize the poll function to save this exstra thread
 			(new Thread(() => {
-				start.WaitOne (1000);
+				start.WaitOne (750);
 				started=true;//make sure started is true if we get a timeout
 				stop.WaitOne();
 				timer.Stop();
@@ -204,4 +204,3 @@ namespace MonoBrickFirmware.Movement
 		}
 	}
 }
-
