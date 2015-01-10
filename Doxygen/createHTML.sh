@@ -2,13 +2,11 @@
 doxyGenExecute=/Applications/Doxygen.app/Contents/Resources/doxygen
 currentDir=${PWD}
 outputDir=$currentDir 
-#*******
-#Set these parameters to match your settings
+
 logoFileName=monobrickLogo200.png
 monoBrickDirName=MonoBrickFirmware
 configFileName=doxygenConfig
-#End of set
-#********
+
 if [ ! -f "$doxyGenExecute" ]; then
     doxyGenExecute="doxygen"
 fi
