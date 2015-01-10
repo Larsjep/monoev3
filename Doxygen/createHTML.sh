@@ -9,21 +9,15 @@ monoBrickDirName=MonoBrickFirmware
 configFileName=doxygenConfig
 #End of set
 #********
+if [ ! -f "$doxyGenExecute" ]; then
+    doxyGenExecute="doxygen"
+fi
 
 if [ -z "$1" ]
   then
-   echo "Please specify a path to doxygen"
-   exit 1
-  else
-     doxyGenExecute=$1
-     echo "Doxygen path specified to "  $doxyGenExecute  
-fi
-
-if [ -z "$2" ]
-  then
    echo "No output path set using current directory" $outputDir
   else
-     outputDir=$2
+     outputDir=$1
      echo "Output path is set to "  $outputDir
 fi
 
