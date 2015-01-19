@@ -192,7 +192,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = MonoBrickWebserverPCTest\MonoBrickWebserverPCTest.csproj
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2
@@ -208,7 +207,7 @@ Global
 		$3.MessageStyle = $4
 		$4.LineAlign = 0
 		$3.inheritsSet = Mono
-		version = 1.1
+		version = 1.2
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

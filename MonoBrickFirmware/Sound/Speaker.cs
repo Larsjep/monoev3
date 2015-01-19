@@ -219,11 +219,11 @@ namespace MonoBrickFirmware.Sound
 					Array.Copy(buffer, offset,data,0,len+1);
 					soundDevice.Write(data);
 					int written = len+1;
-                    /*if (written == 0)
+                    if (written == 0)
                     {
-                        Delay.msDelay(1);
+                        //Delay.msDelay(1);
                     }
-                    else*/
+                    else
                     offset += written;
                     totalWritten += written-1;
                 }

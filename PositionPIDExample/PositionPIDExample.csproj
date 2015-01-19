@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>PositionPIDExample</RootNamespace>
     <AssemblyName>PositionPIDExample</AssemblyName>
-    <ReleaseVersion>1.1</ReleaseVersion>
+    <ReleaseVersion>1.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>false</Optimize>
