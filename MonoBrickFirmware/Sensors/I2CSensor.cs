@@ -1,6 +1,7 @@
 using System;
 using MonoBrickFirmware.Native;
 using MonoBrickFirmware.Tools;
+using System.Text;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -22,11 +23,24 @@ namespace MonoBrickFirmware.Sensors
 		//private MemoryArea I2CMemory;
 		
 		private const int InitDelay = 100;
-		public const int BufferSize = 30;
+		private const int BufferSize = 30;
 		
 		//I2C control 
 		private const UInt32 I2CIOSetup = 0xc04c6905;
-		
+
+		private enum I2cRegister : byte
+		{
+			FirmwareVersion = 0x00, VendorId = 0x08, DeviceId = 0x10
+		};
+
+		private string ConvertByteArrayToString (byte[] bytes)
+		{
+			string s = System.Text.Encoding.Default.GetString(bytes);
+			int pos = s.IndexOf('\0');  
+			if (pos >= 0)
+    			s = s.Substring(0, pos);
+			return s;
+		}
 		
 		protected byte I2CAddress = 0x00;
 		
@@ -42,9 +56,23 @@ namespace MonoBrickFirmware.Sensors
 			I2CDevice = SensorManager.Instance.I2CDevice;
 			this.mode = mode;
 			SensorManager.Instance.SetAnalogMode((AnalogMode)mode, port);
-			
 		}
-		
+
+		protected string GetDeviceId ()
+		{
+			return ConvertByteArrayToString(ReadRegister((byte)I2cRegister.DeviceId));
+		}
+
+		protected string GetVendorId ()
+		{
+			return ConvertByteArrayToString(ReadRegister((byte)I2cRegister.VendorId));
+		}
+
+		protected string GetFirmwareVersion ()
+		{
+			return ConvertByteArrayToString(ReadRegister((byte)I2cRegister.FirmwareVersion));
+		}
+
 		protected void Reset ()
 		{
 			SensorManager.Instance.ResetI2C(this.port);

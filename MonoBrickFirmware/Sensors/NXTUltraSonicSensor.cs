@@ -81,18 +81,18 @@ namespace MonoBrickFirmware.Sensors
 		}
         
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.NXT.Sonar"/> class in centimeter mode
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.NXTUltraSonicSensor"/> class.
 		/// </summary>
+		/// <param name="port">Senosr Port.</param>
 		public NXTUltraSonicSensor(SensorPort port) : this(port,UltraSonicMode.Centimeter) { 
 			
 		}
         
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.NXT.Sonar"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.NXTUltraSonicSensor"/> class.
 		/// </summary>
-		/// <param name='mode'>
-		/// The sonar mode
-		/// </param>
+		/// <param name="port">Senosr Port.</param>
+		/// <param name="mode">Ultrasonic Mode.</param>
 		public NXTUltraSonicSensor(SensorPort port, UltraSonicMode mode) : base(port,UltraSonicAddress,I2CMode.LowSpeed9V)
 		{ 
 			Mode = mode;

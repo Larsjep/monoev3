@@ -9,8 +9,9 @@ namespace MonoBrickFirmware.Sensors
 		private const int EV3Cutoff = ADCResolution/2;
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.EV3.TouchSensor"/> class in boolean mode
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.EV3TouchSensor"/> class.
 		/// </summary>
+		/// <param name="port">Sensor Port.</param>
 		public EV3TouchSensor (SensorPort port) : base(port)
 		{
 			

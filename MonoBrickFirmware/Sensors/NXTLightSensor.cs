@@ -21,22 +21,26 @@ namespace MonoBrickFirmware.Sensors
 	/// Class for the NXT light sensor
 	/// </summary>
 	public class NXTLightSensor : AnalogSensor{
+		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.EV3.LightSensor"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.NXTLightSensor"/> class.
 		/// </summary>
+		/// <param name="port">Port.</param>
 		public NXTLightSensor (SensorPort port) : this(port, LightMode.Ambient)
 		{
 			
 		}
-		
+
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.EV3.LightSensor"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.NXTLightSensor"/> class.
 		/// </summary>
+		/// <param name="port">Port.</param>
 		/// <param name="mode">Mode.</param>
 		public NXTLightSensor (SensorPort port, LightMode  mode) :  base(port)
 		{
 			Mode = mode;
 		}
+
 		/// <summary>
 		/// Gets or sets the light mode.
 		/// </summary>

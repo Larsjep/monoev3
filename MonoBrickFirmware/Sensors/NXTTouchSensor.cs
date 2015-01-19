@@ -9,8 +9,9 @@ namespace MonoBrickFirmware.Sensors
 		private const int NXTCutoff = 512;
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.EV3.TouchSensor"/> class in boolean mode
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.NXTTouchSensor"/> class.
 		/// </summary>
+		/// <param name="port">Senor Port.</param>
 		public NXTTouchSensor (SensorPort port) : base(port)
 		{
 			

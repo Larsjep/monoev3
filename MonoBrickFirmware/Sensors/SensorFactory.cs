@@ -6,6 +6,17 @@ namespace MonoBrickFirmware.Sensors
 {
 	public class SensorFactory
 	{
+		public static ISensor[] GetSensorArray()
+		{
+			SensorPort[] ports = new SensorPort[]{ SensorPort.In1, SensorPort.In2, SensorPort.In3, SensorPort.In4 };
+			ISensor[] sensors = new ISensor[ports.Length];
+			for(int i = 0; i < ports.Length; i++)
+			{
+				sensors[i] = GetSensor(ports[i]);
+			}
+			return sensors;
+		}
+
 		public static ISensor GetSensor (SensorPort port)
 		{
 			ISensor sensor = null;
@@ -13,76 +24,80 @@ namespace MonoBrickFirmware.Sensors
 			SensorType sensorType = SensorManager.Instance.GetSensorType (port);
 			ConnectionType connectionType = SensorManager.Instance.GetConnectionType (port);
 			switch (sensorType) {
-				case SensorType.Color:
-					sensor = new EV3ColorSensor (port); 
-					break;
-				case SensorType.Gyro:
-					sensor = new EV3GyroSensor (port); 
-					break;
-				case SensorType.IR:
-					sensor = new EV3IRSensor (port);
-					break;
-				case SensorType.NXTColor:
-					sensor = new NXTColorSensor (port);
-					break;
-				case SensorType.NXTLight:
-					sensor = new NXTLightSensor (port);
-					break;
-				case SensorType.NXTSound:
-					sensor = new NXTSoundSensor (port);
-					break;
-				case SensorType.NXTTouch:
-					sensor = new NXTTouchSensor (port);
-					break;
-				case SensorType.NXTUltraSonic:
-					sensor = new NXTUltraSonicSensor (port);
-					break;
-				case SensorType.Touch:
+			case SensorType.Color:
+				sensor = new EV3ColorSensor (port); 
+				break;
+			case SensorType.Gyro:
+				sensor = new EV3GyroSensor (port); 
+				break;
+			case SensorType.IR:
+				sensor = new EV3IRSensor (port);
+				break;
+			case SensorType.NXTColor:
+				sensor = new NXTColorSensor (port);
+				break;
+			case SensorType.NXTLight:
+				sensor = new NXTLightSensor (port);
+				break;
+			case SensorType.NXTSound:
+				sensor = new NXTSoundSensor (port);
+				break;
+			case SensorType.NXTTouch:
+				sensor = new NXTTouchSensor (port);
+				break;
+			case SensorType.NXTUltraSonic:
+				sensor = new NXTUltraSonicSensor (port);
+				break;
+			case SensorType.Touch:
+				sensor = new EV3TouchSensor (port);
+				break;
+			case SensorType.UltraSonic:
+				sensor = new EV3UltrasonicSensor (port);
+				break;
+			case SensorType.NXTI2c:
+				var helper = new I2CHelper (port);
+				sensor = helper.GetSensor ();
+				break;
+			case SensorType.Unknown:
+				if (connectionType == ConnectionType.UART) {
+					var uartHelper = new UARTHelper (port);
+					sensor = uartHelper.GetSensor ();
+				}
+				if (connectionType == ConnectionType.InputResistor) {
 					sensor = new EV3TouchSensor (port);
-					break;
-				case SensorType.UltraSonic:
-					sensor = new EV3UltrasonicSensor (port);
-					break;
-				case SensorType.NXTI2c:
-					var helper = new I2CHelper (port);
-					sensor = helper.GetSensor ();
-					break;
-				case SensorType.Unknown:
-					if (connectionType == ConnectionType.UART) {
-						var uartHelper = new UARTHelper (port);
-						sensor = uartHelper.GetSensor ();
-					}
-					if (connectionType == ConnectionType.InputResistor) {
-						sensor  = new EV3TouchSensor(port);
-					}
-					break;
-				case SensorType.I2CUnknown:
+				}
+				break;
+			case SensorType.I2CUnknown:
 						
-					break;
-				case SensorType.NXTTemperature:
+				break;
+			case SensorType.NXTTemperature:
 						
-					break;
-				case SensorType.LMotor:
+				break;
+			case SensorType.LMotor:
 						
-					break;
-				case SensorType.MMotor:
+				break;
+			case SensorType.MMotor:
 						
-					break;
-				case SensorType.NXTTest:
+				break;
+			case SensorType.NXTTest:
 						
-					break;
-				case SensorType.Terminal:
+				break;
+			case SensorType.Terminal:
 						
-					break;
-				case SensorType.Test:
+				break;
+			case SensorType.Test:
 						
-					break;
-				case SensorType.Error:
+				break;
+			case SensorType.Error:
 					
-					break;
-				case SensorType.None:
-					
-					break;
+				break;
+			case SensorType.None:
+				sensor = new NoSensor (port);
+				break;
+			}
+			if (sensor == null) 
+			{
+				sensor = new UnknownSensor(port);
 			}
 			return sensor;
 		}
@@ -190,29 +205,20 @@ namespace MonoBrickFirmware.Sensors
 	
 	internal class I2CHelper : I2CSensor
 	{
-		private Dictionary<byte[], ISensor> sensorDictionary = null;
-    	
-    	private static byte[] SonarName = {0x4c, 0x45, 0x47, 0x4f, 0x00, 0xff, 0xff, 0xff, 0x53, 0x6f, 0x6e, 0x61, 0x72, 0x00, 0xff, 0xff};
-    	private static byte[] HTColorName = {0x48, 0x69, 0x54, 0x65, 0x63, 0x68, 0x6e, 0x63, 0x43, 0x6f, 0x6c, 0x6f, 0x72, 0x20, 0x20, 0x20};
-    	private static byte[] HTCompassName = {0x48, 0x69, 0x54, 0x65, 0x63, 0x68, 0x6e, 0x63, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x73, 0x73, 0x20};
-    	private static byte[] HTAccelName = {0x48, 0x49, 0x54, 0x45, 0x43, 0x48, 0x4e, 0x43, 0x41, 0x63, 0x63, 0x65, 0x6c, 0x2e, 0x20, 0x20};
-		
+		private Dictionary<Tuple<string,string>, ISensor> sensorDictionary = null;
+
 		public I2CHelper (SensorPort port) : base (port, 0x02, I2CMode.LowSpeed9V)
 		{
 			base.Initialise();
-			sensorDictionary = new Dictionary<byte[], ISensor>();
-			sensorDictionary.Add(SonarName , new NXTUltraSonicSensor(port));
-			sensorDictionary.Add(HTColorName, new HiTecColorSensor(port));
-			sensorDictionary.Add(HTCompassName, new HiTecCompassSensor(port));
-			sensorDictionary.Add(HTAccelName, new HiTecTiltSensor(port));
-		}
-		
-		private bool ByteArrayCompare(byte[] a1, byte[] a2) 
-		{
-		  for(int i=0; i<a1.Length; i++)
-		    if(a1[i]!=a2[i])
-		      return false;
-		  return true;
+			sensorDictionary = new Dictionary<Tuple<string,string>, ISensor>();
+			sensorDictionary.Add(new Tuple<string, string>("LEGO", "Sonar"), new NXTUltraSonicSensor(port));
+			sensorDictionary.Add(new Tuple<string, string>("HiTechnc", "Color"), new HiTecColorSensor(port));
+			sensorDictionary.Add(new Tuple<string, string>("HiTechnc", "Compass"), new HiTecCompassSensor(port));
+			sensorDictionary.Add(new Tuple<string, string>("HITECHNC", "Accel"), new HiTecTiltSensor(port));
+			sensorDictionary.Add(new Tuple<string, string>("mndsnsrs", "AngSens"), new MSAngleSensor(port));
+			sensorDictionary.Add(new Tuple<string, string>("mndsnsrs", "DIST-S"), new MSDistanceSensor(port));
+			sensorDictionary.Add(new Tuple<string, string>("mndsnsrs", "DIST-M"), new MSDistanceSensor(port));
+			sensorDictionary.Add(new Tuple<string, string>("mndsnsrs", "DIST-L"), new MSDistanceSensor(port));
 		}
 		
 		/// <summary>
@@ -228,14 +234,11 @@ namespace MonoBrickFirmware.Sensors
 		
 		public ISensor GetSensor ()
 		{
-			byte[] data = new byte[16];
-			var temp = ReadRegister (0x08);
-			Buffer.BlockCopy (temp, 0, data, 0, 8);
-			System.Threading.Thread.Sleep (100);
-			temp = ReadRegister (0x10);
-			Buffer.BlockCopy (temp, 0, data, 8, 8);
-			foreach (KeyValuePair<byte[], ISensor> pair in sensorDictionary) {
-				if (ByteArrayCompare (pair.Key, data)) {
+			string vendorId = GetVendorId ();
+			string deviceId = GetDeviceId ();
+			foreach (KeyValuePair<Tuple<string,string>, ISensor> pair in sensorDictionary) {
+				if (pair.Key.Item1 == vendorId && pair.Key.Item2 == deviceId) 
+				{
 					return pair.Value;
 				}
 			}

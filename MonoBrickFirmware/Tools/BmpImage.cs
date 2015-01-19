@@ -32,7 +32,7 @@ namespace MonoBrickFirmware.Tools
 	public class BmpImage : IDisposable{
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Graphics.BmpFile"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Tools.BmpImage"/> class.
 		/// </summary>
 		/// <param name="width">Width of image in pixels.</param>
 		/// <param name="height">Height of image in pixels.</param>

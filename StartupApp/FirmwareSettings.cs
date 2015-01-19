@@ -10,7 +10,7 @@ namespace MonoBrickFirmware.Settings
 	public class WebServerSettings{
 		[XmlElement("Port")]
 		private int port = 80;
-		
+
 		public int Port
 		{
 			get { return port; }

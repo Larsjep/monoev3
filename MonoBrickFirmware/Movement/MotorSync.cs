@@ -9,7 +9,7 @@ namespace MonoBrickFirmware.Movement
 	public class MotorSync : MotorBase{
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.MotorSync"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Movement.MotorSync"/> class.
 		/// </summary>
 		/// <param name="bitfield">Bitfield.</param>
 		public MotorSync (OutputBitfield bitfield)
@@ -18,7 +18,7 @@ namespace MonoBrickFirmware.Movement
 		}
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.MotorSync"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Movement.MotorSync"/> class.
 		/// </summary>
 		/// <param name="port1">Port1.</param>
 		/// <param name="port2">Port2.</param>
@@ -43,8 +43,8 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
 		/// <param name="steps">Steps to move.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// </param>
 		public WaitHandle StepSync(sbyte speed, Int16 turnRatio, UInt32 steps, bool brake){
+			StartPooling();
 			output.SetStepSync(speed, turnRatio, steps, brake);
 			return  WaitForMotorsToStop();
 		}
@@ -56,8 +56,8 @@ namespace MonoBrickFirmware.Movement
 		/// <param name="turnRatio">Turn ratio (-200 to 200).</param>
 		/// <param name="timeInMs">Time in ms to move.</param>
 		/// <param name="brake">If set to <c>true</c> motors will brake when done otherwise off.</param>
-		/// </param>
 		public WaitHandle TimeSync(sbyte speed, Int16 turnRatio, UInt32 timeInMs, bool brake){
+			StartPooling();
 			output.SetTimeSync(speed, turnRatio, timeInMs, brake);
 			return  WaitForMotorsToStop();
 		}

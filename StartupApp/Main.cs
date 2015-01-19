@@ -9,10 +9,9 @@ using MonoBrickFirmware.Native;
 using MonoBrickFirmware.Display.Menus;
 using MonoBrickFirmware.Display.Dialogs;
 using MonoBrickFirmware.Settings;
-using MonoBrickFirmware.Services;
 using MonoBrickFirmware.Connections;
 using MonoBrickFirmware.Tools;
-
+using MonoBrickFirmware.FileSystem;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,13 +26,9 @@ namespace StartupApp
 		static Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 		static FirmwareSettings settings = new FirmwareSettings();
 		static string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
-		static string ProgramPathSdCard = "/mnt/bootpar/apps";
-		static string ProgramPathEV3 = "/home/root/apps/";
 		static string firmwareVersion= "1.0.0.0";
 
 		static bool updateProgramList = false;
-		
-		enum ExecutionMode {Normal = 0, Debug = 1, AOT = 2  };
 		
 		#region Main Menu
 		static void ShowMainMenu()
@@ -42,7 +37,7 @@ namespace StartupApp
 			List<IMenuItem> items = new List<IMenuItem>();
 			items.Add (new MenuItemWithAction("Programs", () => RunPrograms(),MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction("WiFi Connection", () => ShowWiFiMenu(), MenuItemSymbole.RightArrow));
-			//items.Add (new MenuItemWithAction("WebServer", () => ShowWebServerMenu(), MenuItemSymbole.RightArrow));
+			items.Add (new MenuItemWithAction("WebServer", () => ShowWebServerMenu(), MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction("Settings", () => ShowSettings(), MenuItemSymbole.RightArrow));
 			items.Add (new MenuItemWithAction("Information", () => Information()));
 			items.Add (new MenuItemWithAction("Check for Updates", () => ShowUpdatesDialogs()));
@@ -58,35 +53,23 @@ namespace StartupApp
 			do
 			{
 				updateProgramList = false;
-				IEnumerable<MenuItemWithAction> itemsFromEV3 = Directory.EnumerateDirectories(ProgramPathEV3)
-					.Select((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
-				IEnumerable<MenuItemWithAction> itemsFromSD = Directory.EnumerateDirectories(ProgramPathSdCard)
-					.Select ((programFolder) => new MenuItemWithAction (new DirectoryInfo(programFolder).Name, () => ShowProgramOptions (programFolder)));
-				
-				
-				Menu m = new Menu ("Run program:", itemsFromEV3.Concat (itemsFromSD));
+				List<MenuItemWithAction> actionList = new List<MenuItemWithAction>();
+				List<ProgramInformation> programs = ProgramManager.Instance.GetProgramInformationList();
+				foreach(var program in programs)
+				{
+					actionList.Add( new MenuItemWithAction(program.Name, () => ShowProgramOptions (program)));
+				}
+				Menu m = new Menu ("Run program:", actionList);
 				m.Show ();//block
 			}while (updateProgramList); 
 			return false;
 		}
 		
 		
-		static bool ShowProgramOptions (string programFolder)
+		static bool ShowProgramOptions (ProgramInformation program)
 		{
-			string fileName = "";
-			try {
-				fileName = Directory.EnumerateFiles (programFolder, "*.exe").First ();	
-			} catch {
-				var info = new InfoDialog (programFolder + "is not executable", true, "Program");
-				info.Show ();
-				Directory.Delete (programFolder, true);
-				updateProgramList = true;
-				return true;
-			}
-			
 			var dialog = new SelectDialog<string> (new string[] {
 				"Run Program",
-				"Debug Program",
 				"Run In AOT",
 				"AOT Compile",
 				"Delete Program",
@@ -101,38 +84,39 @@ namespace StartupApp
 					Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 					Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Running...", true, Lcd.Alignment.Center);
 					Lcd.Instance.Update ();						
-					programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.Normal);	
+					programAction = () => ProgramManager.Instance.StartProgram(program,false);	
 					break;
 				case 1:
-					programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.Debug);
-					break;
-				case 2:
-					if (!AOTHelper.IsFileCompiled (fileName)) {
-						if (AOTCompileAndShowDialog (programFolder)) {
-							programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.AOT);	
+					if (!program.IsAOTCompiled) 
+					{
+						if (AOTCompileAndShowDialog (program)) 
+						{
+							programAction = () => ProgramManager.Instance.StartProgram(program,true);	
 						}
-					} else {
-						programAction = () => RunAndWaitForProgram (fileName, ExecutionMode.AOT);
+					} 
+					else 
+					{
+						programAction = () => ProgramManager.Instance.StartProgram(program, true);
 					}
 					break;
 				case 3:
 						
-					if (AOTHelper.IsFileCompiled (fileName)) {
+					if (program.IsAOTCompiled) {
 						var questionDialog = new QuestionDialog ("Progran already compiled. Recompile?", "AOT recompile");
 						if (questionDialog.Show ()) {
-							AOTCompileAndShowDialog (programFolder);
+							AOTCompileAndShowDialog (program);
 						}
-					} else {
-						AOTCompileAndShowDialog (programFolder);
+					} 
+					else 
+					{
+						AOTCompileAndShowDialog (program);
 					}
 					break;
 				case 4:
 					var question = new QuestionDialog ("Are you sure?", "Delete");
-					if (question.Show ()) {
-						var step = new StepContainer (() => {
-							Directory.Delete (programFolder, true);
-							return true;
-						}, "Deleting ", "Error deleting program"); 
+					if (question.Show ()) 
+					{
+						var step = new StepContainer (() => {ProgramManager.Instance.DeleteProgram(program); return true;}, "Deleting ", "Error deleting program"); 
 						var progressDialog = new ProgressDialog ("Program", step);
 						progressDialog.Show ();
 						updateProgramList = true;
@@ -151,68 +135,17 @@ namespace StartupApp
 			
 		}
 		
-		static bool AOTCompileAndShowDialog(string programFolder)
+		static bool AOTCompileAndShowDialog(ProgramInformation program)
 		{
 			List<IStep> steps = new List<IStep> ();
-			foreach (string file in Directory.EnumerateFiles(programFolder,"*.*").Where(s => s.EndsWith(".exe") || s.EndsWith(".dll"))) {
+			steps.Add(new StepContainer (delegate() {return ProgramManager.Instance.AOTCompileProgram(program);}, "compiling program", "Failed to compile"));
+			/*foreach (string file in Directory.EnumerateFiles(programFolder,"*.*").Where(s => s.EndsWith(".exe") || s.EndsWith(".dll"))) {
 				steps.Add (new StepContainer (delegate() {
 					return AOTHelper.Compile (file);
 				}, new FileInfo(file).Name, "Failed to compile"));
-			}
+			}*/
 			var dialog = new StepDialog("Compiling",steps);
 			return dialog.Show();
-		}
-
-		
-		
-		static void RunAndWaitForProgram (string programName, ExecutionMode mode)
-		{
-			switch (mode) 
-			{
-				case ExecutionMode.Debug:
-					programName = @"--debug --debugger-agent=transport=dt_socket,address=0.0.0.0:" + settings.DebugSettings.Port + ",server=y " + programName;
-					System.Diagnostics.Process proc = new System.Diagnostics.Process ();
-					Dialog dialog = null;
-					Thread escapeThread = null;
-					CancellationTokenSource cts = new CancellationTokenSource();
-					CancellationToken token = cts.Token;
-					string portString  = ("Port: " + settings.DebugSettings.Port).PadRight(6).PadRight(6);
-					if (settings.DebugSettings.TerminateWithEscape) {
-						escapeThread = new System.Threading.Thread (delegate() {
-							while (!token.IsCancellationRequested) {
-								if (Buttons.Instance.GetKeypress (token) == Buttons.ButtonStates.Escape) {
-									proc.Kill ();
-									Console.WriteLine ("Killing process");
-									cts.Cancel();
-								}
-							}
-						});
-						escapeThread.Start();
-						dialog = new InfoDialog (portString + " Press escape to terminate", false, "Debug Mode");
-					} 
-					else 
-					{
-						dialog = new InfoDialog (portString + " Waiting for connection.", false, "Debug Mode");	
-					}
-					dialog.Show ();
-					proc.EnableRaisingEvents = false; 
-					Console.WriteLine ("Starting process: {0} with arguments: {1}", "/usr/local/bin/mono", programName);
-					proc.StartInfo.FileName = "/usr/local/bin/mono";
-					proc.StartInfo.Arguments = programName;
-					proc.Start ();
-					proc.WaitForExit ();
-					if (escapeThread != null && !token.IsCancellationRequested) {
-						cts.Cancel();
-						escapeThread.Join();
-					}
-					break;
-				case ExecutionMode.Normal:
-					ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono", programName); 
-					break;
-				case ExecutionMode.AOT:
-					ProcessHelper.RunAndWaitForProcess("/usr/local/bin/mono", "--full-aot " + programName);	
-					break;
-			}
 		}
 		#endregion
 		
@@ -248,13 +181,15 @@ namespace StartupApp
 				delegate(bool WiFiOn)
          		{ 
 					bool isOn = WiFiOn;
-					var createFileStep = new StepContainer( 
+					var createFileStep = new StepContainer
+					( 
 						delegate() 
 						{
 							WriteWpaSupplicantConfiguration(settings.WiFiSettings.SSID,settings.WiFiSettings.Password,settings.WiFiSettings.Encryption);
 							return true;
 						},
-						"Creating file", "Error creating WPA file");
+						"Creating file", "Error creating WPA file"
+					);
 					var progressDialog = new ProgressDialog("WiFi", createFileStep);
 					progressDialog.Show();
 					if(WiFiOn){
@@ -310,7 +245,7 @@ namespace StartupApp
 		#endregion
 		
 		#region WebServer Menu
-		/*static bool ShowWebServerMenu ()
+		static bool ShowWebServerMenu ()
 		{
 			List<IMenuItem> items = new List<IMenuItem> ();
 			var portItem = new MenuItemWithNumericInput("Port", settings.WebServerSettings.Port, 1, ushort.MaxValue);
@@ -321,7 +256,7 @@ namespace StartupApp
 					settings.Save();
 				}).Start();
 			};
-			var startItem = new MenuItemWithCheckBox("Start server", WebServer.IsRunning(),
+			var startItem = new MenuItemWithCheckBox("Start server", Webserver.Instance.IsRunning,
 				delegate(bool running)
        	 		{ 
 					
@@ -330,20 +265,18 @@ namespace StartupApp
 						var step = new StepContainer(
 							delegate() 
 							{
-								WebServer.StopAll();
-								System.Threading.Thread.Sleep(2000);
+								Webserver.Instance.Stop();
 								return true;
 							},
 							"Stopping", "Failed to stop");
 						var dialog = new ProgressDialog("Web Server",step);
 						dialog.Show();
-						isRunning = WebServer.IsRunning();
+						isRunning = Webserver.Instance.IsRunning;
 					}
 					else{
-						var step1 = new StepContainer(()=>{return WebServer.StartFastCGI();}, "Init CGI Server", "Failed to start CGI Server");
-						var step2 = new StepContainer(()=>{return WebServer.StartLighttpd();}, "Initializing", "Failed to start server");
-						var step3 = new StepContainer(()=>{return WebServer.LoadPage();}, "Loading page", "Failed to load page");
-						var stepDialog = new StepDialog("Web Server", new List<IStep>{step1,step2,step3}, "Webserver started");
+						var step1 = new StepContainer(()=>{Webserver.Instance.Start(portItem.Value); return true;}, "Starting REST", "Failed To Start REST");
+						var step2 = new StepContainer(()=>{return Webserver.Instance.LoadPage();}, "Loading Webpage", "Failed to load page");
+						var stepDialog = new StepDialog("Web Server", new List<IStep>{step1,step2}, "Webserver started");
 						isRunning = stepDialog.Show();
 					}
 					return isRunning;
@@ -356,7 +289,7 @@ namespace StartupApp
 			Menu m = new Menu ("Web Server", items);
 			m.Show ();
 			return false;
-		}*/
+		}
 		#endregion
 		
 		#region Settings Menu
@@ -457,7 +390,7 @@ namespace StartupApp
 				bool newAddin = false;
 				VersionInfo versionInfo = null;
 				var step = new StepContainer (
-					           delegate() {
+					delegate() {
 						try {
 							versionInfo = VersionHelper.AvailableVersions ();
 							newImage = versionInfo.Image != VersionHelper.CurrentImageVersion ();
@@ -543,15 +476,14 @@ namespace StartupApp
 
 		public static void Main (string[] args)
 		{
-			/*Lcd.Instance.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
+			Lcd.Instance.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
 			Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 			
 			Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
 			Lcd.Instance.Update ();						
 			WiFiDevice.TurnOff ();
-			if (!Directory.Exists (ProgramPathSdCard))
-				Directory.CreateDirectory (ProgramPathSdCard);
-			
+			ProgramManager.Instance.CreateSDCardFolder();
+
 			// JIT work-around remove when JIT problem is fixed
 			System.Threading.Thread.Sleep (10);
 			Console.WriteLine ("JIT workaround - please remove!!!");
@@ -613,15 +545,7 @@ namespace StartupApp
 			while(true)
 			{
 				ShowMainMenu();
-			}*/
-			var nancyHost = new NancyHost(new Uri("http://127.0.0.1:8080/"));
-
-			nancyHost.Start();
-			
-			Console.WriteLine("Nancy now listening - navigating to http://localhost:8888/. Press enter to stop");
-			//Process.Start("http://localhost:8080/");
-			terminateProgram.WaitOne();
-			//Console.WriteLine("Stopped. Good bye!");
+			}
 		}
 		#endregion
 	}
