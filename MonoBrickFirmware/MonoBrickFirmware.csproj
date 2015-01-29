@@ -110,6 +110,7 @@
     <Compile Include="Sensors\MSAngleSensor.cs" />
     <Compile Include="Sensors\SensorAttachment.cs" />
     <Compile Include="Sensors\SensorDetector.cs" />
+    <Compile Include="Sensors\MSSensorMuxBase.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

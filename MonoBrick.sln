@@ -68,6 +68,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoBrickWebserverExample",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindsensorsDistanceSensorExample", "MindsensorsDistanceSensorExample\MindsensorsDistanceSensorExample.csproj", "{8F6AD806-23D7-4810-9A5A-718C6563687F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindsensorsMuxExample", "MindsensorsMuxExample\MindsensorsMuxExample.csproj", "{6F47269A-01E4-491E-A5D6-F4E2A39E4E33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindsensorsAngleExample", "MindsensorsAngleExample\MindsensorsAngleExample.csproj", "{7DC2E6DE-E940-4F90-B83F-01CD0660E6DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -134,6 +138,10 @@ Global
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67261E03-D263-4C42-A5AD-2A4820231B28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F47269A-01E4-491E-A5D6-F4E2A39E4E33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F47269A-01E4-491E-A5D6-F4E2A39E4E33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F47269A-01E4-491E-A5D6-F4E2A39E4E33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F47269A-01E4-491E-A5D6-F4E2A39E4E33}.Release|Any CPU.Build.0 = Release|Any CPU
 		{74BA831E-D185-47CB-B892-97DFDF2EEBCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{74BA831E-D185-47CB-B892-97DFDF2EEBCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75E781D0-7313-445B-8430-DECB0AD3C96E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -144,6 +152,10 @@ Global
 		{76DEED88-464B-42B7-8F82-0EB0249B05A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76DEED88-464B-42B7-8F82-0EB0249B05A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76DEED88-464B-42B7-8F82-0EB0249B05A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DC2E6DE-E940-4F90-B83F-01CD0660E6DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DC2E6DE-E940-4F90-B83F-01CD0660E6DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DC2E6DE-E940-4F90-B83F-01CD0660E6DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DC2E6DE-E940-4F90-B83F-01CD0660E6DB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{826357C7-2F1F-46CD-8786-5987E6E26767}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{826357C7-2F1F-46CD-8786-5987E6E26767}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{826357C7-2F1F-46CD-8786-5987E6E26767}.Release|Any CPU.ActiveCfg = Release|Any CPU
