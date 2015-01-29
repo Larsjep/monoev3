@@ -8,7 +8,7 @@ using System.Threading;
 using MonoBrickFirmware.Sensors;
 using MonoBrickFirmware.UserInput;
 
-namespace MonoBrickHelloWorld
+namespace MindsensorsAngleExample
 {
 	class MainClass
 	{
