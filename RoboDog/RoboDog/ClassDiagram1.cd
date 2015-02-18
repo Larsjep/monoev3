@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="RoboDog.AbstractDog" BaseTypeListCollapsed="true">
+    <Position X="9.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EgAEAAAAFEoISAAEEEIEIAYAQCAWACAQBgAAGAogAAg=</HashCode>
+      <FileName>AbstractDog.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.4" Collapsed="true" />
+  </Class>
+  <Class Name="RoboDog.AbstractMemory" BaseTypeListCollapsed="true">
+    <Position X="5.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAQAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>AbstractMemory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoboDog.Serializer">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACBAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Serializer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="RoboDog.IDog">
+    <Position X="8" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAEAAAAEAoACAAEAEIEAAQAQCASACAQBgAAGAAgAAA=</HashCode>
+      <FileName>IDog.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoboDog.IMemory">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAQAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>IMemory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="RoboDog.DogEyes">
+    <Position X="2.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAABAAAAAAAAAAAAAAAQAAIAAAAAAAIAAAiAA=</HashCode>
+      <FileName>DogEyes.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="RoboDog.DogSound">
+    <Position X="0.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAACAAAAAAAEAgEAAAAAAAQQIAgAAAAAAA=</HashCode>
+      <FileName>DogSound.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

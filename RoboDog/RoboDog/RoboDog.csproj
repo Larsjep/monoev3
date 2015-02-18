@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BF9CC34B-9005-49E1-82CC-8066B34F8547}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RoboDog</RootNamespace>
+    <AssemblyName>RoboDog</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MonoBrickFirmware, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\monoev3-release\MonoBrickFirmware\bin\Debug\MonoBrickFirmware.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractDog.cs" />
+    <Compile Include="AbstractMemory.cs" />
+    <Compile Include="AbstractDog2.cs" />
+    <Compile Include="IDog2.cs" />
+    <Compile Include="ExternalMotor.cs" />
+    <Compile Include="IMovement.cs" />
+    <Compile Include="Serializer.cs" />
+    <Compile Include="DogEyes.cs" />
+    <Compile Include="DogSound.cs" />
+    <Compile Include="IDog.cs" />
+    <Compile Include="IMemory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Angry.bin">
+      <LogicalName>Angry.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Awake.bin">
+      <LogicalName>Awake.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Disappointed.bin">
+      <LogicalName>Disappointed.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\KnockedOut.bin">
+      <LogicalName>KnockedOut.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BlackEye.bin">
+      <LogicalName>BlackEye.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BottomLeft.bin">
+      <LogicalName>BottomLeft.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BottomRight.bin">
+      <LogicalName>BottomRight.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Crazy1.bin">
+      <LogicalName>Crazy1.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Crazy2.bin">
+      <LogicalName>Crazy2.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Dizzy.bin">
+      <LogicalName>Dizzy.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Down.bin">
+      <LogicalName>Down.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Evil.bin">
+      <LogicalName>Evil.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Hurt.bin">
+      <LogicalName>Hurt.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Love.bin">
+      <LogicalName>Love.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MiddleLeft.bin">
+      <LogicalName>MiddleLeft.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MiddleRight.bin">
+      <LogicalName>MiddleRight.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neutral.bin">
+      <LogicalName>Neutral.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Nuclear.bin">
+      <LogicalName>Nuclear.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\PinchLeft.bin">
+      <LogicalName>PinchLeft.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\PinchMiddle.bin">
+      <LogicalName>PinchMiddle.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\PinchRight.bin">
+      <LogicalName>PinchRight.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Sleeping.bin">
+      <LogicalName>Sleeping.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Tear.bin">
+      <LogicalName>Tear.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TiredLeft.bin">
+      <LogicalName>TiredLeft.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TiredMiddle.bin">
+      <LogicalName>TiredMiddle.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TiredRight.bin">
+      <LogicalName>TiredRight.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Toxic.bin">
+      <LogicalName>Toxic.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Up.bin">
+      <LogicalName>Up.bitmap</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Winking.bin" />
+  </ItemGroup>
+</Project>
