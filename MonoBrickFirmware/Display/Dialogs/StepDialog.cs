@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using MonoBrickFirmware.UserInput;
 using System.Collections.Generic;
 
@@ -35,7 +36,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			return true;//exit
 		}
 		
-		public override bool Show ()
+		public override bool Show (CancellationToken token)
 		{
 			bool ok = true;
 			errorStep = null;
@@ -45,7 +46,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 			for (stepIndex = 0; stepIndex < steps.Count; stepIndex++) {
 				Draw ();
 				try {
-					if (!steps [stepIndex].Execute ()) {
+					if(token.IsCancellationRequested)
+					{
+						StopProgressAnimation ();
+						ClearContent ();
+						ok = false;
+						break;
+
+					}
+					if (!steps[stepIndex].Execute ()) {
 						StopProgressAnimation ();
 						ClearContent ();
 						WriteTextOnDialog (steps [stepIndex].ErrorText);
@@ -55,17 +64,17 @@ namespace MonoBrickFirmware.Display.Dialogs
 						errorStep = steps [stepIndex];
 						ok = false;
 						break;
-					} else {
+					} 
+					else if (steps[stepIndex].ShowOkText) 
+					{
+						StopProgressAnimation ();
+						ClearContent ();
+						WriteTextOnDialog (steps [stepIndex].ErrorText);
+						DrawCenterButton ("Ok", false);
+						Lcd.Instance.Update ();
+						Buttons.Instance.GetKeypress ();//Wait for any key
+						StartProgressAnimation (progressLine);
 						
-						if (steps [stepIndex].ShowOkText) {
-							StopProgressAnimation ();
-							ClearContent ();
-							WriteTextOnDialog (steps [stepIndex].ErrorText);
-							DrawCenterButton ("Ok", false);
-							Lcd.Instance.Update ();
-							Buttons.Instance.GetKeypress ();//Wait for any key
-							StartProgressAnimation (progressLine);
-						}
 					}
 				} 
 				catch 
@@ -82,13 +91,14 @@ namespace MonoBrickFirmware.Display.Dialogs
 				}
 			}
 			StopProgressAnimation ();
-			if (allDoneText != "" && ok) {
-				ClearContent();
-				WriteTextOnDialog(allDoneText);
-				DrawCenterButton("Ok",false);
-				Lcd.Instance.Update();
-				Buttons.Instance.GetKeypress();//Wait for any key*/
-			}
+			if (allDoneText != "" && ok && !token.IsCancellationRequested) 
+			{
+				ClearContent ();
+				WriteTextOnDialog (allDoneText);
+				DrawCenterButton ("Ok", false);
+				Lcd.Instance.Update ();
+				Buttons.Instance.GetKeypress ();//Wait for any key*/
+			} 
 			OnExit();
 			return ok;
 		}

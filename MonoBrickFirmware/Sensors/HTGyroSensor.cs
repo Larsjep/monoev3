@@ -6,19 +6,20 @@ namespace MonoBrickFirmware.Sensors
 	/// HiTechnic gyro sensor
     /// </summary>
     public class HiTecGyroSensor : AnalogSensor{
+		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.NXT.HiTecGyro"/> class without offset
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.HiTecGyroSensor"/> class.
 		/// </summary>
+		/// <param name="port">Port.</param>
 		public HiTecGyroSensor(SensorPort port) : this(port,0) {
 			
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.NXT.HiTecGyro"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.HiTecGyroSensor"/> class.
 		/// </summary>
-		/// <param name='offset'>
-		/// Offset
-		/// </param>
+		/// <param name="port">Port.</param>
+		/// <param name="offset">Gyro offset.</param>
 		public HiTecGyroSensor(SensorPort port, int offset) : base(port) {
 			Offset = offset;
 			base.SetMode(AnalogMode.Set); 
@@ -59,7 +60,7 @@ namespace MonoBrickFirmware.Sensors
 		
 		public override string GetSensorName ()
 		{
-			return "HT Gyro";
+			return "HiTechnic Gyro";
 		}
 		
 		public override void SelectPreviousMode ()

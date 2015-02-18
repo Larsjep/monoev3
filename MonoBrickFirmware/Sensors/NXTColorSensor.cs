@@ -23,8 +23,9 @@ namespace MonoBrickFirmware.Sensors
         private byte red;
         private byte green;
         private byte blue;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="MonoBrick.NXT.RGBColor"/> class.
+        /// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.RGBColor"/> class.
         /// </summary>
         /// <param name='red'>
         /// Red value
@@ -60,6 +61,11 @@ namespace MonoBrickFirmware.Sensors
 		/// The blue value
 		/// </value>
 		public byte Blue { get { return blue; } }
+
+	    public override string ToString()
+	    {
+	        return string.Format("{0} {1} {2}", red, green, blue);
+	    }
     }
 	
 	/// <summary>
@@ -90,6 +96,11 @@ namespace MonoBrickFirmware.Sensors
 		/// Activate the green blue on the color sensor. 
 		/// </summary>
 		Blue = AnalogMode.ColorBlue,//Mode 1 for EV3
+
+        /// <summary>
+        /// Use the color sensor to read RGB values
+        /// </summary>
+        RGB = AnalogMode.None,//Mode 4 for EV3
 	};
 	
 	
@@ -155,7 +166,7 @@ namespace MonoBrickFirmware.Sensors
 			string s = "";
 			switch (Mode)
 			{
-			    case ColorMode.Ambient:
+			   case ColorMode.Ambient:
 			        s = Read().ToString();
 			        break;
 			   case ColorMode.Color:
@@ -163,6 +174,9 @@ namespace MonoBrickFirmware.Sensors
 			        break;
 			   case ColorMode.Reflection:
 			        s = Read().ToString();
+			        break;
+				case ColorMode.RGB:
+			        s = ReadRGBColor().ToString();
 			        break;
 			   default:
 			   		s = Read().ToString();

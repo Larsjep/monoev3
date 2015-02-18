@@ -16,7 +16,7 @@ namespace MonoBrickFirmware.Movement
 		private ManualResetEvent stop = new ManualResetEvent(false);
 		private ManualResetEvent start = new ManualResetEvent(false);
 		private ManualResetEvent waitHandle = new ManualResetEvent(false);
-
+		private bool started = false;
 		/// <summary>
 		/// The output.
 		/// </summary>
@@ -151,17 +151,31 @@ namespace MonoBrickFirmware.Movement
 			}
 			//Do the polling
 			if (IsRunning ()) {
-				stop.Reset ();
-				start.Set ();
+			    start.Set ();
+			    started = true;
 			} 
 			else 
 			{
-				stop.Set ();
-				start.Reset ();
+			    if (started)
+			    {
+			        stop.Set ();
+			        started = false;
+			    }
 			}
 			Monitor.Exit(this);
-
 		}
+
+		protected void StartPooling()
+	    {
+            CancelPolling();
+            waitHandle.Reset();
+            start.Set();
+			stop.Set();
+			started = false;
+            stop.Reset();
+            start.Reset();
+        	timer.Start();
+	    }
 
 		protected void CancelPolling()
 		{
@@ -177,32 +191,10 @@ namespace MonoBrickFirmware.Movement
 
 		protected WaitHandle WaitForMotorsToStop()
 		{
-			waitHandle.Reset();
-			timer.Start();
 			//Optimize the poll function to save this exstra thread
 			(new Thread(() => {
-				System.Threading.Thread.Sleep(100);
-				stop.WaitOne();
-				timer.Stop();
-				start.Reset();
-				stop.Reset();
-				waitHandle.Set();
-		    })).Start();
-			return waitHandle;	
-
-
-		}
-
-		protected WaitHandle WaitForMotorsToStartAndStop()
-		{
-			waitHandle.Reset();
-			timer.Start();
-			//Optimize the poll function to save this exstra thread
-			(new Thread(() => {
-				if (!IsRunning ()) 
-				{
-					start.WaitOne ();
-				}
+				start.WaitOne (750);
+				started=true;//make sure started is true if we get a timeout
 				stop.WaitOne();
 				timer.Stop();
 				start.Reset();
@@ -213,4 +205,3 @@ namespace MonoBrickFirmware.Movement
 		}
 	}
 }
-

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{67261E03-D263-4C42-A5AD-2A4820231B28}</ProjectGuid>
@@ -10,47 +10,29 @@
     <RootNamespace>MonoBrickFirmware</RootNamespace>
     <AssemblyName>MonoBrickFirmware</AssemblyName>
     <UseMSBuildEngine>False</UseMSBuildEngine>
+    <ReleaseVersion>1.2</ReleaseVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Externalconsole>true</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
+    <WarningLevel>0</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Debug\MonoBrickFirmware.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Externalconsole>true</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Native\" />
-    <Folder Include="Tools\" />
-    <Folder Include="Display\" />
-    <Folder Include="Display\Resources\" />
-    <Folder Include="Sensors\" />
-    <Folder Include="Movement\" />
-    <Folder Include="UserInput\" />
-    <Folder Include="Sound\" />
-    <Folder Include="Services\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Display\Animation\" />
-    <Folder Include="Connections\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Management\Battery.cs" />
     <Compile Include="Native\Libc.cs" />
     <Compile Include="Tools\QueueThread.cs" />
     <Compile Include="Display\Console.cs" />
@@ -92,7 +74,6 @@
     <Compile Include="Display\Dialogs\QuestionsDialog.cs" />
     <Compile Include="Display\Dialogs\SelectDialog.cs" />
     <Compile Include="Sound\Speaker.cs" />
-    <Compile Include="Services\WebServer.cs" />
     <Compile Include="Tools\XmlHelper.cs" />
     <Compile Include="Extensions\EnumExtension.cs" />
     <Compile Include="Sensors\SensorFactory.cs" />
@@ -121,6 +102,15 @@
     <Compile Include="Tools\VersionHelper.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Display\Dialogs\DialogWithProgessAnimation.cs" />
+    <Compile Include="Sensors\NoSensor.cs" />
+    <Compile Include="Sensors\UnknownSensor.cs" />
+    <Compile Include="FileSystem\ProgramManager.cs" />
+    <Compile Include="FileSystem\ProgramInformation.cs" />
+    <Compile Include="Sensors\MSDistanceSensor.cs" />
+    <Compile Include="Sensors\MSAngleSensor.cs" />
+    <Compile Include="Sensors\SensorAttachment.cs" />
+    <Compile Include="Sensors\SensorDetector.cs" />
+    <Compile Include="Sensors\MSSensorMuxBase.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -140,5 +130,8 @@
     <EmbeddedResource Include="Display\Resources\profont_7.bin">
       <LogicalName>font.profont_7</LogicalName>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FileSystem\" />
   </ItemGroup>
 </Project>

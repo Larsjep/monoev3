@@ -38,8 +38,9 @@ namespace MonoBrickFirmware.Sensors
 	/// Class for IR beacon location.
 	/// </summary>
 	public class BeaconLocation{
+		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrickFirmware.IO.IRBeaconLocation"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.BeaconLocation"/> class.
 		/// </summary>
 		/// <param name="location">Location.</param>
 		/// <param name="distance">Distance.</param>
@@ -68,17 +69,19 @@ namespace MonoBrickFirmware.Sensors
 	public class EV3IRSensor : UartSensor{
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.EV3.IRSensor"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.EV3IRSensor"/> class.
 		/// </summary>
+		/// <param name="port">Port.</param>
 		public EV3IRSensor (SensorPort port) : this(port, IRMode.Proximity)
 		{
 				
 		}
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrick.EV3.IRSensor"/> class.
+		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.EV3IRSensor"/> class.
 		/// </summary>
-		/// <param name="mode">Mode.</param>
+		/// <param name="port">Senosr port.</param>
+		/// <param name="mode">IR Mode.</param>
 		public EV3IRSensor (SensorPort port, IRMode mode) :  base(port)
 		{
 			base.Initialise(base.uartMode);

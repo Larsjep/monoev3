@@ -24,9 +24,7 @@ namespace MonoBrickFirmware.Display.Dialogs
         private int titleSize;
 		private int dialogWidth;
 		private int dialogHeight;
-		private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
-		private CancellationToken token;
-		
+
 		private const int dialogEdge = 5;
 		private const int buttonEdge = 2;
 		private const int buttonTextOffset = 2;
@@ -49,9 +47,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 			outherWindow = new Rectangle (startPoint1, startPoint2);
 			innerWindow = new Rectangle (new Point (startPoint1.X + dialogEdge, startPoint1.Y + dialogEdge), new Point (startPoint2.X - dialogEdge, startPoint2.Y - dialogEdge));
 			titleRect = new Rectangle (new Point ((int)(Lcd.Width / 2 - titleSize / 2), (int)(startPoint1.Y - (font.maxHeight / 2))), new Point ((int)(Lcd.Width / 2 + titleSize / 2), (int)(startPoint1.Y + (font.maxHeight / 2))));
-			token = cancelTokenSource.Token;
-			
-						
 			int top = innerWindow.P1.Y + (int)( f.maxHeight/2) + topOffset;
 			int middel = innerWindow.P1.Y  + ((innerWindow.P2.Y - innerWindow.P1.Y) / 2) - (int)(f.maxHeight)/2;
 			int count = 0;
@@ -70,13 +65,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 			OnShow += delegate {Lcd.Instance.SaveScreen();};
 			OnExit += delegate {Lcd.Instance.LoadScreen();};	
 		}
-		
-		protected void Cancel()
+
+		public bool Show ()
 		{
-			cancelTokenSource.Cancel();	
+			return Show(CancellationToken.None);
 		}
-		
-		public virtual bool Show()
+
+
+
+		public virtual bool Show(CancellationToken token)
 		{
 			bool exit = false;
 			OnShow();

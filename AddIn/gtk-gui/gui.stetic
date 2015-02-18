@@ -5,10 +5,7 @@
     <target-gtk-version>2.12</target-gtk-version>
   </configuration>
   <import>
-    <widget-library name="../bin/Release/MonoBrickAddin.dll" internal="true" />
-    <widget-library name="../External/MonoDevelop.Ide.dll" />
-    <widget-library name="../External/MonoDevelop.Debugger.dll" />
-    <widget-library name="../External/MonoDevelop.Debugger.Soft.dll" />
+    <widget-library name="../bin/Debug/MonoBrickAddin.dll" internal="true" />
   </import>
   <widget class="Gtk.Bin" id="MonoBrickAddin.EV3OptionsPanel" design-size="491 300">
     <property name="MemberName" />

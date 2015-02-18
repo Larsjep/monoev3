@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Threading;
 namespace MonoBrickFirmware.Display.Dialogs
 {
 	public interface IStep
@@ -7,7 +7,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		string StepText{get;}
 		string OkText{get;}
 		string ErrorText{get;}
-		bool Execute ();
+		bool Execute();
 		bool ShowOkText{get;}
 	}
 }

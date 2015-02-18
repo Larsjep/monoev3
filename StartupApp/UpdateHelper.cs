@@ -8,7 +8,8 @@ namespace StartupApp
 {
 	public class UpdateHelper
 	{
-		private static string DownloadURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/";
+		private static string PackageURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/firware/";
+		private static string PackageName = "package.xml";
 		private static string StartUPAppName = "StartupApp.exe";
 		private static string FirmwareDllName = "MonoBrickFirmware.dll";
 		private static string XmlSerializersName = "StartupApp.XmlSerializers.dll";
@@ -19,38 +20,70 @@ namespace StartupApp
 		public UpdateHelper(string version)
 		{
 			newDir = Path.Combine (BinDir, version);
-			Console.WriteLine("NewDir " + newDir);
 		}
 
-		private bool DownloadFile(string file, string url, string downloadPath)
+		private static bool DownloadFile(string file, string url, string downloadPath, bool overwriteFiles)
 		{
 			bool ok = true;
 			try
 			{
 				if(!Directory.Exists(downloadPath))
+				{
 					Directory.CreateDirectory(downloadPath);
-				new WebClient ().DownloadFile (url + file, Path.Combine(downloadPath,file));
+				}
+				string downloadFileName = Path.Combine(downloadPath,file);
+				if(overwriteFiles || (!overwriteFiles && !File.Exists(downloadFileName)))
+				{
+					new WebClient ().DownloadFile (Path.Combine(url,file), downloadFileName );
+				}
 			}
-			catch
+			catch(Exception e)
 			{
+				Console.WriteLine(e.Message);
 				ok = false;
 			}
 			return ok;
 		}
 
-		public bool DownloadFirmware()
+		private static bool DownloadPackage(string packageName, string packageUrl, string downloadPath, bool overwriteFiles)
 		{
 			bool ok = true;
-			string[] filesToDownload = new string[]{ StartUPAppName, FirmwareDllName, XmlSerializersName };
-			foreach (var file in filesToDownload) 
+			InstallPackage installPackage = new InstallPackage();
+			ok = DownloadFile(packageName, packageUrl, downloadPath, true);
+			if(ok)
 			{
-				if (!DownloadFile (file, DownloadURL, newDir)) 
+				try
+				{
+					installPackage = installPackage.LoadFromXML(Path.Combine(downloadPath,packageName));
+				}
+				catch
 				{
 					ok = false;
-					break;
+				}
+				if(ok)
+				{
+					var downloadElements = installPackage.DownloadElementToArray();
+					foreach(var element in downloadElements)
+					{
+						ok = DownloadFile(element.FileName, Path.Combine(element.Url, element.Subdir), Path.Combine(downloadPath, element.Subdir), overwriteFiles);
+						if(!ok)
+						{
+							break;
+						}
+					}
 				}
 			}
 			return ok;
+		}
+
+		public bool DownloadMissingFiles ()
+		{
+			return DownloadPackage(PackageName, PackageURL, newDir, false);		
+		}
+
+		public bool DownloadFirmware()
+		{
+			return DownloadPackage(PackageName, PackageURL, newDir, true);
 		}
 
 		public bool UpdateBootFile()
