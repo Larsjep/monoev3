@@ -31,14 +31,15 @@ using MonoDevelop.Projects;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Core.ProgressMonitoring;
-using MonoDevelop.Debugger;
+using System.IO;
+using System.Diagnostics;
 
 namespace MonoBrickAddin
 {
 	public class MonoBrickProject : DotNetAssemblyProject
 	{
 		FilePath referencePath = "";
-		static string versionString  = "AddIn: 1.2.0.0";
+		string versionString ;
 		#region Constructors
 
 		public MonoBrickProject()
@@ -56,6 +57,8 @@ namespace MonoBrickAddin
 		{
 			referencePath = info.ProjectBasePath;
 			Init();
+			versionString = FileVersionInfo.GetVersionInfo("MonoBrickFirmware.dll").FileVersion;
+
 		}
 
 		void Init()

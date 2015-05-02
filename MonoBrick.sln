@@ -50,6 +50,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{060FB881-2269-42D7-92C6-D1326181DCCC}"
 	ProjectSection(SolutionItems) = preProject
 		version.txt = version.txt
+		AssemblyInfo.cs = AssemblyInfo.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LcdDrawExample", "LcdDrawExample\LcdDrawExample.csproj", "{2730A667-E9ED-4CA7-8281-CF04EB9707BC}"

@@ -7,7 +7,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>MonoBrickAddin</RootNamespace>
     <AssemblyName>MonoBrickAddin</AssemblyName>
-    <SynchReleaseVersion>false</SynchReleaseVersion>
     <Description>MonoBrick addin for EV3 development.</Description>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -41,21 +40,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Cairo" />
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>glib-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="MonoDevelop.Core">
       <HintPath>External\MonoDevelop.Core.dll</HintPath>
     </Reference>
@@ -82,7 +71,6 @@
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="GUI\EV3OptionsPanel.cs" />
     <Compile Include="gtk-gui\MonoBrickAddin.EV3OptionsPanel.cs" />
-    <Compile Include="Source\AssemblyInfo.cs" />
     <Compile Include="Source\MonoBrickAddinScpUpload.cs" />
     <Compile Include="Source\MonoBrickAddinConfiguration.cs" />
     <Compile Include="Source\MonoBrickAddinDebuggerEngine.cs" />
@@ -95,6 +83,9 @@
     <Compile Include="Source\MonoBrickAddinUtility.cs" />
     <Compile Include="Source\MonoBrickAddinSshExecute.cs" />
     <Compile Include="Source\MonoBrickAddinSettings.cs" />
+    <Compile Include="..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\MonoBrickProject.xpt.xml">

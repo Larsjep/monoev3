@@ -111,6 +111,9 @@
     <Compile Include="Sensors\SensorAttachment.cs" />
     <Compile Include="Sensors\SensorDetector.cs" />
     <Compile Include="Sensors\MSSensorMuxBase.cs" />
+    <Compile Include="..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
