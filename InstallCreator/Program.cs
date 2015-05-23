@@ -21,7 +21,7 @@ namespace InstallCreator
 
 	    static public string NormalizeFilepath(string filepath)
 	    {
-	        string result = System.IO.Path.GetFullPath(filepath).ToLowerInvariant();
+	        string result = System.IO.Path.GetFullPath(filepath);
 			var removeChars = new char[] { '\\'};
 
 	        result = result.TrimEnd(removeChars);
