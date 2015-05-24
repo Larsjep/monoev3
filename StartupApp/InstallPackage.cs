@@ -49,18 +49,10 @@ namespace StartupApp
 
 	public class DownloadElement
 	{
-		[XmlElement("Url")]
-		private string downloadUrl = "";
 		[XmlElement("Subdir")]
 		private string subdir = "";
 		[XmlElement("FileName")]
 		private string fileName = "";
-		public string Url
-		{ 
-			get{ return downloadUrl;}
-			set{downloadUrl = value;}
-		}
-		
 		public string Subdir
 		{ 
 			get{return subdir;}
@@ -74,10 +66,9 @@ namespace StartupApp
 		}
 
 
-		public DownloadElement(string url, string fileName, string subdir = "")
+		public DownloadElement(string fileName, string subdir = "")
 		{
 			this.subdir = subdir;
-			this.downloadUrl = url;
 			this.fileName = fileName;
 		}
 

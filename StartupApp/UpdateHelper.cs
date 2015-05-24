@@ -65,7 +65,7 @@ namespace StartupApp
 					var downloadElements = installPackage.DownloadElementToArray();
 					foreach(var element in downloadElements)
 					{
-						ok = DownloadFile(element.FileName, Path.Combine(element.Url, element.Subdir), Path.Combine(downloadPath, element.Subdir), overwriteFiles);
+						ok = DownloadFile(element.FileName, Path.Combine(downloadPath, element.Subdir), Path.Combine(downloadPath, element.Subdir), overwriteFiles);
 						if(!ok)
 						{
 							break;

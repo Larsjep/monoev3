@@ -16,7 +16,6 @@ namespace InstallCreator
 		private static List<string> fileExclude = new List<string>{"package.xml"};
 
 		private static string currentDir;
-		private static string url;
 		private static string installFileName = "package.xml";
 
 	    static public string NormalizeFilepath(string filepath)
@@ -53,7 +52,7 @@ namespace InstallCreator
 					if(!exclude)
 					{
 						string subdir =  GetRelativePath(currentDir, Path.GetDirectoryName(f));
-						DownloadElement element = new DownloadElement(url, fileName, subdir);
+						DownloadElement element = new DownloadElement(fileName, subdir);
 						downloadList.Add(element);
 					}
 		        }
@@ -71,10 +70,6 @@ namespace InstallCreator
 
 		public static void Main (string[] args)
 		{
-			if (args.Length > 0)
-				url = args [0];
-			else 
-				url = "";
 			currentDir = Directory.GetCurrentDirectory ();
 			DirSearch (currentDir);
 			InstallPackage installSettings = new InstallPackage();
