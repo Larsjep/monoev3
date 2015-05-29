@@ -44,7 +44,7 @@ namespace DownloadInstallerTest
 					var downloadElements = installPackage.DownloadElementToArray();
 					foreach(var element in downloadElements)
 					{
-						ok = DownloadFile(element.FileName, Path.Combine(element.Url, element.Subdir), Path.Combine(downloadPath, element.Subdir));
+						ok = DownloadFile(element.FileName, Path.Combine(downloadPath, element.Subdir), Path.Combine(downloadPath, element.Subdir));
 						if(!ok)
 						{
 							break;

@@ -31,7 +31,6 @@ using MonoDevelop.Projects;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Core.ProgressMonitoring;
-using System.IO;
 using System.Diagnostics;
 
 namespace MonoBrickAddin
