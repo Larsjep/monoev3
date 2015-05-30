@@ -57,7 +57,7 @@ namespace DownloadInstallerTest
 
 		public static void Main (string[] args)
 		{
-			DownloadAndInstallPackage("install.xml", "http://monobrick.dk/MonoBrickFirmwareRelease/Test/webserverPackage", Directory.GetCurrentDirectory());		
+			DownloadAndInstallPackage("package.xml", "ftp://soborg.net/test/StartupApp/", Directory.GetCurrentDirectory());		
 		}
 	}
 }

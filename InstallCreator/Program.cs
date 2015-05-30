@@ -13,7 +13,7 @@ namespace InstallCreator
 		
 		private static List<DownloadElement> downloadList = new List<DownloadElement>();
 		private static List<string> extensionExclude = new List<string>{"mdb", "DS_Store"};
-		private static List<string> fileExclude = new List<string>{"package.xml"};
+		private static List<string> fileExclude = new List<string>{"package.xml", "InstallCreator.exe"};
 
 		private static string currentDir;
 		private static string installFileName = "package.xml";
