@@ -139,11 +139,6 @@ namespace StartupApp
 		{
 			List<IStep> steps = new List<IStep> ();
 			steps.Add(new StepContainer (delegate() {return ProgramManager.Instance.AOTCompileProgram(program);}, "compiling program", "Failed to compile"));
-			/*foreach (string file in Directory.EnumerateFiles(programFolder,"*.*").Where(s => s.EndsWith(".exe") || s.EndsWith(".dll"))) {
-				steps.Add (new StepContainer (delegate() {
-					return AOTHelper.Compile (file);
-				}, new FileInfo(file).Name, "Failed to compile"));
-			}*/
 			var dialog = new StepDialog("Compiling",steps);
 			return dialog.Show();
 		}

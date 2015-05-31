@@ -8,21 +8,28 @@ namespace StartupApp
 {
 	public class UpdateHelper
 	{
-		private static string PackageURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/firware/";
 		private static string PackageName = "package.xml";
 		private static string StartUPAppName = "StartupApp.exe";
 		private static string FirmwareDllName = "MonoBrickFirmware.dll";
 		private static string XmlSerializersName = "StartupApp.XmlSerializers.dll";
 		private static string StartupFile = @"/home/root/lejos/bin/startup";
 		private static string BinDir = @"/usr/local/bin";
+		private static string RepositoryFile = BinDir + "/repository.txt";
 		private string newDir;
+		private string PackageURL;
 
 		public UpdateHelper(string version)
 		{
+			PackageURL = GetRepository ();
 			newDir = Path.Combine (BinDir, version);
 		}
 
-		private static bool DownloadFile(string file, string url, string downloadPath, bool overwriteFiles)
+		private string GetRepository()
+		{
+			return File.ReadAllText (RepositoryFile);
+		}
+
+		private bool DownloadFile(string file, string url, string downloadPath, bool overwriteFiles)
 		{
 			bool ok = true;
 			try
@@ -45,7 +52,7 @@ namespace StartupApp
 			return ok;
 		}
 
-		private static bool DownloadPackage(string packageName, string packageUrl, string downloadPath, bool overwriteFiles)
+		private bool DownloadPackage(string packageName, string packageUrl, string downloadPath, bool overwriteFiles)
 		{
 			bool ok = true;
 			InstallPackage installPackage = new InstallPackage();
@@ -65,7 +72,7 @@ namespace StartupApp
 					var downloadElements = installPackage.DownloadElementToArray();
 					foreach(var element in downloadElements)
 					{
-						ok = DownloadFile(element.FileName, Path.Combine(downloadPath, element.Subdir), Path.Combine(downloadPath, element.Subdir), overwriteFiles);
+						ok = DownloadFile(element.FileName, Path.Combine(PackageURL, element.Subdir), Path.Combine(downloadPath, element.Subdir), overwriteFiles);
 						if(!ok)
 						{
 							break;
@@ -74,11 +81,6 @@ namespace StartupApp
 				}
 			}
 			return ok;
-		}
-
-		public bool DownloadMissingFiles ()
-		{
-			return DownloadPackage(PackageName, PackageURL, newDir, false);		
 		}
 
 		public bool DownloadFirmware()
