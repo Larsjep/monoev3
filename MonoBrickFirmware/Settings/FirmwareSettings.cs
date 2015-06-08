@@ -1,8 +1,6 @@
-using System;
+﻿using System;
 using System.Xml.Serialization;
 using System.IO;
-using System.Collections.Specialized;
-using System.Xml;
 using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.Settings
@@ -17,41 +15,38 @@ namespace MonoBrickFirmware.Settings
 			set { port = value; }
 		}
 	}
-	
-	
+
+
 	public class DebugSettings{
 		[XmlElement("Port")]
 		private int port = 12345;
-		
+
 		[XmlElement("TerminateWithEscape")]
 		private bool terminateWithEscape = true;
-		
+
 		public bool TerminateWithEscape	
 		{
 			get { return terminateWithEscape; }
 			set { terminateWithEscape = value; }
 		}
-		
+
 		public int Port
 		{
 			get { return port; }
 			set { port = value; }
 		}
 	}
-	
+
 	public class WiFiSettings{
 		[XmlElement("SSID")]
 		private string ssid = "YourSSID";
-		
+
 		[XmlElement("Password")]
 		private string password = "YourPassword";
-		
-		[XmlElement("ConnectAtStartUp")]
-		private bool connectAtStartUp = false;
-		
+
 		[XmlElement("Encryption")]
 		private bool encryption = true;
-		
+
 		public string SSID {
 			get{return ssid; }
 			set { ssid = value; }
@@ -60,62 +55,65 @@ namespace MonoBrickFirmware.Settings
 			get{return  password; }
 			set {  password = value; }
 		}
-		
-		public bool ConnectAtStartUp	
-		{
-			get { return connectAtStartUp; }
-			set { connectAtStartUp = value; }
-		}
-		
+
 		public bool Encryption	
 		{
 			get { return encryption; }
 			set { encryption = value; }
 		}
 	}
-	
+
 	public class GeneralSettings{
 		[XmlElement("CheckForSwUpdatesAtStartUp")]
-		private bool checkForSwUpdatesAtStartUp = true;
-		
+		private bool checkForSwUpdatesAtStartUp = false;
+
+		[XmlElement("ConnectToWiFiAtStartUp")]
+		private bool connectToWiFiAtStartUp = false;
+
 		public bool CheckForSwUpdatesAtStartUp	
 		{
 			get { return checkForSwUpdatesAtStartUp; }
 			set { checkForSwUpdatesAtStartUp = value; }
 		}
+
+		public bool ConnectToWiFiAtStartUp	
+		{
+			get { return connectToWiFiAtStartUp; }
+			set { connectToWiFiAtStartUp = value; }
+		}
 	}
-	
+
 	public class SoundSettings{
 		[XmlElement("Volume")]
 		private int volume = 60;
-		
+
 		[XmlElement("EnableSound")]
 		private bool enableSound = true;
-		
+
 		public bool EnableSound	
 		{
 			get { return enableSound; }
 			set { enableSound = value; }
 		}
 
-		
+
 		public int Volume	
 		{
 			get { return volume; }
 			set { volume = value; }
 		}
 	}
-	
+
 	[XmlRoot("ConfigRoot")]
 	public class FirmwareSettings
 	{
 		private static object readWriteLock = new object();
 		private static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
-		
-		
+
+
 		[XmlElement("GeneralSettings")]
 		public GeneralSettings GeneralSettings { get; set; }
-		
+
 		[XmlElement("WiFiSettings")]
 		public WiFiSettings WiFiSettings { get; set; }
 
@@ -124,10 +122,10 @@ namespace MonoBrickFirmware.Settings
 
 		[XmlElement("SoundSettings")]
 		public SoundSettings SoundSettings{ get; set; }
-		
+
 		[XmlElement("WebServerSettings")]
 		public WebServerSettings WebServerSettings{ get; set; }
-		
+
 
 		public FirmwareSettings ()
 		{
@@ -137,7 +135,7 @@ namespace MonoBrickFirmware.Settings
 			SoundSettings = new SoundSettings();
 			WebServerSettings = new WebServerSettings();	
 		}
-		
+
 		public bool Save()
 		{
 			lock (readWriteLock) {
@@ -159,7 +157,7 @@ namespace MonoBrickFirmware.Settings
 			}
 			return false;
 		}
-		
+
 		public FirmwareSettings Load()
 		{
 			lock (readWriteLock) {

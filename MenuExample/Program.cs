@@ -9,75 +9,36 @@ namespace MenuExample
 {
 	class MainClass
 	{
+		public static MenuContainer container;
+		public static Menu mainMenu;
+		public static Menu subMenu;
+		public static Menu subSubMenu;
+
+
+
 		public static void Main (string[] args)
 		{
-			List<IMenuItem> items = new List<IMenuItem>();
-			items.Add (new MenuItemWithAction("Personal details", () => ShowSubMenu(),MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("Execute steps", () => ExecuteSteps()));
-			Menu m = new Menu("Main menu", items);
-			m.Show();	
-		}
-		
-		public static bool ExecuteSteps ()
-		{
-			List<IStep> steps = new List<IStep>();
-			steps.Add( new StepContainer(DummyStep, "Dummy step 1", "Error executing step 1") );
-			steps.Add( new StepContainer(DummyStep, "Dummy step 2", "Error executing step 2") );
-			Dialog stepDialog = new StepDialog("Doing steps", steps);
-			stepDialog.Show();
-			return false;
-		}
-		
-		
-		
-		public static bool ShowSubMenu ()
-		{
-			List<IMenuItem> items = new List<IMenuItem> ();
-			var nameItem = new MenuItemWithCharacterInput("Name", "Enter Name", "Anders");
-			var ageItem = new MenuItemWithNumericInput("Age", 29, 0, 100);
-			var genderItem = new MenuItemWithOptions<string>("Option", new string[]{"Male","Female"});
-			var programItem = new MenuItemWithCheckBox("Loves C#", true);
-			var checkBoxWithActionItem = new MenuItemWithCheckBox("Execute", true, TurnCheckBoxOnOff);
+			subSubMenu = new Menu ("sub Sub Menu", Font.MediumFont);
+			subSubMenu.AddMenuItem( new ItemWithCharacterInput("Name", "Enter Name", "Anders"));
+			subSubMenu.AddMenuItem( new ItemWithNumericInput("Age", 29, 0, 100));
+			subSubMenu.AddMenuItem( new ItemWithOptions<string>("Option", new string[]{"Male","Female"}));
+			subSubMenu.AddMenuItem( new ItemWithCheckBox("Loves C#", true));
+
+
+			subMenu = new Menu ("Sub Menu", Font.MediumFont);
+			subMenu.AddMenuItem (subSubMenu);
+			subMenu.AddMenuItem( new ItemWithCharacterInput("Name", "Enter Name", "Anders"));
+			subMenu.AddMenuItem( new ItemWithNumericInput("Age", 29, 0, 100));
+			subMenu.AddMenuItem( new ItemWithCheckBox("Loves C#", true));
+
+			mainMenu = new Menu ("Main menu", Font.MediumFont);
+			mainMenu.AddMenuItem (subMenu);
+			mainMenu.AddMenuItem (new ItemWithProgramList ("Programs"));
 			
-			items.Add(nameItem);
-			items.Add(ageItem);
-			items.Add(genderItem);
-			items.Add(programItem);
-			items.Add(checkBoxWithActionItem);
+			container = new MenuContainer(mainMenu);
+			container.Show();
 			
-			//Show the menu
-			Menu m = new Menu ("Sub Menu", items);
-			m.Show ();
-			Console.WriteLine("Your name is " + nameItem.Text);
-			Console.WriteLine("Your genger is " + genderItem.GetSelection().ToString());
-			Console.WriteLine("Your age is " + ageItem.Value);
-			if(programItem.Checked)
-				Console.WriteLine(nameItem.Text + " loves C#");
-			Console.WriteLine("Is checked: " + checkBoxWithActionItem.Checked);			
-			return false;
 		}
-		
-		public static bool TurnCheckBoxOnOff (bool isChecked)
-		{
-			if (isChecked) {
-				var step = new StepContainer (DummyStep, "Turning off", "Failed to turn off");
-				var progressDialog = new ProgressDialog ("Information", step);
-				progressDialog.Show ();
-				return false;
-			} 
-			else 
-			{
-				var dialog = new InfoDialog("Turning On", true);
-				dialog.Show();
-				return true;
-			}
-		}
-		
-		public static bool DummyStep ()
-		{
-			System.Threading.Thread.Sleep(5000);
-			return true;
-		}
-		
+
 	}
 }

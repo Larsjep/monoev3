@@ -9,7 +9,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private string message;
 		private bool waitForOk;
 		private const string okString = "OK";
-		public InfoDialog(string message, bool waitForOk, string title = "Information"):base(Font.MediumFont,title){
+		public InfoDialog(string message, bool waitForOk, string title = "Information"):base(Font.MediumFont,title)
+		{
 			this.message = message;
 			this.waitForOk = waitForOk;
 		}
@@ -20,25 +21,25 @@ namespace MonoBrickFirmware.Display.Dialogs
 		}
 		
 		/// <summary>
-		/// Show the dialog - this does not block only draws the dialog if wait for OK is disabled
+		/// Draw the dialog
 		/// </summary>
-		public override bool Show (CancellationToken token)
+		internal override void Draw ()
 		{
-			if (waitForOk) {
-				base.Show (token);
+			if (waitForOk) 
+			{
+				base.Draw();
 			} 
-			else {
+			else 
+			{
 				OnShow();
 				Draw ();
 				OnExit();
-				//Don't listen for button events
 			}
-			return true;
 		}
 		
-		protected override bool OnEnterAction ()
+		internal override void OnEnterPressed ()
 		{
-			return true;//exit
+			OnExit();
 		}
 		
 		

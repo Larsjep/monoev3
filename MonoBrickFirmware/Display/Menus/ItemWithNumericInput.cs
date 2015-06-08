@@ -1,10 +1,11 @@
 using System;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
+using System.Threading;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class MenuItemWithNumericInput : IMenuItem
+	public class ItemWithNumericInput : IChildItem
 	{
 		private string text;
 		private int min;
@@ -19,18 +20,19 @@ namespace MonoBrickFirmware.Display.Menus
 		
 		private Font font;
 		private Rectangle rect;
+		private CancellationTokenSource cancelSource = new CancellationTokenSource();
+
 		public Action<int> OnValueChanged = delegate {};
-		public MenuItemWithNumericInput (string text, int startValue, int min = int.MinValue, int max= int.MaxValue){
+		public ItemWithNumericInput (string text, int startValue, int min = int.MinValue, int max= int.MaxValue){
 			this.text = text;
 			this.Value = startValue;
 			this.min = min;
 			this.max = max;
 		}
-		public bool EnterAction(){
-			return false;
-		}
-		
-		public bool LeftAction ()
+
+		public IParentItem Parent { get; set;}
+
+		public void OnLeftPressed ()
 		{
 			int counter = 0;
 			Value--;
@@ -55,15 +57,14 @@ namespace MonoBrickFirmware.Display.Menus
 				}
 				if(Value<min)
 					Value = max;
-				this.Draw(font,rect,false);
+				this.OnDrawTitle(font,rect,false);
 				Lcd.Instance.Update();
 				System.Threading.Thread.Sleep(holdSleepTime);
-			}while (Buttons.Instance.GetStates()== Buttons.ButtonStates.Left);
+			}while (Buttons.Instance.GetStates()== Buttons.ButtonStates.Left && !cancelSource.Token.IsCancellationRequested);
 			OnValueChanged(Value);
-			return false;
 		}
 		
-		public bool RightAction(){
+		public void OnRightPressed(){
 			int counter = 0;
 			Value++;
 			do{
@@ -87,14 +88,14 @@ namespace MonoBrickFirmware.Display.Menus
 				}
 				if(Value>max)
 					Value = min;
-				this.Draw(font,rect,false);
+				this.OnDrawTitle(font,rect,false);
 				Lcd.Instance.Update();
 				System.Threading.Thread.Sleep(holdSleepTime);
-			}while (Buttons.Instance.GetStates()== Buttons.ButtonStates.Right);
+			}while (Buttons.Instance.GetStates()== Buttons.ButtonStates.Right && !cancelSource.Token.IsCancellationRequested);
 			OnValueChanged(Value);
-			return false;
 		}
-		public void Draw (Font f, Rectangle r, bool color)
+
+		public void OnDrawTitle (Font f, Rectangle r, bool color)
 		{
 			font = f;
 			rect = r;
@@ -113,6 +114,37 @@ namespace MonoBrickFirmware.Display.Menus
 			Lcd.Instance.DrawArrow(leftArrowRect, Lcd.ArrowOrientation.Left, color);
 			Lcd.Instance.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
 		}
+
+		public void OnEnterPressed()
+		{
+		
+		}
+
+		public void OnUpPressed ()
+		{
+			
+		}
+
+		public void OnDownPressed ()
+		{
+			
+		}
+
+		public void OnEscPressed ()
+		{
+			
+		}
+
+		public void OnDrawContent ()
+		{
+			
+		}
+
+		public void OnHideContent ()
+		{
+			cancelSource.Cancel ();	
+		}
+
 		public int Value{get;private set;}
 	}
 }

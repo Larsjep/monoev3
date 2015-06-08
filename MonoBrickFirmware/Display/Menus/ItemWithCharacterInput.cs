@@ -1,35 +1,48 @@
 using System;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Display.Dialogs;
+using System.Threading;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class  MenuItemWithCharacterInput : IMenuItem
+	public class  ItemWithCharacterInput : IChildItem
 	{
 		private string subject;
 		private string dialogTitle;
 		private const int lineSize = 2;
 		private const int edgeSize = 2;
 		private bool hide;
-		public Action<Dialogs.CharacterDialog> OnShowDialog = delegate {};
+		private bool show = false;
+		private CharacterDialog dialog; 
+		public Action<CharacterDialog> OnShowDialog = delegate {};
 		public Action<string> OnDialogExit = delegate {};
-		public  MenuItemWithCharacterInput (string subject, string dialogTitle, string startText, bool hideInput = false){
+
+		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText, bool hideInput = false){
 			this.dialogTitle = dialogTitle; 
 			this.subject = subject;
 			this.Text = startText;
 			this.hide = hideInput;
-		}
-		public bool EnterAction ()
-		{
-			var dialog = new Dialogs.CharacterDialog(dialogTitle);
+			dialog = new Dialogs.CharacterDialog(dialogTitle);
 			dialog.OnShow += delegate{this.OnShowDialog(dialog);};
-			dialog.OnExit += delegate{Text = dialog.GetUserInput();this.OnDialogExit(Text);};
-			dialog.Show();
-			return false;
+			dialog.OnExit += delegate{Text = dialog.GetUserInput();this.OnDialogExit(Text); show = false; Parent.RemoveFocus(this);};
 		}
-		public bool LeftAction (){return false;}
-		public bool RightAction(){return false;}
-		public void Draw (Font f, Rectangle r, bool color)
+
+		public IParentItem Parent { get; set;}
+
+		public void OnEnterPressed ()
+		{
+			if (show)
+			{
+				dialog.OnEnterPressed ();
+			} 
+			else 
+			{
+				show = true;
+				Parent.SetFocus (this);
+			}
+		}
+
+		public void OnDrawTitle(Font f, Rectangle r, bool color)
 		{
 			string showTextString;
 			int totalWidth = r.P2.X - r.P1.X;
@@ -63,6 +76,59 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 			Lcd.Instance.WriteTextBox (f, subjectRect,subject + "  ", color);
 			Lcd.Instance.WriteTextBox(f,textRect,showTextString,color,Lcd.Alignment.Right);
+		}
+
+		public void OnDrawContent ()
+		{
+			dialog.Draw ();		
+		}
+
+		public void OnUpPressed ()
+		{
+			if (show)
+			{
+				dialog.OnUpPressed ();		
+			}
+		}
+
+		public void OnDownPressed ()
+		{
+			if (show)
+			{
+				dialog.OnDownPressed();		
+			}
+		}
+
+		public void OnEscPressed ()
+		{
+			if (show)
+			{
+				dialog.OnEscPressed ();		
+			}			
+		}
+
+		public void OnLeftPressed ()
+		{
+			if (show)
+			{
+				dialog.OnLeftPressed ();	
+			}
+		}
+
+		public void OnRightPressed()
+		{
+			if (show)
+			{
+				dialog.OnRightPressed ();	
+			}	
+		}
+
+		public void OnHideContent()
+		{
+			if (show) 
+			{
+				dialog.Hide ();
+			}
 		}
 
 		public string Text{get;private set;}

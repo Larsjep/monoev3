@@ -9,55 +9,78 @@ namespace MonoBrickFirmware.Display.Dialogs
 	{
 		private IStep step;
 		private int progressLine;
-		
+		private Thread progress;
 		public ProgressDialog (string title,IStep step): base(Font.MediumFont, title)
 		{
 			this.step = step;
 			progressLine = 1;
+			CreateProcessThread ();
 		}
 		
-		public override bool Show (CancellationToken token)
+		internal override void Draw ()
 		{
-			bool ok = true;
-			string endText;
-			OnShow ();
-			Draw ();
-			StartProgressAnimation (progressLine);
-			try {
-				if (step.Execute ()) 
-				{
-					endText = step.OkText;
-				} 
-				else 
-				{
-					ok = false;
-					endText = step.ErrorText;
-				}
-			} 
-			catch (Exception e) 
+			if (!progress.IsAlive)
 			{
-				ok = false;
-				endText =  "Exception executing " + step.StepText;
-				Console.WriteLine("Exception " + e.Message);
-				Console.WriteLine(e.StackTrace);
-			}
-			StopProgressAnimation ();
-			if ((step.ShowOkText && ok) || !ok) 
-			{
-				ClearContent ();
-				WriteTextOnDialog (endText);
-				DrawCenterButton ("Ok", false);
-				Lcd.Instance.Update ();
-				Buttons.Instance.GetKeypress ();//Wait for any key
-			}
-			OnExit();
-			return ok;
+				progress.Start ();
+			}	
 		}
+
+		public bool Ok{ get; private set;}
 		
 		protected override void OnDrawContent ()
 		{
 			WriteTextOnLine(step.StepText, 0);
 			WriteTextOnLine("Please wait...", 2);
+		}
+
+		/// <summary>
+		/// Show menu. Returns true if step executed ok otherwise false
+		/// </summary>
+		public override bool Show ()
+		{
+			base.Show ();
+			return Ok;
+		}
+
+		private void CreateProcessThread()
+		{
+			progress = new Thread (delegate() 
+			{
+				Ok = true;
+				string endText;
+				OnShow ();
+				base.Draw();
+				StartProgressAnimation (progressLine);
+				try {
+					if (step.Execute ()) 
+					{
+						endText = step.OkText;
+					} 
+					else 
+					{
+						Ok = false;
+						endText = step.ErrorText;
+					}
+				} 
+				catch (Exception e) 
+				{
+					Ok = false;
+					endText =  "Exception executing " + step.StepText;
+					Console.WriteLine("Exception " + e.Message);
+					Console.WriteLine(e.StackTrace);
+				}
+				StopProgressAnimation ();
+				if ((step.ShowOkText && Ok) || !Ok) 
+				{
+					ClearContent ();
+					WriteTextOnDialog (endText);
+					DrawCenterButton ("Ok", false);
+					Lcd.Instance.Update ();
+					Buttons.Instance.GetKeypress ();//Wait for any key
+				}
+				OnExit();
+			});
+		
 		}
 	}
 }

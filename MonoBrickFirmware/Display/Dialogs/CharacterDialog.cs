@@ -178,7 +178,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			return true;
 		}
         
-		protected override bool OnEnterAction ()
+		internal override void OnEnterPressed ()
 		{
 			bool end = false;
 			switch (selection) 
@@ -205,10 +205,13 @@ namespace MonoBrickFirmware.Display.Dialogs
                     end = AddCharacter(" ");
 					break;
 			}
-			return end;
+			if (end) 
+			{
+				OnExit ();
+			}
 		}
 		
-		protected override bool OnLeftAction ()
+		internal override void OnLeftPressed ()
 		{
 			switch (selection) 
 			{
@@ -227,10 +230,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 						selectedIndex = 0;
 					break;
 			}
-			return false;
 		}
 		
-		protected override bool OnRightAction ()
+		internal override void OnRightPressed ()
 		{
 			switch (selection) 
 			{
@@ -249,10 +251,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 						selectedIndex = maxNumberOfHorizontalCharacters-1;
 				break;
 			}
-			return false;
 		}
 		
-		protected override bool OnUpAction ()
+		internal override void OnUpPressed ()
 		{
 			switch (selection) 
 			{
@@ -267,17 +268,19 @@ namespace MonoBrickFirmware.Display.Dialogs
 					break;
 			}
 			selectedLine--;
-			if(selectedLine < 0)
+			if (selectedLine < 0) 
+			{
 				selectedLine = 0;
-			return false;
+			}
 		}
 		
-		protected override bool OnDownAction ()
+		internal override void OnDownPressed ()
 		{
 			selectedLine++;
-			if(selectedLine > maxNumberOfLines-1)
-				selectedLine = maxNumberOfLines-1;
-			return false;	
+			if (selectedLine > maxNumberOfLines - 1) 
+			{
+				selectedLine = maxNumberOfLines - 1;
+			}
 		}
 		
 		protected override void OnDrawContent ()

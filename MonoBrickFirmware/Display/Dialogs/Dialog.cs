@@ -10,14 +10,7 @@ namespace MonoBrickFirmware.Display.Dialogs
     public abstract class Dialog
 	{
 		
-		protected Font font;
-		protected Rectangle outherWindow; 
-		protected Rectangle innerWindow;
-		protected List<Rectangle> lines;
-        
-				
-		private string title;
-        
+
 		private Rectangle titleRect;
 		private Point bottomLineCenter;
         
@@ -29,6 +22,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private const int buttonEdge = 2;
 		private const int buttonTextOffset = 2;
 		private const int boxMiddleOffset = 8;
+		private bool OnShowCalled = false;
+		private CancellationTokenSource cancelSource = new CancellationTokenSource();
+
+		protected Font font;
+		protected Rectangle outherWindow; 
+		protected Rectangle innerWindow;
+		protected List<Rectangle> lines;
+		internal string title;
+
 
 		public Action OnShow = delegate {};
 		public Action OnExit = delegate {};
@@ -63,93 +65,94 @@ namespace MonoBrickFirmware.Display.Dialogs
             }
 			bottomLineCenter = new Point(innerWindow.P1.X + ((innerWindow.P2.X-innerWindow.P1.X)/2) , outherWindow.P2.Y - dialogEdge/2);
 			OnShow += delegate {Lcd.Instance.SaveScreen();};
-			OnExit += delegate {Lcd.Instance.LoadScreen();};	
+			OnExit += delegate {Lcd.Instance.LoadScreen(); cancelSource.Cancel ();};	
 		}
 
-		public bool Show ()
+		/// <summary>
+		/// Show menu. This is a blocking call. Will end if dialog 
+		/// </summary>
+		public virtual bool Show()
 		{
-			return Show(CancellationToken.None);
-		}
-
-
-
-		public virtual bool Show(CancellationToken token)
-		{
-			bool exit = false;
-			OnShow();
-			while (!exit && !token.IsCancellationRequested) {
+			cancelSource = new CancellationTokenSource ();
+			while (!cancelSource.Token.IsCancellationRequested)
+			{
 				Draw ();
-				switch (Buttons.Instance.GetKeypress(token)) {
-					case Buttons.ButtonStates.Down: 
-						if (OnDownAction()) 
-						{
-							exit = true;
-						}
-						break;
-					case Buttons.ButtonStates.Up:
-						if (OnUpAction ()) 
-						{
-							exit = true;
-						}
-						break;
-					case Buttons.ButtonStates.Escape:
-						if (OnEscape()) 
-						{
-							exit = true;
-						}
-						break;
-					case Buttons.ButtonStates.Enter:
-						if (OnEnterAction ()) 
-						{
-							exit = true;
-						}
-						break;
-					case Buttons.ButtonStates.Left:
-						if (OnLeftAction()) 
-						{
-							exit = true;
-						}
-						break;
-					case Buttons.ButtonStates.Right:
-						if (OnRightAction()) 
-						{
-							exit = true;
-						}
-						break;
+				switch (Buttons.Instance.GetKeypress (cancelSource.Token)) {
+				case Buttons.ButtonStates.Down: 
+					OnDownPressed ();
+					break;
+				case Buttons.ButtonStates.Up:
+					OnUpPressed ();
+					break;
+				case Buttons.ButtonStates.Escape:
+					OnEscPressed ();
+					break;
+				case Buttons.ButtonStates.Enter:
+					OnEnterPressed ();
+					break;
+				case Buttons.ButtonStates.Left:
+					OnLeftPressed ();
+					break;
+				case Buttons.ButtonStates.Right:
+					OnRightPressed ();
+					break;
 				}
 			}
-			OnExit();
 			return true;
 		}
-		
-		protected virtual bool OnEnterAction ()
+
+		public virtual void Hide()
 		{
-			return false;
+			cancelSource.Cancel ();
+			OnExit ();
 		}
 		
-		protected virtual bool OnLeftAction ()
+		internal virtual void OnEnterPressed ()
 		{
-			return false;
+			
 		}
 		
-		protected virtual bool OnRightAction ()
+		internal virtual void OnLeftPressed ()
 		{
-			return false;
+			
 		}
 		
-		protected virtual bool OnUpAction ()
+		internal virtual void OnRightPressed ()
 		{
-			return false;
+			
 		}
 		
-		protected virtual bool OnDownAction ()
+		internal virtual void OnUpPressed ()
 		{
-			return false;
+			
 		}
 		
-		protected virtual bool OnEscape(){
-			return false;
+		internal virtual void OnDownPressed ()
+		{
+		
 		}
+		
+		internal virtual void OnEscPressed(){
+			
+		}
+
+		internal virtual void Draw ()
+		{
+			if (!OnShowCalled) 
+			{
+				OnShow ();
+				OnShowCalled = true;
+			}
+			Lcd.Instance.DrawRectangle(outherWindow, true, true);
+			Lcd.Instance.DrawRectangle(innerWindow, false, true);
+			OnDrawContent();
+			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
+			Lcd.Instance.Update();
+
+		}
+
+		protected  abstract void OnDrawContent ();
+
 
 		protected void WriteTextOnLine (string text, int lineIndex, bool color = true, Lcd.Alignment alignment = Lcd.Alignment.Center)
 		{
@@ -280,8 +283,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			}
 		}
 		
-		protected  abstract void OnDrawContent ();
-		
+
 		protected void ClearContent ()
 		{
 			Lcd.Instance.LoadScreen();
@@ -289,16 +291,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Lcd.Instance.DrawRectangle(innerWindow, false, true);
 			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 		}
-		
-		protected virtual void Draw ()
-		{
-			Lcd.Instance.DrawRectangle(outherWindow, true, true);
-			Lcd.Instance.DrawRectangle(innerWindow, false, true);
-			OnDrawContent();
-			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
-			Lcd.Instance.Update();
-			 
-		}
+
 	}
 }
 

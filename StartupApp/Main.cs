@@ -34,30 +34,30 @@ namespace StartupApp
 		static void ShowMainMenu()
 		{
 			
-			List<IMenuItem> items = new List<IMenuItem>();
-			items.Add (new MenuItemWithAction("Programs", () => RunPrograms(),MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("WiFi Connection", () => ShowWiFiMenu(), MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("WebServer", () => ShowWebServerMenu(), MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("Settings", () => ShowSettings(), MenuItemSymbole.RightArrow));
-			items.Add (new MenuItemWithAction("Information", () => Information()));
-			items.Add (new MenuItemWithAction("Check for Updates", () => ShowUpdatesDialogs()));
-			items.Add (new MenuItemWithAction("Shutdown", () => Shutdown()));
+			List<IChildItem> items = new List<IChildItem>();
+			items.Add (new ItemWithAction("Programs", () => RunPrograms(),ItemSymbole.RightArrow));
+			items.Add (new ItemWithAction("WiFi Connection", () => ShowWiFiMenu(), ItemSymbole.RightArrow));
+			items.Add (new ItemWithAction("WebServer", () => ShowWebServerMenu(), ItemSymbole.RightArrow));
+			items.Add (new ItemWithAction("Settings", () => ShowSettings(), ItemSymbole.RightArrow));
+			items.Add (new ItemWithAction("Information", () => Information()));
+			items.Add (new ItemWithAction("Check for Updates", () => ShowUpdatesDialogs()));
+			items.Add (new ItemWithAction("Shutdown", () => Shutdown()));
 			Menu m = new Menu("Main menu", items);
 			m.Show();
 		}
 		#endregion
-		
+
 		#region Programs Menu
 		static bool RunPrograms ()
 		{
 			do
 			{
 				updateProgramList = false;
-				List<MenuItemWithAction> actionList = new List<MenuItemWithAction>();
+				List<ItemWithAction> actionList = new List<ItemWithAction>();
 				List<ProgramInformation> programs = ProgramManager.Instance.GetProgramInformationList();
 				foreach(var program in programs)
 				{
-					actionList.Add( new MenuItemWithAction(program.Name, () => ShowProgramOptions (program)));
+					actionList.Add( new ItemWithAction(program.Name, () => ShowProgramOptions (program)));
 				}
 				Menu m = new Menu ("Run program:", actionList);
 				m.Show ();//block
@@ -140,29 +140,30 @@ namespace StartupApp
 			List<IStep> steps = new List<IStep> ();
 			steps.Add(new StepContainer (delegate() {return ProgramManager.Instance.AOTCompileProgram(program);}, "compiling program", "Failed to compile"));
 			var dialog = new StepDialog("Compiling",steps);
-			return dialog.Show();
+			return dialog.Show () == 0 ? false : true;
+
 		}
 		#endregion
 		
 		#region WiFi Menu
 		static bool ShowWiFiMenu ()
 		{
-			List<IMenuItem> items = new List<IMenuItem> ();
-			var ssidItem = new MenuItemWithCharacterInput("SSID", "Enter SSID", settings.WiFiSettings.SSID);
+			List<IChildItem> items = new List<IChildItem> ();
+			var ssidItem = new ItemWithCharacterInput("SSID", "Enter SSID", settings.WiFiSettings.SSID);
 			ssidItem.OnDialogExit += delegate(string text) {
 				new Thread(delegate() {
 		    		settings.WiFiSettings.SSID = text;
 					settings.Save();
 			    }).Start();
 			};
-			var passwordItem = new MenuItemWithCharacterInput("Password", "Password", settings.WiFiSettings.Password, true);
+			var passwordItem = new ItemWithCharacterInput("Password", "Password", settings.WiFiSettings.Password, true);
 			passwordItem.OnDialogExit += delegate(string text) {
 				new Thread(delegate() {
 			    	settings.WiFiSettings.Password = text;
 					settings.Save();
 			    }).Start();
 			};
-			var encryptionItem = new MenuItemWithOptions<string>("Encryption", new string[]{"None","WPA/2"}, settings.WiFiSettings.Encryption ? 1 : 0);
+			var encryptionItem = new ItemWithOptions<string>("Encryption", new string[]{"None","WPA/2"}, settings.WiFiSettings.Encryption ? 1 : 0);
 			encryptionItem.OnOptionChanged += delegate(string newOpstion) {
 				new Thread(delegate() {
 		    		if(newOpstion == "None")
@@ -172,7 +173,7 @@ namespace StartupApp
 					settings.Save(); 
 			    }).Start();
 			};
-			var connectItem = new MenuItemWithCheckBox("Connect", WiFiDevice.IsLinkUp(),
+			var connectItem = new ItemWithCheckBox("Connect", WiFiDevice.IsLinkUp(),
 				delegate(bool WiFiOn)
          		{ 
 					bool isOn = WiFiOn;
@@ -242,8 +243,8 @@ namespace StartupApp
 		#region WebServer Menu
 		static bool ShowWebServerMenu ()
 		{
-			List<IMenuItem> items = new List<IMenuItem> ();
-			var portItem = new MenuItemWithNumericInput("Port", settings.WebServerSettings.Port, 1, ushort.MaxValue);
+			List<IChildItem> items = new List<IChildItem> ();
+			var portItem = new ItemWithNumericInput("Port", settings.WebServerSettings.Port, 1, ushort.MaxValue);
 			portItem.OnValueChanged+= delegate(int value) 
 			{
 				new Thread(delegate() {
@@ -251,7 +252,7 @@ namespace StartupApp
 					settings.Save();
 				}).Start();
 			};
-			var startItem = new MenuItemWithCheckBox("Start server", Webserver.Instance.IsRunning,
+			var startItem = new ItemWithCheckBox("Start server", Webserver.Instance.IsRunning,
 				delegate(bool running)
        	 		{ 
 					
@@ -291,11 +292,11 @@ namespace StartupApp
 		static bool ShowSettings ()
 		{
 			//Create the settings items and apply the settings 
-			List<IMenuItem> items = new List<IMenuItem> ();
-			var terminateWithEscapeItem = new MenuItemWithCheckBox("Debug termination",settings.DebugSettings.TerminateWithEscape);
-			var debugPortItem = new MenuItemWithNumericInput("Debug port",settings.DebugSettings.Port,1, ushort.MaxValue);
-			var checkForUpdate = new MenuItemWithCheckBox("Update check",settings.GeneralSettings.CheckForSwUpdatesAtStartUp);
-			var wifiConnect = new MenuItemWithCheckBox("WiFi auto connect",settings.WiFiSettings.ConnectAtStartUp);
+			List<IChildItem> items = new List<IChildItem> ();
+			var terminateWithEscapeItem = new ItemWithCheckBox("Debug termination",settings.DebugSettings.TerminateWithEscape);
+			var debugPortItem = new ItemWithNumericInput("Debug port",settings.DebugSettings.Port,1, ushort.MaxValue);
+			var checkForUpdate = new ItemWithCheckBox("Update check",settings.GeneralSettings.CheckForSwUpdatesAtStartUp);
+			var wifiConnect = new ItemWithCheckBox("WiFi auto connect",settings.WiFiSettings.ConnectAtStartUp);
 			//var soundVolume = new MenuItemWithNumericInput("Volume",settings.SoundSettings.Volume);
 			//var enableSound = new MenuItemWithCheckBox("Enable sound", settings.SoundSettings.EnableSound);
 			

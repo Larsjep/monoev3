@@ -3,37 +3,28 @@ using MonoBrickFirmware.Display;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class MenuItemWithCheckBox : IMenuItem
+
+	public class ItemWithCheckBox : IChildItem
 	{
 		private string text;
 		private const int lineSize = 2;
 		private const int edgeSize = 2;
-		private Func<bool,bool>func;
+		private bool isChecked;
 		public Action<bool> OnCheckedChanged = delegate {};
-		
-		public MenuItemWithCheckBox (string text, bool checkedAtStart, Func<bool,bool>enterFunc = null){
+
+		public ItemWithCheckBox (string text, bool checkedAtStart){
 			this.text = text;
 			this.Checked = checkedAtStart;
-			this.func = enterFunc;
 		}
+
+		public IParentItem Parent { get; set;}
 		
-		public bool EnterAction ()
+		public void OnEnterPressed ()
 		{
-			if (func != null) {
-				Checked = func(Checked);
-				OnCheckedChanged(Checked);	
-			} 
-			else 
-			{
-				Checked = !Checked;
-				OnCheckedChanged(Checked);
-			}
-			return false;
+			Checked = !Checked;
 		}
 		
-		public bool LeftAction (){return false;}
-		public bool RightAction(){return false;}
-		public void Draw (Font f, Rectangle r, bool color)
+		public void OnDrawTitle (Font f, Rectangle r, bool color)
 		{
 			int xCheckBoxSize =(int) f.maxWidth;
 			Rectangle outer = new Rectangle(new Point(Lcd.Width - xCheckBoxSize + edgeSize, r.P1.Y + edgeSize), new Point(r.P2.X - edgeSize,r.P2.Y - edgeSize));
@@ -47,7 +38,44 @@ namespace MonoBrickFirmware.Display.Menus
 			if(Checked)
 				Lcd.Instance.WriteText(f,checkPoint,"v", color);
 		}
-		public bool Checked{get;private set;}
+
+		public void OnDrawContent ()
+		{
+
+		}
+
+		public void OnLeftPressed ()
+		{
+			
+		}
+
+		public void OnRightPressed()
+		{
+			
+		}
+
+		public void OnHideContent ()
+		{
+			
+		}
+
+		public void OnUpPressed ()
+		{
+
+		}
+
+		public void OnDownPressed ()
+		{
+	
+		}
+
+		public void OnEscPressed ()
+		{
+
+		}
+
+		public bool Checked{get{return isChecked;}internal set{isChecked = value; OnCheckedChanged (isChecked);}}
 	}
+
 }
 

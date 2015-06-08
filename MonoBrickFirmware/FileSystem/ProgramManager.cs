@@ -31,82 +31,73 @@ namespace MonoBrickFirmware.FileSystem
 				Directory.CreateDirectory (ProgramPathSdCard);
 		}
 
-		public WaitHandle StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0)
+		public int StartAndWaitForProgram(ProgramInformation program, bool runInAOT = false, int timeout = 0)
 		{
-			ManualResetEvent waitHandle = new ManualResetEvent(false);
-			lock (this) 
-			{
-				if (!program.IsRunning) 
-				{
-					(new Thread (() => {
-						
-						if (!runInAOT) {
-							ProcessHelper.RunAndWaitForProcess ("/usr/local/bin/mono", program.ExeFile, timeout);
-						} else {
-							ProcessHelper.RunAndWaitForProcess ("/usr/local/bin/mono", "--full-aot " + program.ExeFile, timeout);
-						}
-						waitHandle.Set();
-					})).Start ();
-				}
+			if (!runInAOT) {
+				return ProcessHelper.RunAndWaitForProcess ("/usr/local/bin/mono", program.ExeFile, timeout);
+			} else {
+				return ProcessHelper.RunAndWaitForProcess ("/usr/local/bin/mono", "--full-aot " + program.ExeFile, timeout);
 			}
-			return waitHandle;
 		}
+
+		public void StartProgram(ProgramInformation program, bool runInAOT = false, int timeout = 0)
+		{
+			if (!runInAOT)
+			{
+				ProcessHelper.StartProcess("/usr/local/bin/mono", program.ExeFile);
+			} 
+			else 
+			{
+				ProcessHelper.StartProcess("/usr/local/bin/mono", "--full-aot " + program.ExeFile);
+			}
+		}
+
 
 		public void StopProgram(ProgramInformation program)
 		{
-			lock (this) 
+			if(program.IsRunning) 
 			{
-				if(program.IsRunning) 
-				{
-					ProcessHelper.KillProcess(program.Name);
-				}
+				ProcessHelper.KillProcess(program.Name);
 			}
+
 		}
 
 		public void DeleteProgram(ProgramInformation program)
 		{
-			lock (this) 
+			if(program.IsRunning) 
 			{
-				if(program.IsRunning) 
-				{
-					ProcessHelper.KillProcess(program.Name);
-				}
-				Directory.Delete(program.Path,true);
+				ProcessHelper.KillProcess(program.Name);
 			}
+			Directory.Delete(program.Path,true);
+
 		}
 
 		public bool AOTCompileProgram(ProgramInformation program)
 		{
 			bool ok = true;
-			lock (this) 
+			if (!program.IsRunning) 
 			{
-				if (!program.IsRunning) 
+				foreach (var file in program.DllFiles) 
 				{
-					foreach (var file in program.DllFiles) 
+					if (!AOTHelper.Compile (System.IO.Path.Combine (program.Path, file))) 
 					{
-						if (!AOTHelper.Compile (System.IO.Path.Combine (program.Path, file))) 
-						{
-							ok = false;
-							break;
-						}
+						ok = false;
+						break;
 					}
-					ok = AOTHelper.Compile (program.ExeFile);
-				} 
-				else 
-				{
-					ok = false;
 				}
+				ok = AOTHelper.Compile (program.ExeFile);
+			} 
+			else 
+			{
+				ok = false;
 			}
 			return ok;
 		}
 
 		public List<ProgramInformation> GetProgramInformationList()
 		{
-			lock (this) 
-			{
-				UpdateProgramList ();
-				return programList;
-			}	
+			UpdateProgramList ();
+			return programList;
 		}
 
 		private void UpdateProgramList ()

@@ -37,7 +37,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			
         }
 
-        protected override bool OnUpAction ()
+		internal override void OnUpPressed ()
 		{
 			if (cursorPos + scrollPos > 0) {
 				if (cursorPos > 0)
@@ -45,10 +45,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 				 else 
 					scrollPos--;
 			} 
-			return false;
         }
 
-        protected override bool OnDownAction ()
+		internal override void OnDownPressed ()
 		{
 			if (scrollPos + cursorPos < options.Length - 1) {
 				if (cursorPos < lines.Count - 1)
@@ -56,21 +55,19 @@ namespace MonoBrickFirmware.Display.Dialogs
 				else
 					scrollPos++;
 			} 
-           	return false;
         }
         
-        protected override bool OnEnterAction ()
+		internal override void OnEnterPressed ()
 		{
-			return true;
+			OnExit ();
 		}
 		
-		protected override bool OnEscape ()
+		internal override void OnEscPressed ()
 		{
 			if (allowEsc) {
 				EscPressed = true;
-				return true;
+				OnExit ();
 			}
-			return false;
 		}
         
 		public SelectionType GetSelection()

@@ -2,6 +2,7 @@
 using System.Threading;
 using MonoBrickFirmware.UserInput;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace MonoBrickFirmware.Display.Dialogs
 {
@@ -14,10 +15,13 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private string allDoneText;
 		private IStep errorStep = null;
 		private int progressLine = 1;
-		
+		private CancellationTokenSource cancelSource;
+		private Thread stepThread=null;
+		private bool hideRequested = false;
+
 		public StepDialog (string title,List<IStep> steps): this(title,steps,"")		
 		{
-		
+			
 		}
 		
 		public StepDialog (string title,List<IStep> steps, string allCompletedText): base(Font.MediumFont, title)
@@ -27,80 +31,32 @@ namespace MonoBrickFirmware.Display.Dialogs
 			progressLine = 1;
 			stepLineIndex = 2;
 			this.allDoneText = allCompletedText;
+			CreateStepThread ();
 		}
-		
-		
-		
-		protected override bool OnEnterAction ()
-		{
-			return true;//exit
-		}
-		
-		public override bool Show (CancellationToken token)
-		{
-			bool ok = true;
-			errorStep = null;
-			OnShow ();
-			Draw ();
-			StartProgressAnimation (progressLine);
-			for (stepIndex = 0; stepIndex < steps.Count; stepIndex++) {
-				Draw ();
-				try {
-					if(token.IsCancellationRequested)
-					{
-						StopProgressAnimation ();
-						ClearContent ();
-						ok = false;
-						break;
 
-					}
-					if (!steps[stepIndex].Execute ()) {
-						StopProgressAnimation ();
-						ClearContent ();
-						WriteTextOnDialog (steps [stepIndex].ErrorText);
-						DrawCenterButton ("Ok", false);
-						Lcd.Instance.Update ();
-						Buttons.Instance.GetKeypress ();//Wait for any key
-						errorStep = steps [stepIndex];
-						ok = false;
-						break;
-					} 
-					else if (steps[stepIndex].ShowOkText) 
-					{
-						StopProgressAnimation ();
-						ClearContent ();
-						WriteTextOnDialog (steps [stepIndex].ErrorText);
-						DrawCenterButton ("Ok", false);
-						Lcd.Instance.Update ();
-						Buttons.Instance.GetKeypress ();//Wait for any key
-						StartProgressAnimation (progressLine);
-						
-					}
-				} 
-				catch 
-				{
-					StopProgressAnimation ();
-					ClearContent ();
-					WriteTextOnDialog ("Exception excuting " + steps [stepIndex].StepText);
-					DrawCenterButton ("Ok", false);
-					Lcd.Instance.Update ();
-					Buttons.Instance.GetKeypress ();//Wait for any key
-					errorStep = steps [stepIndex];
-					ok = false;
-					break;
-				}
-			}
-			StopProgressAnimation ();
-			if (allDoneText != "" && ok && !token.IsCancellationRequested) 
+		internal override void OnEnterPressed ()
+		{
+			this.Hide ();
+		}
+
+		internal override void Draw ()
+		{
+			if (!stepThread.IsAlive)
 			{
-				ClearContent ();
-				WriteTextOnDialog (allDoneText);
-				DrawCenterButton ("Ok", false);
-				Lcd.Instance.Update ();
-				Buttons.Instance.GetKeypress ();//Wait for any key*/
-			} 
-			OnExit();
-			return ok;
+				hideRequested = false;
+				stepThread.Start ();
+			}						
+		}
+
+		public override void Hide ()
+		{
+			this.hideRequested = true;
+			base.Hide ();
+			if (cancelSource != null && stepThread.IsAlive) 
+			{
+				cancelSource.Cancel ();
+				stepThread.Join ();
+			}
 		}
 		
 		public IStep ErrorStep{ get {return errorStep;}}
@@ -109,6 +65,90 @@ namespace MonoBrickFirmware.Display.Dialogs
 		{
 			WriteTextOnLine(steps[stepIndex].StepText,infoLineIndex);
 			WriteTextOnLine("Step " + (stepIndex +1).ToString() + " of " + steps.Count, stepLineIndex);
+		}
+
+		/// <summary>
+		/// Show menu. Returns true if the step executed without problem
+		/// </summary>
+		public override bool Show ()
+		{
+			base.Show ();
+			return errorStep == null;
+		}
+
+		public bool ExecutedOk{get{return errorStep == null;}}
+
+
+		private void CreateStepThread()
+		{
+			stepThread = new Thread(delegate() {
+				cancelSource = new CancellationTokenSource ();
+				var token = cancelSource.Token;
+				bool ok = true;
+				errorStep = null;
+				base.Draw();
+				StartProgressAnimation (progressLine);
+				for (stepIndex = 0; stepIndex < steps.Count; stepIndex++) {
+					base.Draw();;
+					try {
+						if(token.IsCancellationRequested)
+						{
+							StopProgressAnimation ();
+							ClearContent ();
+							ok = false;
+							break;
+
+						}
+						if (!steps[stepIndex].Execute ()) {
+							StopProgressAnimation ();
+							ClearContent ();
+							WriteTextOnDialog (steps [stepIndex].ErrorText);
+							DrawCenterButton ("Ok", false);
+							Lcd.Instance.Update ();
+							Buttons.Instance.GetKeypress ();//Wait for any key
+							errorStep = steps [stepIndex];
+							ok = false;
+							break;
+						} 
+						else if (steps[stepIndex].ShowOkText) 
+						{
+							StopProgressAnimation ();
+							ClearContent ();
+							WriteTextOnDialog (steps [stepIndex].ErrorText);
+							DrawCenterButton ("Ok", false);
+							Lcd.Instance.Update ();
+							Buttons.Instance.GetKeypress ();//Wait for any key
+							StartProgressAnimation (progressLine);
+						}
+					} 
+					catch 
+					{
+						StopProgressAnimation ();
+						ClearContent ();
+						WriteTextOnDialog ("Exception excuting " + steps [stepIndex].StepText);
+						DrawCenterButton ("Ok", false);
+						Lcd.Instance.Update ();
+						Buttons.Instance.GetKeypress ();//Wait for any key
+						errorStep = steps [stepIndex];
+						ok = false;
+						break;
+					}
+				}
+				StopProgressAnimation ();
+				if (allDoneText != "" && ok && !token.IsCancellationRequested) 
+				{
+					ClearContent ();
+					WriteTextOnDialog (allDoneText);
+					DrawCenterButton ("Ok", false);
+					Lcd.Instance.Update ();
+					Buttons.Instance.GetKeypress ();//Wait for any key*/
+				}
+				if(!hideRequested)
+				{
+					OnExit();
+				}
+			});
+
 		}
 	}
 }
