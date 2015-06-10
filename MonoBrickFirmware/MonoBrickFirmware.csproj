@@ -124,6 +124,7 @@
     <Compile Include="Settings\FirmwareSettings.cs" />
     <Compile Include="Display\Menus\ItemWithCheckBoxStep.cs" />
     <Compile Include="Display\Menus\ItemWithWiFiOptions.cs" />
+    <Compile Include="Display\Menus\ItemWithShutDown.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
