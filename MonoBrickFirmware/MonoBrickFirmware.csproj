@@ -93,7 +93,6 @@
     <Compile Include="Movement\PositionPID.cs" />
     <Compile Include="Tools\MovingAverage.cs" />
     <Compile Include="Tools\PIDAbstraction.cs" />
-    <Compile Include="Tools\VersionHelper.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Display\Dialogs\DialogWithProgessAnimation.cs" />
     <Compile Include="Sensors\NoSensor.cs" />
@@ -119,12 +118,16 @@
     <Compile Include="Display\Menus\ItemWithOptions.cs" />
     <Compile Include="Display\Menus\ItemWithProgramList.cs" />
     <Compile Include="Display\Menus\ItemWithDialog.cs" />
-    <Compile Include="Display\Menus\ItemWithInfoDialog.cs" />
     <Compile Include="Display\Menus\ItemWithSettings.cs" />
     <Compile Include="Settings\FirmwareSettings.cs" />
     <Compile Include="Display\Menus\ItemWithCheckBoxStep.cs" />
     <Compile Include="Display\Menus\ItemWithWiFiOptions.cs" />
     <Compile Include="Display\Menus\ItemWithShutDown.cs" />
+    <Compile Include="Display\Menus\ItemWithUpdateDialog.cs" />
+    <Compile Include="FirmwareUpdate\InstallPackage.cs" />
+    <Compile Include="FirmwareUpdate\UpdateHelper.cs" />
+    <Compile Include="FirmwareUpdate\VersionHelper.cs" />
+    <Compile Include="Display\Menus\ItemWithBrickInfo.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -148,5 +151,6 @@
   <ItemGroup>
     <Folder Include="FileSystem\" />
     <Folder Include="Settings\" />
+    <Folder Include="FirmwareUpdate\" />
   </ItemGroup>
 </Project>

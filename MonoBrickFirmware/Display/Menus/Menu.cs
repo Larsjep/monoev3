@@ -12,16 +12,21 @@ namespace MonoBrickFirmware.Display.Menus
 	{
 
 		private bool topMenu = false;
-		private List<IChildItem> childItems;
+		private List<IChildItem> childItems = new List<IChildItem>();
 
-		public Menu(string title, List<IChildItem> childItems) : base(title, Font.MediumFont, false)
+		public Menu(string title) : base(title, Font.MediumFont, false)
 		{
-			this.childItems = childItems;	
+				
 		}
 
 		protected override List<IChildItem> OnCreateChildList ()
 		{
 			return childItems;
+		}
+
+		public void AddItem(IChildItem item)
+		{
+			childItems.Add (item);
 		}
 
 		public override void OnEscPressed ()

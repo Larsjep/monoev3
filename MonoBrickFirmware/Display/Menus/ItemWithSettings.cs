@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	internal class ItemWithSettings : ItemList
+	public class ItemWithSettings : ItemList
 	{
 		private ItemWithCheckBox autoConnect;
 		private ItemWithCheckBox autoCheck;

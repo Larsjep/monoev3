@@ -8,7 +8,7 @@ namespace MonoBrickFirmware.Display.Menus
 	{
 
 		private string title;
-		private bool hasFocus = false;
+		protected bool hasFocus = false;
 		protected DialogType dialog;
 
 		public abstract void OnExit (DialogType dialog);

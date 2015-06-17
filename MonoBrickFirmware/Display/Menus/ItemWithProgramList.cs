@@ -9,7 +9,7 @@ namespace MonoBrickFirmware.Display.Menus
 	public class ItemWithProgramList : ItemList
 	{
 		private bool useEscToStop;
-		public ItemWithProgramList (string title, bool useEscToStop): base(title, Font.MediumFont)
+		public ItemWithProgramList (string title, bool useEscToStop = false): base(title, Font.MediumFont)
 		{
 			this.useEscToStop = useEscToStop;	 		
 		}

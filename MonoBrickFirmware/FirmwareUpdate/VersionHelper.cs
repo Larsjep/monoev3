@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Net;
-namespace MonoBrickFirmware.Tools
+using System.Reflection;
+
+
+namespace MonoBrickFirmware.FirmwareUpdate
 {
 	public class VersionInfo
 	{
 		public VersionInfo(string firmware, string image, string addIn)
 		{
-			Fimrware = firmware;
+			Firmware = firmware;
 			Image = image;
 			AddIn = addIn;
 		}
 
-		public string Fimrware{ get; private set;}
+		public string Firmware{ get; private set;}
 		public string Image{ get; private set;}
 		public string AddIn{ get; private set;}
 	}
@@ -21,7 +24,9 @@ namespace MonoBrickFirmware.Tools
 		private static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
 		private static string versionPath = @"/usr/local/bin/version.txt";
 		private static string addInVersionPath = @"/usr/local/bin/add-inVersion.txt";
-
+		private static string repositoryFile = @"/usr/local/bin/repository.txt";
+		private static string repository = @"/usr/local/bin/repository.txt";
+		private static bool urlRead = false;
 
 		public static VersionInfo AvailableVersions()
 		{
@@ -34,12 +39,26 @@ namespace MonoBrickFirmware.Tools
 			return info;
 		}
 
-		public static string CurrentImageVersion()
+
+		public static VersionInfo CurrentVersions()
+		{
+			string firmware = CurrentFirmwareVersion (); 
+			string image = CurrentImageVersion();
+			string addIn = CurrentAddInVersion ();
+			return new VersionInfo(firmware, image, addIn);
+		}
+
+		 static string CurrentFirmwareVersion()
+		{
+			return Assembly.LoadFrom("MonoBrickFirmware.dll").GetName().Version.ToString();
+		}
+
+		private static string CurrentImageVersion()
 		{
 			return System.IO.File.ReadAllLines(versionPath)[1].Split(new char[] {':'})[1].Trim();
 		}
 
-		public static string CurrentAddInVersion ()
+		private static string CurrentAddInVersion ()
 		{
 			string val = null;
 			try 

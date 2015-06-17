@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using StartupApp;
+using MonoBrickFirmware.FirmwareUpdate;
+
 namespace DownloadInstallerTest
 {
 	class MainClass

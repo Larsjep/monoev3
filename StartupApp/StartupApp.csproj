@@ -41,13 +41,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
-    <Compile Include="UpdateHelper.cs" />
     <Compile Include="Webserver.cs" />
-    <Compile Include="InstallPackage.cs" />
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="MainMenu.cs" />
+    <Compile Include="ItemWithWebserver.cs" />
+    <Compile Include="FirmwareMenuContainer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

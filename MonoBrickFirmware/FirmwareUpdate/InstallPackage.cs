@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
 using System.Xml.Serialization;
 using System.IO;
-using System.Collections.Specialized;
 
-namespace StartupApp
+namespace MonoBrickFirmware.FirmwareUpdate
 {
 	[XmlRoot("ConfigRoot")]
 	public class InstallPackage
 	{
 		public Task Task { get; set; }
-		
+
 		public InstallPackage()
 		{
 			Task = new Task();
@@ -22,11 +20,11 @@ namespace StartupApp
 		{
 			this.Task.DownloadElement.Add(element); 
 		}
-		
+
 		public DownloadElement[] DownloadElementToArray(){
 			return (DownloadElement[])  this.Task.DownloadElement.ToArray(typeof(DownloadElement));
 		}
-		
+
 		public bool SaveToXML(String filepath)
 		{
 			XmlSerializer serializer = new XmlSerializer(typeof(InstallPackage));
@@ -35,7 +33,7 @@ namespace StartupApp
 			textWriter.Close();
 			return true;
 		}
-		
+
 		public InstallPackage LoadFromXML(String filepath)
 		{
 			XmlSerializer deserializer = new XmlSerializer(typeof(InstallPackage));
@@ -75,7 +73,7 @@ namespace StartupApp
 
 		public DownloadElement():this("","")
 		{
-			
+
 		}
 	}
 

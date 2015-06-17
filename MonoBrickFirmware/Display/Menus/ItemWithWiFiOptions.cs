@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class WiFiOptions : ItemList
+	public class ItemWiFiOptions : ItemList
 	{
 
 		private ItemWithCharacterInput ssidItem;
@@ -16,9 +16,8 @@ namespace MonoBrickFirmware.Display.Menus
 		private TurnWiFiOnOffCheckBox connectItem; 
 		private FirmwareSettings settings = new FirmwareSettings();
 		private LoadSettingsDialog loadSettingsDialog;
-		public WiFiOptions(IParentItem parent): base("WiFi", Font.MediumFont, true)
+		public ItemWiFiOptions(): base("WiFi", Font.MediumFont, true)
 		{
-			Parent = parent;
 			loadSettingsDialog = new LoadSettingsDialog (OnSettingsLoaded);
 		}
 

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Net;
 using System.IO;
-using MonoBrickFirmware.Tools;
 using MonoBrickFirmware.Extensions;
 
-namespace StartupApp
+namespace MonoBrickFirmware.FirmwareUpdate
 {
 	public class UpdateHelper
 	{
@@ -15,21 +14,15 @@ namespace StartupApp
 		private static string StartupFile = @"/home/root/lejos/bin/startup";
 		private static string BinDir = @"/usr/local/bin";
 		private static string RepositoryFile = BinDir + "/repository.txt";
-		private string newDir;
-		private string PackageURL;
+		private static string newDir=""; //= Path.Combine (BinDir, version);
+		private static string PackageURL=""; //= GetRepository ();
 
-		public UpdateHelper(string version)
-		{
-			PackageURL = GetRepository ();
-			newDir = Path.Combine (BinDir, version);
-		}
-
-		private string GetRepository()
+		private static string GetRepository()
 		{
 			return File.ReadAllText (RepositoryFile);
 		}
 
-		private bool DownloadFile(string file, string url, string downloadPath, bool overwriteFiles)
+		private static bool DownloadFile(string file, string url, string downloadPath, bool overwriteFiles)
 		{
 			bool ok = true;
 			try
@@ -52,7 +45,7 @@ namespace StartupApp
 			return ok;
 		}
 
-		private bool DownloadPackage(string packageName, string packageUrl, string downloadPath, bool overwriteFiles)
+		private static bool DownloadPackage(string packageName, string packageUrl, string downloadPath, bool overwriteFiles)
 		{
 			bool ok = true;
 			InstallPackage installPackage = new InstallPackage();
@@ -83,12 +76,12 @@ namespace StartupApp
 			return ok;
 		}
 
-		public bool DownloadFirmware()
+		public static bool DownloadFirmware()
 		{
 			return DownloadPackage(PackageName, PackageURL, newDir, true);
 		}
 
-		public bool UpdateBootFile()
+		public static bool UpdateBootFile()
 		{
 			bool ok = true;
 			try{
