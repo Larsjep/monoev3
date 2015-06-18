@@ -63,7 +63,7 @@ namespace MonoBrickFirmware.Display.Menus
 			try 
 			{
 				versionInfo = VersionHelper.AvailableVersions ();
-				var currentVersion = VersionHelper.CurrentVersions();
+				var currentVersion = VersionHelper.InstalledVersion();
 				newImage = versionInfo.Image != currentVersion.Image;
 				newFirmwareApp = versionInfo.Firmware != currentVersion.Firmware;
 				if (currentVersion.AddIn != null)

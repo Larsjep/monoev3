@@ -21,18 +21,23 @@ namespace MonoBrickFirmware.FirmwareUpdate
 
 	public static class VersionHelper
 	{
-		private static string versionURL = "http://www.monobrick.dk/MonoBrickFirmwareRelease/latest/version.txt";
-		private static string versionPath = @"/usr/local/bin/version.txt";
+		private static string imageVersionPath = @"/usr/local/bin/version.txt";
 		private static string addInVersionPath = @"/usr/local/bin/add-inVersion.txt";
 		private static string repositoryFile = @"/usr/local/bin/repository.txt";
-		private static string repository = @"/usr/local/bin/repository.txt";
+		private static string repository = null;
 		private static bool urlRead = false;
 
 		public static VersionInfo AvailableVersions()
 		{
 			VersionInfo info = null;
+
 			try{
 				string[] downloadInfo = new WebClient ().DownloadString (versionURL).Split (new char[] {'\n' });
+				foreach(string s in downloadInfo)
+				{
+					Console.WriteLine("Download info: " + s);
+				}
+
 				info = new VersionInfo(downloadInfo[0].Split(new char[] {':'})[1].Trim(),downloadInfo[1].Split(new char[] {':'})[1].Trim(), downloadInfo[2].Split(new char[] {':'})[1].Trim());
 			}
 			catch{}
@@ -40,7 +45,7 @@ namespace MonoBrickFirmware.FirmwareUpdate
 		}
 
 
-		public static VersionInfo CurrentVersions()
+		public static VersionInfo InstalledVersion()
 		{
 			string firmware = CurrentFirmwareVersion (); 
 			string image = CurrentImageVersion();
@@ -48,14 +53,23 @@ namespace MonoBrickFirmware.FirmwareUpdate
 			return new VersionInfo(firmware, image, addIn);
 		}
 
-		 static string CurrentFirmwareVersion()
+		private static string GetRepositoryVersionFile()
+		{
+			if (repository == null)
+			{
+				repository = System.IO.File.ReadAllLines (repositoryFile)[0] + "version.txt";		
+			}
+		
+		}
+
+		private static string CurrentFirmwareVersion()
 		{
 			return Assembly.LoadFrom("MonoBrickFirmware.dll").GetName().Version.ToString();
 		}
 
 		private static string CurrentImageVersion()
 		{
-			return System.IO.File.ReadAllLines(versionPath)[1].Split(new char[] {':'})[1].Trim();
+			return System.IO.File.ReadAllLines(imageVersionPath)[1].Split(new char[] {':'})[1].Trim();
 		}
 
 		private static string CurrentAddInVersion ()

@@ -84,7 +84,7 @@ namespace MonoBrickFirmware.Display.Menus
 					monoVersion = (string)displayName.Invoke(null, null); 
 			}	
 			string monoCLR = System.Reflection.Assembly.GetExecutingAssembly().ImageRuntimeVersion;
-			var currentVersion = VersionHelper.CurrentVersions ();
+			var currentVersion = VersionHelper.InstalledVersion ();
 
 			Point offset = new Point(0, (int)Font.MediumFont.maxHeight);
 			Point startPos = new Point(0,0);
@@ -180,7 +180,7 @@ namespace MonoBrickFirmware.Display.Menus
 						monoVersion = (string)displayName.Invoke(null, null); 
 				}	
 				string monoCLR = System.Reflection.Assembly.GetExecutingAssembly().ImageRuntimeVersion;
-				var currentVersion = VersionHelper.CurrentVersions ();
+				var currentVersion = VersionHelper.InstalledVersion ();
 				string ip = WiFiDevice.GetIpAddress();
 				info = new Information();
 				info.FirmwareVersion = currentVersion.Firmware;

@@ -87,7 +87,7 @@ namespace StartupApp
 				webServerType.InvokeMember ("Stop", BindingFlags.Default | BindingFlags.InvokeMethod, null, webServerInstance, new object[]{});
 		}
 
-		public bool IsAssemblyLoaded{get; private set;}
+		public bool IsAssemblyLoaded{get; set;}
 
 		public bool IsRunning
 		{ 

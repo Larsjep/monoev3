@@ -15,6 +15,11 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="" workingdir="" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>

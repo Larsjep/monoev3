@@ -20,6 +20,7 @@ namespace MonoBrickFirmware.Tools
 			catch (Exception)
 			{
 				Console.WriteLine("Error loading Xml serializer from {0}.dll", XmlAssembly);
+
 				return new XmlSerializer(t);
 			}
 		}

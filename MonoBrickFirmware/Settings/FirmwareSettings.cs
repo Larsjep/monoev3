@@ -108,7 +108,8 @@ namespace MonoBrickFirmware.Settings
 	public class FirmwareSettings
 	{
 		private static object readWriteLock = new object();
-		private static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
+		//private static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
+		private static string SettingsFileName = "firmwareSettings.xml";
 
 
 		[XmlElement("GeneralSettings")]
@@ -141,6 +142,7 @@ namespace MonoBrickFirmware.Settings
 			lock (readWriteLock) {
 				TextWriter textWriter = null;
 				try {
+					Console.WriteLine("Loading XML");
 					XmlSerializer serializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
 					textWriter = new StreamWriter (SettingsFileName);
 					serializer.Serialize (textWriter, this);
