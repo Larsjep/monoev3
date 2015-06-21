@@ -53,23 +53,25 @@ namespace StartupApp
 					Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);
 					Lcd.Instance.Update ();						
 					if (WiFiDevice.TurnOn (60000)) {
-						if (settings.GeneralSettings.CheckForSwUpdatesAtStartUp)
-          				{
+						if (settings.GeneralSettings.CheckForSwUpdatesAtStartUp) {
 							container.Show (3); //show the menu container with the update dialog			
-						} 
-						else 
-						{
+						} else {
 							var dialog = new InfoDialog ("Connected Successfully " + WiFiDevice.GetIpAddress (), true);
 							dialog.Show ();
 						} 
-					} 
-					else
-					{
+					} else {
 						var dialog = new InfoDialog ("Failed to connect to WiFI Network", true);
 						dialog.Show ();
 					}
 				}
 			} 
+			else 
+			{
+				Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Creating new settings...", true, Lcd.Alignment.Center);
+				Lcd.Instance.Update ();
+				settings = new FirmwareSettings ();
+				settings.Save ();
+			}
 			container.Show ();
 
 		}

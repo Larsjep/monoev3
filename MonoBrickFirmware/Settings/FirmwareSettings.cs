@@ -108,8 +108,7 @@ namespace MonoBrickFirmware.Settings
 	public class FirmwareSettings
 	{
 		private static object readWriteLock = new object();
-		//private static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
-		private static string SettingsFileName = "firmwareSettings.xml";
+		private static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
 
 
 		[XmlElement("GeneralSettings")]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Reflection;
+using System.IO;
 
 
 namespace MonoBrickFirmware.FirmwareUpdate
@@ -21,30 +22,24 @@ namespace MonoBrickFirmware.FirmwareUpdate
 
 	public static class VersionHelper
 	{
-		private static string imageVersionPath = @"/usr/local/bin/version.txt";
-		private static string addInVersionPath = @"/usr/local/bin/add-inVersion.txt";
-		private static string repositoryFile = @"/usr/local/bin/repository.txt";
+		private const string imageVersionPath = @"/usr/local/bin/version.txt";
+		private const string addInVersionPath = @"/usr/local/bin/add-inVersion.txt";
+		private const string repositoryFile = @"/usr/local/bin/repository.txt";
+		private const string StartupFile = @"/home/root/lejos/bin/startup";
 		private static string repository = null;
-		private static bool urlRead = false;
 
 		public static VersionInfo AvailableVersions()
 		{
-			VersionInfo info = null;
-
-			try{
-				string[] downloadInfo = new WebClient ().DownloadString (versionURL).Split (new char[] {'\n' });
-				foreach(string s in downloadInfo)
-				{
-					Console.WriteLine("Download info: " + s);
-				}
-
-				info = new VersionInfo(downloadInfo[0].Split(new char[] {':'})[1].Trim(),downloadInfo[1].Split(new char[] {':'})[1].Trim(), downloadInfo[2].Split(new char[] {':'})[1].Trim());
-			}
-			catch{}
-			return info;
+			string image = GetAvailableImage ();
+			string firmware = GetAvailableFirmware ();
+			return new VersionInfo (firmware, image, firmware);
 		}
 
-
+		/// <summary>
+		/// Get a version info class containing what is curently installed.
+		/// If no program has been uploaded with the addIn then Addin strin will be null 
+		/// </summary>
+		/// <returns>The version.</returns>
 		public static VersionInfo InstalledVersion()
 		{
 			string firmware = CurrentFirmwareVersion (); 
@@ -53,23 +48,56 @@ namespace MonoBrickFirmware.FirmwareUpdate
 			return new VersionInfo(firmware, image, addIn);
 		}
 
-		private static string GetRepositoryVersionFile()
+		private static string GetRepository()
 		{
 			if (repository == null)
 			{
-				repository = System.IO.File.ReadAllLines (repositoryFile)[0] + "version.txt";		
+				repository = System.IO.File.ReadAllLines (repositoryFile)[0];		
 			}
+			return repository;
 		
+		}
+
+		private static string GetAvailableImage()
+		{
+			string repo = GetRepository ();
+			string image = new WebClient ().DownloadString (repo + "images/version.txt").Trim();
+			return image;
+		}
+
+		private static string GetAvailableFirmware()
+		{
+			string repo = GetRepository ();
+			string firmware =  new WebClient ().DownloadString (repo + "version.txt").Trim();
+			return firmware;
 		}
 
 		private static string CurrentFirmwareVersion()
 		{
-			return Assembly.LoadFrom("MonoBrickFirmware.dll").GetName().Version.ToString();
+
+			string dllPath = null;
+			string[] lines = File.ReadAllLines(StartupFile);
+			foreach (var s in lines) 
+			{
+				if (s.Contains ("MonoBrickFirmware.dll")) 
+				{
+					string[] commands = s.Split (' ');
+					foreach (var command in commands)
+					{
+						if(command.Contains("MonoBrickFirmware.dll"))
+						{
+							dllPath = command;
+							break;
+						}	
+					}
+				}
+			}
+			return Assembly.LoadFrom(dllPath).GetName().Version.ToString();
 		}
 
 		private static string CurrentImageVersion()
 		{
-			return System.IO.File.ReadAllLines(imageVersionPath)[1].Split(new char[] {':'})[1].Trim();
+			return System.IO.File.ReadAllLines(imageVersionPath)[0].Trim();
 		}
 
 		private static string CurrentAddInVersion ()
@@ -77,10 +105,11 @@ namespace MonoBrickFirmware.FirmwareUpdate
 			string val = null;
 			try 
 			{
-				val = System.IO.File.ReadAllLines (addInVersionPath) [0].Split (new char[] { ':' }) [1].Trim ();
+				val = System.IO.File.ReadAllLines (addInVersionPath) [0].Trim ();
 			} 
 			catch 
 			{
+				
 			}
 			return val;
 		}
