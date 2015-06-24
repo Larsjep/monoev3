@@ -54,6 +54,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		private void OnSettingsLoaded(FirmwareSettings newSettings)
 		{
+			Console.WriteLine ("Settings loaded action");
 			settings = newSettings;
 		}
 

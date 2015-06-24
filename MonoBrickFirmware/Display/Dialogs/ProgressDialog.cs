@@ -9,7 +9,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 	{
 		private IStep step;
 		private int progressLine;
-		private Thread progress;
+		private Thread progress = null;
 		public ProgressDialog (string title,IStep step): base(Font.MediumFont, title)
 		{
 			this.step = step;
@@ -19,10 +19,17 @@ namespace MonoBrickFirmware.Display.Dialogs
 		
 		internal override void Draw ()
 		{
-			if (!progress.IsAlive)
+			if (!progress.IsAlive) 
 			{
+				CreateProcessThread ();
 				progress.Start ();
-			}	
+			} 
+			else 
+			{
+				progress.Abort ();
+				CreateProcessThread ();
+				progress.Start ();
+			}
 		}
 
 		public bool Ok{ get; private set;}
@@ -78,6 +85,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 					Lcd.Instance.Update ();
 					Buttons.Instance.GetKeypress ();//Wait for any key
 				}
+				Console.WriteLine ("Progress is done");
 				OnExit();
 			});
 		

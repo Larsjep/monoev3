@@ -14,7 +14,7 @@ namespace MonoBrickFirmware.Display.Menus
 		private static bool newFirmwareApp = false;
 		private static bool newAddin = false;
 
-		public ItemWithUpdateDialog () : base( new ProgressDialog ("Updates", new StepContainer(CheckForUpdate,"Checking server", "Failed to check for Updates")))
+		public ItemWithUpdateDialog () : base( new ProgressDialog ("Updates", new StepContainer(CheckForUpdate,"Checking server", "Failed to check for Updates")), "Check for update")
 		{
 				
 		}

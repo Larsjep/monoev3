@@ -22,6 +22,7 @@ namespace MonoBrickFirmware.Display.Menus
 			activeMenuItem.Parent = this;
 			startMenu.SetAsTopMenu ();
 			topMenu = startMenu;
+
 		}
 
 		/// <summary>
@@ -39,15 +40,12 @@ namespace MonoBrickFirmware.Display.Menus
 					activeMenuItem.OnDrawContent ();
 					buttonAction = false;
 					var action = Buttons.Instance.GetKeypress (cancelSource.Token);
-					if (cancelSource.Token.IsCancellationRequested) 
-					{
-						buttonAction = true;
-					}
+					buttonAction = true;
 					switch (action) 
 					{
 						case Buttons.ButtonStates.Down: 
 							activeMenuItem.OnDownPressed ();
-							break;
+							 break;
 						case Buttons.ButtonStates.Up:
 							activeMenuItem.OnUpPressed ();
 							break;

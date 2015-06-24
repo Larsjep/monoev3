@@ -69,6 +69,10 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void OnDrawContent ()
 		{
+			if (!hasLoadedList)
+			{
+				CreateNewList (OnCreateChildList());
+			}
 			DrawItemList ();
 		}
 

@@ -16,7 +16,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public Menu(string title) : base(title, Font.MediumFont, false)
 		{
-				
+								
 		}
 
 		protected override List<IChildItem> OnCreateChildList ()
@@ -40,7 +40,8 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void SetAsTopMenu()
 		{
-			topMenu = true;	
+			topMenu = true;
+			show = true;
 		}
 	}
 }

@@ -82,6 +82,7 @@ namespace MonoBrickFirmware.Display.Menus
 		private Action<FirmwareSettings> OnNewSettings;
 		public LoadSettingsDialog(Action<FirmwareSettings> OnNewSettings): base(new ProgressDialog("Settings", new StepContainer( 
 			()=>{
+				Console.WriteLine("Loading settings");
 				Settings = Settings.Load();
 				return Settings!=null;
 			}, 

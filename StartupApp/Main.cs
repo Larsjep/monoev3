@@ -42,7 +42,6 @@ namespace StartupApp
 			Lcd.Instance.Update ();						
 			WiFiDevice.TurnOff ();
 			ProgramManager.Instance.CreateSDCardFolder();
-			//Load settings
 			Lcd.Instance.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
 			Lcd.Instance.Update ();
 			settings = settings.Load();						

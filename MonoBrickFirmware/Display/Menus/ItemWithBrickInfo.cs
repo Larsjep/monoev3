@@ -70,7 +70,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void OnDrawTitle (Font font, Rectangle rectangle, bool selected)
 		{
-			Lcd.Instance.WriteTextBox(font, rectangle, "Information", selected);	
+			Lcd.Instance.WriteTextBox(font, rectangle, "Brick information", selected);	
 		}
 
 		public void OnDrawContent ()
@@ -100,7 +100,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void SetFocus (IChildItem item)
 		{
-			Parent.SetFocus (this);
+			Parent.SetFocus (item);
 		}
 
 		public void RemoveFocus (IChildItem item)
