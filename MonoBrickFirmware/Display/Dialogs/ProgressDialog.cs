@@ -34,7 +34,16 @@ namespace MonoBrickFirmware.Display.Dialogs
 		}
 
 		public bool Ok{ get; private set;}
-		
+
+		public override void Hide ()
+		{
+			base.Hide ();
+			if (progress.IsAlive) 
+			{
+				progress.Join ();
+			}
+		}
+
 		protected override void OnDrawContent ()
 		{
 			WriteTextOnLine(step.StepText, 0);
@@ -61,9 +70,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 			{
 				Ok = true;
 				string endText;
+				StartProgressAnimation (progressLine);
 				OnShow ();
 				base.Draw();
-				StartProgressAnimation (progressLine);
 				try {
 					if (step.Execute ()) 
 					{
@@ -82,13 +91,20 @@ namespace MonoBrickFirmware.Display.Dialogs
 					Console.WriteLine("Exception " + e.Message);
 					Console.WriteLine(e.StackTrace);
 				}
-				StopProgressAnimation ();
 				if ((step.ShowOkText && Ok) || !Ok) 
 				{
+					StopProgressAnimation ();
 					ClearContent ();
 					WriteTextOnDialog (endText);
 					DrawCenterButton ("Ok", false);
 					Lcd.Instance.Update ();
+					Buttons.Instance.GetKeypress ();//Wait for any key
+					OnExit();
+				}
+				else
+				{
+					OnExit();
+					StopProgressAnimation();
 				}
 				OnExit();
 			});
