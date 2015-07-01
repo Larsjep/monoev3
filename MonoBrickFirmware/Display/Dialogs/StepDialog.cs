@@ -17,7 +17,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private int progressLine = 1;
 		private CancellationTokenSource cancelSource;
 		private Thread stepThread=null;
-		private bool hideRequested = false;
 
 		public StepDialog (string title,List<IStep> steps): this(title,steps,"")		
 		{
@@ -34,23 +33,16 @@ namespace MonoBrickFirmware.Display.Dialogs
 			CreateStepThread ();
 		}
 
-		internal override void OnEnterPressed ()
-		{
-			this.Hide ();
-		}
-
 		internal override void Draw ()
 		{
 			if (!stepThread.IsAlive)
 			{
-				hideRequested = false;
 				stepThread.Start ();
 			}						
 		}
 
 		public override void Hide ()
 		{
-			this.hideRequested = true;
 			base.Hide ();
 			if (cancelSource != null && stepThread.IsAlive) 
 			{
@@ -134,7 +126,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 						break;
 					}
 				}
-				StopProgressAnimation ();
 				if (allDoneText != "" && ok && !token.IsCancellationRequested) 
 				{
 					ClearContent ();
@@ -142,10 +133,12 @@ namespace MonoBrickFirmware.Display.Dialogs
 					DrawCenterButton ("Ok", false);
 					Lcd.Instance.Update ();
 					Buttons.Instance.GetKeypress ();//Wait for any key*/
+					OnExit();
 				}
-				if(!hideRequested)
+				else
 				{
 					OnExit();
+					StopProgressAnimation ();
 				}
 			});
 
