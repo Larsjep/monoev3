@@ -10,6 +10,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private IStep step;
 		private int progressLine;
 		private Thread progress = null;
+		private ManualResetEvent waitForOk = new ManualResetEvent (false);
 		public ProgressDialog (string title,IStep step): base(Font.MediumFont, title)
 		{
 			this.step = step;
@@ -49,6 +50,11 @@ namespace MonoBrickFirmware.Display.Dialogs
 			return Ok;
 		}
 
+		internal override void OnEnterPressed ()
+		{
+			
+		}
+
 		private void CreateProcessThread()
 		{
 			progress = new Thread (delegate() 
@@ -83,9 +89,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 					WriteTextOnDialog (endText);
 					DrawCenterButton ("Ok", false);
 					Lcd.Instance.Update ();
-					Buttons.Instance.GetKeypress ();//Wait for any key
 				}
-				Console.WriteLine ("Progress is done");
 				OnExit();
 			});
 		

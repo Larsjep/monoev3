@@ -33,7 +33,6 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 		}
 
-
 		protected override List<IChildItem> OnCreateChildList ()
 		{
 			ssidItem = new ItemWithCharacterInput("SSID", "Enter SSID", settings.WiFiSettings.SSID);
@@ -49,42 +48,29 @@ namespace MonoBrickFirmware.Display.Menus
 			childList.Add (encryptionItem);
 			childList.Add (connectItem);
 			return childList;
-
 		}
 
 		private void OnSettingsLoaded(FirmwareSettings newSettings)
 		{
-			Console.WriteLine ("Settings loaded action");
 			settings = newSettings;
 		}
 
 		private void OnSsidChanged(string ssidName)
 		{
-			new Thread(delegate() 
-				{
-					settings.WiFiSettings.SSID = ssidName;
-					settings.Save();
-				}).Start();
-
+			settings.WiFiSettings.SSID = ssidName;
+			settings.Save ();
 		}
 
 		private void OnPasswordChanged(string password)
 		{
-			new Thread(delegate() 
-				{
-					settings.WiFiSettings.Password = password;
-					settings.Save();
-				}).Start();
-
+			settings.WiFiSettings.Password = password;
+			settings.Save ();
 		}
 
 		private void OnEncryptionOptionChanged(string option)
 		{
-			new Thread(delegate() 
-				{
-					settings.WiFiSettings.Encryption = option != "None";
-					settings.Save(); 
-				}).Start();
+			settings.WiFiSettings.Encryption = option != "None";
+			settings.Save ();
 		}
 
 	}
@@ -93,20 +79,26 @@ namespace MonoBrickFirmware.Display.Menus
 	{
 		private const int ConnectTimeout = 60000;
 		private static FirmwareSettings settings = new FirmwareSettings();
-		public TurnWiFiOnOffCheckBox(FirmwareSettings firmwareSettings): base("Connected", WiFiDevice.IsLinkUp (), "WiFi", new CheckBoxStep(new StepContainer(OnTurnWiFiOn, "Disconnecting", "Error disconnecting"), new StepContainer(OnTurnWiFiOn, "Connecting", "Failed to connect")))
+		private static bool onOff = false;
+		//public TurnWiFiOnOffCheckBox(FirmwareSettings firmwareSettings): base("Connected", WiFiDevice.IsLinkUp (), "WiFi", new CheckBoxStep(new StepContainer(OnTurnWiFiOn, "Connecting" ,"Failed to connect" ), new StepContainer(OnTurnWiFiOff, "Disconnecting", "Error disconnecting")))
+		public TurnWiFiOnOffCheckBox(FirmwareSettings firmwareSettings): base("Connected", onOff, "WiFi", new CheckBoxStep(new StepContainer(OnTurnWiFiOn, "Connecting" ,"Failed to connect" ), new StepContainer(OnTurnWiFiOff, "Disconnecting", "Error disconnecting")))
 		{
-			settings = firmwareSettings; 	
+			settings = firmwareSettings;
+			this.OnCheckedChanged += (b)=> onOff = b;
 		}
+
 		private static bool OnTurnWiFiOn()
 		{
-			if (!WiFiDevice.WriteWpaSupplicantConfiguration (settings.WiFiSettings.SSID, settings.WiFiSettings.Password, settings.WiFiSettings.Encryption))
+			Console.WriteLine ("Turn on");
+			/*if (!WiFiDevice.WriteWpaSupplicantConfiguration (settings.WiFiSettings.SSID, settings.WiFiSettings.Password, settings.WiFiSettings.Encryption))
 				return false;
-			return WiFiDevice.TurnOn(ConnectTimeout);
+			return WiFiDevice.TurnOn(ConnectTimeout);*/
+			return false;
 		}
 
 		private static bool OnTurnWiFiOff()
 		{
-			WiFiDevice.TurnOff();
+			//WiFiDevice.TurnOff();
 			return true;
 		}
 

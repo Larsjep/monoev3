@@ -141,7 +141,6 @@ namespace MonoBrickFirmware.Settings
 			lock (readWriteLock) {
 				TextWriter textWriter = null;
 				try {
-					Console.WriteLine("Loading XML");
 					XmlSerializer serializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
 					textWriter = new StreamWriter (SettingsFileName);
 					serializer.Serialize (textWriter, this);

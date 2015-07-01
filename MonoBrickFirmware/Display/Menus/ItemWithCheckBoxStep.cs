@@ -14,13 +14,14 @@ namespace MonoBrickFirmware.Display.Menus
 			this.itemStep = step;
 			dialogItem = new ItemWithProgressDialog (new ProgressDialog(stepTitle, itemStep));
 		}
-		public void OnEnterPressed ()
+
+		public override void OnEnterPressed ()
 		{
 			itemStep.Checked = this.Checked;
 			dialogItem.SetFocus(this);	
 		}
 
-		public void OnHideContent ()
+		public override void OnHideContent ()
 		{
 			dialogItem.OnHideContent ();
 		}
@@ -79,13 +80,13 @@ namespace MonoBrickFirmware.Display.Menus
 
 
 		public bool Checked{get; set;}
-		public string StepText{get {return Checked ? checkedStep.StepText : unCheckStep.StepText;}}
-		public string ErrorText{get {return Checked ? checkedStep.ErrorText : unCheckStep.ErrorText;}}
-		public string OkText{get {return Checked ? checkedStep.OkText : unCheckStep.OkText;}}
-		public bool ShowOkText{get {return Checked ? checkedStep.ShowOkText : unCheckStep.ShowOkText;}}
+		public string StepText{get {return Checked ? unCheckStep.StepText : checkedStep.StepText;}}
+		public string ErrorText{get {return Checked ? unCheckStep.ErrorText : checkedStep.ErrorText;}}
+		public string OkText{get {return Checked ? unCheckStep.OkText : checkedStep.OkText;}}
+		public bool ShowOkText{get {return Checked ? unCheckStep.ShowOkText : checkedStep.ShowOkText;}}
 		public bool Execute ()
 		{
-			return Checked ? checkedStep.Execute () : unCheckStep.Execute ();
+			return Checked ? unCheckStep.Execute () : checkedStep.Execute ();
 		}
 	}
 
@@ -98,7 +99,10 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public override void OnExit (ProgressDialog dialog)
 		{
-			((ItemWithCheckBox)Parent).Checked = dialog.Ok;
+			if (dialog.Ok)
+			{
+				((ItemWithCheckBox)Parent).Checked	 = !((ItemWithCheckBox)Parent).Checked;
+			}
 			Parent.RemoveFocus (this);
 		}
 	}

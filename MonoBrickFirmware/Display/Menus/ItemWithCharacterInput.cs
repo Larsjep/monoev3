@@ -23,8 +23,17 @@ namespace MonoBrickFirmware.Display.Menus
 			this.Text = startText;
 			this.hide = hideInput;
 			dialog = new Dialogs.CharacterDialog(dialogTitle);
-			dialog.OnShow += delegate{this.OnShowDialog(dialog);};
-			dialog.OnExit += delegate{Text = dialog.GetUserInput();this.OnDialogExit(Text); show = false; Parent.RemoveFocus(this);};
+			dialog.OnShow += delegate
+			{
+				this.OnShowDialog(dialog);
+			};
+			dialog.OnExit += delegate
+			{
+				Text = dialog.GetUserInput();
+				this.OnDialogExit(Text); 
+				show = false; 
+				Parent.RemoveFocus(this);
+			};
 		}
 
 		public IParentItem Parent { get; set;}

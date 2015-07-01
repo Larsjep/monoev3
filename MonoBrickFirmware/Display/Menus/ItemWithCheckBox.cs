@@ -19,7 +19,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public IParentItem Parent { get; set;}
 		
-		public void OnEnterPressed ()
+		public virtual void OnEnterPressed ()
 		{
 			Checked = !Checked;
 		}
@@ -54,7 +54,7 @@ namespace MonoBrickFirmware.Display.Menus
 			
 		}
 
-		public void OnHideContent ()
+		public virtual void OnHideContent ()
 		{
 			
 		}

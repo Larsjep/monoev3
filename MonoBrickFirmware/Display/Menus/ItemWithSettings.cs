@@ -20,6 +20,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public override void OnEnterPressed ()
 		{
+			Console.WriteLine ("Enter pressed item with settings. Show: " + show);
 			if (!show) 
 			{
 				loadSettingsDialog.SetFocus (this);	
@@ -82,7 +83,6 @@ namespace MonoBrickFirmware.Display.Menus
 		private Action<FirmwareSettings> OnNewSettings;
 		public LoadSettingsDialog(Action<FirmwareSettings> OnNewSettings): base(new ProgressDialog("Settings", new StepContainer( 
 			()=>{
-				Console.WriteLine("Loading settings");
 				Settings = Settings.Load();
 				return Settings!=null;
 			}, 
