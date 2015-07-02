@@ -90,7 +90,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void RemoveFocus (IChildItem item)
 		{
-
+			
 		}
 
 		public void RequestRedraw (IChildItem item)

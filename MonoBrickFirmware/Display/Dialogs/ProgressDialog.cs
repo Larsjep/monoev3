@@ -25,12 +25,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 				CreateProcessThread ();
 				progress.Start ();
 			} 
-			else 
-			{
-				progress.Abort ();
-				CreateProcessThread ();
-				progress.Start ();
-			}
 		}
 
 		public bool Ok{ get; private set;}
@@ -61,7 +55,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 
 		internal override void OnEnterPressed ()
 		{
-			
+			waitForOk.Set ();	
 		}
 
 		private void CreateProcessThread()
@@ -74,6 +68,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 				OnShow ();
 				base.Draw();
 				try {
+					
 					if (step.Execute ()) 
 					{
 						endText = step.OkText;
@@ -91,20 +86,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 					Console.WriteLine("Exception " + e.Message);
 					Console.WriteLine(e.StackTrace);
 				}
+				StopProgressAnimation ();
 				if ((step.ShowOkText && Ok) || !Ok) 
 				{
-					StopProgressAnimation ();
 					ClearContent ();
 					WriteTextOnDialog (endText);
 					DrawCenterButton ("Ok", false);
+					waitForOk.Reset();
 					Lcd.Instance.Update ();
-					Buttons.Instance.GetKeypress ();//Wait for any key
-					OnExit();
-				}
-				else
-				{
-					OnExit();
-					StopProgressAnimation();
+					waitForOk.WaitOne();
 				}
 				OnExit();
 			});

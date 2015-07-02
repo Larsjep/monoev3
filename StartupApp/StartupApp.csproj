@@ -20,6 +20,7 @@
         <Command type="AfterBuild" command="" workingdir="" />
       </CustomCommands>
     </CustomCommands>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>

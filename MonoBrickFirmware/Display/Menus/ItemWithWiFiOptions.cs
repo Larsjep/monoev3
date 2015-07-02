@@ -79,42 +79,33 @@ namespace MonoBrickFirmware.Display.Menus
 	{
 		private const int ConnectTimeout = 60000;
 		private static FirmwareSettings settings = new FirmwareSettings();
-		private static bool onOff = false;
-		//public TurnWiFiOnOffCheckBox(FirmwareSettings firmwareSettings): base("Connected", WiFiDevice.IsLinkUp (), "WiFi", new CheckBoxStep(new StepContainer(OnTurnWiFiOn, "Connecting" ,"Failed to connect" ), new StepContainer(OnTurnWiFiOff, "Disconnecting", "Error disconnecting")))
-		public TurnWiFiOnOffCheckBox(FirmwareSettings firmwareSettings): base("Connected", onOff, "WiFi", new CheckBoxStep(new StepContainer(OnTurnWiFiOn, "Connecting" ,"Failed to connect" ), new StepContainer(OnTurnWiFiOff, "Disconnecting", "Error disconnecting")))
+		public TurnWiFiOnOffCheckBox(FirmwareSettings firmwareSettings): base("Connected", WiFiDevice.IsLinkUp (), "WiFi", new CheckBoxStep(new StepContainer(OnTurnWiFiOn, "Connecting" ,"Failed to connect" ), new StepContainer(OnTurnWiFiOff, "Disconnecting", "Error disconnecting")))
 		{
 			settings = firmwareSettings;
-			this.OnCheckedChanged += (b)=> onOff = b;
+			this.OnCheckedChanged += CheckedChanged;
 		}
 
 		private static bool OnTurnWiFiOn()
 		{
-			Console.WriteLine ("Turn on");
-			/*if (!WiFiDevice.WriteWpaSupplicantConfiguration (settings.WiFiSettings.SSID, settings.WiFiSettings.Password, settings.WiFiSettings.Encryption))
+			if (!WiFiDevice.WriteWpaSupplicantConfiguration (settings.WiFiSettings.SSID, settings.WiFiSettings.Password, settings.WiFiSettings.Encryption))
 				return false;
-			return WiFiDevice.TurnOn(ConnectTimeout);*/
-			return false;
+			return WiFiDevice.TurnOn(ConnectTimeout);
 		}
 
 		private static bool OnTurnWiFiOff()
 		{
-			//WiFiDevice.TurnOff();
+			WiFiDevice.TurnOff();
 			return true;
 		}
 
-		public override void RemoveFocus (IChildItem item)
+		private void CheckedChanged(bool isChecked)
 		{
-			if (Checked && item is ItemWithProgressDialog) 
+			if (isChecked) 
 			{
 				ConnectAtStartUpDialog dialog = new ConnectAtStartUpDialog (settings);
-				Parent.RemoveFocus (item);
 				dialog.SetFocus (this);
-			} 
-			else 
-			{
-				Parent.RemoveFocus (item);
 			}
-		} 
+		}
 	}
 
 	internal class ConnectAtStartUpDialog : ItemWithDialog<QuestionDialog>
@@ -129,14 +120,10 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			if (dialog.IsPositiveSelected) 
 			{
-				new Thread(delegate() 
-					{
-						settings.GeneralSettings.ConnectToWiFiAtStartUp = true;
-						settings.GeneralSettings.CheckForSwUpdatesAtStartUp = true;
-						settings.Save();
-					}).Start();	
+				settings.GeneralSettings.ConnectToWiFiAtStartUp = true;
+				settings.GeneralSettings.CheckForSwUpdatesAtStartUp = true;
+				settings.Save();
 			}
-			Parent.RemoveFocus (this);
 		}
 	}
 }

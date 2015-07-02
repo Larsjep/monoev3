@@ -2,7 +2,6 @@
 using System.Threading;
 using MonoBrickFirmware.UserInput;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace MonoBrickFirmware.Display.Dialogs
 {
@@ -17,7 +16,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private int progressLine = 1;
 		private CancellationTokenSource cancelSource;
 		private Thread stepThread=null;
-
+		private ManualResetEvent waitForOk = new ManualResetEvent (false);
 		public StepDialog (string title,List<IStep> steps): this(title,steps,"")		
 		{
 			
@@ -37,6 +36,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		{
 			if (!stepThread.IsAlive)
 			{
+				CreateStepThread ();
 				stepThread.Start ();
 			}						
 		}
@@ -49,6 +49,11 @@ namespace MonoBrickFirmware.Display.Dialogs
 				cancelSource.Cancel ();
 				stepThread.Join ();
 			}
+		}
+
+		internal override void OnEnterPressed ()
+		{
+			waitForOk.Set ();
 		}
 		
 		public IStep ErrorStep{ get {return errorStep;}}
@@ -108,8 +113,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 							ClearContent ();
 							WriteTextOnDialog (steps [stepIndex].ErrorText);
 							DrawCenterButton ("Ok", false);
+							waitForOk.Reset(); 
 							Lcd.Instance.Update ();
-							Buttons.Instance.GetKeypress ();//Wait for any key
+							waitForOk.WaitOne();
 							StartProgressAnimation (progressLine);
 						}
 					} 
@@ -119,13 +125,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 						ClearContent ();
 						WriteTextOnDialog ("Exception excuting " + steps [stepIndex].StepText);
 						DrawCenterButton ("Ok", false);
+						waitForOk.Reset();
 						Lcd.Instance.Update ();
-						Buttons.Instance.GetKeypress ();//Wait for any key
+						waitForOk.WaitOne();
 						errorStep = steps [stepIndex];
 						ok = false;
 						break;
 					}
 				}
+				StopProgressAnimation ();
 				if (allDoneText != "" && ok && !token.IsCancellationRequested) 
 				{
 					ClearContent ();
@@ -133,13 +141,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 					DrawCenterButton ("Ok", false);
 					Lcd.Instance.Update ();
 					Buttons.Instance.GetKeypress ();//Wait for any key*/
-					OnExit();
 				}
-				else
-				{
-					OnExit();
-					StopProgressAnimation ();
-				}
+				OnExit();
 			});
 
 		}

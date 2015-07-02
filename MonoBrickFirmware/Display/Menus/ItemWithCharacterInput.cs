@@ -8,7 +8,6 @@ namespace MonoBrickFirmware.Display.Menus
 	public class  ItemWithCharacterInput : IChildItem
 	{
 		private string subject;
-		private string dialogTitle;
 		private const int lineSize = 2;
 		private const int edgeSize = 2;
 		private bool hide;
@@ -18,7 +17,6 @@ namespace MonoBrickFirmware.Display.Menus
 		public Action<string> OnDialogExit = delegate {};
 
 		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText, bool hideInput = false){
-			this.dialogTitle = dialogTitle; 
 			this.subject = subject;
 			this.Text = startText;
 			this.hide = hideInput;

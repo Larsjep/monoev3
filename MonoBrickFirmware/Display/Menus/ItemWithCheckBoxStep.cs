@@ -6,11 +6,9 @@ namespace MonoBrickFirmware.Display.Menus
 	public class ItemWithCheckBoxStep : ItemWithCheckBox, IParentItem
 	{
 		private CheckBoxStep itemStep = null;
-		private string stepTitle;
 		private ItemWithProgressDialog dialogItem;
 		public ItemWithCheckBoxStep (string text, bool checkedAtStart, string stepTitle, CheckBoxStep step) : base(text, checkedAtStart)
 		{
-			this.stepTitle = stepTitle;
 			this.itemStep = step;
 			dialogItem = new ItemWithProgressDialog (new ProgressDialog(stepTitle, itemStep));
 		}
@@ -26,20 +24,6 @@ namespace MonoBrickFirmware.Display.Menus
 			dialogItem.OnHideContent ();
 		}
 
-		public void OnUpPressed ()
-		{
-
-		}
-
-		public void OnDownPressed ()
-		{
-
-		}
-
-		public void OnEscPressed ()
-		{
-
-		}
 
 		#region IParentItem implementation
 
@@ -48,9 +32,9 @@ namespace MonoBrickFirmware.Display.Menus
 			Parent.SetFocus (item);
 		}
 
-		public virtual void RemoveFocus (IChildItem item)
+		public void RemoveFocus (IChildItem item)
 		{
-			Parent.SetFocus(item);
+			Parent.RemoveFocus (item);
 		}
 
 		public void SuspendEvents (IChildItem item)
@@ -103,7 +87,6 @@ namespace MonoBrickFirmware.Display.Menus
 			{
 				((ItemWithCheckBox)Parent).Checked	 = !((ItemWithCheckBox)Parent).Checked;
 			}
-			Parent.RemoveFocus (this);
 		}
 	}
 }
