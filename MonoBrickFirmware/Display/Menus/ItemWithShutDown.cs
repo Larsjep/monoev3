@@ -28,6 +28,7 @@ namespace MonoBrickFirmware.Display.Menus
 			} 
 			else 
 			{
+				this.hasFocus = false;
 				Parent.RemoveFocus (this);
 			}
 		}
