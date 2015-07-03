@@ -16,27 +16,6 @@ namespace MonoBrickFirmware.Settings
 		}
 	}
 
-
-	public class DebugSettings{
-		[XmlElement("Port")]
-		private int port = 12345;
-
-		[XmlElement("TerminateWithEscape")]
-		private bool terminateWithEscape = true;
-
-		public bool TerminateWithEscape	
-		{
-			get { return terminateWithEscape; }
-			set { terminateWithEscape = value; }
-		}
-
-		public int Port
-		{
-			get { return port; }
-			set { port = value; }
-		}
-	}
-
 	public class WiFiSettings{
 		[XmlElement("SSID")]
 		private string ssid = "YourSSID";
@@ -83,7 +62,8 @@ namespace MonoBrickFirmware.Settings
 		}
 	}
 
-	public class SoundSettings{
+	public class SoundSettings
+	{
 		[XmlElement("Volume")]
 		private int volume = 60;
 
@@ -104,44 +84,65 @@ namespace MonoBrickFirmware.Settings
 		}
 	}
 
-	[XmlRoot("ConfigRoot")]
-	public class FirmwareSettings
+	public interface IFirmwareSettings
 	{
-		private static object readWriteLock = new object();
-		private static string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
+		GeneralSettings GeneralSettings { get; set; }
+		WiFiSettings WiFiSettings { get; set; }
+		SoundSettings SoundSettings{ get; set; }
+		WebServerSettings WebServerSettings{ get; set; }
+		bool Save ();
+	  void Load();
+	}
 
 
-		[XmlElement("GeneralSettings")]
-		public GeneralSettings GeneralSettings { get; set; }
+	public static class FirmwareSettings
+	{
+		static FirmwareSettings()
+		{
+			Settings = new EV3FirmwareSettings();
+		}
+		public static IFirmwareSettings Settings{ get; set;}
+		public static GeneralSettings GeneralSettings { get{return Settings.GeneralSettings; } set{Settings.GeneralSettings = value;} }
+		public static WiFiSettings WiFiSettings { get{return Settings.WiFiSettings; } set{Settings.WiFiSettings = value;} }
+		public static SoundSettings SoundSettings{ get{return Settings.SoundSettings; } set{Settings.SoundSettings = value;} }
+		public static WebServerSettings WebServerSettings{ get{return Settings.WebServerSettings; } set{Settings.WebServerSettings = value;} }
+		public static bool Save (){return Settings.Save();}
+	  public static void Load(){Settings.Load();}
+	}
 
-		[XmlElement("WiFiSettings")]
-		public WiFiSettings WiFiSettings { get; set; }
+	[XmlRoot("ConfigRoot")]
+	public class EV3FirmwareSettings : IFirmwareSettings
+	{
+		private object readWriteLock = new object();
+    //private const string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
+    private const string SettingsFileName = "firmwareSettings.xml";
 
-		[XmlElement("DebugSettings")]
-		public DebugSettings DebugSettings{ get; set; }
-
-		[XmlElement("SoundSettings")]
-		public SoundSettings SoundSettings{ get; set; }
-
-		[XmlElement("WebServerSettings")]
-		public WebServerSettings WebServerSettings{ get; set; }
-
-
-		public FirmwareSettings ()
+    public EV3FirmwareSettings()
 		{
 			GeneralSettings = new GeneralSettings();
 			WiFiSettings = new WiFiSettings();
-			DebugSettings = new DebugSettings();
 			SoundSettings = new SoundSettings();
-			WebServerSettings = new WebServerSettings();	
+			WebServerSettings = new WebServerSettings();
 		}
+
+		[XmlElement("GeneralSettings")]
+		public GeneralSettings GeneralSettings { get ; set;}
+
+		[XmlElement("WiFiSettings")]
+		public WiFiSettings WiFiSettings { get ; set;}
+
+		[XmlElement("SoundSettings")]
+		public SoundSettings SoundSettings { get ; set;}
+
+		[XmlElement("WebServerSettings")]
+		public WebServerSettings WebServerSettings { get ; set;}
 
 		public bool Save()
 		{
 			lock (readWriteLock) {
 				TextWriter textWriter = null;
 				try {
-					XmlSerializer serializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
+					XmlSerializer serializer = XmlHelper.CreateSerializer(typeof(EV3FirmwareSettings));
 					textWriter = new StreamWriter (SettingsFileName);
 					serializer.Serialize (textWriter, this);
 					textWriter.Close ();
@@ -158,28 +159,32 @@ namespace MonoBrickFirmware.Settings
 			return false;
 		}
 
-		public FirmwareSettings Load()
+		public void Load()
 		{
-			lock (readWriteLock) {
+			lock (readWriteLock) 
+			{
 				TextReader textReader = null;
 				try{
-					XmlSerializer deserializer = XmlHelper.CreateSerializer(typeof(FirmwareSettings));
+					XmlSerializer deserializer = XmlHelper.CreateSerializer(typeof(EV3FirmwareSettings));
 					textReader = new StreamReader (SettingsFileName);
 					Object obj = deserializer.Deserialize (textReader);
-					FirmwareSettings myNewSettings = (FirmwareSettings)obj;
+					var loadSettings = (EV3FirmwareSettings)obj;
 					textReader.Close ();
-					return myNewSettings;
+          GeneralSettings = loadSettings.GeneralSettings;
+          WiFiSettings = loadSettings.WiFiSettings;
+          SoundSettings = loadSettings.SoundSettings;
+          WebServerSettings = loadSettings.WebServerSettings;
 				}
-				catch (Exception exp) 
-				{ 
-					Console.WriteLine("Exception during settings load: " + exp.Message);
-					Console.WriteLine(exp.StackTrace);
+				catch (FileNotFoundException exp)
+				{
+				  Save();
 				}
 				if(textReader!= null)
 					textReader.Close();
 			}
-			return null;
 		}
-	}
+	} 
+
+
 }
 
