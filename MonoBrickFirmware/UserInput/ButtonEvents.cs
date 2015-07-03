@@ -41,9 +41,9 @@ namespace MonoBrickFirmware.UserInput
 		void ButtonPollThread ()
 		{	
 			Thread.CurrentThread.IsBackground = true;
-			Buttons.ButtonStates lastState = Buttons.Instance.GetDebounced();
+			Buttons.ButtonStates lastState = ((EV3Buttons)Buttons.Instance).GetDebounced();
 			while (!stopPolling.WaitOne (pollTime)) {
-				Buttons.ButtonStates bs = Buttons.Instance.GetDebounced ();
+        Buttons.ButtonStates bs = ((EV3Buttons)Buttons.Instance).GetDebounced();
 				if (bs != lastState) {
 					Buttons.ButtonStates pressed = (bs ^ lastState) & (~lastState);
 					switch (pressed) {

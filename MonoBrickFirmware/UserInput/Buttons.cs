@@ -5,10 +5,72 @@ using System.Threading;
 
 namespace MonoBrickFirmware.UserInput
 {
-	public class Buttons
-	{
-		private static readonly Buttons instance = new Buttons();
-		
+  public interface IButtons
+  {
+    Buttons.ButtonStates GetStates ();
+    void WaitForKeyRelease (CancellationToken token);
+    void WaitForKeyRelease ();
+    Buttons.ButtonStates GetKeypress (CancellationToken token);
+    Buttons.ButtonStates GetKeypress ();
+    void LedPattern (int pattern);
+  }
+
+  public static class Buttons
+  {
+    [Flags]
+		public enum ButtonStates
+		{
+			None = 0x00,
+			Up = 0x01,
+			Enter = 0x02,
+			Down = 0x04,
+			Right = 0x08,
+			Left = 0x10,
+			Escape = 0x20,
+			All = 0xff,
+		}
+
+    static Buttons()
+    {
+      Instance = new EV3Buttons();
+    }
+
+    public static IButtons Instance { get; set;}
+
+    public static ButtonStates GetStates()
+    {
+      return Instance.GetStates();
+    }
+
+    public static void WaitForKeyRelease(CancellationToken token)
+    {
+      Instance.WaitForKeyRelease(token);
+    }
+
+    public static void WaitForKeyRelease()
+    {
+      Instance.WaitForKeyRelease();
+    }
+
+    public static ButtonStates GetKeypress(CancellationToken token)
+    {
+      return Instance.GetKeypress(token);
+    }
+
+    public static ButtonStates GetKeypress()
+    {
+      return Instance.GetKeypress();
+    }
+
+    public static void LedPattern(int pattern)
+    {
+      Instance.LedPattern(pattern);
+    }
+
+  }
+
+  public class EV3Buttons : IButtons
+  {
 		[Flags]
 		public enum ButtonStates
 		{
@@ -28,40 +90,31 @@ namespace MonoBrickFirmware.UserInput
 		const int debounceTime = 10;
 		const int pollTime = 50;
 
-		private Buttons ()
+    public EV3Buttons()
 		{
 			dev = new UnixDevice ("/dev/lms_ui");
 			buttonMem = dev.MMap (ButtonCount, 0);			
 		}
-		
-		public static Buttons Instance
+
+    Buttons.ButtonStates ReadStates()
 		{
-			get 
-	      	{
-				return instance; 
-	      	}	
-		}
-		
-		
-		ButtonStates ReadStates()
-		{
-			ButtonStates bs = ButtonStates.None;
+      var bs = Buttons.ButtonStates.None;
 			byte[] buttonData = buttonMem.Read ();
 			int bitMask = 1;
 			foreach (byte butState in buttonData) {
 				if (butState != 0)
-					bs |= (ButtonStates)bitMask;
+          bs |= (Buttons.ButtonStates)bitMask;
 				bitMask = bitMask << 1;
 			}
 			return bs;
 		}
 
-		internal ButtonStates GetDebounced ()
+		internal Buttons.ButtonStates GetDebounced ()
 		{
-			
-			ButtonStates s2 = ButtonStates.None;
+
+      Buttons.ButtonStates s2 = Buttons.ButtonStates.None;
 			for (;;) {
-				ButtonStates s1 = ReadStates ();
+        Buttons.ButtonStates s1 = ReadStates();
 				if (s1 == s2)
 					return s1;
 				Thread.Sleep (debounceTime);
@@ -69,18 +122,18 @@ namespace MonoBrickFirmware.UserInput
 			}
 		}
 
-		public ButtonStates GetStates ()
+		public Buttons.ButtonStates GetStates ()
 		{
 			return GetDebounced ();
 		}
 
 		public void WaitForKeyRelease (CancellationToken token)
 		{
-			ButtonStates bs = GetDebounced ();
+			var bs = GetDebounced ();
 			do {				
 				Thread.Sleep (pollTime);
 				bs = GetDebounced ();
-			} while (bs != ButtonStates.None && !token.IsCancellationRequested);
+			} while (bs != Buttons.ButtonStates.None && !token.IsCancellationRequested);
 		}
 		
 		public void WaitForKeyRelease ()
@@ -88,20 +141,21 @@ namespace MonoBrickFirmware.UserInput
 			WaitForKeyRelease(new CancellationToken(false));
 		}
 
-		public ButtonStates GetKeypress (CancellationToken token)
+    public Buttons.ButtonStates GetKeypress(CancellationToken token)
 		{
-			ButtonStates bs = GetDebounced ();
-			while (bs != ButtonStates.None && !token.IsCancellationRequested) {
+      Buttons.ButtonStates bs = GetDebounced();
+      while (bs != Buttons.ButtonStates.None && !token.IsCancellationRequested)
+      {
 				bs = GetDebounced ();
 			}
 			do {				
 				Thread.Sleep (pollTime);
 				bs = GetDebounced ();
-			} while (bs == ButtonStates.None && !token.IsCancellationRequested);
+      } while (bs == Buttons.ButtonStates.None && !token.IsCancellationRequested);
 			return bs;
 		}
-		
-		public ButtonStates GetKeypress ()
+
+    public Buttons.ButtonStates GetKeypress()
 		{
 			return GetKeypress(new CancellationToken(false));
 		}

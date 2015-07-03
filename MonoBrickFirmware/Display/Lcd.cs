@@ -1,26 +1,182 @@
 using System;
+using System.ComponentModel;
 using MonoBrickFirmware.Native;
 using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.Display
-{	
-	public class Lcd
-	{
-		public const int Width = 178;
-		public const int Height = 128;
-		public enum Alignment { Left, Center, Right };
-		
-		
-		private const int bytesPrLine = ((Width+31)/32)*4;
-		private const int bufferSize = bytesPrLine * Height;
-		private const int hwBufferLineSize = bytesPrLine;
-		private const int hwBufferSize = hwBufferLineSize*Height;			
-		private UnixDevice device;
+{
+  public interface ILcd
+  {
+    int Width { get;}
+    int Height { get; }
+    void SetPixel(int x, int y, bool color);
+    bool IsPixelSet (int x, int y);
+    void Update(int yOffset = 0);
+    void SaveScreen ();
+    void LoadScreen();
+    void ShowPicture(byte[] picture);
+    void TakeScreenShot ();
+    void TakeScreenShot (string directory, string fileName );
+    void ClearLines(int y, int count);
+    void Clear();
+    void DrawVLine(Point startPoint, int height, bool color);
+    void DrawHLine(Point startPoint, int length, bool color);
+    void DrawBitmap(Bitmap bm, Point p);
+    void DrawBitmap(BitStreamer bs, Point p, uint xsize, uint ysize, bool color);
+    int TextWidth(Font f, string text);
+    void WriteText(Font f, Point p, string text, bool color);
+    void DrawArrow (Rectangle r, Lcd.ArrowOrientation orientation, bool color);
+    void WriteTextBox(Font f, Rectangle r, string text, bool color);
+    void WriteTextBox(Font f, Rectangle r, string text, bool color, Lcd.Alignment aln);
+    void DrawCircle (Point center, ushort radius, bool color, bool fill);
+    void DrawEllipse (Point center, ushort radiusA, ushort radiusB, bool color, bool fill);
+    void DrawLine (Point start, Point end, bool color);
+    void DrawRectangle (Rectangle r, bool color, bool fill);
+  }
+
+  public static class Lcd
+  {
+    static Lcd()
+    {
+      Instance = new EV3Lcd();
+    }
+    public enum Alignment { Left, Center, Right };
+    public enum ArrowOrientation { Left, Right, Down, Up }
+	  public static ILcd Instance { get; set;}
+    public static int Width { get; private set; }
+    public static int Height { get; private set; }
+    public static void SetPixel(int x, int y, bool color)
+    {
+      Instance.SetPixel(x,y,color);
+    }
+
+    public static bool IsPixelSet(int x, int y)
+    {
+      return Instance.IsPixelSet(x, y);
+    }
+
+    public static void Update(int yOffset = 0)
+    {
+      Instance.Update(yOffset);
+    }
+
+    public static void SaveScreen()
+    {
+      Instance.SaveScreen();
+    }
+
+    public static void LoadScreen()
+    {
+      Instance.LoadScreen();
+    }
+
+    public static void ShowPicture(byte[] picture)
+    {
+      Instance.ShowPicture(picture);
+    }
+
+    public static void TakeScreenShot()
+    {
+      Instance.TakeScreenShot();
+    }
+
+    public static void TakeScreenShot(string directory, string fileName)
+    {
+      Instance.TakeScreenShot(directory,fileName);
+    }
+
+    public static void ClearLines(int y, int count)
+    {
+      Instance.ClearLines(y, count);
+    }
+
+    public static void Clear()
+    {
+      Instance.Clear();
+    }
+
+    public static void DrawVLine(Point startPoint, int height, bool color)
+    {
+      Instance.DrawVLine(startPoint,height,color);
+    }
+
+    public static void DrawHLine(Point startPoint, int length, bool color)
+    {
+      Instance.DrawHLine(startPoint,length,color);
+    }
+
+    public static void DrawBitmap(Bitmap bm, Point p)
+    {
+      Instance.DrawBitmap(bm,p);
+    }
+
+    public static void DrawBitmap(BitStreamer bs, Point p, uint xsize, uint ysize, bool color)
+    {
+      Instance.DrawBitmap(bs,p,xsize,ysize,color);
+    }
+
+    public static int TextWidth(Font f, string text)
+    {
+      return Instance.TextWidth(f, text);
+    }
+
+    public static void WriteText(Font f, Point p, string text, bool color)
+    {
+      Instance.WriteText(f,p,text, color);
+    }
+
+    public static void DrawArrow(Rectangle r, Lcd.ArrowOrientation orientation, bool color)
+    {
+      Instance.DrawArrow(r,orientation,color);
+    }
+
+    public static void WriteTextBox(Font f, Rectangle r, string text, bool color)
+    {
+      Instance.WriteTextBox(f,r,text,color);
+    }
+
+    public static void WriteTextBox(Font f, Rectangle r, string text, bool color, Lcd.Alignment aln)
+    {
+      Instance.WriteTextBox(f,r,text,color,aln);
+    }
+
+    public static void DrawCircle(Point center, ushort radius, bool color, bool fill)
+    {
+      Instance.DrawCircle(center,radius,color,fill);
+    }
+
+    public static void DrawEllipse(Point center, ushort radiusA, ushort radiusB, bool color, bool fill)
+    {
+      Instance.DrawEllipse(center,radiusA,radiusB,color,fill);
+    }
+
+    public static void DrawLine(Point start, Point end, bool color)
+    {
+      Instance.DrawLine(start,end,color);
+    }
+
+    public static void DrawRectangle(Rectangle r, bool color, bool fill)
+    {
+      Instance.DrawRectangle(r,color,fill);
+    }
+  }
+
+
+  internal class EV3Lcd : ILcd
+  {
+
+    private const int height = 128;
+    private const int width = 178;
+    private static readonly int bytesPrLine = ((width+31)/32)*4;
+    private static readonly int bufferSize = bytesPrLine * height;
+    private static readonly int hwBufferLineSize = bytesPrLine;
+    private static readonly int hwBufferSize = hwBufferLineSize*height;
+    private UnixDevice device;
 		private MemoryArea memory;
 		private byte[] displayBuf = new byte[bufferSize];
 		private byte[] savedScreen = new byte[bufferSize];
 		
-		private BmpImage screenshotImage = new BmpImage(bytesPrLine * 8 , Height, ColorDepth.TrueColor);
+		private BmpImage screenshotImage = new BmpImage((UInt32)bytesPrLine * 8 , height, ColorDepth.TrueColor);
 		private RGB startColor = new RGB(188,191,161);
 		private RGB endColor = new  RGB(219,225,206);
 		private float redGradientStep;
@@ -28,19 +184,20 @@ namespace MonoBrickFirmware.Display
 		private float blueGradientStep; 
 		private byte[] hwBuffer = new byte[hwBufferSize];
 		
-		private static readonly Lcd instance = new Lcd();
-		
 		private bool IsPixelInLcd(Point pixel)
 		{
-			return (pixel.X >= 0) && (pixel.Y >= 0) && (pixel.X <= Lcd.Width) && (pixel.Y <= Lcd.Height);
+			return (pixel.X >= 0) && (pixel.Y >= 0) && (pixel.X <= Lcd.Width) && (pixel.Y <= Height);
 		}
 
 		private bool IsPixelInLcd(int x, int y)
 		{
-			return	(x >= 0) && (y >= 0) && (x <= Lcd.Width) && (y <= Lcd.Height);
+			return	(x >= 0) && (y >= 0) && (x <= Lcd.Width) && (y <= Height);
 		}
 
-		public void SetPixel(int x, int y, bool color)
+    public int Width { get { return width; } }
+    public int Height {get { return height; } }
+
+    public void SetPixel(int x, int y, bool color)
 		{
 			if (!IsPixelInLcd (x, y))
 				return;
@@ -54,9 +211,6 @@ namespace MonoBrickFirmware.Display
 					
 		}
 		
-		public enum ArrowOrientation{Left, Right, Down, Up}
-		
-		
 		public bool IsPixelSet (int x, int y)
 		{
 			int index = (x / 8) + y * bytesPrLine;
@@ -64,18 +218,10 @@ namespace MonoBrickFirmware.Display
 			return (displayBuf[index] & (1 << bit)) != 0;
 		}
 		
-		public static Lcd Instance
-		{
-			get 
-	      	{
-				return instance; 
-	      	}	
-		}
-		
-		private Lcd()
+		public EV3Lcd()
 		{
 			device = new UnixDevice("/dev/fb0");
-			memory =  device.MMap(hwBufferSize, 0);
+      memory = device.MMap((uint)hwBufferSize, 0);
 			Clear();
 			Update();
 			
@@ -86,7 +232,7 @@ namespace MonoBrickFirmware.Display
 		
 		public void Update(int yOffset = 0)
 		{
-			int byteOffset = (yOffset % Lcd.Height)*bytesPrLine;
+			int byteOffset = (yOffset % Height)*bytesPrLine;
 			Array.Copy(displayBuf, byteOffset, hwBuffer, 0, hwBufferSize-byteOffset);
 			Array.Copy(displayBuf, 0, hwBuffer, hwBufferSize-byteOffset, byteOffset);			
 		    memory.Write(0,hwBuffer);			
@@ -256,12 +402,12 @@ namespace MonoBrickFirmware.Display
 			}
 		}
 		
-		public void DrawArrow (Rectangle r, ArrowOrientation orientation, bool color)
+		public void DrawArrow (Rectangle r, Lcd.ArrowOrientation orientation, bool color)
 		{
 			int height = r.P2.Y - r.P1.Y;
 			int width = r.P2.X - r.P1.X;
 			float inc = 0;
-			if (orientation == ArrowOrientation.Left || orientation == ArrowOrientation.Right) 
+			if (orientation == Lcd.ArrowOrientation.Left || orientation == Lcd.ArrowOrientation.Right) 
 			{
 				inc = (((float)height) / 2.0f) / ((float)width); 
 			} 
@@ -269,7 +415,8 @@ namespace MonoBrickFirmware.Display
 			{
 				inc = (((float)width) / 2.0f) / ((float)height); 
 			}
-			if (orientation == ArrowOrientation.Left) {
+			if (orientation == Lcd.ArrowOrientation.Left) 
+      {
 				for (int i = 0; i < width; i++) {
 					SetPixel ((int)(r.P1.X + i), (int)(r.P1.Y + height/2), color);
 					int points = (int)(inc*(float)i)+1;
@@ -279,7 +426,7 @@ namespace MonoBrickFirmware.Display
 					}
 				}	
 			}
-			if (orientation == ArrowOrientation.Right) {
+			if (orientation == Lcd.ArrowOrientation.Right) {
 				for (int i = 0; i < width; i++) {
 					SetPixel ((int)(r.P2.X - i), (int)(r.P1.Y + height/2), color);
 					int points = (int)(inc*(float)i)+1;
@@ -289,7 +436,7 @@ namespace MonoBrickFirmware.Display
 					}
 				}	
 			}
-			if (orientation == ArrowOrientation.Up) {
+			if (orientation == Lcd.ArrowOrientation.Up) {
 				for (int i = 0; i < height; i++) {
 					
 					SetPixel ((int)(r.P1.X + width/2), (int)(r.P1.Y + i), color);
@@ -300,7 +447,7 @@ namespace MonoBrickFirmware.Display
 					}
 				}	
 			}
-			if (orientation == ArrowOrientation.Down) {
+			if (orientation == Lcd.ArrowOrientation.Down) {
 				for (int i = 0; i < height; i++) {
 					
 					SetPixel ((int)(r.P1.X + width/2), (int)(r.P2.Y -i), color);
@@ -315,17 +462,17 @@ namespace MonoBrickFirmware.Display
 		
 		public void WriteTextBox(Font f, Rectangle r, string text, bool color)
 		{
-			WriteTextBox(f, r, text, color, Alignment.Left);
+			WriteTextBox(f, r, text, color, Lcd.Alignment.Left);
 		}
 		
-		public void WriteTextBox(Font f, Rectangle r, string text, bool color, Alignment aln)
+		public void WriteTextBox(Font f, Rectangle r, string text, bool color, Lcd.Alignment aln)
 		{
 			DrawRectangle(r,!color, true);// Clear background
 			int xpos = 0;
-			if (aln == Alignment.Left)
+			if (aln == Lcd.Alignment.Left)
 			{
 			} 
-			else if (aln == Alignment.Center)
+			else if (aln == Lcd.Alignment.Center)
 			{
 				int width = TextWidth(f, text);
 				xpos = (r.P2.X-r.P1.X)/2-width/2;
