@@ -32,11 +32,11 @@ namespace MonoBrickFirmware.Display.Menus
 			Point fontPoint = f.TextSize("v");
 			Point checkPoint = new Point(Lcd.Width - xCheckBoxSize +(int) fontPoint.X-edgeSize, r.P1.Y);
 			
-			Lcd.Instance.WriteTextBox(f, r, text, color);
-			Lcd.Instance.DrawRectangle(outer,color, true);
-			Lcd.Instance.DrawRectangle(innter,!color, true);
+			Lcd.WriteTextBox(f, r, text, color);
+			Lcd.DrawRectangle(outer,color, true);
+			Lcd.DrawRectangle(innter,!color, true);
 			if(Checked)
-				Lcd.Instance.WriteText(f,checkPoint,"v", color);
+				Lcd.WriteText(f,checkPoint,"v", color);
 		}
 
 		public void OnDrawContent ()

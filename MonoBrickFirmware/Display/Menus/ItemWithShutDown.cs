@@ -17,11 +17,11 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			if (dialog.IsPositiveSelected) 
 			{
-				Lcd.Instance.Clear();
-				Lcd.Instance.WriteText(Font.MediumFont, new Point(0,0), "Shutting down...", true);
-				Lcd.Instance.Update();
+				Lcd.Clear();
+				Lcd.WriteText(Font.MediumFont, new Point(0,0), "Shutting down...", true);
+				Lcd.Update();
 
-				Buttons.Instance.LedPattern(2);
+				Buttons.LedPattern(2);
 				ProcessHelper.RunAndWaitForProcess("/sbin/shutdown", "-h now");
 				Thread.Sleep(120000);
 				Parent.RemoveFocus (this);

@@ -96,7 +96,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void OnDrawTitle (Font font, Rectangle rectangle, bool selected)
 		{
-			Lcd.Instance.WriteTextBox (font, rectangle, title, selected);
+			Lcd.WriteTextBox (font, rectangle, title, selected);
 		}
 
 		public void OnDrawContent ()

@@ -33,7 +33,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 					break;
 				WriteTextOnLine(options [i + scrollPos].ToString (), i, i != cursorPos);
 			}
-			Lcd.Instance.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + lines.Count < options.Length);
+			Lcd.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + lines.Count < options.Length);
 			
         }
 

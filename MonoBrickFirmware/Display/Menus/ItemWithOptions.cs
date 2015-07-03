@@ -49,10 +49,10 @@ namespace MonoBrickFirmware.Display.Menus
 			Rectangle leftArrowRect = new Rectangle(new Point(numericRect.P1.X, numericRect.P1.Y+arrowEdge), new Point(numericRect.P1.X+ arrowWidth, numericRect.P2.Y-arrowEdge));
 			Rectangle rightArrowRect = new Rectangle( new Point(numericRect.P2.X-(arrowWidth + rightArrowOffset), numericRect.P1.Y+arrowEdge) , new Point(numericRect.P2.X-rightArrowOffset,numericRect.P2.Y-arrowEdge));
 			
-			Lcd.Instance.WriteTextBox (f, textRect, text, color, Lcd.Alignment.Left);
-			Lcd.Instance.WriteTextBox (f, numericRect, valueAsString, color, Lcd.Alignment.Right);
-			Lcd.Instance.DrawArrow(leftArrowRect, Lcd.ArrowOrientation.Left, color);
-			Lcd.Instance.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
+			Lcd.WriteTextBox (f, textRect, text, color, Lcd.Alignment.Left);
+			Lcd.WriteTextBox (f, numericRect, valueAsString, color, Lcd.Alignment.Right);
+			Lcd.DrawArrow(leftArrowRect, Lcd.ArrowOrientation.Left, color);
+			Lcd.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
 
 		}
 

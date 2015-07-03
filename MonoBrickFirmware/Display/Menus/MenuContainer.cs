@@ -31,7 +31,7 @@ namespace MonoBrickFirmware.Display.Menus
 		public void Show()
 		{
 			cancelSource = new CancellationTokenSource ();
-			Lcd.Instance.SaveScreen ();
+			Lcd.SaveScreen ();
 			while (continueRunning) {
 				cancelSource = new CancellationTokenSource ();
 				resume.Reset ();
@@ -39,7 +39,7 @@ namespace MonoBrickFirmware.Display.Menus
 				{
 					activeMenuItem.OnDrawContent ();
 					buttonAction = false;
-					var action = Buttons.Instance.GetKeypress (cancelSource.Token);
+					var action = Buttons.GetKeypress (cancelSource.Token);
 					buttonAction = true;
 					switch (action) 
 					{
@@ -66,7 +66,7 @@ namespace MonoBrickFirmware.Display.Menus
 				}
 				resume.WaitOne ();
 			}
-			Lcd.Instance.LoadScreen ();
+			Lcd.LoadScreen ();
 		}
 
 		public void Stop()

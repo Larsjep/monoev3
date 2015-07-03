@@ -43,14 +43,14 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void OnDrawTitle(Font f, Rectangle r, bool selected)
 		{
-			Lcd.Instance.WriteTextBox (f, r, text, selected);
+			Lcd.WriteTextBox (f, r, text, selected);
 			if (symbole == ItemSymbole.LeftArrow || symbole == ItemSymbole.RightArrow) {
 				int arrowWidth =(int) f.maxWidth/3;
 				Rectangle arrowRect = new Rectangle(new Point(r.P2.X -(arrowWidth+arrowOffset), r.P1.Y + arrowEdge), new Point(r.P2.X -arrowOffset, r.P2.Y-arrowEdge));
 				if(symbole == ItemSymbole.LeftArrow)
-					Lcd.Instance.DrawArrow(arrowRect,Lcd.ArrowOrientation.Left, selected);
+					Lcd.DrawArrow(arrowRect,Lcd.ArrowOrientation.Left, selected);
 				else
-					Lcd.Instance.DrawArrow(arrowRect,Lcd.ArrowOrientation.Right, selected);
+					Lcd.DrawArrow(arrowRect,Lcd.ArrowOrientation.Right, selected);
 			}
 		}
 

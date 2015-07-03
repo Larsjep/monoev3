@@ -60,10 +60,10 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void OnDrawTitle (Font font, Rectangle rectangle, bool selected)
 		{
-			Lcd.Instance.WriteTextBox (font, rectangle, title, selected);
+			Lcd.WriteTextBox (font, rectangle, title, selected);
 			int arrowWidth = (int)font.maxWidth / 3;
 			Rectangle arrowRect = new Rectangle (new Point (rectangle.P2.X - (arrowWidth + arrowOffset), rectangle.P1.Y + arrowEdge), new Point (rectangle.P2.X - arrowOffset, rectangle.P2.Y - arrowEdge));
-			Lcd.Instance.DrawArrow (arrowRect, Lcd.ArrowOrientation.Right, selected);
+			Lcd.DrawArrow (arrowRect, Lcd.ArrowOrientation.Right, selected);
 		}
 
 
@@ -177,11 +177,11 @@ namespace MonoBrickFirmware.Display.Menus
 				CalculateItemSize ();
 				isItemSizeCalculated = true;
 			}
-			Lcd.Instance.Clear ();
+			Lcd.Clear ();
 			Rectangle currentPos = new Rectangle (new Point (0, 0), itemSize);
 			Rectangle arrowRect = new Rectangle (new Point (Lcd.Width / 2 - arrowWidth / 2, Lcd.Height - arrowHeight), new Point (Lcd.Width / 2 + arrowWidth / 2, Lcd.Height - 1));
 
-			Lcd.Instance.WriteTextBox (font, currentPos, title, true, Lcd.Alignment.Center);
+			Lcd.WriteTextBox (font, currentPos, title, true, Lcd.Alignment.Center);
 			int i = 0;
 			while (i != itemsOnScreen) {
 				if (i + scrollPos >= items.Count)
@@ -189,8 +189,8 @@ namespace MonoBrickFirmware.Display.Menus
 				items [i + scrollPos].OnDrawTitle (font, currentPos + itemHeight * (i + 1), i != cursorPos);
 				i++;
 			}
-			Lcd.Instance.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + itemsOnScreen < items.Count);
-			Lcd.Instance.Update ();
+			Lcd.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + itemsOnScreen < items.Count);
+			Lcd.Update ();
 		}
 
 		private void CreateNewList(List<IChildItem> newList)

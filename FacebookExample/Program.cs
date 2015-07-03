@@ -35,10 +35,10 @@ namespace FacebookExample
 			
 			buts.EnterPressed += () => { 
 				Color color = colorSensor.ReadColor();
-				Lcd.Instance.Clear();
-				Lcd.Instance.WriteTextBox(f, box + offset*0, "Color: " + color, true);
-				Lcd.Instance.WriteTextBox(f, box + offset*1, "Send to Facebook" + color, true);
-				Lcd.Instance.Update();
+				Lcd.Clear();
+				Lcd.WriteTextBox(f, box + offset*0, "Color: " + color, true);
+				Lcd.WriteTextBox(f, box + offset*1, "Send to Facebook" + color, true);
+				Lcd.Update();
 				colorSensor.ReadColor();
 				var me = fb.Get("monobrick.dk") as JsonObject;
 				var uid = me["id"];

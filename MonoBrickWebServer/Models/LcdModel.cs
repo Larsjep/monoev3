@@ -9,46 +9,46 @@ namespace MonoBrickWebServer.Models
 		
 		public void SetPixel(int x, int y, bool color)
 		{
-			Lcd.Instance.SetPixel(x, y, color);
-			Lcd.Instance.Update();				
+			Lcd.SetPixel(x, y, color);
+			Lcd.Update();				
 		}
 
 		public void TakeScreenShot (string directory, string fileName)
 		{
-			Lcd.Instance.TakeScreenShot (directory, fileName);
-			Lcd.Instance.Update();
+			Lcd.TakeScreenShot (directory, fileName);
+			Lcd.Update();
 		}
 
 		
 		public void ClearLines(int y, int count)
 		{			
-			Lcd.Instance.ClearLines(y, count);
-			Lcd.Instance.Update();
+			Lcd.ClearLines(y, count);
+			Lcd.Update();
 		}
 		
 		public void Clear()
 		{
-			Lcd.Instance.Clear();
-			Lcd.Instance.Update();
+			Lcd.Clear();
+			Lcd.Update();
 		}
 
 		public void DrawVLine(int x, int y, int height, bool color)
 		{
-			Lcd.Instance.DrawVLine(new Point(x,y), height, color);
-			Lcd.Instance.Update(); 
+			Lcd.DrawVLine(new Point(x,y), height, color);
+			Lcd.Update(); 
 		}
 
 		public void DrawHLine(int x, int y, int length, bool color)
 		{
-			Lcd.Instance.DrawHLine(new Point(x,y), length, color);
-			Lcd.Instance.Update();
+			Lcd.DrawHLine(new Point(x,y), length, color);
+			Lcd.Update();
 		}
 
 
 		public void WriteText(int x, int y, string text, bool color)
 		{			
-			Lcd.Instance.WriteText(Font.MediumFont, new Point(x,y), text, color);
-			Lcd.Instance.Update();
+			Lcd.WriteText(Font.MediumFont, new Point(x,y), text, color);
+			Lcd.Update();
 		}
 		
 		public void WriteTextBox (int xStart, int yStart, int xEnd, int yEnd, string text, bool color, string align)
@@ -58,30 +58,30 @@ namespace MonoBrickWebServer.Models
 			{
 				lcdAlign = Lcd.Alignment.Center;
 			} 
-			Lcd.Instance.WriteTextBox(Font.MediumFont, new Rectangle(new Point(xStart, yStart), new Point(xEnd, yEnd)), text, color, lcdAlign);
-			Lcd.Instance.Update();
+			Lcd.WriteTextBox(Font.MediumFont, new Rectangle(new Point(xStart, yStart), new Point(xEnd, yEnd)), text, color, lcdAlign);
+			Lcd.Update();
 		}
 
 		public void DrawCircle (int x, int y, ushort radius, bool color, bool fill)
 		{	
-			Lcd.Instance.DrawCircle(new Point(x,y), radius, color, fill);
-			Lcd.Instance.Update();
+			Lcd.DrawCircle(new Point(x,y), radius, color, fill);
+			Lcd.Update();
 		}
 
 		public void DrawEllipse (int x, int y, ushort radiusA, ushort radiusB, bool color, bool fill)
 		{
-			Lcd.Instance.DrawEllipse(new Point(x,y), radiusA, radiusB, color, fill);
-			Lcd.Instance.Update();	
+			Lcd.DrawEllipse(new Point(x,y), radiusA, radiusB, color, fill);
+			Lcd.Update();	
 		}
 
 		public void DrawLine (int xStart, int yStart, int xEnd, int yEnd, bool color)
 		{
-			Lcd.Instance.DrawLine(new Point(xStart,yStart), new Point(xEnd, yEnd), color);
+			Lcd.DrawLine(new Point(xStart,yStart), new Point(xEnd, yEnd), color);
 		}
 
 		public void DrawRectangle (int xStart, int yStart, int xEnd, int yEnd,  bool color, bool fill)
 		{
-			Lcd.Instance.DrawRectangle(new Rectangle(new Point(xStart,yStart), new Point(xEnd, yEnd)), color, fill);	
+			Lcd.DrawRectangle(new Rectangle(new Point(xStart,yStart), new Point(xEnd, yEnd)), color, fill);	
 		}
 	}
 }

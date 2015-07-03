@@ -81,8 +81,8 @@ namespace MonoBrickFirmware.Display.Menus
 					showTextString = showTextString + "...";
 				}
 			}
-			Lcd.Instance.WriteTextBox (f, subjectRect,subject + "  ", color);
-			Lcd.Instance.WriteTextBox(f,textRect,showTextString,color,Lcd.Alignment.Right);
+			Lcd.WriteTextBox (f, subjectRect,subject + "  ", color);
+			Lcd.WriteTextBox(f,textRect,showTextString,color,Lcd.Alignment.Right);
 		}
 
 		public void OnDrawContent ()

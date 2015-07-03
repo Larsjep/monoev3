@@ -101,8 +101,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 							ClearContent ();
 							WriteTextOnDialog (steps [stepIndex].ErrorText);
 							DrawCenterButton ("Ok", false);
-							Lcd.Instance.Update ();
-							Buttons.Instance.GetKeypress ();//Wait for any key
+							Lcd.Update ();
+							Buttons.GetKeypress ();//Wait for any key
 							errorStep = steps [stepIndex];
 							ok = false;
 							break;
@@ -114,7 +114,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 							WriteTextOnDialog (steps [stepIndex].ErrorText);
 							DrawCenterButton ("Ok", false);
 							waitForOk.Reset(); 
-							Lcd.Instance.Update ();
+							Lcd.Update ();
 							waitForOk.WaitOne();
 							StartProgressAnimation (progressLine);
 						}
@@ -126,7 +126,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 						WriteTextOnDialog ("Exception excuting " + steps [stepIndex].StepText);
 						DrawCenterButton ("Ok", false);
 						waitForOk.Reset();
-						Lcd.Instance.Update ();
+						Lcd.Update ();
 						waitForOk.WaitOne();
 						errorStep = steps [stepIndex];
 						ok = false;
@@ -139,8 +139,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 					ClearContent ();
 					WriteTextOnDialog (allDoneText);
 					DrawCenterButton ("Ok", false);
-					Lcd.Instance.Update ();
-					Buttons.Instance.GetKeypress ();//Wait for any key*/
+					Lcd.Update ();
+					Buttons.GetKeypress ();//Wait for any key*/
 				}
 				OnExit();
 			});

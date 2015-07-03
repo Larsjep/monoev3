@@ -93,7 +93,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 					WriteTextOnDialog (endText);
 					DrawCenterButton ("Ok", false);
 					waitForOk.Reset();
-					Lcd.Instance.Update ();
+					Lcd.Update ();
 					waitForOk.WaitOne();
 				}
 				OnExit();

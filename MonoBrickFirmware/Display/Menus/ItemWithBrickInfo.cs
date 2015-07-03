@@ -70,7 +70,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void OnDrawTitle (Font font, Rectangle rectangle, bool selected)
 		{
-			Lcd.Instance.WriteTextBox(font, rectangle, "Brick information", selected);	
+			Lcd.WriteTextBox(font, rectangle, "Brick information", selected);	
 		}
 
 		public void OnDrawContent ()
@@ -88,14 +88,14 @@ namespace MonoBrickFirmware.Display.Menus
 
 			Point offset = new Point(0, (int)Font.MediumFont.maxHeight);
 			Point startPos = new Point(0,0);
-			Lcd.Instance.Clear();
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*0, "Firmware: " + currentVersion.Firmware, true);
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*1, "Image: " + currentVersion.Image , true);
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*2, "Mono version: " + monoVersion.Substring(0,7), true);
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*3, "Mono CLR: " + monoCLR, true);			
-			Lcd.Instance.WriteText(Font.MediumFont, startPos+offset*4, "IP: " + WiFiDevice.GetIpAddress(), true);			
+			Lcd.Clear();
+			Lcd.WriteText(Font.MediumFont, startPos+offset*0, "Firmware: " + currentVersion.Firmware, true);
+			Lcd.WriteText(Font.MediumFont, startPos+offset*1, "Image: " + currentVersion.Image , true);
+			Lcd.WriteText(Font.MediumFont, startPos+offset*2, "Mono version: " + monoVersion.Substring(0,7), true);
+			Lcd.WriteText(Font.MediumFont, startPos+offset*3, "Mono CLR: " + monoCLR, true);			
+			Lcd.WriteText(Font.MediumFont, startPos+offset*4, "IP: " + WiFiDevice.GetIpAddress(), true);			
 
-			Lcd.Instance.Update();
+			Lcd.Update();
 		}
 
 		public void SetFocus (IChildItem item)
