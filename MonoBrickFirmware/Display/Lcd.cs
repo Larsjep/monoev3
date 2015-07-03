@@ -42,7 +42,7 @@ namespace MonoBrickFirmware.Display
     }
     public enum Alignment { Left, Center, Right };
     public enum ArrowOrientation { Left, Right, Down, Up }
-	  public static ILcd Instance { get; set;}
+	public static ILcd Instance { get; set;}
     public static int Width { get; private set; }
     public static int Height { get; private set; }
     public static void SetPixel(int x, int y, bool color)
@@ -221,7 +221,7 @@ namespace MonoBrickFirmware.Display
 		public EV3Lcd()
 		{
 			device = new UnixDevice("/dev/fb0");
-      memory = device.MMap((uint)hwBufferSize, 0);
+      		memory = device.MMap((uint)hwBufferSize, 0);
 			Clear();
 			Update();
 			
@@ -416,7 +416,7 @@ namespace MonoBrickFirmware.Display
 				inc = (((float)width) / 2.0f) / ((float)height); 
 			}
 			if (orientation == Lcd.ArrowOrientation.Left) 
-      {
+      		{
 				for (int i = 0; i < width; i++) {
 					SetPixel ((int)(r.P1.X + i), (int)(r.P1.Y + height/2), color);
 					int points = (int)(inc*(float)i)+1;
