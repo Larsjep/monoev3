@@ -16,7 +16,7 @@ using Nancy.Hosting.Self;
 
 namespace StartupApp
 {
-	class MainClass
+	public class MainClass
 	{
 		public static void Main (string[] args)
 		{
@@ -32,46 +32,42 @@ namespace StartupApp
 
 			var container = new FirmwareMenuContainer (menu);
 
-
 			Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 			Lcd.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
 			Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
 			
 			Lcd.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
-			Lcd.Update ();						
+			Lcd.Update ();
 			WiFiDevice.TurnOff ();
 			ProgramManager.Instance.CreateSDCardFolder();
 			Lcd.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
 			Lcd.Update ();
 			Lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
 			Lcd.Update ();						
-			if (FirmwareSettings.GeneralSettings.ConnectToWiFiAtStartUp) {
+			if (FirmwareSettings.GeneralSettings.ConnectToWiFiAtStartUp) 
+			{
 				Lcd.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);
 				Lcd.Update ();						
-				if (WiFiDevice.TurnOn (60000)) {
-          if (FirmwareSettings.GeneralSettings.CheckForSwUpdatesAtStartUp)
-          {
+				if (WiFiDevice.TurnOn (60000)) 
+				{
+					if (FirmwareSettings.GeneralSettings.CheckForSwUpdatesAtStartUp)
+					{
 						container.Show (3); //show the menu container with the update dialog			
-					} else 
-          {
+					} 
+					else 
+					{
 						var dialog = new InfoDialog ("Connected Successfully " + WiFiDevice.GetIpAddress (), true);
 						dialog.Show ();
 					} 
 				} 
-        else 
-        {
-					var dialog = new InfoDialog ("Failed to connect to WiFI Network", true);
-					dialog.Show ();
+		        else 
+		        {
+						var dialog = new InfoDialog ("Failed to connect to WiFI Network", true);
+						dialog.Show ();
 				}
 			}
 			container.Show ();
-
 		}
-		#region WebServer Menu
-
-		#endregion
-
-
 	}
 	
 }

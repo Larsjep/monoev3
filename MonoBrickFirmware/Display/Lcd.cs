@@ -44,7 +44,7 @@ namespace MonoBrickFirmware.Display
 			Instance = new EV3Lcd();
 			((EV3Lcd)Instance).Initialize();
 		}
-		catch
+		catch(Exception e)
 		{
 			Instance = null; //Not running on a EV3
 		}
@@ -188,11 +188,11 @@ namespace MonoBrickFirmware.Display
 	private BmpImage screenshotImage = new BmpImage((UInt32)bytesPrLine * 8 , height, ColorDepth.TrueColor);
 	private RGB startColor = new RGB(188,191,161);
 	private RGB endColor = new  RGB(219,225,206);
-	private float redGradientStep;
-	private float greenGradientStep;  
-	private float blueGradientStep; 
 	private byte[] hwBuffer = new byte[hwBufferSize];
-	
+	protected float redGradientStep;
+	protected float greenGradientStep;  
+	protected float blueGradientStep; 
+
 	private bool IsPixelInLcd(Point pixel)
 	{
 		return (pixel.X >= 0) && (pixel.Y >= 0) && (pixel.X <= Lcd.Width) && (pixel.Y <= Height);

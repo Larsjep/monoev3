@@ -75,6 +75,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindsensorsAngleExample", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{9152A05B-7FD4-485A-BB6A-B7C7AD0B3AAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoBrickFirmwareSimulation", "MonoBrickFirmwareSimulation\MonoBrickFirmwareSimulation.csproj", "{320F52FD-26ED-469D-B9EA-B5E7F66DED43}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,10 @@ Global
 		{314570C2-D0F1-45D2-868D-FA54E2F538F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{314570C2-D0F1-45D2-868D-FA54E2F538F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{314570C2-D0F1-45D2-868D-FA54E2F538F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{320F52FD-26ED-469D-B9EA-B5E7F66DED43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{320F52FD-26ED-469D-B9EA-B5E7F66DED43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{320F52FD-26ED-469D-B9EA-B5E7F66DED43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{320F52FD-26ED-469D-B9EA-B5E7F66DED43}.Release|Any CPU.Build.0 = Release|Any CPU
 		{33EA4399-1595-42E9-85C6-6DA5FFDB14B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{33EA4399-1595-42E9-85C6-6DA5FFDB14B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33EA4399-1595-42E9-85C6-6DA5FFDB14B8}.Release|Any CPU.ActiveCfg = Release|Any CPU

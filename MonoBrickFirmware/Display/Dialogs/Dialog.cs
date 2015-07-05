@@ -14,7 +14,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private Rectangle titleRect;
 		private Point bottomLineCenter;
         
-    private int titleSize;
+    	private int titleSize;
 		private int dialogWidth;
 		private int dialogHeight;
 
