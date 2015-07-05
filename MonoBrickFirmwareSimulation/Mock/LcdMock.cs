@@ -8,16 +8,12 @@ namespace MonoBrickFirmwareSimulation.Mock
 {
 	public class LcdMock : EV3Lcd
 	{
-		private readonly DrawingArea drawingArea;
 		private readonly Context ctx;
-		private readonly int pixelSize;
 		private Color notSetColor = new Color (255, 255, 255);
 		private Color setColor = new Color (0, 0, 0);
 
-		public LcdMock (DrawingArea drawingArea, int pixelSize)
+		public LcdMock (DrawingArea drawingArea)
 		{
-			this.drawingArea = drawingArea;
-			this.pixelSize = pixelSize;
 			ctx =  Gdk.CairoHelper.Create(drawingArea.GdkWindow);
 		}
 

@@ -18,17 +18,17 @@ namespace MonoBrickWebServer.Models
 
 		public void Start()
 		{
-			ProgramManager.Instance.StartProgram(programInfo);
+			ProgramManager.StartProgram(programInfo);
 		}
 
 		public void Stop()
 		{
-			ProgramManager.Instance.StopProgram(programInfo);
+			ProgramManager.StopProgram(programInfo);
 		}
 
 		public void Delete ()
 		{
-			ProgramManager.Instance.DeleteProgram(programInfo);
+			ProgramManager.DeleteProgram(programInfo);
 		}
 
 		private string LocationToString (ProgramLocation location)

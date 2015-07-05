@@ -7,23 +7,48 @@ using System.Threading;
 
 namespace MonoBrickFirmware.FileSystem
 {
-	public class ProgramManager
+	public interface IProgramManager
 	{
-		private static readonly ProgramManager instance = new ProgramManager();
-		private static string ProgramPathSdCard = "/mnt/bootpar/apps";
-		private static string ProgramPathEV3 = "/home/root/apps/";
+		void CreateSDCardFolder ();
+		int StartAndWaitForProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0);
+		void StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0);
+		void StopProgram (ProgramInformation program);
+		void DeleteProgram (ProgramInformation program);
+		bool AOTCompileProgram (ProgramInformation program);
+		List<ProgramInformation> GetProgramInformationList ();
+	}
+
+	public static class ProgramManager
+	{
+		static ProgramManager()
+		{
+			try
+			{
+				Instance = new EV3ProgramManager();
+
+			}
+			catch(Exception e)
+			{
+				Instance = null; //Not running on a EV3
+			}
+		}
+		public static IProgramManager Instance{ get; set; }
+		public static void CreateSDCardFolder (){Instance.CreateSDCardFolder ();}
+		public static int StartAndWaitForProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0){return Instance.StartAndWaitForProgram (program, runInAOT, timeout);}
+		public static void StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0){Instance.StartProgram (program, runInAOT, timeout);}
+		public static void StopProgram (ProgramInformation program){Instance.StopProgram (program);}
+		public static void DeleteProgram (ProgramInformation program){Instance.DeleteProgram (program);}
+		public static bool AOTCompileProgram (ProgramInformation program){return Instance.AOTCompileProgram (program);}
+		public static List<ProgramInformation> GetProgramInformationList (){return Instance.GetProgramInformationList ();}
+
+	}
+
+
+	public class EV3ProgramManager : IProgramManager
+	{
+		private string ProgramPathSdCard = "/mnt/bootpar/apps";
+		private string ProgramPathEV3 = "/home/root/apps/";
 		private List<ProgramInformation> programList = new List<ProgramInformation>();
-
-		private ProgramManager ()
-		{
-
-
-		}
-
-		public static ProgramManager Instance
-		{
-			get{return instance;}
-		}
 
 		public void CreateSDCardFolder ()
 		{

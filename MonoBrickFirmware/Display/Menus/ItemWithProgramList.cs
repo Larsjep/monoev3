@@ -16,7 +16,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		protected override List<IChildItem> OnCreateChildList ()
 		{
-			List<ProgramInformation> programs = ProgramManager.Instance.GetProgramInformationList();
+			List<ProgramInformation> programs = ProgramManager.GetProgramInformationList();
 			var childList = new List<IChildItem> ();
 			foreach(var program in programs)
 			{
@@ -124,7 +124,7 @@ namespace MonoBrickFirmware.Display.Menus
 					{
 						Parent.SuspendEvents (this);
 					}
-					ProgramManager.Instance.StartAndWaitForProgram (program, inAot);
+					ProgramManager.StartAndWaitForProgram (program, inAot);
 					OnDone ();
 				})).Start ();
 			} 
@@ -171,7 +171,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void OnEscPressed ()
 		{
-			ProgramManager.Instance.StopProgram (this.program);		
+			ProgramManager.StopProgram (this.program);		
 		}
 
 		public void OnDrawTitle (Font font, Rectangle rectangle, bool selected)
@@ -224,7 +224,7 @@ namespace MonoBrickFirmware.Display.Menus
 	internal class AotCompileDialog : ItemWithDialog<StepDialog>
 	{
 		public AotCompileDialog(ProgramInformation programInformation): base(new StepDialog("Compiling", 
-			new List<IStep> (){new StepContainer (delegate() {return ProgramManager.Instance.AOTCompileProgram(programInformation);}, 
+			new List<IStep> (){new StepContainer (delegate() {return ProgramManager.AOTCompileProgram(programInformation);}, 
 				"compiling program", "Failed to compile")}),"")
 		{
 			
@@ -260,7 +260,7 @@ namespace MonoBrickFirmware.Display.Menus
 		private class DeleteStepsDialog : ItemWithDialog<ProgressDialog>
 		{
 			public DeleteStepsDialog(ProgramInformation programInformation): base(new ProgressDialog("", new StepContainer (() => {
-				ProgramManager.Instance.DeleteProgram (programInformation);
+				ProgramManager.DeleteProgram (programInformation);
 				return true;
 			}, "Deleting ", "Error deleting program")),"")
 			{
