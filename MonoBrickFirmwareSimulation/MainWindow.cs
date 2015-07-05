@@ -2,18 +2,21 @@
 using System;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.FileSystem;
+using MonoBrickFirmware.UserInput;
 using MonoBrickFirmwareSimulation.Mock;
 using System.Threading;
 
 public partial class MainWindow: Gtk.Window
 {
 	private Thread startupAppThread;
+	private ButtonsMock buttonsMock = new ButtonsMock();
 	public ManualResetEvent LcdReady = new ManualResetEvent(false);
 	private void StartupAppExecution()
 	{
 		lcdDrawingarea.SetSizeRequest(178, 128);
 		Lcd.Instance = new LcdMock (lcdDrawingarea);
 		ProgramManager.Instance = new ProgramManagerMock ();
+		Buttons.Instance = buttonsMock;
 		StartupApp.MainClass.Main (null);	
 	}
 
