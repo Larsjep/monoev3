@@ -11,7 +11,8 @@ namespace MonoBrickFirmware.Display
     int Height { get; }
     void SetPixel(int x, int y, bool color);
     bool IsPixelSet (int x, int y);
-    void Update(int yOffset = 0);
+	void Update();
+	void Update(int yOffset);
     void SaveScreen ();
     void LoadScreen();
     void ShowPicture(byte[] picture);
@@ -36,15 +37,23 @@ namespace MonoBrickFirmware.Display
 
   public static class Lcd
   {
-    static Lcd()
+	static Lcd()
     {
-      Instance = new EV3Lcd();
+		try
+		{
+			Instance = new EV3Lcd();
+			((EV3Lcd)Instance).Initialize();
+		}
+		catch
+		{
+			Instance = null; //Not running on a EV3
+		}
     }
     public enum Alignment { Left, Center, Right };
     public enum ArrowOrientation { Left, Right, Down, Up }
-	public static ILcd Instance { get; set;}
-    public static int Width { get; private set; }
-    public static int Height { get; private set; }
+	public static ILcd Instance{ get; set; }
+	public static int Width { get{return Instance.Width;}}
+	public static int Height { get{return Instance.Height;}}
     public static void SetPixel(int x, int y, bool color)
     {
       Instance.SetPixel(x,y,color);
@@ -162,8 +171,8 @@ namespace MonoBrickFirmware.Display
   }
 
 
-  internal class EV3Lcd : ILcd
-  {
+   	public class EV3Lcd : ILcd
+	{
 
     private const int height = 128;
     private const int width = 178;
@@ -172,222 +181,231 @@ namespace MonoBrickFirmware.Display
     private static readonly int hwBufferLineSize = bytesPrLine;
     private static readonly int hwBufferSize = hwBufferLineSize*height;
     private UnixDevice device;
-		private MemoryArea memory;
-		private byte[] displayBuf = new byte[bufferSize];
-		private byte[] savedScreen = new byte[bufferSize];
-		
-		private BmpImage screenshotImage = new BmpImage((UInt32)bytesPrLine * 8 , height, ColorDepth.TrueColor);
-		private RGB startColor = new RGB(188,191,161);
-		private RGB endColor = new  RGB(219,225,206);
-		private float redGradientStep;
-		private float greenGradientStep;  
-		private float blueGradientStep; 
-		private byte[] hwBuffer = new byte[hwBufferSize];
-		
-		private bool IsPixelInLcd(Point pixel)
-		{
-			return (pixel.X >= 0) && (pixel.Y >= 0) && (pixel.X <= Lcd.Width) && (pixel.Y <= Height);
-		}
+	private MemoryArea memory;
+	private byte[] displayBuf = new byte[bufferSize];
+	private byte[] savedScreen = new byte[bufferSize];
+	
+	private BmpImage screenshotImage = new BmpImage((UInt32)bytesPrLine * 8 , height, ColorDepth.TrueColor);
+	private RGB startColor = new RGB(188,191,161);
+	private RGB endColor = new  RGB(219,225,206);
+	private float redGradientStep;
+	private float greenGradientStep;  
+	private float blueGradientStep; 
+	private byte[] hwBuffer = new byte[hwBufferSize];
+	
+	private bool IsPixelInLcd(Point pixel)
+	{
+		return (pixel.X >= 0) && (pixel.Y >= 0) && (pixel.X <= Lcd.Width) && (pixel.Y <= Height);
+	}
 
-		private bool IsPixelInLcd(int x, int y)
-		{
-			return	(x >= 0) && (y >= 0) && (x <= Lcd.Width) && (y <= Height);
-		}
+	private bool IsPixelInLcd(int x, int y)
+	{
+		return	(x >= 0) && (y >= 0) && (x <= Lcd.Width) && (y <= Height);
+	}
 
     public int Width { get { return width; } }
     public int Height {get { return height; } }
 
-    public void SetPixel(int x, int y, bool color)
-		{
-			if (!IsPixelInLcd (x, y))
-				return;
+	public void SetPixel(int x, int y, bool color)
+	{
+		if (!IsPixelInLcd (x, y))
+			return;
 
-			int index = (x/8)+ y * bytesPrLine;
-			int bit = x & 0x7;
-			if (color)
-				displayBuf[index] |= (byte)(1 << bit);
-			else
-				displayBuf[index] &= (byte)~(1 << bit);
-					
-		}
+		int index = (x/8)+ y * bytesPrLine;
+		int bit = x & 0x7;
+		if (color)
+			displayBuf[index] |= (byte)(1 << bit);
+		else
+			displayBuf[index] &= (byte)~(1 << bit);
+				
+	}
 		
-		public bool IsPixelSet (int x, int y)
-		{
-			int index = (x / 8) + y * bytesPrLine;
-			int bit = x & 0x7;
-			return (displayBuf[index] & (1 << bit)) != 0;
-		}
+	public bool IsPixelSet (int x, int y)
+	{
+		int index = (x / 8) + y * bytesPrLine;
+		int bit = x & 0x7;
+		return (displayBuf[index] & (1 << bit)) != 0;
+	}
 		
-		public EV3Lcd()
-		{
-			device = new UnixDevice("/dev/fb0");
-      		memory = device.MMap((uint)hwBufferSize, 0);
-			Clear();
-			Update();
-			
+	public EV3Lcd()
+	{
 			redGradientStep = (float)(endColor.Red - startColor.Red)/Height; 
 			greenGradientStep = (float)(endColor.Green - startColor.Green)/Height; 
 			blueGradientStep = (float)(endColor.Blue - startColor.Blue)/Height; 
-		}
-		
-		public void Update(int yOffset = 0)
-		{
-			int byteOffset = (yOffset % Height)*bytesPrLine;
-			Array.Copy(displayBuf, byteOffset, hwBuffer, 0, hwBufferSize-byteOffset);
-			Array.Copy(displayBuf, 0, hwBuffer, hwBufferSize-byteOffset, byteOffset);			
-		    memory.Write(0,hwBuffer);			
-		}
-		
-		public void SaveScreen ()
-		{
-			Array.Copy(displayBuf,savedScreen, bufferSize);
-		}
-		
-		public void LoadScreen()
-		{
-			Array.Copy(savedScreen,displayBuf,bufferSize);
-		}
-		
-		public void ShowPicture(byte[] picture)
-		{
-			Array.Copy(picture, displayBuf, picture.Length);
-			Update();
-		}
+	}
+	
+	public virtual void Initialize()
+	{
+		device = new UnixDevice("/dev/fb0");
+		memory = device.MMap((uint)hwBufferSize, 0);
+		Clear();
+		Update();
 
-		public void TakeScreenShot ()
-		{
-			TakeScreenShot(System.IO.Directory.GetCurrentDirectory(), "ScreenShot-" + string.Format ("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now) + ".bmp");
-		}
+	}
+	
+	public void Update()
+	{
+		Update (0);
+	}
+
+	public virtual void Update(int yOffset)
+	{
+		int byteOffset = (yOffset % Height)*bytesPrLine;
+		Array.Copy(displayBuf, byteOffset, hwBuffer, 0, hwBufferSize-byteOffset);
+		Array.Copy(displayBuf, 0, hwBuffer, hwBufferSize-byteOffset, byteOffset);			
+	    memory.Write(0,hwBuffer);			
+	}
+		
+	public void SaveScreen ()
+	{
+		Array.Copy(displayBuf,savedScreen, bufferSize);
+	}
+	
+	public void LoadScreen()
+	{
+		Array.Copy(savedScreen,displayBuf,bufferSize);
+	}
+	
+	public void ShowPicture(byte[] picture)
+	{
+		Array.Copy(picture, displayBuf, picture.Length);
+		Update();
+	}
+
+	public void TakeScreenShot ()
+	{
+		TakeScreenShot(System.IO.Directory.GetCurrentDirectory(), "ScreenShot-" + string.Format ("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now) + ".bmp");
+	}
 
 
-		/// <summary>
-		/// Takes the screen shot.
-		/// </summary>
-		/// <param name="directory">Directory.</param>
-		/// <param name="fileName">File name.</param>
-		public void TakeScreenShot (string directory, string fileName )
-		{
-			screenshotImage.Clear ();
-			float redActual = (float)endColor.Red;
-			float greenActual = (float)endColor.Green;
-			float blueActual = (float)endColor.Blue;
-			
-			RGB color = new RGB ();
-			for (int y = Height - 1; y >= 0; y--) {
-				for (int x = 0; x < bytesPrLine * 8; x++) {
-					if (IsPixelSet (x, y)) {
-						color.Blue = 0x00;
-						color.Green = 0x00;
-						color.Red = 0x00;	
-					} else {
-						color.Red = (byte)redActual;
-						color.Green = (byte)greenActual;
-						color.Blue = (byte)blueActual;
-					}
-					screenshotImage.AppendRGB (color);
+	/// <summary>
+	/// Takes the screen shot.
+	/// </summary>
+	/// <param name="directory">Directory.</param>
+	/// <param name="fileName">File name.</param>
+	public void TakeScreenShot (string directory, string fileName )
+	{
+		screenshotImage.Clear ();
+		float redActual = (float)endColor.Red;
+		float greenActual = (float)endColor.Green;
+		float blueActual = (float)endColor.Blue;
+		
+		RGB color = new RGB ();
+		for (int y = Height - 1; y >= 0; y--) {
+			for (int x = 0; x < bytesPrLine * 8; x++) {
+				if (IsPixelSet (x, y)) {
+					color.Blue = 0x00;
+					color.Green = 0x00;
+					color.Red = 0x00;	
+				} else {
+					color.Red = (byte)redActual;
+					color.Green = (byte)greenActual;
+					color.Blue = (byte)blueActual;
 				}
-				redActual -= redGradientStep;
-				greenActual -= greenGradientStep;
-				blueActual -= blueGradientStep;
+				screenshotImage.AppendRGB (color);
 			}
-			if (fileName == "") {
-				fileName = "ScreenShot" + string.Format ("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now) + ".bmp";
-			}
-			if (!fileName.ToLower ().EndsWith (".bmp")) 
-			{
-				fileName = fileName + ".bmp";
-			}
-			screenshotImage.WriteToFile(System.IO.Path.Combine(directory,fileName));
+			redActual -= redGradientStep;
+			greenActual -= greenGradientStep;
+			blueActual -= blueGradientStep;
 		}
+		if (fileName == "") {
+			fileName = "ScreenShot" + string.Format ("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now) + ".bmp";
+		}
+		if (!fileName.ToLower ().EndsWith (".bmp")) 
+		{
+			fileName = fileName + ".bmp";
+		}
+		screenshotImage.WriteToFile(System.IO.Path.Combine(directory,fileName));
+	}
 		
 		
-		public void ClearLines(int y, int count)
-		{			
-			Array.Clear(displayBuf, bytesPrLine*y, count*bytesPrLine);
+	public void ClearLines(int y, int count)
+	{			
+		Array.Clear(displayBuf, bytesPrLine*y, count*bytesPrLine);
+	}
+	
+	public void Clear()
+	{
+		ClearLines(0, Height);
+	}
+
+	public void DrawVLine(Point startPoint, int height, bool color)
+	{
+		for (var y = 0; y <= height; y++) {
+			SetPixel (startPoint.X, startPoint.Y + y, color);			
 		}
+
+	}
+
+	public void DrawHLine(Point startPoint, int length, bool color)
+	{
+		int bytePos = bytesPrLine*startPoint.Y + startPoint.X/8;
+		int bitPos = startPoint.X & 0x7;
+		int bitsInFirstByte = Math.Min(8 - bitPos, length);			
+		byte bitMask = (byte)((0xff >> (8-bitsInFirstByte)) << bitPos);
 		
-		public void Clear()
+		// Set/clear bits in first byte
+		if (color)
+			displayBuf[bytePos] |= bitMask;
+		else
+			displayBuf[bytePos] &= (byte)~bitMask;
+		length -= bitsInFirstByte;
+		bytePos++;
+		while (length >= 8) // Set/Clear all byte full bytes
 		{
-			ClearLines(0, Height);
+			displayBuf[bytePos] = color ? (byte)0xff : (byte)0;
+			bytePos++;
+			length -= 8;
 		}
-
-		public void DrawVLine(Point startPoint, int height, bool color)
+		// Set/clear bits in last byte
+		if (length > 0)
 		{
-			for (var y = 0; y <= height; y++) {
-				SetPixel (startPoint.X, startPoint.Y + y, color);			
-			}
-
-		}
-
-		public void DrawHLine(Point startPoint, int length, bool color)
-		{
-			int bytePos = bytesPrLine*startPoint.Y + startPoint.X/8;
-			int bitPos = startPoint.X & 0x7;
-			int bitsInFirstByte = Math.Min(8 - bitPos, length);			
-			byte bitMask = (byte)((0xff >> (8-bitsInFirstByte)) << bitPos);
-			
-			// Set/clear bits in first byte
+			bitMask = (byte)(0xff >> (8-length));
 			if (color)
 				displayBuf[bytePos] |= bitMask;
 			else
-				displayBuf[bytePos] &= (byte)~bitMask;
-			length -= bitsInFirstByte;
-			bytePos++;
-			while (length >= 8) // Set/Clear all byte full bytes
+				displayBuf[bytePos] &= (byte)~bitMask;				
+		}
+	}
+
+	public void DrawBitmap(Bitmap bm, Point p)
+	{
+		DrawBitmap(bm.GetStream(), p, bm.Width, bm.Height, true);
+	}
+
+	public void DrawBitmap(BitStreamer bs, Point p, uint xsize, uint ysize, bool color)
+	{
+		for (int yPos = p.Y; yPos != p.Y+ysize; yPos++)
+		{
+			int BufPos = bytesPrLine*yPos+p.X/8;
+			uint xBitsLeft = xsize;
+			int xPos = p.X;
+			
+			while (xBitsLeft > 0)
 			{
-				displayBuf[bytePos] = color ? (byte)0xff : (byte)0;
-				bytePos++;
-				length -= 8;
-			}
-			// Set/clear bits in last byte
-			if (length > 0)
-			{
-				bitMask = (byte)(0xff >> (8-length));
+				int bitPos = xPos & 0x7;					
+				uint bitsToWrite = Math.Min(xBitsLeft, (uint)(8-bitPos));
 				if (color)
-					displayBuf[bytePos] |= bitMask;
+					displayBuf[BufPos] |= (byte)(bs.GetBits(bitsToWrite) << bitPos);
 				else
-					displayBuf[bytePos] &= (byte)~bitMask;				
-			}
+					displayBuf[BufPos] &= (byte)~(bs.GetBits(bitsToWrite) << bitPos);
+				xBitsLeft -= bitsToWrite;
+				xPos += (int)bitsToWrite;
+				BufPos++;
+			}				
 		}
+	}				
 
-		public void DrawBitmap(Bitmap bm, Point p)
+	public int TextWidth(Font f, string text)
+	{
+		int width = 0;
+		foreach(char c in text)
 		{
-			DrawBitmap(bm.GetStream(), p, bm.Width, bm.Height, true);
+			CharStreamer cs = f.getChar(c);				
+			width += (int)cs.width;				
 		}
-
-		public void DrawBitmap(BitStreamer bs, Point p, uint xsize, uint ysize, bool color)
-		{
-			for (int yPos = p.Y; yPos != p.Y+ysize; yPos++)
-			{
-				int BufPos = bytesPrLine*yPos+p.X/8;
-				uint xBitsLeft = xsize;
-				int xPos = p.X;
-				
-				while (xBitsLeft > 0)
-				{
-					int bitPos = xPos & 0x7;					
-					uint bitsToWrite = Math.Min(xBitsLeft, (uint)(8-bitPos));
-					if (color)
-						displayBuf[BufPos] |= (byte)(bs.GetBits(bitsToWrite) << bitPos);
-					else
-						displayBuf[BufPos] &= (byte)~(bs.GetBits(bitsToWrite) << bitPos);
-					xBitsLeft -= bitsToWrite;
-					xPos += (int)bitsToWrite;
-					BufPos++;
-				}				
-			}
-		}				
-
-		public int TextWidth(Font f, string text)
-		{
-			int width = 0;
-			foreach(char c in text)
-			{
-				CharStreamer cs = f.getChar(c);				
-				width += (int)cs.width;				
-			}
-			return width;
-		}
+		return width;
+	}
 
 		
 		public void WriteText(Font f, Point p, string text, bool color)
