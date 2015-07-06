@@ -1,50 +1,52 @@
 ﻿using System;
 using MonoBrickFirmware.UserInput;
+using System.Threading;
+
 namespace MonoBrickFirmwareSimulation.Mock
 {
 	public class ButtonsMock : IButtons
 	{
-
-
-		public void EnterPressed(){}
-		public void EnterReleased(){}
-		public void DownPressed(){}
-		public void DownReleased(){}
-		public void UpPressed(){}
-		public void UpReleased(){}
-		public void LeftPressed(){}
-		public void LeftReleased(){}
-		public void RightPressed(){}
-		public void RightReleased(){}
-
-		public ButtonsMock ()
-		{
-		
-		}
-
+		private Buttons.ButtonStates state;		
+		private ManualResetEvent released = new ManualResetEvent(false);
+		private ManualResetEvent pressed = new ManualResetEvent(false);
+		private const int pollTime = 20;
 		public Buttons.ButtonStates GetStates ()
 		{
-			return 	Buttons.ButtonStates.None;	
+			return 	state;	
 		}
 
 		public void WaitForKeyRelease (System.Threading.CancellationToken token)
 		{
-			
+			var bs = GetStates ();
+			do {				
+				Thread.Sleep (pollTime);
+				bs = GetStates();
+			} while (bs != Buttons.ButtonStates.None && !token.IsCancellationRequested);
+				
 		}
 
 		public void WaitForKeyRelease ()
 		{
-			
+			WaitForKeyRelease(new CancellationToken(false));
 		}
 
 		public Buttons.ButtonStates GetKeypress (System.Threading.CancellationToken token)
 		{
-			return 	Buttons.ButtonStates.None;	
+			Buttons.ButtonStates bs = GetStates ();
+			while (bs != Buttons.ButtonStates.None && !token.IsCancellationRequested)
+			{
+				bs = GetStates ();
+			}
+			do {				
+				Thread.Sleep (pollTime);
+				bs = GetStates();
+			} while (bs == Buttons.ButtonStates.None && !token.IsCancellationRequested);
+			return bs;
 		}
 
 		public Buttons.ButtonStates GetKeypress ()
 		{
-			return 	Buttons.ButtonStates.None;		
+			return GetKeypress(new CancellationToken(false));	
 		}
 
 		public void LedPattern (int pattern)
@@ -52,6 +54,57 @@ namespace MonoBrickFirmwareSimulation.Mock
 			
 		}
 
+		public void EnterPressed()
+		{
+			state = state | Buttons.ButtonStates.Enter;
+			pressed.Set ();
+		}
+		public void EnterReleased()
+		{
+			state &= ~Buttons.ButtonStates.Enter;
+		}
+		public void DownPressed()
+		{
+			state = state | Buttons.ButtonStates.Down;
+		}
+		public void DownReleased()
+		{
+			state &= ~Buttons.ButtonStates.Down;
+		}
+		public void UpPressed()
+		{
+			state = state | Buttons.ButtonStates.Up;
+		}
+		public void UpReleased()
+		{
+			state &= ~Buttons.ButtonStates.Up;	
+		}
+		public void LeftPressed()
+		{
+			state = state | Buttons.ButtonStates.Left;
+		}
+		public void LeftReleased()
+		{
+			state &= ~Buttons.ButtonStates.Left;	
+		}
+		public void RightPressed()
+		{
+			state = state | Buttons.ButtonStates.Right;
+		}
+		public void RightReleased()
+		{
+			state &= ~Buttons.ButtonStates.Right;	
+		}
+
+		public void EscPressed()
+		{
+			state = state | Buttons.ButtonStates.Escape;
+		}
+
+		public void EscReleased()
+		{
+			state &= ~Buttons.ButtonStates.Escape;	
+		}
 
 	}
 }

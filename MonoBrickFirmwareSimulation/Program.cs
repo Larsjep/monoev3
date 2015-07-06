@@ -11,7 +11,7 @@ namespace MonoBrickFirmwareSimulation
 			Application.Init ();
 			MainWindow win = new MainWindow ();
 			win.Show ();
-			win.LcdReady.Set ();
+			MainWindow.LcdReady.Set ();
 			Application.Run ();
 		}
 	}

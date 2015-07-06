@@ -8,14 +8,13 @@ using System.Threading;
 
 public partial class MainWindow: Gtk.Window
 {
-	private Thread startupAppThread;
-	private ButtonsMock buttonsMock = new ButtonsMock();
-	public ManualResetEvent LcdReady = new ManualResetEvent(false);
-	private void StartupAppExecution()
+	private static Thread startupAppThread;
+	private static ButtonsMock buttonsMock = new ButtonsMock();
+	public static ManualResetEvent LcdReady = new ManualResetEvent(false);
+	private static void StartupAppExecution()
 	{
-		lcdDrawingarea.SetSizeRequest(178, 128);
-		Lcd.Instance = new LcdMock (lcdDrawingarea);
-		ProgramManager.Instance = new ProgramManagerMock ();
+		LcdReady.WaitOne ();
+		Thread.Sleep (2000);
 		Buttons.Instance = buttonsMock;
 		StartupApp.MainClass.Main (null);	
 	}
@@ -24,6 +23,9 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build();
+		lcdDrawingarea.SetSizeRequest(178, 128);
+		Lcd.Instance = new LcdMock (lcdDrawingarea);
+		ProgramManager.Instance = new ProgramManagerMock ();
 		startupAppThread = new Thread(new ThreadStart(StartupAppExecution));
 		startupAppThread.IsBackground = true;
 		startupAppThread.Start ();
@@ -37,9 +39,61 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnUpButtonPressed (object sender, EventArgs e)
 	{
-		Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
-		Lcd.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
-		Lcd.Update ();
+		buttonsMock.UpPressed ();
+	}
 
+	protected void OnUpButtonReleased (object sender, EventArgs e)
+	{
+		buttonsMock.UpReleased ();
+	}
+
+	protected void OnEnterButtonPressed (object sender, EventArgs e)
+	{
+		buttonsMock.EnterPressed ();
+	}
+
+	protected void OnEnterButtonReleased (object sender, EventArgs e)
+	{
+		buttonsMock.EnterReleased ();
+	}
+
+	protected void OnRightButtonPressed (object sender, EventArgs e)
+	{
+		buttonsMock.RightPressed ();
+	}
+
+	protected void OnRightButtonReleased (object sender, EventArgs e)
+	{
+		buttonsMock.RightReleased ();
+	}
+
+	protected void OnLeftButtonPressed (object sender, EventArgs e)
+	{
+		buttonsMock.LeftPressed ();
+	}
+
+	protected void OnLeftButtonReleased (object sender, EventArgs e)
+	{
+		buttonsMock.LeftReleased ();
+	}
+
+	protected void OnDownButtonPressed (object sender, EventArgs e)
+	{
+		buttonsMock.DownPressed ();
+	}
+
+	protected void OnDownButtonReleased (object sender, EventArgs e)
+	{
+		buttonsMock.DownReleased ();
+	}
+
+	protected void OnEscButtonPressed (object sender, EventArgs e)
+	{
+		buttonsMock.EscPressed ();	
+	}
+
+	protected void OnEscButtonReleased (object sender, EventArgs e)
+	{
+		buttonsMock.EscReleased ();
 	}
 }

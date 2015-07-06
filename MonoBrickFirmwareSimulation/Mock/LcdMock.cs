@@ -37,6 +37,7 @@ namespace MonoBrickFirmwareSimulation.Mock
 							PointD p2 = new PointD(x+1,y+1);
 							ctx.MoveTo(p1);
 							ctx.LineTo(p2);
+							//ctx.SetSourceRGB(drawColor.R, drawColor.G, drawColor.B);	
 							ctx.SetSourceColor(drawColor);
 							ctx.Stroke ();
 					}

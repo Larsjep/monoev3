@@ -25,11 +25,11 @@ public partial class MainWindow
 	
 	private global::Gtk.Button enterButton;
 	
+	private global::Gtk.Button escButton;
+	
 	private global::Gtk.Fixed fixed11;
 	
 	private global::Gtk.Fixed fixed12;
-	
-	private global::Gtk.Fixed fixed13;
 	
 	private global::Gtk.Fixed fixed14;
 	
@@ -116,7 +116,7 @@ public partial class MainWindow
 		this.downButton.CanFocus = true;
 		this.downButton.Name = "downButton";
 		this.downButton.UseUnderline = true;
-		this.downButton.Label = global::Mono.Unix.Catalog.GetString ("GtkButton");
+		this.downButton.Label = global::Mono.Unix.Catalog.GetString ("_DOWN");
 		this.table2.Add (this.downButton);
 		global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table2 [this.downButton]));
 		w6.TopAttach = ((uint)(2));
@@ -130,7 +130,7 @@ public partial class MainWindow
 		this.enterButton.CanFocus = true;
 		this.enterButton.Name = "enterButton";
 		this.enterButton.UseUnderline = true;
-		this.enterButton.Label = global::Mono.Unix.Catalog.GetString ("GtkButton");
+		this.enterButton.Label = global::Mono.Unix.Catalog.GetString ("OK");
 		this.table2.Add (this.enterButton);
 		global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table2 [this.enterButton]));
 		w7.TopAttach = ((uint)(1));
@@ -140,33 +140,35 @@ public partial class MainWindow
 		w7.XOptions = ((global::Gtk.AttachOptions)(4));
 		w7.YOptions = ((global::Gtk.AttachOptions)(4));
 		// Container child table2.Gtk.Table+TableChild
+		this.escButton = new global::Gtk.Button ();
+		this.escButton.CanFocus = true;
+		this.escButton.Name = "escButton";
+		this.escButton.UseUnderline = true;
+		this.escButton.Label = global::Mono.Unix.Catalog.GetString ("Esc");
+		this.table2.Add (this.escButton);
+		global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table2 [this.escButton]));
+		w8.XOptions = ((global::Gtk.AttachOptions)(4));
+		w8.YOptions = ((global::Gtk.AttachOptions)(4));
+		// Container child table2.Gtk.Table+TableChild
 		this.fixed11 = new global::Gtk.Fixed ();
 		this.fixed11.Name = "fixed11";
 		this.fixed11.HasWindow = false;
 		this.table2.Add (this.fixed11);
-		global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table2 [this.fixed11]));
-		w8.LeftAttach = ((uint)(2));
-		w8.RightAttach = ((uint)(3));
-		w8.XOptions = ((global::Gtk.AttachOptions)(4));
-		w8.YOptions = ((global::Gtk.AttachOptions)(4));
-		// Container child table2.Gtk.Table+TableChild
-		this.fixed12 = new global::Gtk.Fixed ();
-		this.fixed12.Name = "fixed12";
-		this.fixed12.HasWindow = false;
-		this.table2.Add (this.fixed12);
-		global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table2 [this.fixed12]));
-		w9.TopAttach = ((uint)(2));
-		w9.BottomAttach = ((uint)(3));
+		global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table2 [this.fixed11]));
 		w9.LeftAttach = ((uint)(2));
 		w9.RightAttach = ((uint)(3));
 		w9.XOptions = ((global::Gtk.AttachOptions)(4));
 		w9.YOptions = ((global::Gtk.AttachOptions)(4));
 		// Container child table2.Gtk.Table+TableChild
-		this.fixed13 = new global::Gtk.Fixed ();
-		this.fixed13.Name = "fixed13";
-		this.fixed13.HasWindow = false;
-		this.table2.Add (this.fixed13);
-		global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table2 [this.fixed13]));
+		this.fixed12 = new global::Gtk.Fixed ();
+		this.fixed12.Name = "fixed12";
+		this.fixed12.HasWindow = false;
+		this.table2.Add (this.fixed12);
+		global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table2 [this.fixed12]));
+		w10.TopAttach = ((uint)(2));
+		w10.BottomAttach = ((uint)(3));
+		w10.LeftAttach = ((uint)(2));
+		w10.RightAttach = ((uint)(3));
 		w10.XOptions = ((global::Gtk.AttachOptions)(4));
 		w10.YOptions = ((global::Gtk.AttachOptions)(4));
 		// Container child table2.Gtk.Table+TableChild
@@ -184,7 +186,7 @@ public partial class MainWindow
 		this.leftButton.CanFocus = true;
 		this.leftButton.Name = "leftButton";
 		this.leftButton.UseUnderline = true;
-		this.leftButton.Label = global::Mono.Unix.Catalog.GetString ("GtkButton");
+		this.leftButton.Label = global::Mono.Unix.Catalog.GetString ("LEFT");
 		this.table2.Add (this.leftButton);
 		global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table2 [this.leftButton]));
 		w12.TopAttach = ((uint)(1));
@@ -196,7 +198,7 @@ public partial class MainWindow
 		this.rightButton.CanFocus = true;
 		this.rightButton.Name = "rightButton";
 		this.rightButton.UseUnderline = true;
-		this.rightButton.Label = global::Mono.Unix.Catalog.GetString ("GtkButton");
+		this.rightButton.Label = global::Mono.Unix.Catalog.GetString ("RIGHT");
 		this.table2.Add (this.rightButton);
 		global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table2 [this.rightButton]));
 		w13.TopAttach = ((uint)(1));
@@ -210,7 +212,7 @@ public partial class MainWindow
 		this.upButton.CanFocus = true;
 		this.upButton.Name = "upButton";
 		this.upButton.UseUnderline = true;
-		this.upButton.Label = global::Mono.Unix.Catalog.GetString ("GtkButton");
+		this.upButton.Label = global::Mono.Unix.Catalog.GetString ("_UP");
 		this.table2.Add (this.upButton);
 		global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table2 [this.upButton]));
 		w14.LeftAttach = ((uint)(1));
@@ -237,10 +239,21 @@ public partial class MainWindow
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
 		}
-		this.DefaultWidth = 400;
-		this.DefaultHeight = 300;
+		this.DefaultWidth = 236;
+		this.DefaultHeight = 330;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 		this.upButton.Pressed += new global::System.EventHandler (this.OnUpButtonPressed);
+		this.upButton.Released += new global::System.EventHandler (this.OnUpButtonReleased);
+		this.rightButton.Pressed += new global::System.EventHandler (this.OnRightButtonPressed);
+		this.rightButton.Released += new global::System.EventHandler (this.OnRightButtonReleased);
+		this.leftButton.Pressed += new global::System.EventHandler (this.OnLeftButtonPressed);
+		this.leftButton.Released += new global::System.EventHandler (this.OnLeftButtonReleased);
+		this.escButton.Pressed += new global::System.EventHandler (this.OnEscButtonPressed);
+		this.escButton.Released += new global::System.EventHandler (this.OnEscButtonReleased);
+		this.enterButton.Pressed += new global::System.EventHandler (this.OnEnterButtonPressed);
+		this.enterButton.Released += new global::System.EventHandler (this.OnEnterButtonReleased);
+		this.downButton.Pressed += new global::System.EventHandler (this.OnDownButtonPressed);
+		this.downButton.Released += new global::System.EventHandler (this.OnDownButtonReleased);
 	}
 }
