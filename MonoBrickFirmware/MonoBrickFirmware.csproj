@@ -137,6 +137,8 @@
     <Compile Include="Display\EV3Lcd.cs" />
     <Compile Include="FileSystem\IProgramManager.cs" />
     <Compile Include="FileSystem\EV3ProgramManager.cs" />
+    <Compile Include="Settings\IFirmwareSettings.cs" />
+    <Compile Include="Settings\EV3FirmwareSettings.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
