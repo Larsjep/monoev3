@@ -66,9 +66,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		private static bool OnTurnWiFiOn()
 		{
-			if (!WiFiDevice.WriteWpaSupplicantConfiguration (FirmwareSettings.WiFiSettings.SSID, FirmwareSettings.WiFiSettings.Password, FirmwareSettings.WiFiSettings.Encryption))
-				return false;
-			return WiFiDevice.TurnOn(ConnectTimeout);
+			return WiFiDevice.TurnOn(FirmwareSettings.WiFiSettings.SSID, FirmwareSettings.WiFiSettings.Password, FirmwareSettings.WiFiSettings.Encryption, ConnectTimeout);
 		}
 
 		private static bool OnTurnWiFiOff()
