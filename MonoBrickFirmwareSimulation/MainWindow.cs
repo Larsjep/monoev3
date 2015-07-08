@@ -3,6 +3,7 @@ using System;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.FileSystem;
 using MonoBrickFirmware.UserInput;
+using MonoBrickFirmware.Connections;
 using MonoBrickFirmwareSimulation.Mock;
 using System.Threading;
 
@@ -27,6 +28,7 @@ public partial class MainWindow: Gtk.Window
 		lcdDrawingarea.SetSizeRequest(178, 128);
 		Buttons.Instance = buttonsMock;
 		ProgramManager.Instance = new ProgramManagerMock ();
+		WiFiDevice.Device = new WiFiMock ();
 		lcdMock = new LcdMock (lcdDrawingarea);
 		Lcd.Instance = lcdMock;
 		startupAppThread = new Thread(new ThreadStart(StartupAppExecution));

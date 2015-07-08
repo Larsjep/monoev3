@@ -66,6 +66,7 @@
     <Compile Include="Mock\LcdMock.cs" />
     <Compile Include="Mock\ProgramManagerMock.cs" />
     <Compile Include="Mock\ButtonsMock.cs" />
+    <Compile Include="Mock\WiFiMock.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
