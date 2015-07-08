@@ -10,6 +10,7 @@
     <RootNamespace>StartupApp</RootNamespace>
     <AssemblyName>StartupApp</AssemblyName>
     <ReleaseVersion>1.2</ReleaseVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -42,7 +43,7 @@
       <HintPath>..\packages\Nancy.Hosting.Self.0.23.2\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
     <Reference Include="Mono.CSharp">
-      <Private>True</Private>
+      <HintPath>..\packages\Mono.CSharp.4.0.0.143\lib\4.5\Mono.CSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
