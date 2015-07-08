@@ -58,7 +58,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 	internal class TurnWiFiOnOffCheckBox : ItemWithCheckBoxStep
 	{
-		private const int ConnectTimeout = 60000;
+		private const int ConnectTimeout = 40000;
 		public TurnWiFiOnOffCheckBox(): base("Connected", WiFiDevice.IsLinkUp (), "WiFi", new CheckBoxStep(new StepContainer(OnTurnWiFiOn, "Connecting" ,"Failed to connect" ), new StepContainer(OnTurnWiFiOff, "Disconnecting", "Error disconnecting")))
 		{
 			this.OnCheckedChanged += CheckedChanged;

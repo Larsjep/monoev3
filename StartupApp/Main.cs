@@ -48,7 +48,7 @@ namespace StartupApp
 			{
 				Lcd.WriteTextBox (Font.SmallFont, textRect, "Connecting to WiFi...", true, Lcd.Alignment.Center);
 				Lcd.Update ();						
-				if (WiFiDevice.TurnOn (60000)) 
+				if (WiFiDevice.TurnOn (FirmwareSettings.WiFiSettings.SSID, FirmwareSettings.WiFiSettings.Password, FirmwareSettings.WiFiSettings.Encryption, 40000)) 
 				{
 					if (FirmwareSettings.GeneralSettings.CheckForSwUpdatesAtStartUp)
 					{
