@@ -20,6 +20,7 @@ namespace MonoBrickFirmwareSimulation.Mock
 		{
 		  	this.drawingArea = drawingArea;
 	      	gc = new Gdk.GC((Drawable)drawingArea.GdkWindow);
+			gc.RgbFgColor = new Color(255, 255, 255);
 		}
 
 		public override void Update (int yOffset)
@@ -44,9 +45,12 @@ namespace MonoBrickFirmwareSimulation.Mock
 				}
 				for(int y = 0; y < Height; y++)
 				{
-					var pixelsToDraw = pixelClearList.Where( p => p.Y == y);
+					var pixelsToDraw = pixelClearList.Where( p => p.Y == y).ToArray();
 					gc.RgbFgColor = backgroundColors[y];
-					drawingArea.GdkWindow.DrawPoints(gc, pixelsToDraw.ToArray());
+					if(pixelsToDraw.Length != 0)
+					{
+						drawingArea.GdkWindow.DrawPoints(gc, pixelsToDraw);
+					}
 				}
 		        gc.RgbFgColor = new Color(0, 0, 0);
 				drawingArea.GdkWindow.DrawPoints( new Gdk.GC(drawingArea.GdkWindow), pixelSetList.ToArray());
