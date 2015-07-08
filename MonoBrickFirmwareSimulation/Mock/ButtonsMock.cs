@@ -7,8 +7,6 @@ namespace MonoBrickFirmwareSimulation.Mock
 	public class ButtonsMock : IButtons
 	{
 		private Buttons.ButtonStates state;		
-		private ManualResetEvent released = new ManualResetEvent(false);
-		private ManualResetEvent pressed = new ManualResetEvent(false);
 		private const int pollTime = 20;
 		public Buttons.ButtonStates GetStates ()
 		{
@@ -57,7 +55,6 @@ namespace MonoBrickFirmwareSimulation.Mock
 		public void EnterPressed()
 		{
 			state = state | Buttons.ButtonStates.Enter;
-			pressed.Set ();
 		}
 		public void EnterReleased()
 		{
