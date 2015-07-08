@@ -10,12 +10,13 @@ public partial class MainWindow: Gtk.Window
 {
 	private static Thread startupAppThread;
 	private static ButtonsMock buttonsMock = new ButtonsMock();
+	private static LcdMock lcdMock;
 	public static ManualResetEvent LcdReady = new ManualResetEvent(false);
+
 	private static void StartupAppExecution()
 	{
 		LcdReady.WaitOne ();
 		Thread.Sleep (2000);
-		Buttons.Instance = buttonsMock;
 		StartupApp.MainClass.Main (null);	
 	}
 
@@ -24,8 +25,10 @@ public partial class MainWindow: Gtk.Window
 	{
 		Build();
 		lcdDrawingarea.SetSizeRequest(178, 128);
-		Lcd.Instance = new LcdMock (lcdDrawingarea);
+		Buttons.Instance = buttonsMock;
 		ProgramManager.Instance = new ProgramManagerMock ();
+		lcdMock = new LcdMock (lcdDrawingarea);
+		Lcd.Instance = lcdMock;
 		startupAppThread = new Thread(new ThreadStart(StartupAppExecution));
 		startupAppThread.IsBackground = true;
 		startupAppThread.Start ();

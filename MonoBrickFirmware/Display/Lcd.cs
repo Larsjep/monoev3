@@ -186,8 +186,8 @@ namespace MonoBrickFirmware.Display
 	private byte[] savedScreen = new byte[bufferSize];
 	
 	private BmpImage screenshotImage = new BmpImage((UInt32)bytesPrLine * 8 , height, ColorDepth.TrueColor);
-	private RGB startColor = new RGB(188,191,161);
-	private RGB endColor = new  RGB(219,225,206);
+	protected RGB startColor = new RGB(188,191,161);
+	protected RGB endColor = new  RGB(219,225,206);
 	private byte[] hwBuffer = new byte[hwBufferSize];
 	protected float redGradientStep;
 	protected float greenGradientStep;  
