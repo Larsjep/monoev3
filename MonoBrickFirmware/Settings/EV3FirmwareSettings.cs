@@ -10,7 +10,7 @@ namespace MonoBrickFirmware.Settings
 	[XmlRoot("ConfigRoot")]
 	public class EV3FirmwareSettings : IFirmwareSettings
 	{
-		private object readWriteLock = new object();
+		protected object readWriteLock = new object();
 		protected string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
 		public EV3FirmwareSettings()
 		{
@@ -21,18 +21,18 @@ namespace MonoBrickFirmware.Settings
 		}
 
 		[XmlElement("GeneralSettings")]
-		public IGeneralSettings GeneralSettings { get ; set;}
+		public GeneralSettings GeneralSettings { get ; set;}
 
 		[XmlElement("WiFiSettings")]
-		public IWiFiSettings WiFiSettings { get ; set;}
+		public WiFiSettings WiFiSettings { get ; set;}
 
 		[XmlElement("SoundSettings")]
-		public ISoundSettings SoundSettings { get ; set;}
+		public SoundSettings SoundSettings { get ; set;}
 
 		[XmlElement("WebServerSettings")]
-		public IWebServerSettings WebServerSettings { get ; set;}
+		public WebServerSettings WebServerSettings { get ; set;}
 
-		public bool Save()
+		public virtual bool Save()
 		{
 			lock (readWriteLock) {
 				TextWriter textWriter = null;
@@ -54,7 +54,7 @@ namespace MonoBrickFirmware.Settings
 			return false;
 		}
 
-		public void Load()
+		public virtual void Load()
 		{
 			lock (readWriteLock) 
 			{
@@ -80,87 +80,7 @@ namespace MonoBrickFirmware.Settings
 		}
 	}
 
-	public class WebServerSettings : IWebServerSettings
-	{
-		[XmlElement("Port")]
-		private int port = 80;
 
-		public int Port
-		{
-			get { return port; }
-			set { port = value; }
-		}
-	}
-
-	public class WiFiSettings : IWiFiSettings
-	{
-		[XmlElement("SSID")]
-		private string ssid = "YourSSID";
-
-		[XmlElement("Password")]
-		private string password = "YourPassword";
-
-		[XmlElement("Encryption")]
-		private bool encryption = true;
-
-		public string SSID {
-			get{return ssid; }
-			set { ssid = value; }
-		}
-		public string Password{
-			get{return  password; }
-			set {  password = value; }
-		}
-
-		public bool Encryption	
-		{
-			get { return encryption; }
-			set { encryption = value; }
-		}
-	}
-
-	public class GeneralSettings : IGeneralSettings
-	{
-		[XmlElement("CheckForSwUpdatesAtStartUp")]
-		private bool checkForSwUpdatesAtStartUp = false;
-
-		[XmlElement("ConnectToWiFiAtStartUp")]
-		private bool connectToWiFiAtStartUp = false;
-
-		public bool CheckForSwUpdatesAtStartUp	
-		{
-			get { return checkForSwUpdatesAtStartUp; }
-			set { checkForSwUpdatesAtStartUp = value; }
-		}
-
-		public bool ConnectToWiFiAtStartUp	
-		{
-			get { return connectToWiFiAtStartUp; }
-			set { connectToWiFiAtStartUp = value; }
-		}
-	}
-
-	public class SoundSettings: ISoundSettings
-	{
-		[XmlElement("Volume")]
-		private int volume = 60;
-
-		[XmlElement("EnableSound")]
-		private bool enableSound = true;
-
-		public bool EnableSound	
-		{
-			get { return enableSound; }
-			set { enableSound = value; }
-		}
-
-
-		public int Volume	
-		{
-			get { return volume; }
-			set { volume = value; }
-		}
-	}
 
 }
 

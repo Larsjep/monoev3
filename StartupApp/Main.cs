@@ -42,6 +42,7 @@ namespace StartupApp
 			ProgramManager.CreateSDCardFolder();
 			Lcd.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
 			Lcd.Update ();
+			FirmwareSettings.Load ();
 			Lcd.WriteTextBox (Font.SmallFont, textRect, "Applying settings...", true, Lcd.Alignment.Center);
 			Lcd.Update ();						
 			if (FirmwareSettings.GeneralSettings.ConnectToWiFiAtStartUp) 

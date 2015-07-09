@@ -1,39 +1,99 @@
 ﻿using System;
+using System.Xml;
+using System.Xml.Serialization;
 namespace MonoBrickFirmware.Settings
 {
 
 	public interface IFirmwareSettings
 	{
-		IGeneralSettings GeneralSettings { get; set; }
-		IWiFiSettings WiFiSettings { get; set; }
-		ISoundSettings SoundSettings{ get; set; }
-		IWebServerSettings WebServerSettings{ get; set; }
+		GeneralSettings GeneralSettings { get; set; }
+		WiFiSettings WiFiSettings { get; set; }
+		SoundSettings SoundSettings{ get; set; }
+		WebServerSettings WebServerSettings{ get; set; }
 		bool Save ();
 		void Load();
 	}
 
-	public class IWebServerSettings
+	public class WebServerSettings
 	{
-		public int Port{ get; set;}
+		[XmlElement("Port")]
+		private int port = 80;
+
+		public int Port
+		{
+			get { return port; }
+			set { port = value; }
+		}
 	}
 
-	public class IWiFiSettings
+	public class WiFiSettings
 	{
-		public string SSID { get; set;}
-		public string Password{ get; set;}
-		public bool Encryption{ get; set;}
+		[XmlElement("SSID")]
+		private string ssid = "YourSSID";
+
+		[XmlElement("Password")]
+		private string password = "YourPassword";
+
+		[XmlElement("Encryption")]
+		private bool encryption = true;
+
+		public string SSID {
+			get{return ssid; }
+			set { ssid = value; }
+		}
+		public string Password{
+			get{return  password; }
+			set {  password = value; }
+		}
+
+		public bool Encryption	
+		{
+			get { return encryption; }
+			set { encryption = value; }
+		}
 	}
 
-	public class IGeneralSettings{
-		public bool CheckForSwUpdatesAtStartUp	{ get; set;}
+	public class GeneralSettings
+	{
+		[XmlElement("CheckForSwUpdatesAtStartUp")]
+		private bool checkForSwUpdatesAtStartUp = false;
 
-		public bool ConnectToWiFiAtStartUp{ get; set;}
+		[XmlElement("ConnectToWiFiAtStartUp")]
+		private bool connectToWiFiAtStartUp = false;
+
+		public bool CheckForSwUpdatesAtStartUp	
+		{
+			get { return checkForSwUpdatesAtStartUp; }
+			set { checkForSwUpdatesAtStartUp = value; }
+		}
+
+		public bool ConnectToWiFiAtStartUp	
+		{
+			get { return connectToWiFiAtStartUp; }
+			set { connectToWiFiAtStartUp = value; }
+		}
 	}
 
-	public class ISoundSettings
+	public class SoundSettings
 	{
-		public bool EnableSound{ get; set;}
-		public int Volume{ get; set;}
+		[XmlElement("Volume")]
+		private int volume = 60;
+
+		[XmlElement("EnableSound")]
+		private bool enableSound = true;
+
+		public bool EnableSound	
+		{
+			get { return enableSound; }
+			set { enableSound = value; }
+		}
+
+
+		public int Volume	
+		{
+			get { return volume; }
+			set { volume = value; }
+		}
 	}
 
 }

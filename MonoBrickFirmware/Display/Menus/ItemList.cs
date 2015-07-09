@@ -94,6 +94,15 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public virtual void OnLeftPressed ()
 		{
+			if (show) 
+			{
+				items [scrollPos + cursorPos].OnLeftPressed ();
+			}
+		}
+
+		public virtual void OnRightPressed ()
+		{
+			
 			if (!show) 
 			{
 				show = true;
@@ -105,16 +114,9 @@ namespace MonoBrickFirmware.Display.Menus
 			} 
 			else 
 			{
-				items [scrollPos + cursorPos].OnLeftPressed ();
-			}
-		}
-
-		public virtual void OnRightPressed ()
-		{
-			if (show) 
-			{
 				items [scrollPos + cursorPos].OnRightPressed ();
 			}
+
 		}
 
 		public virtual void OnEscPressed ()

@@ -118,6 +118,7 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			Parent.RemoveFocus (this);
 			OnExit(this.dialog);
+			hasFocus = false;
 		}
 
 	}

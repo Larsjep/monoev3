@@ -26,7 +26,7 @@ namespace MonoBrickFirmwareSimulation.Mock
 
 		public void TurnOff ()
 		{
-			System.Threading.Thread.Sleep (5000);
+			//System.Threading.Thread.Sleep (5000);
 			isOn = false;
 		}
 
