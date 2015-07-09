@@ -15,17 +15,17 @@ namespace MonoBrickFirmwareSimulation.Mock
 	  	private Gdk.GC gc;
 		private Dictionary<int, Color> backgroundColors = new Dictionary<int, Color> ();
 		private bool backGroundFilled = false;
-
+		private bool[,] lastSetValue = null;
 		public LcdMock (DrawingArea drawingArea)
 		{
 		  	this.drawingArea = drawingArea;
 	      	gc = new Gdk.GC((Drawable)drawingArea.GdkWindow);
 			gc.RgbFgColor = new Color(255, 255, 255);
+			lastSetValue = new bool[Width,Height];
 		}
 
 		public override void Update (int yOffset)
 		{
-			Application.Invoke (delegate {
 				FillBackGround();
 				List<Gdk.Point> pixelSetList = new List<Gdk.Point>();
 				List<Gdk.Point> pixelClearList = new List<Gdk.Point>();
@@ -35,26 +35,35 @@ namespace MonoBrickFirmwareSimulation.Mock
 					{
 						if (IsPixelSet(x, y))
 						{
-						  pixelSetList.Add(new Gdk.Point(x, y));
+							if(!lastSetValue[x,y])
+							{
+								pixelSetList.Add(new Gdk.Point(x, y));
+							}
+							lastSetValue [x,y] = true;
 						}
 						else
 						{
-							pixelClearList.Add(new Gdk.Point(x, y));  
+							if (lastSetValue [x, y]) 
+							{
+								pixelClearList.Add(new Gdk.Point(x, y));	
+							}
+							lastSetValue[x,y] = false;
 						}
 					}
 				}
-				for(int y = 0; y < Height; y++)
-				{
-					var pixelsToDraw = pixelClearList.Where( p => p.Y == y).ToArray();
-					gc.RgbFgColor = backgroundColors[y];
-					if(pixelsToDraw.Length != 0)
+				Application.Invoke (delegate {
+					for(int y = 0; y < Height; y++)
 					{
-						drawingArea.GdkWindow.DrawPoints(gc, pixelsToDraw);
+						var pixelsToDraw = pixelClearList.Where( p => p.Y == y).ToArray();
+						gc.RgbFgColor = backgroundColors[y];
+						if(pixelsToDraw.Length != 0)
+						{
+							drawingArea.GdkWindow.DrawPoints (gc, pixelsToDraw);
+						}
 					}
-				}
-		        gc.RgbFgColor = new Color(0, 0, 0);
-				drawingArea.GdkWindow.DrawPoints( new Gdk.GC(drawingArea.GdkWindow), pixelSetList.ToArray());
-			});
+					gc.RgbFgColor = new Color(0, 0, 0);
+					drawingArea.GdkWindow.DrawPoints( new Gdk.GC(drawingArea.GdkWindow), pixelSetList.ToArray());
+				});
 		}
 		private void FillBackGround()
 		{
@@ -75,8 +84,9 @@ namespace MonoBrickFirmwareSimulation.Mock
 				for (int x = 0; x < Width; x++) 
 				{
 					pixel.Add (new Gdk.Point (x, y));
+					lastSetValue [x,y] = false;
 				}
-				drawingArea.GdkWindow.DrawPoints(gc, pixel.ToArray());
+				drawingArea.GdkWindow.DrawPoints (gc, pixel.ToArray ());
 				redActual -= redGradientStep;
 				greenActual -= greenGradientStep;
 				blueActual -= blueGradientStep;
