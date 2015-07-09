@@ -46,61 +46,92 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnUpButtonPressed (object sender, EventArgs e)
 	{
-		buttonsMock.UpPressed ();
+		SpawnThread (buttonsMock.UpPressed);
 	}
 
 	protected void OnUpButtonReleased (object sender, EventArgs e)
 	{
-		buttonsMock.UpReleased ();
+		SpawnThread (buttonsMock.UpReleased);
 	}
 
 	protected void OnEnterButtonPressed (object sender, EventArgs e)
 	{
-		buttonsMock.EnterPressed ();
+		SpawnThread (buttonsMock.EnterPressed);
 	}
 
 	protected void OnEnterButtonReleased (object sender, EventArgs e)
 	{
-		buttonsMock.EnterReleased ();
+		SpawnThread (buttonsMock.EnterReleased);
 	}
 
 	protected void OnRightButtonPressed (object sender, EventArgs e)
 	{
-		buttonsMock.RightPressed ();
+		SpawnThread (buttonsMock.RightPressed);
 	}
 
 	protected void OnRightButtonReleased (object sender, EventArgs e)
 	{
-		buttonsMock.RightReleased ();
+		SpawnThread (buttonsMock.RightReleased);
 	}
 
 	protected void OnLeftButtonPressed (object sender, EventArgs e)
 	{
-		buttonsMock.LeftPressed ();
+		SpawnThread (buttonsMock.LeftPressed);
 	}
 
 	protected void OnLeftButtonReleased (object sender, EventArgs e)
 	{
-		buttonsMock.LeftReleased ();
+		SpawnThread (buttonsMock.LeftReleased);
 	}
 
 	protected void OnDownButtonPressed (object sender, EventArgs e)
 	{
-		buttonsMock.DownPressed ();
+		SpawnThread (buttonsMock.DownPressed);
 	}
 
 	protected void OnDownButtonReleased (object sender, EventArgs e)
 	{
-		buttonsMock.DownReleased ();
+		SpawnThread (buttonsMock.DownReleased);
 	}
 
 	protected void OnEscButtonPressed (object sender, EventArgs e)
 	{
-		buttonsMock.EscPressed ();	
+		SpawnThread (buttonsMock.EscPressed);	
 	}
 
 	protected void OnEscButtonReleased (object sender, EventArgs e)
 	{
-		buttonsMock.EscReleased ();
+		SpawnThread (buttonsMock.EscReleased);
 	}
+
+
+	private Semaphore threadMutex = new Semaphore(1, 1); //Ensure that  only one operation is started at the same time
+	private void SpawnThread(System.Action action)
+	{
+		Thread t = new Thread(
+			new ThreadStart(
+				delegate()
+				{
+					if (threadMutex.WaitOne())
+					{
+						try
+						{	
+							action();	
+						}
+						catch(Exception e)
+						{
+
+						}
+						finally
+						{
+							threadMutex.Release();
+						}
+					}
+				}
+			));
+		t.IsBackground = true;
+		t.Priority = ThreadPriority.AboveNormal;
+		t.Start();
+	}
+
 }
