@@ -118,7 +118,7 @@ public partial class MainWindow: Gtk.Window
 						{	
 							action();	
 						}
-						catch(Exception e)
+						catch
 						{
 
 						}
