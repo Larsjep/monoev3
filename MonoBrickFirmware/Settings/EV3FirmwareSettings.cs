@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using System.Xml.Serialization;
 using System.IO;
 using MonoBrickFirmware.Tools;
@@ -70,7 +69,7 @@ namespace MonoBrickFirmware.Settings
 					SoundSettings = loadSettings.SoundSettings;
 					WebServerSettings = loadSettings.WebServerSettings;
 				}
-				catch (FileNotFoundException exp)
+				catch
 				{
 					Save();
 				}

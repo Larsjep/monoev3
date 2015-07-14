@@ -53,11 +53,9 @@ namespace MonoBrickFirmware.Native
 	{
 		static System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
 		int fd = -1;
-		private string name;
 		public UnixDevice(string name)
 		{			
 			
-			this.name = name;
 			fd = Libc.open(encoding.GetBytes(name + Char.MinValue), Libc.OpenFlags.O_RDWR);
 			if (fd < 0)
 				throw new InvalidOperationException("Couldn't open device: " + name);

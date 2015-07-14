@@ -10,7 +10,7 @@ namespace MonoBrickFirmware.Display
 			Instance = new EV3Lcd();
 			((EV3Lcd)Instance).Initialize();
 		}
-		catch(Exception e)
+		catch
 		{
 			Instance = null; //Not running on a EV3
 		}

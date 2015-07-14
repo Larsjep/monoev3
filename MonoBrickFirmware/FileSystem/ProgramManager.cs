@@ -12,7 +12,7 @@ namespace MonoBrickFirmware.FileSystem
 				Instance = new EV3ProgramManager();
 
 			}
-			catch(Exception e)
+			catch
 			{
 				Instance = null; //Not running on a EV3
 			}
