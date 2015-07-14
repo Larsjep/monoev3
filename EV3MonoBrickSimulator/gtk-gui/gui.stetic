@@ -1,0 +1,526 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<stetic-interface>
+  <configuration>
+    <images-root-path>..</images-root-path>
+  </configuration>
+  <import>
+    <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <widget-library name="../bin/Debug/EV3MonoBrickSimulator.exe" internal="true" />
+  </import>
+  <widget class="Gtk.Window" id="MainWindow" design-size="338 465">
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">MonoBrick EV3 Simulator</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="Modal">True</property>
+    <property name="Resizable">False</property>
+    <signal name="DeleteEvent" handler="OnDeleteEvent" />
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <child>
+          <widget class="Gtk.Image" id="image42">
+            <property name="MemberName" />
+            <property name="Xalign">0</property>
+            <property name="Yalign">0</property>
+            <property name="Pixbuf">file:./Images/EV3-multibrick_01.png</property>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hbox6">
+            <property name="MemberName" />
+            <child>
+              <widget class="Gtk.Image" id="image40">
+                <property name="MemberName" />
+                <property name="Pixbuf">file:./Images/EV3-multibrick_02.png</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.DrawingArea" id="lcdDrawingarea">
+                <property name="MemberName" />
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Image" id="image41">
+                <property name="MemberName" />
+                <property name="Pixbuf">file:./Images/EV3-multibrick_04.png</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Image" id="image39">
+            <property name="MemberName" />
+            <property name="Xalign">0</property>
+            <property name="Yalign">0</property>
+            <property name="Pixbuf">file:./Images/EV3-multibrick_05.png</property>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hbox3">
+            <property name="MemberName" />
+            <child>
+              <widget class="Gtk.VBox" id="vbox4">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.HBox" id="hbox4">
+                    <property name="MemberName" />
+                    <child>
+                      <widget class="Gtk.Image" id="image20">
+                        <property name="MemberName" />
+                        <property name="Pixbuf">file:./Images/EV3-multibrick_06.png</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.EventBox" id="escEventbox">
+                        <property name="MemberName" />
+                        <signal name="ButtonPressEvent" handler="OnEscEventboxButtonPressEvent" />
+                        <signal name="ButtonReleaseEvent" handler="OnEscEventboxButtonReleaseEvent" />
+                        <child>
+                          <widget class="Gtk.Image" id="escImage">
+                            <property name="MemberName" />
+                            <property name="Pixbuf">file:./Images/EV3-multibrick_07.png</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Image" id="image18">
+                        <property name="MemberName" />
+                        <property name="Pixbuf">file:./Images/EV3-multibrick_10.png</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Image" id="image22">
+                    <property name="MemberName" />
+                    <property name="Pixbuf">file:./Images/EV3-multibrick_12.png</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.VBox" id="vbox6">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Image" id="image21">
+                    <property name="MemberName" />
+                    <property name="Pixbuf">file:./Images/EV3-multibrick_08.png</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.HBox" id="hbox5">
+                    <property name="MemberName" />
+                    <child>
+                      <widget class="Gtk.EventBox" id="eventbox4">
+                        <property name="MemberName" />
+                        <child>
+                          <widget class="Gtk.EventBox" id="upEventbox">
+                            <property name="MemberName" />
+                            <signal name="ButtonPressEvent" handler="OnUpEventboxButtonPressEvent" />
+                            <signal name="ButtonReleaseEvent" handler="OnUpEventboxButtonReleaseEvent" />
+                            <child>
+                              <widget class="Gtk.Image" id="upImage">
+                                <property name="MemberName" />
+                                <property name="Pixbuf">file:./Images/EV3-multibrick_11.png</property>
+                              </widget>
+                            </child>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.VBox" id="vbox5">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Image" id="image24">
+                    <property name="MemberName" />
+                    <property name="Pixbuf">file:./Images/EV3-multibrick_09.png</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Image" id="image25">
+                    <property name="MemberName" />
+                    <property name="Pixbuf">file:./Images/EV3-multibrick_13.png</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hbox2">
+            <property name="MemberName" />
+            <child>
+              <widget class="Gtk.Image" id="image26">
+                <property name="MemberName" />
+                <property name="Pixbuf">file:./Images/EV3-multibrick_14.png</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="leftEventbox">
+                <property name="MemberName" />
+                <signal name="ButtonPressEvent" handler="OnLeftEventboxButtonPressEvent" />
+                <signal name="ButtonReleaseEvent" handler="OnLeftEventboxButtonReleaseEvent" />
+                <child>
+                  <widget class="Gtk.Image" id="leftImage">
+                    <property name="MemberName" />
+                    <property name="Pixbuf">file:./Images/EV3-multibrick_15.png</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.VBox" id="vbox2">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.EventBox" id="eventbox10">
+                    <property name="MemberName" />
+                    <child>
+                      <widget class="Gtk.Image" id="upImageSmall1">
+                        <property name="MemberName" />
+                        <property name="Pixbuf">file:./Images/EV3-multibrick_16.png</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.EventBox" id="eventbox11">
+                    <property name="MemberName" />
+                    <child>
+                      <widget class="Gtk.Image" id="downImageSmall1">
+                        <property name="MemberName" />
+                        <property name="Pixbuf">file:./Images/EV3-multibrick_21.png</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="enterEventbox">
+                <property name="MemberName" />
+                <signal name="ButtonPressEvent" handler="OnEnterEventboxButtonPressEvent" />
+                <signal name="ButtonReleaseEvent" handler="OnEnterEventboxButtonReleaseEvent" />
+                <child>
+                  <widget class="Gtk.Image" id="enterImage">
+                    <property name="MemberName" />
+                    <property name="Pixbuf">file:./Images/EV3-multibrick_17.png</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">3</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.VBox" id="vbox3">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.EventBox" id="eventbox12">
+                    <property name="MemberName" />
+                    <child>
+                      <widget class="Gtk.Image" id="upImageSmall2">
+                        <property name="MemberName" />
+                        <property name="Pixbuf">file:./Images/EV3-multibrick_18.png</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.EventBox" id="eventbox13">
+                    <property name="MemberName" />
+                    <child>
+                      <widget class="Gtk.Image" id="downImageSmall2">
+                        <property name="MemberName" />
+                        <property name="Pixbuf">file:./Images/EV3-multibrick_22.png</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">4</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="rightEventbox">
+                <property name="MemberName" />
+                <signal name="ButtonPressEvent" handler="OnRightEventboxButtonPressEvent" />
+                <signal name="ButtonReleaseEvent" handler="OnRightEventboxButtonReleaseEvent" />
+                <child>
+                  <widget class="Gtk.Image" id="rightImage">
+                    <property name="MemberName" />
+                    <property name="Pixbuf">file:./Images/EV3-multibrick_19.png</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">5</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Image" id="image27">
+                <property name="MemberName" />
+                <property name="Pixbuf">file:./Images/EV3-multibrick_20.png</property>
+              </widget>
+              <packing>
+                <property name="Position">6</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">4</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hbox1">
+            <property name="MemberName" />
+            <child>
+              <widget class="Gtk.Image" id="image35">
+                <property name="MemberName" />
+                <property name="Pixbuf">file:./Images/EV3-multibrick_23.png</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="downEventbox">
+                <property name="MemberName" />
+                <signal name="ButtonPressEvent" handler="OnDownEventboxButtonPressEvent" />
+                <signal name="ButtonReleaseEvent" handler="OnDownEventboxButtonReleaseEvent" />
+                <child>
+                  <widget class="Gtk.Image" id="downImage">
+                    <property name="MemberName" />
+                    <property name="Pixbuf">file:./Images/EV3-multibrick_24.png</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Image" id="image36">
+                <property name="MemberName" />
+                <property name="Pixbuf">file:./Images/EV3-multibrick_25.png</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">5</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Image" id="image38">
+            <property name="MemberName" />
+            <property name="Xalign">0</property>
+            <property name="Yalign">0</property>
+            <property name="Pixbuf">file:./Images/EV3-multibrick_26.png</property>
+          </widget>
+          <packing>
+            <property name="Position">6</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+</stetic-interface>
