@@ -5,7 +5,7 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <widget-library name="../bin/Debug/EV3MonoBrickSimulator.exe" internal="true" />
+    <widget-library name="../bin/Release/EV3MonoBrickSimulator.exe" internal="true" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="338 465">
     <property name="MemberName" />
@@ -113,8 +113,6 @@
                     <child>
                       <widget class="Gtk.EventBox" id="escEventbox">
                         <property name="MemberName" />
-                        <signal name="ButtonPressEvent" handler="OnEscEventboxButtonPressEvent" />
-                        <signal name="ButtonReleaseEvent" handler="OnEscEventboxButtonReleaseEvent" />
                         <child>
                           <widget class="Gtk.Image" id="escImage">
                             <property name="MemberName" />
@@ -193,8 +191,6 @@
                         <child>
                           <widget class="Gtk.EventBox" id="upEventbox">
                             <property name="MemberName" />
-                            <signal name="ButtonPressEvent" handler="OnUpEventboxButtonPressEvent" />
-                            <signal name="ButtonReleaseEvent" handler="OnUpEventboxButtonReleaseEvent" />
                             <child>
                               <widget class="Gtk.Image" id="upImage">
                                 <property name="MemberName" />
@@ -288,8 +284,6 @@
             <child>
               <widget class="Gtk.EventBox" id="leftEventbox">
                 <property name="MemberName" />
-                <signal name="ButtonPressEvent" handler="OnLeftEventboxButtonPressEvent" />
-                <signal name="ButtonReleaseEvent" handler="OnLeftEventboxButtonReleaseEvent" />
                 <child>
                   <widget class="Gtk.Image" id="leftImage">
                     <property name="MemberName" />
@@ -352,8 +346,6 @@
             <child>
               <widget class="Gtk.EventBox" id="enterEventbox">
                 <property name="MemberName" />
-                <signal name="ButtonPressEvent" handler="OnEnterEventboxButtonPressEvent" />
-                <signal name="ButtonReleaseEvent" handler="OnEnterEventboxButtonReleaseEvent" />
                 <child>
                   <widget class="Gtk.Image" id="enterImage">
                     <property name="MemberName" />
@@ -416,8 +408,6 @@
             <child>
               <widget class="Gtk.EventBox" id="rightEventbox">
                 <property name="MemberName" />
-                <signal name="ButtonPressEvent" handler="OnRightEventboxButtonPressEvent" />
-                <signal name="ButtonReleaseEvent" handler="OnRightEventboxButtonReleaseEvent" />
                 <child>
                   <widget class="Gtk.Image" id="rightImage">
                     <property name="MemberName" />
@@ -470,8 +460,6 @@
             <child>
               <widget class="Gtk.EventBox" id="downEventbox">
                 <property name="MemberName" />
-                <signal name="ButtonPressEvent" handler="OnDownEventboxButtonPressEvent" />
-                <signal name="ButtonReleaseEvent" handler="OnDownEventboxButtonReleaseEvent" />
                 <child>
                   <widget class="Gtk.Image" id="downImage">
                     <property name="MemberName" />

@@ -9,7 +9,8 @@ namespace EV3MonoBrickSimulator
 		{
 			Application.Init ();
 			MainWindow win = new MainWindow ();
-			win.Show ();
+			//win.Show ();
+			win.ShowAll ();
 			MainWindow.LcdReady.Set ();
 			Application.Run ();
 		}

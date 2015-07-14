@@ -14,7 +14,6 @@ namespace EV3MonoBrickSimulator.Stub
 		private DrawingArea drawingArea;
 		private Gdk.GC gc;
 		private Dictionary<int, Color> backgroundColors = new Dictionary<int, Color> ();
-		private bool backGroundFilled = false;
 		private bool[,] lastSetValue = null;
 		public LcdStub (DrawingArea drawingArea)
 		{
@@ -26,50 +25,16 @@ namespace EV3MonoBrickSimulator.Stub
 
 		public override void Update (int yOffset)
 		{
-			FillBackGround();
-			List<Gdk.Point> pixelSetList = new List<Gdk.Point>();
-			List<Gdk.Point> pixelClearList = new List<Gdk.Point>();
-			for (int x = 0; x < Width; x++) 
-			{
-				for (int y = yOffset; y < Height; y++)
+			Application.Invoke (delegate 
 				{
-					if (IsPixelSet(x, y))
-					{
-						if(!lastSetValue[x,y])
-						{
-							pixelSetList.Add(new Gdk.Point(x, y));
-						}
-						lastSetValue [x,y] = true;
-					}
-					else
-					{
-						if (lastSetValue [x, y]) 
-						{
-							pixelClearList.Add(new Gdk.Point(x, y));	
-						}
-						lastSetValue[x,y] = false;
-					}
+					int offSet = yOffset;
+					Draw(offSet, false);	
 				}
-			}
-			Application.Invoke (delegate {
-				for(int y = 0; y < Height; y++)
-				{
-					var pixelsToDraw = pixelClearList.Where( p => p.Y == y).ToArray();
-					gc.RgbFgColor = backgroundColors[y];
-					if(pixelsToDraw.Length != 0)
-					{
-						drawingArea.GdkWindow.DrawPoints (gc, pixelsToDraw);
-					}
-				}
-				gc.RgbFgColor = new Color(0, 0, 0);
-				drawingArea.GdkWindow.DrawPoints( new Gdk.GC(drawingArea.GdkWindow), pixelSetList.ToArray());
-			});
+			);
 		}
-		private void FillBackGround()
+
+		public void FillBackGround()
 		{
-			if (backGroundFilled)
-				return;
-			backGroundFilled = true;
 			float redActual = (float)endColor.Red;
 			float greenActual = (float)endColor.Green;
 			float blueActual = (float)endColor.Blue;
@@ -91,30 +56,52 @@ namespace EV3MonoBrickSimulator.Stub
 				greenActual -= greenGradientStep;
 				blueActual -= blueGradientStep;
 			}
+			Draw (0, true);
 		}
 
-
-		private Color RGB2Color(RGB color)
+		private void Draw(int yOffset, bool drawBackGround)
 		{
-			return new Color(color.Red, color.Green, color.Blue);
-		}
-
-		/*public void Update (int yOffset)
-		{
-			for (int x = 0; x < Width; x++)
+			List<Gdk.Point> pixelSetList = new List<Gdk.Point>();
+			List<Gdk.Point> pixelClearList = new List<Gdk.Point>();
+			for (int x = 0; x < Width; x++) 
 			{
-				for (int y = yOffset; x < Height; y++)
+				for (int y = yOffset; y < Height; y++)
 				{
-					RGB drawColor = pixelBuffer[x,y];
-					PointD p1 = new PointD (x,y);
-					PointD p2 = new PointD(x+1,y+1);
-					ctx.MoveTo(p1);
-					ctx.LineTo(p2);
-					ctx.SetSourceColor(RGB2Color(drawColor));
-					ctx.Stroke ();			
+					if (IsPixelSet(x, y))
+					{
+						if(!lastSetValue[x,y])
+						{
+							pixelSetList.Add(new Gdk.Point(x, y));
+						}
+						lastSetValue [x,y] = true;
+					}
+					else
+					{
+						if (lastSetValue [x, y] || drawBackGround) 
+						{
+							pixelClearList.Add(new Gdk.Point(x, y));	
+						}
+						lastSetValue[x,y] = false;
+					}
 				}
 			}
-		}*/
+			for(int y = 0; y < Height; y++)
+			{
+				var pixelsToDraw = pixelClearList.Where( p => p.Y == y).ToArray();
+				gc.RgbFgColor = backgroundColors[y];
+				if(pixelsToDraw.Length != 0)
+				{
+					drawingArea.GdkWindow.DrawPoints (gc, pixelsToDraw);
+				}
+			}
+			if(pixelSetList.Count != 0)
+			{
+				gc.RgbFgColor = new Color(0, 0, 0);
+				drawingArea.GdkWindow.DrawPoints( new Gdk.GC(drawingArea.GdkWindow), pixelSetList.ToArray());
+			}
+		}
+
+
 	}
 }
 

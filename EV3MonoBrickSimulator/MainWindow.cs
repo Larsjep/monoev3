@@ -30,10 +30,12 @@ public partial class MainWindow: Gtk.Window
 		startupAppThread.Start ();
 	}
 
+
+
 	private static void StartupAppExecution()
 	{
 		LcdReady.WaitOne ();
-		Thread.Sleep (2000);
+		lcdMock.FillBackGround ();
 		StartupApp.MainClass.Main (null);	
 	}
 
