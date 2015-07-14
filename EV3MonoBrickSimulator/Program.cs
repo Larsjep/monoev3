@@ -1,8 +1,7 @@
-﻿using Gtk;
-using System;
-using System.Threading;
+﻿using System;
+using Gtk;
 
-namespace MonoBrickFirmwareSimulation
+namespace EV3MonoBrickSimulator
 {
 	class MainClass
 	{
