@@ -434,7 +434,6 @@ public partial class MainWindow
 		w42.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbox1 = new global::Gtk.HBox ();
-		this.hbox1.Name = "hbox1";
 		// Container child hbox1.Gtk.Box+BoxChild
 		this.image35 = new global::Gtk.Image ();
 		this.image35.Name = "image35";
@@ -490,5 +489,17 @@ public partial class MainWindow
 		this.DefaultHeight = 465;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
+		this.escEventbox.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler (this.OnEscEventboxButtonPressEvent);
+		this.escEventbox.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler (this.OnEscEventboxButtonReleaseEvent);
+		this.upEventbox.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler (this.OnUpEventboxButtonPressEvent);
+		this.upEventbox.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler (this.OnUpEventboxButtonReleaseEvent);
+		this.leftEventbox.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler (this.OnLeftEventboxButtonPressEvent);
+		this.leftEventbox.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler (this.OnLeftEventboxButtonReleaseEvent);
+		this.enterEventbox.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler (this.OnEnterEventboxButtonPressEvent);
+		this.enterEventbox.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler (this.OnEnterEventboxButtonReleaseEvent);
+		this.rightEventbox.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler (this.OnRightEventboxButtonPressEvent);
+		this.rightEventbox.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler (this.OnRightEventboxButtonReleaseEvent);
+		this.downEventbox.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler (this.OnDownEventboxButtonPressEvent);
+		this.downEventbox.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler (this.OnDownEventboxButtonReleaseEvent);
 	}
 }
