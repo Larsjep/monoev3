@@ -88,7 +88,10 @@ namespace MonoBrickFirmware.Display.Menus
 			} 
 			else 
 			{
-				items [scrollPos + cursorPos].OnEnterPressed ();
+				if (items.Count != 0) 
+				{
+					items [scrollPos + cursorPos].OnEnterPressed ();
+				}
 			}
 		}
 
@@ -96,7 +99,10 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			if (show) 
 			{
-				items [scrollPos + cursorPos].OnLeftPressed ();
+				if (items.Count != 0) 
+				{
+					items [scrollPos + cursorPos].OnLeftPressed ();
+				}
 			}
 		}
 
@@ -114,7 +120,10 @@ namespace MonoBrickFirmware.Display.Menus
 			} 
 			else 
 			{
-				items [scrollPos + cursorPos].OnRightPressed ();
+				if (items.Count != 0) 
+				{
+					items [scrollPos + cursorPos].OnRightPressed ();
+				}
 			}
 
 		}
