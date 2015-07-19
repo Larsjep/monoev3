@@ -163,7 +163,7 @@ namespace EV3MonoBrickSimulator.Stub
 			public bool IsPixelSet(int x, int y)
 			{
 				int index = GetIndex(x, y);
-				return Marshal.ReadInt32( IntPtr.Add (lcdBuffer.Pixels, index)) == 0xff000000;	
+				return (Marshal.ReadInt32( IntPtr.Add (lcdBuffer.Pixels, index)) & 0x00ffffff) == 0x000000;
 			}
 
 			public void SetPixel(int x, int y)
