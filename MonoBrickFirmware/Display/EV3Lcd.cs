@@ -26,12 +26,12 @@ namespace MonoBrickFirmware.Display
 		protected float greenGradientStep;  
 		protected float blueGradientStep; 
 
-		private bool IsPixelInLcd(Point pixel)
+		protected bool IsPixelInLcd(Point pixel)
 		{
 			return (pixel.X >= 0) && (pixel.Y >= 0) && (pixel.X <= Lcd.Width) && (pixel.Y <= Height);
 		}
 
-		private bool IsPixelInLcd(int x, int y)
+		protected bool IsPixelInLcd(int x, int y)
 		{
 			return	(x >= 0) && (y >= 0) && (x <= Lcd.Width) && (y <= Height);
 		}
@@ -39,7 +39,7 @@ namespace MonoBrickFirmware.Display
 		public int Width { get { return width; } }
 		public int Height {get { return height; } }
 
-		public void SetPixel(int x, int y, bool color)
+		public virtual void SetPixel(int x, int y, bool color)
 		{
 			if (!IsPixelInLcd (x, y))
 				return;
@@ -53,7 +53,7 @@ namespace MonoBrickFirmware.Display
 
 		}
 
-		public bool IsPixelSet (int x, int y)
+		public virtual bool IsPixelSet (int x, int y)
 		{
 			int index = (x / 8) + y * bytesPrLine;
 			int bit = x & 0x7;
@@ -67,7 +67,7 @@ namespace MonoBrickFirmware.Display
 			blueGradientStep = (float)(endColor.Blue - startColor.Blue)/Height; 
 		}
 
-		public virtual void Initialize()
+		public void Initialize()
 		{
 			device = new UnixDevice("/dev/fb0");
 			memory = device.MMap((uint)hwBufferSize, 0);
@@ -89,23 +89,23 @@ namespace MonoBrickFirmware.Display
 			memory.Write(0,hwBuffer);			
 		}
 
-		public void SaveScreen ()
+		public virtual void SaveScreen ()
 		{
 			Array.Copy(displayBuf,savedScreen, bufferSize);
 		}
 
-		public void LoadScreen()
+		public virtual void LoadScreen()
 		{
 			Array.Copy(savedScreen,displayBuf,bufferSize);
 		}
 
-		public void ShowPicture(byte[] picture)
+		public virtual void ShowPicture(byte[] picture)
 		{
 			Array.Copy(picture, displayBuf, picture.Length);
 			Update();
 		}
 
-		public void TakeScreenShot ()
+		public virtual void TakeScreenShot ()
 		{
 			TakeScreenShot(System.IO.Directory.GetCurrentDirectory(), "ScreenShot-" + string.Format ("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now) + ".bmp");
 		}
@@ -116,7 +116,7 @@ namespace MonoBrickFirmware.Display
 		/// </summary>
 		/// <param name="directory">Directory.</param>
 		/// <param name="fileName">File name.</param>
-		public void TakeScreenShot (string directory, string fileName )
+		public virtual void TakeScreenShot (string directory, string fileName )
 		{
 			screenshotImage.Clear ();
 			float redActual = (float)endColor.Red;
@@ -152,12 +152,12 @@ namespace MonoBrickFirmware.Display
 		}
 
 
-		public void ClearLines(int y, int count)
+		public virtual void ClearLines(int y, int count)
 		{			
 			Array.Clear(displayBuf, bytesPrLine*y, count*bytesPrLine);
 		}
 
-		public void Clear()
+		public virtual void Clear()
 		{
 			ClearLines(0, Height);
 		}
@@ -172,33 +172,11 @@ namespace MonoBrickFirmware.Display
 
 		public void DrawHLine(Point startPoint, int length, bool color)
 		{
-			int bytePos = bytesPrLine*startPoint.Y + startPoint.X/8;
-			int bitPos = startPoint.X & 0x7;
-			int bitsInFirstByte = Math.Min(8 - bitPos, length);			
-			byte bitMask = (byte)((0xff >> (8-bitsInFirstByte)) << bitPos);
+			for (int i = 0; i < length; i++) 
+			{
+				SetPixel (startPoint.X + i, startPoint.Y, color);
+			}
 
-			// Set/clear bits in first byte
-			if (color)
-				displayBuf[bytePos] |= bitMask;
-			else
-				displayBuf[bytePos] &= (byte)~bitMask;
-			length -= bitsInFirstByte;
-			bytePos++;
-			while (length >= 8) // Set/Clear all byte full bytes
-			{
-				displayBuf[bytePos] = color ? (byte)0xff : (byte)0;
-				bytePos++;
-				length -= 8;
-			}
-			// Set/clear bits in last byte
-			if (length > 0)
-			{
-				bitMask = (byte)(0xff >> (8-length));
-				if (color)
-					displayBuf[bytePos] |= bitMask;
-				else
-					displayBuf[bytePos] &= (byte)~bitMask;				
-			}
 		}
 
 		public void DrawBitmap(Bitmap bm, Point p)
@@ -206,12 +184,12 @@ namespace MonoBrickFirmware.Display
 			DrawBitmap(bm.GetStream(), p, bm.Width, bm.Height, true);
 		}
 
-		public void DrawBitmap(BitStreamer bs, Point p, uint xsize, uint ysize, bool color)
+		public virtual void DrawBitmap(BitStreamer bs, Point p, uint xSize, uint ySize, bool color)
 		{
-			for (int yPos = p.Y; yPos != p.Y+ysize; yPos++)
+			for (int yPos = p.Y; yPos != p.Y+ySize; yPos++)
 			{
 				int BufPos = bytesPrLine*yPos+p.X/8;
-				uint xBitsLeft = xsize;
+				uint xBitsLeft = xSize;
 				int xPos = p.X;
 
 				while (xBitsLeft > 0)

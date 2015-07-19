@@ -209,6 +209,9 @@
     <None Include="Images\EV3-multibrick_24_P.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Images\background.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoBrickFirmware\MonoBrickFirmware.csproj">

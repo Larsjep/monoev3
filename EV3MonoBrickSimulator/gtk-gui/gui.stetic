@@ -49,6 +49,8 @@
             <child>
               <widget class="Gtk.DrawingArea" id="lcdDrawingarea">
                 <property name="MemberName" />
+                <property name="WidthRequest">178</property>
+                <property name="HeightRequest">128</property>
               </widget>
               <packing>
                 <property name="Position">1</property>

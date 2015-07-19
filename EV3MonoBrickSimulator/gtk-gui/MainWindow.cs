@@ -138,6 +138,8 @@ public partial class MainWindow
 		w2.Fill = false;
 		// Container child hbox6.Gtk.Box+BoxChild
 		this.lcdDrawingarea = new global::Gtk.DrawingArea ();
+		this.lcdDrawingarea.WidthRequest = 178;
+		this.lcdDrawingarea.HeightRequest = 128;
 		this.lcdDrawingarea.Name = "lcdDrawingarea";
 		this.hbox6.Add (this.lcdDrawingarea);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox6 [this.lcdDrawingarea]));
@@ -434,6 +436,7 @@ public partial class MainWindow
 		w42.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbox1 = new global::Gtk.HBox ();
+		this.hbox1.Name = "hbox1";
 		// Container child hbox1.Gtk.Box+BoxChild
 		this.image35 = new global::Gtk.Image ();
 		this.image35.Name = "image35";

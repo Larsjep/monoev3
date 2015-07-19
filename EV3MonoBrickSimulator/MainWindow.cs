@@ -7,13 +7,13 @@ using MonoBrickFirmware.Connections;
 using MonoBrickFirmware.Settings;
 using EV3MonoBrickSimulator.Stub;
 using System.Threading;
+using Gdk;
 
 public partial class MainWindow: Gtk.Window
 {
 	private static Thread startupAppThread;
 	private static ButtonsStub buttonsMock = new ButtonsStub();
 	private static LcdStub lcdMock;
-	public static ManualResetEvent LcdReady = new ManualResetEvent(false);
 
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
@@ -28,14 +28,18 @@ public partial class MainWindow: Gtk.Window
 		startupAppThread = new Thread(new ThreadStart(StartupAppExecution));
 		startupAppThread.IsBackground = true;
 		startupAppThread.Start ();
+		lcdDrawingarea.ExposeEvent += LcdExposed;
+	}
+
+	private static void LcdExposed(object o, ExposeEventArgs args)
+	{
+		Lcd.Update ();
 	}
 
 
 
 	private static void StartupAppExecution()
 	{
-		LcdReady.WaitOne ();
-		lcdMock.FillBackGround ();
 		StartupApp.MainClass.Main (null);	
 	}
 
@@ -63,10 +67,10 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnDownEventboxButtonPressEvent (object o, ButtonPressEventArgs args)
 	{
-		downImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_24_P.png"));
-		downImageSmall1.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_21_P.png"));
+		downImage.Pixbuf = new Pixbuf (global::System.IO.Path.Combine (AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_24_P.png"));
+		downImageSmall1.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_21_P.png"));
 		downImageSmall2.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_22_P.png"));
-		buttonsMock.DownPressed ();		
+		buttonsMock.DownPressed ();
 	}
 
 	protected void OnDownEventboxButtonReleaseEvent (object o, ButtonReleaseEventArgs args)

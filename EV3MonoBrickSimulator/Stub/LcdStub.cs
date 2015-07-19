@@ -6,99 +6,222 @@ using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Tools;
 using Gtk;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace EV3MonoBrickSimulator.Stub
 {
 	public class LcdStub : EV3Lcd
 	{
-		private DrawingArea drawingArea;
-		private Gdk.GC gc;
-		private Dictionary<int, Color> backgroundColors = new Dictionary<int, Color> ();
-		private bool[,] lastSetValue = null;
+		private LcdDisplay display;
 		public LcdStub (DrawingArea drawingArea)
 		{
-			this.drawingArea = drawingArea;
-			gc = new Gdk.GC((Drawable)drawingArea.GdkWindow);
-			gc.RgbFgColor = new Color(255, 255, 255);
-			lastSetValue = new bool[Width,Height];
+			display = new LcdDisplay (drawingArea);
 		}
+
 
 		public override void Update (int yOffset)
 		{
-			Application.Invoke (delegate 
+			
+			Application.Invoke (
+				delegate 
 				{
-					int offSet = yOffset;
-					Draw(offSet, false);	
+					display.Draw ();
 				}
 			);
 		}
 
-		public void FillBackGround()
-		{
-			float redActual = (float)endColor.Red;
-			float greenActual = (float)endColor.Green;
-			float blueActual = (float)endColor.Blue;
-			List<Gdk.Point> pixel = new List<Gdk.Point>();
-			gc.RgbFgColor = new Color(255, 255, 255);
 
-			for (int y = Height - 1; y >= 0; y--) {
-				pixel.Clear ();
-				Color color = new Color((byte)redActual, (byte)greenActual, (byte)blueActual);
-				gc.RgbFgColor = color;
-				backgroundColors.Add (y, color);  
-				for (int x = 0; x < Width; x++) 
-				{
-					pixel.Add (new Gdk.Point (x, y));
-					lastSetValue [x,y] = false;
-				}
-				drawingArea.GdkWindow.DrawPoints (gc, pixel.ToArray ());
-				redActual -= redGradientStep;
-				greenActual -= greenGradientStep;
-				blueActual -= blueGradientStep;
+		public override void SetPixel (int x, int y, bool color)
+		{
+			base.SetPixel (x, y, color);
+			if (color)
+			{
+				display.SetPixel (x, y);
+			} 
+			else 
+			{
+				display.ClearPixel (x, y);
 			}
-			Draw (0, true);
 		}
 
-		private void Draw(int yOffset, bool drawBackGround)
+
+		public override bool IsPixelSet (int x, int y)
 		{
-			List<Gdk.Point> pixelSetList = new List<Gdk.Point>();
-			List<Gdk.Point> pixelClearList = new List<Gdk.Point>();
+			return display.IsPixelSet (x,y);	
+		}
+
+		public override void Clear ()
+		{
+			base.Clear ();
+			display.ClearBuffer ();
+		}
+
+		public override void ClearLines (int y, int count)
+		{
+			base.ClearLines (y, count);
+			for (int i = 0; i < count; i++)
+			{
+				for (int x = 0; x < Width; x++)
+				{
+					display.ClearPixel (x, y + i);
+				} 
+			} 
+		}
+
+		public override void LoadScreen ()
+		{
+			base.LoadScreen ();
+			display.LoadScreen ();	
+		}
+
+		public override void SaveScreen ()
+		{
+			base.SaveScreen ();
+			display.SaveScreen ();	
+		}
+
+		public override void DrawBitmap (BitStreamer bs, MonoBrickFirmware.Display.Point p, uint xSize, uint ySize, bool color)
+		{
+			base.DrawBitmap (bs, p, xSize, ySize, color);
+			for (int x = 0; x < xSize; x++) 
+			{
+				for (int y = 0; y < ySize; y++)
+				{
+					bool isSet = base.IsPixelSet (x + p.X, y + p.Y);
+					if (isSet)
+					{
+						display.SetPixel (x + p.X, y + p.Y);
+					} 
+					else 
+					{
+						display.ClearPixel(x + p.X, y + p.Y);		
+					}
+				}
+			}
+		}
+
+		public override void ShowPicture (byte[] picture)
+		{
+			base.ShowPicture (picture);
 			for (int x = 0; x < Width; x++) 
 			{
-				for (int y = yOffset; y < Height; y++)
+				for (int y = 0; y < Height; y++)
 				{
-					if (IsPixelSet(x, y))
+					bool isSet = base.IsPixelSet (x,y);
+					if (isSet)
 					{
-						if(!lastSetValue[x,y])
-						{
-							pixelSetList.Add(new Gdk.Point(x, y));
-						}
-						lastSetValue [x,y] = true;
-					}
-					else
+						display.SetPixel (x,y);
+					} 
+					else 
 					{
-						if (lastSetValue [x, y] || drawBackGround) 
-						{
-							pixelClearList.Add(new Gdk.Point(x, y));	
-						}
-						lastSetValue[x,y] = false;
+						display.ClearPixel(x,y);		
 					}
 				}
-			}
-			for(int y = 0; y < Height; y++)
+			} 
+		}
+
+		public override void TakeScreenShot ()
+		{
+			TakeScreenShot(System.IO.Directory.GetCurrentDirectory(), "ScreenShot-" + string.Format ("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now) + ".png");
+		}
+
+		public override void TakeScreenShot (string directory, string fileName)
+		{
+			display.Save (System.IO.Path.Combine (directory, fileName));
+		}
+
+
+		private class LcdDisplay
+		{
+			private static Pixbuf backGroundPixBuffer = new Pixbuf("background.bmp");
+			private static Pixbuf lcdBuffer = new Pixbuf("background.bmp");
+			private DrawingArea drawingArea;
+			private static Pixbuf savedScreenBuffer = new Pixbuf("background.bmp");
+			private Gdk.GC gc;
+			private int rowSize;
+			private const int Width = 178;
+			private const int Height = 128;
+
+			public LcdDisplay (DrawingArea drawingArea)
 			{
-				var pixelsToDraw = pixelClearList.Where( p => p.Y == y).ToArray();
-				gc.RgbFgColor = backgroundColors[y];
-				if(pixelsToDraw.Length != 0)
+				this.drawingArea = drawingArea;
+				drawingArea.SetSizeRequest (Width, Height);
+				gc = new Gdk.GC((Drawable)drawingArea.GdkWindow);
+				rowSize = ((backGroundPixBuffer.Width * backGroundPixBuffer.NChannels) + backGroundPixBuffer.Rowstride)/2;
+			}
+
+			public void Draw()
+			{
+				drawingArea.GdkWindow.DrawPixbuf (gc, lcdBuffer, 0, 0, 0, 0, Width, Height, Gdk.RgbDither.Normal, 0, 0);
+			}
+
+			public void ClearBuffer()
+			{
+				lcdBuffer = new Pixbuf("background.bmp");
+			}
+
+			public bool IsPixelSet(int x, int y)
+			{
+				int index = GetIndex(x, y);
+				return Marshal.ReadInt32( IntPtr.Add (lcdBuffer.Pixels, index)) == 0xff000000;	
+			}
+
+			public void SetPixel(int x, int y)
+			{
+				int index = GetIndex(x, y);
+				Int32 oldValue = Marshal.ReadInt32( IntPtr.Add (lcdBuffer.Pixels, index));
+				Int32 newValue = (int)(oldValue & 0xff000000);
+				Marshal.WriteInt32 (IntPtr.Add (lcdBuffer.Pixels, index), newValue);
+			}
+
+			public void ClearPixel(int x, int y)
+			{
+				int index = GetIndex(x, y);
+				int backGroundValue = Marshal.ReadInt32( IntPtr.Add (backGroundPixBuffer.Pixels, index));
+				int oldValue = Marshal.ReadInt32( IntPtr.Add (lcdBuffer.Pixels, index));
+				int newValue = (int)(oldValue & 0xff000000) | (int)(backGroundValue & 0x00ffffff);
+				Marshal.WriteInt32 (IntPtr.Add (lcdBuffer.Pixels, index), newValue);
+
+			}
+
+			public void SaveScreen()
+			{
+				for (int x = 0; x < Width; x++)
 				{
-					drawingArea.GdkWindow.DrawPoints (gc, pixelsToDraw);
+					for (int y = 0; y < Height; y++)
+					{
+						int index = GetIndex(x, y);
+						int oldValue = Marshal.ReadInt32( IntPtr.Add (lcdBuffer.Pixels, index));
+						Marshal.WriteInt32 (IntPtr.Add (savedScreenBuffer.Pixels, index), oldValue);
+					} 
 				}
 			}
-			if(pixelSetList.Count != 0)
+
+			public void LoadScreen()
 			{
-				gc.RgbFgColor = new Color(0, 0, 0);
-				drawingArea.GdkWindow.DrawPoints( new Gdk.GC(drawingArea.GdkWindow), pixelSetList.ToArray());
+				for (int x = 0; x < Width; x++)
+				{
+					for (int y = 0; y < Height; y++)
+					{
+						int index = GetIndex(x, y);
+						int oldValue = Marshal.ReadInt32( IntPtr.Add (savedScreenBuffer.Pixels, index));
+						Marshal.WriteInt32 (IntPtr.Add (lcdBuffer.Pixels, index), oldValue);
+					} 
+				}
 			}
+
+
+			public void Save(string fileName)
+			{
+				lcdBuffer.Save (fileName, "png");
+			}
+
+			private int GetIndex(int x, int y)
+			{
+				return x*backGroundPixBuffer.NChannels + y*rowSize;	
+			}
+			
+
 		}
 
 
