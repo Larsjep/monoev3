@@ -7,15 +7,17 @@ namespace EV3MonoBrickSimulator.Stub
 	public class WiFiStub : IWiFiDevice
 	{
 		private bool isOn = false;
-		public WiFiStub ()
+		public WiFiStub (int turnOnTimeMs, int turnOffTimeMs)
 		{
+			TurnOnTimeMs = turnOnTimeMs;
+			TurnOffTimeMs = turnOffTimeMs;
 		}
 
 		public bool TurnOn (string ssid, string password, bool useEncryption, int timeout = 0)
 		{
 			if (!isOn) 
 			{
-				System.Threading.Thread.Sleep (15000);
+				System.Threading.Thread.Sleep (TurnOnTimeMs);
 				isOn = true;
 				return true;
 			}
@@ -24,7 +26,7 @@ namespace EV3MonoBrickSimulator.Stub
 
 		public void TurnOff ()
 		{
-			//System.Threading.Thread.Sleep (5000);
+			System.Threading.Thread.Sleep (TurnOffTimeMs);
 			isOn = false;
 		}
 
@@ -57,6 +59,8 @@ namespace EV3MonoBrickSimulator.Stub
 			}
 			return "Unknown";
 		}
+		public int TurnOnTimeMs{ get; set;}
+		public int TurnOffTimeMs{ get; set;}
 
 	}
 }

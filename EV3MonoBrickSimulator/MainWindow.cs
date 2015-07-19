@@ -21,7 +21,7 @@ public partial class MainWindow: Gtk.Window
 		lcdDrawingarea.SetSizeRequest(178, 128);
 		Buttons.Instance = buttonsMock;
 		ProgramManager.Instance = new ProgramManagerStub ();
-		WiFiDevice.Device = new WiFiStub ();
+		WiFiDevice.Device = new WiFiStub (5000, 2000);
 		FirmwareSettings.Settings = new SettingsStub ();
 		lcdMock = new LcdStub (lcdDrawingarea);
 		Lcd.Instance = lcdMock;
@@ -35,8 +35,6 @@ public partial class MainWindow: Gtk.Window
 	{
 		Lcd.Update ();
 	}
-
-
 
 	private static void StartupAppExecution()
 	{
