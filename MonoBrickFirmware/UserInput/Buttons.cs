@@ -31,7 +31,7 @@ namespace MonoBrickFirmware.UserInput
 		}
     }
 
-    public static IButtons Instance { get; set;}
+    internal static IButtons Instance { get; set;}
 
     public static ButtonStates GetStates()
     {

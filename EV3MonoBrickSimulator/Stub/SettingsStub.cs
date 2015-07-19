@@ -5,7 +5,7 @@ using System.IO;
 
 namespace EV3MonoBrickSimulator.Stub
 {
-	public class SettingsStub : EV3FirmwareSettings
+	internal class SettingsStub : EV3FirmwareSettings
 	{
 		public SettingsStub ()
 		{

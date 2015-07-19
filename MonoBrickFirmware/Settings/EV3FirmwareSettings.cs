@@ -7,7 +7,7 @@ namespace MonoBrickFirmware.Settings
 {
 
 	[XmlRoot("ConfigRoot")]
-	public class EV3FirmwareSettings : IFirmwareSettings
+	internal class EV3FirmwareSettings : IFirmwareSettings
 	{
 		protected object readWriteLock = new object();
 		protected string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";

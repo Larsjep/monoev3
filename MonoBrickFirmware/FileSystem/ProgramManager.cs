@@ -17,7 +17,7 @@ namespace MonoBrickFirmware.FileSystem
 				Instance = null; //Not running on a EV3
 			}
 		}
-		public static IProgramManager Instance{ get; set; }
+		internal static IProgramManager Instance{ get; set; }
 		public static void CreateSDCardFolder (){Instance.CreateSDCardFolder ();}
 		public static int StartAndWaitForProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0){return Instance.StartAndWaitForProgram (program, runInAOT, timeout);}
 		public static void StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0){Instance.StartProgram (program, runInAOT, timeout);}

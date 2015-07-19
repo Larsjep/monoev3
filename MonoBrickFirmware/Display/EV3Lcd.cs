@@ -4,7 +4,7 @@ using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.Display
 {
-	public class EV3Lcd : ILcd
+	internal class EV3Lcd : ILcd
 	{
 
 		private const int height = 128;

@@ -21,8 +21,8 @@ public partial class MainWindow: Gtk.Window
 		lcdDrawingarea.SetSizeRequest(178, 128);
 		Buttons.Instance = buttonsMock;
 		ProgramManager.Instance = new ProgramManagerStub ();
-		WiFiDevice.Device = new WiFiStub (5000, 2000);
-		FirmwareSettings.Settings = new SettingsStub ();
+		WiFiDevice.Instance = new WiFiStub (5000, 2000);
+		FirmwareSettings.Instance = new SettingsStub ();
 		lcdMock = new LcdStub (lcdDrawingarea);
 		Lcd.Instance = lcdMock;
 		startupAppThread = new Thread(new ThreadStart(StartupAppExecution));

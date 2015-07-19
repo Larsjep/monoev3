@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace EV3MonoBrickSimulator.Stub
 {
-	public class LcdStub : EV3Lcd
+	internal class LcdStub : EV3Lcd
 	{
 		private LcdDisplay display;
 		public LcdStub (DrawingArea drawingArea)

@@ -5,7 +5,7 @@ using MonoBrickFirmware.Native;
 
 namespace MonoBrickFirmware.Connections
 {
-	public class EV3WiFiDevice : IWiFiDevice
+	internal class EV3WiFiDevice : IWiFiDevice
 	{
 		private string WpaSupplicantFileName = "/mnt/bootpar/wpa_supplicant.conf";
 

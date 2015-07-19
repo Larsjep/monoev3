@@ -1,8 +1,13 @@
 using System;
+using System.Runtime.CompilerServices;
+
+
 namespace MonoBrickFirmware.Display
 {
   public static class Lcd
   {
+
+
 	static Lcd()
     {
 		try
@@ -17,7 +22,7 @@ namespace MonoBrickFirmware.Display
     }
     public enum Alignment { Left, Center, Right };
     public enum ArrowOrientation { Left, Right, Down, Up }
-	public static ILcd Instance{ get; set; }
+	internal static ILcd Instance{ get; set; }
 	public static int Width { get{return Instance.Width;}}
 	public static int Height { get{return Instance.Height;}}
     public static void SetPixel(int x, int y, bool color)
