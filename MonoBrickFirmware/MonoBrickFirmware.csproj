@@ -141,7 +141,7 @@
     <Compile Include="Settings\EV3FirmwareSettings.cs" />
     <Compile Include="FirmwareUpdate\IVersionHelper.cs" />
     <Compile Include="FirmwareUpdate\VersionInfo.cs" />
-    <Compile Include="FirmwareUpdate\EV3FirmwareHelper.cs" />
+    <Compile Include="FirmwareUpdate\EV3VersionHelper.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
