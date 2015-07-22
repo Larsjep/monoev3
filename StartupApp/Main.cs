@@ -1,19 +1,10 @@
-using System;
-using System.Threading;
 using MonoBrickFirmware.Display;
-using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Display.Menus;
 using MonoBrickFirmware.Display.Dialogs;
 using MonoBrickFirmware.Settings;
 using MonoBrickFirmware.Connections;
-using MonoBrickFirmware.Tools;
 using MonoBrickFirmware.FileSystem;
 using System.Reflection;
-using System.Collections.Generic;
-
-using Nancy;
-using Nancy.Hosting.Self;
-
 namespace StartupApp
 {
 	public class MainClass
@@ -53,7 +44,8 @@ namespace StartupApp
 				{
 					if (FirmwareSettings.GeneralSettings.CheckForSwUpdatesAtStartUp)
 					{
-						container.Show (3); //show the menu container with the update dialog			
+						container.Show (3); //show the menu container with the update dialog
+						return;
 					} 
 					else 
 					{
