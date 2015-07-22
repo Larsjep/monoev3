@@ -5,40 +5,57 @@ using MonoBrickFirmware.FileSystem;
 using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Connections;
 using MonoBrickFirmware.Settings;
+using MonoBrickFirmware.FirmwareUpdate;
 using EV3MonoBrickSimulator.Stub;
+using EV3MonoBrickSimulator.Settings;
 using System.Threading;
 using Gdk;
+using System.IO;
+
 
 public partial class MainWindow: Gtk.Window
 {
 	private static Thread startupAppThread;
-	private static ButtonsStub buttonsMock = new ButtonsStub();
-	private static LcdStub lcdMock;
-
+	private static LcdStub lcdStub;
+	private static ButtonsStub buttonsStub = new ButtonsStub();
+	private static WiFiStub wiFiStub = new WiFiStub(); 
+	private static SimulatorSettings simulatorSettings = new SimulatorSettings();
+	private static ProgramManagerStub programManagerStub = new ProgramManagerStub();
+	private static SettingsStub settingsStub = new SettingsStub();
+	private static VersionHelperStub versionHelperStub = new VersionHelperStub();
+	private static FileSystemWatcher watcher = new FileSystemWatcher();
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build ();
 		lcdDrawingarea.SetSizeRequest(178, 128);
-		Buttons.Instance = buttonsMock;
-		ProgramManager.Instance = new ProgramManagerStub ();
-		WiFiDevice.Instance = new WiFiStub (5000, 2000);
-		FirmwareSettings.Instance = new SettingsStub ();
-		lcdMock = new LcdStub (lcdDrawingarea);
-		Lcd.Instance = lcdMock;
+
+		//Set stubs
+		lcdStub = new LcdStub (lcdDrawingarea);
+		Lcd.Instance = lcdStub;
+		Buttons.Instance = buttonsStub;
+		ProgramManager.Instance = programManagerStub;
+		FirmwareSettings.Instance = settingsStub;
+		WiFiDevice.Instance = wiFiStub;
+		VersionHelper.Instance = versionHelperStub;
+
+
+		//Load and apply simulator settings
+		simulatorSettings = new SimulatorSettings ();
+		ApplySettings ();
+
+		//Setup settings changed handler
+		watcher.Path = Directory.GetCurrentDirectory();
+		watcher.NotifyFilter = NotifyFilters.LastAccess;
+		watcher.Filter = simulatorSettings.SettingsFileName;
+		watcher.Changed += OnSettingsFileChanged;
+		watcher.EnableRaisingEvents = true;
+
+		//Start the 
 		startupAppThread = new Thread(new ThreadStart(StartupAppExecution));
 		startupAppThread.IsBackground = true;
 		startupAppThread.Start ();
 		lcdDrawingarea.ExposeEvent += LcdExposed;
-	}
 
-	private static void LcdExposed(object o, ExposeEventArgs args)
-	{
-		Lcd.Update ();
-	}
-
-	private static void StartupAppExecution()
-	{
-		StartupApp.MainClass.Main (null);	
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
@@ -52,7 +69,7 @@ public partial class MainWindow: Gtk.Window
 		upImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_11_P.png"));
 		upImageSmall1.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_16_P.png"));
 		upImageSmall2.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_18_P.png"));
-		buttonsMock.UpPressed ();
+		buttonsStub.UpPressed ();
 	}
 
 	protected void OnUpEventboxButtonReleaseEvent (object o, ButtonReleaseEventArgs args)
@@ -60,7 +77,7 @@ public partial class MainWindow: Gtk.Window
 		upImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_11.png"));
 		upImageSmall1.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_16.png"));
 		upImageSmall2.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_18.png"));
-		buttonsMock.UpReleased ();
+		buttonsStub.UpReleased ();
 	}
 
 	protected void OnDownEventboxButtonPressEvent (object o, ButtonPressEventArgs args)
@@ -68,7 +85,7 @@ public partial class MainWindow: Gtk.Window
 		downImage.Pixbuf = new Pixbuf (global::System.IO.Path.Combine (AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_24_P.png"));
 		downImageSmall1.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_21_P.png"));
 		downImageSmall2.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_22_P.png"));
-		buttonsMock.DownPressed ();
+		buttonsStub.DownPressed ();
 	}
 
 	protected void OnDownEventboxButtonReleaseEvent (object o, ButtonReleaseEventArgs args)
@@ -76,54 +93,90 @@ public partial class MainWindow: Gtk.Window
 		downImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_24.png"));
 		downImageSmall1.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_21.png"));
 		downImageSmall2.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_22.png"));
-		buttonsMock.DownReleased ();
+		buttonsStub.DownReleased ();
 	}
 
 	protected void OnEnterEventboxButtonPressEvent (object o, ButtonPressEventArgs args)
 	{
 		enterImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_17_P.png"));
-		buttonsMock.EnterPressed ();
+		buttonsStub.EnterPressed ();
 	}
 
 	protected void OnEnterEventboxButtonReleaseEvent (object o, ButtonReleaseEventArgs args)
 	{
 		enterImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_17.png"));
-		buttonsMock.EnterReleased ();
+		buttonsStub.EnterReleased ();
 	}
 
 	protected void OnEscEventboxButtonPressEvent (object o, ButtonPressEventArgs args)
 	{
 		escImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_07_P.png"));
-		buttonsMock.EscPressed ();
+		buttonsStub.EscPressed ();
 	}
 
 	protected void OnEscEventboxButtonReleaseEvent (object o, ButtonReleaseEventArgs args)
 	{
 		escImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_07.png"));
-		buttonsMock.EscReleased ();
+		buttonsStub.EscReleased ();
 	}
 
 	protected void OnLeftEventboxButtonPressEvent (object o, ButtonPressEventArgs args)
 	{
 		leftImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_15_P.png"));
-		buttonsMock.LeftPressed ();
+		buttonsStub.LeftPressed ();
 	}
 
 	protected void OnLeftEventboxButtonReleaseEvent (object o, ButtonReleaseEventArgs args)
 	{
 		leftImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_15.png"));
-		buttonsMock.LeftReleased ();
+		buttonsStub.LeftReleased ();
 	}
 
 	protected void OnRightEventboxButtonPressEvent (object o, ButtonPressEventArgs args)
 	{
 		rightImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_19_P.png"));
-		buttonsMock.RightPressed ();
+		buttonsStub.RightPressed ();
 	}
 
 	protected void OnRightEventboxButtonReleaseEvent (object o, ButtonReleaseEventArgs args)
 	{
 		rightImage.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, "./Images/EV3-multibrick_19.png"));
-		buttonsMock.RightReleased ();
+		buttonsStub.RightReleased ();
 	}
+
+	private static void OnSettingsFileChanged(object sender, FileSystemEventArgs e)
+	{
+		Console.WriteLine (e.ChangeType);
+		ApplySettings ();	
+	}
+
+	private static void ApplySettings()
+	{
+		if (simulatorSettings.Load ()) 
+		{
+			watcher.EnableRaisingEvents = false;
+			simulatorSettings.Save ();
+			watcher.EnableRaisingEvents = true;
+		}
+
+		wiFiStub.TurnOnTimeMs = simulatorSettings.WiFiSettings.TurnOnTimeMs;
+		wiFiStub.TurnOffTimeMs = simulatorSettings.WiFiSettings.TurnOffTimeMs;
+
+		versionHelperStub.ImageVersion = simulatorSettings.VersionSettings.ImageVersion;
+		versionHelperStub.Repository = simulatorSettings.VersionSettings.Repository;
+		versionHelperStub.AddInVersion = simulatorSettings.VersionSettings.AddInVersion;
+	}
+
+	private static void LcdExposed(object o, ExposeEventArgs args)
+	{
+		Lcd.Update ();
+	}
+
+	private static void StartupAppExecution()
+	{
+		System.Threading.Thread.Sleep (4000);
+		StartupApp.MainClass.Main (null);	
+	}
+
+
 }
