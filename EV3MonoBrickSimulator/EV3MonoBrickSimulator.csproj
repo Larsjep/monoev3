@@ -70,6 +70,8 @@
     <Compile Include="Stub\ProgramManagerStub.cs" />
     <Compile Include="Stub\WiFiStub.cs" />
     <Compile Include="Stub\SettingsStub.cs" />
+    <Compile Include="Stub\VersionHelperStub.cs" />
+    <Compile Include="Settings\SimulatorSettings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -177,6 +179,7 @@
   <ItemGroup>
     <Folder Include="Images\" />
     <Folder Include="Stub\" />
+    <Folder Include="Settings\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Images\EV3-multibrick_07_P.png">
@@ -210,6 +213,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Images\background.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Stub\StartUp.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

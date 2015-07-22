@@ -1,22 +1,22 @@
 ﻿using MonoBrickFirmware.Connections;
 using System.Net.NetworkInformation;
 using System.Linq;
+using System;
 
 namespace EV3MonoBrickSimulator.Stub
 {
 	public class WiFiStub : IWiFiDevice
 	{
 		private bool isOn = false;
-		public WiFiStub (int turnOnTimeMs, int turnOffTimeMs)
-		{
-			TurnOnTimeMs = turnOnTimeMs;
-			TurnOffTimeMs = turnOffTimeMs;
-		}
+
+		public int TurnOnTimeMs{ get; set;}
+		public int TurnOffTimeMs{ get; set;}
 
 		public bool TurnOn (string ssid, string password, bool useEncryption, int timeout = 0)
 		{
 			if (!isOn) 
 			{
+				Console.WriteLine (TurnOnTimeMs);
 				System.Threading.Thread.Sleep (TurnOnTimeMs);
 				isOn = true;
 				return true;
@@ -59,9 +59,6 @@ namespace EV3MonoBrickSimulator.Stub
 			}
 			return "Unknown";
 		}
-		public int TurnOnTimeMs{ get; set;}
-		public int TurnOffTimeMs{ get; set;}
-
 	}
 }
 

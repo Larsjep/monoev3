@@ -7,11 +7,11 @@ namespace MonoBrickFirmware.FirmwareUpdate
 {
 	internal class EV3VersionHelper : IVersionHelper
 	{
-		private const string imageVersionPath = @"/usr/local/bin/version.txt";
-		private const string addInVersionPath = @"/usr/local/bin/add-inVersion.txt";
-		private const string repositoryFile = @"/usr/local/bin/repository.txt";
-		private const string StartupFile = @"/home/root/lejos/bin/startup";
-		private static string repository = null;
+		protected string imageVersionPath = @"/usr/local/bin/version.txt";
+		protected string addInVersionPath = @"/usr/local/bin/add-inVersion.txt";
+		protected string repositoryFile = @"/usr/local/bin/repository.txt";
+		protected string StartupFile = @"/home/root/lejos/bin/startup";
+		protected string repository = null;
 
 		public VersionInfo AvailableVersions()
 		{
@@ -28,7 +28,7 @@ namespace MonoBrickFirmware.FirmwareUpdate
 			return new VersionInfo(firmware, image, addIn);
 		}
 
-		private string GetRepository()
+		protected virtual string GetRepository()
 		{
 			if (repository == null)
 			{
@@ -52,7 +52,7 @@ namespace MonoBrickFirmware.FirmwareUpdate
 			return firmware;
 		}
 
-		private string CurrentFirmwareVersion()
+		protected virtual string CurrentFirmwareVersion()
 		{
 
 			string dllPath = null;
@@ -75,12 +75,12 @@ namespace MonoBrickFirmware.FirmwareUpdate
 			return Assembly.LoadFrom(dllPath).GetName().Version.ToString();
 		}
 
-		private string CurrentImageVersion()
+		protected virtual string CurrentImageVersion()
 		{
 			return System.IO.File.ReadAllLines(imageVersionPath)[0].Trim();
 		}
 
-		private string CurrentAddInVersion ()
+		protected virtual string CurrentAddInVersion ()
 		{
 			string val = null;
 			try 
