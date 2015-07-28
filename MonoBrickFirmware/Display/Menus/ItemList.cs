@@ -4,6 +4,7 @@ using System.Linq;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
 using System.Threading;
+using MonoBrickFirmware.Display.Dialogs;
 
 namespace MonoBrickFirmware.Display.Menus
 {
@@ -25,14 +26,22 @@ namespace MonoBrickFirmware.Display.Menus
 		private const int arrowOffset = 4;
 		private bool hasLoadedList = false;
 		private bool reloadOnFocus;
+		private EmptyListInfoDialog emptyListListInfoDialog = null;
 		protected bool show;
+		public ItemList (string title, Font font, bool reloadListOnFocus = true) : this(title, font, reloadListOnFocus, null) 
+		{
+		
+		}
 
-		public ItemList (string title, Font font, bool reloadListOnFocus = true)
+		public ItemList (string title, Font font, bool reloadListOnFocus, string emptyListInfo)
 		{
 			this.title = title;
 			this.font = font;
 			this.reloadOnFocus = reloadListOnFocus;
+			emptyListListInfoDialog = new EmptyListInfoDialog (emptyListInfo);
 		}
+
+
 
 		public IParentItem Parent { get; set; }
 
@@ -84,7 +93,14 @@ namespace MonoBrickFirmware.Display.Menus
 				{
 					CreateNewList (OnCreateChildList());		
 				}
-				Parent.SetFocus (this);
+				if (emptyListListInfoDialog != null && items.Count == 0) 
+				{
+					emptyListListInfoDialog.SetFocus (this);			
+				} 
+				else
+				{
+					Parent.SetFocus (this);
+				}
 			} 
 			else 
 			{
@@ -116,7 +132,14 @@ namespace MonoBrickFirmware.Display.Menus
 				{
 					CreateNewList (OnCreateChildList());		
 				}
-				Parent.SetFocus (this);
+				if (emptyListListInfoDialog != null && items.Count == 0) 
+				{
+					emptyListListInfoDialog.SetFocus (this);			
+				} 
+				else
+				{
+					Parent.SetFocus (this);
+				}
 			} 
 			else 
 			{
@@ -213,6 +236,19 @@ namespace MonoBrickFirmware.Display.Menus
 				i.Parent = this;
 			}
 			hasLoadedList = true;
+		}
+
+		private class EmptyListInfoDialog : ItemWithDialog<InfoDialog>
+		{
+			public EmptyListInfoDialog(string info) : base (new InfoDialog(info, true))
+			{
+
+			}
+
+			public override void OnExit (InfoDialog dialog)
+			{
+
+			}
 		}
 	}
 }
