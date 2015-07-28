@@ -7,12 +7,14 @@ using MonoBrickFirmware.Tools;
 using Gtk;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace EV3MonoBrickSimulator.Stub
 {
 	internal class LcdStub : EV3Lcd
 	{
 		private LcdDisplay display;
+		private ManualResetEvent lcdUpdate = new ManualResetEvent(false);
 		public LcdStub (DrawingArea drawingArea)
 		{
 			display = new LcdDisplay (drawingArea);
@@ -21,13 +23,14 @@ namespace EV3MonoBrickSimulator.Stub
 
 		public override void Update (int yOffset)
 		{
-			
+			lcdUpdate.Reset ();
 			Application.Invoke (
-				delegate 
-				{
+				delegate {
 					display.Draw ();
+					lcdUpdate.Set();
 				}
 			);
+			lcdUpdate.WaitOne (100);
 		}
 
 
@@ -71,13 +74,13 @@ namespace EV3MonoBrickSimulator.Stub
 		public override void LoadScreen ()
 		{
 			base.LoadScreen ();
-			display.LoadScreen ();	
+			display.LoadScreen ();
 		}
 
 		public override void SaveScreen ()
 		{
 			base.SaveScreen ();
-			display.SaveScreen ();	
+			display.SaveScreen ();
 		}
 
 		public override void DrawBitmap (BitStreamer bs, MonoBrickFirmware.Display.Point p, uint xSize, uint ySize, bool color)
@@ -133,15 +136,15 @@ namespace EV3MonoBrickSimulator.Stub
 
 		private class LcdDisplay
 		{
-			private static Pixbuf backGroundPixBuffer = new Pixbuf("background.bmp");
-			private static Pixbuf lcdBuffer = new Pixbuf("background.bmp");
+
+			private Pixbuf backGroundPixBuffer = new Pixbuf("background.bmp");
+			private Pixbuf lcdBuffer = new Pixbuf("background.bmp");
 			private DrawingArea drawingArea;
-			private static Pixbuf savedScreenBuffer = new Pixbuf("background.bmp");
+			private Pixbuf savedScreenBuffer = new Pixbuf("background.bmp");
 			private Gdk.GC gc;
 			private int rowSize;
 			private const int Width = 178;
 			private const int Height = 128;
-
 			public LcdDisplay (DrawingArea drawingArea)
 			{
 				this.drawingArea = drawingArea;
@@ -152,12 +155,13 @@ namespace EV3MonoBrickSimulator.Stub
 
 			public void Draw()
 			{
-				drawingArea.GdkWindow.DrawPixbuf (gc, lcdBuffer, 0, 0, 0, 0, Width, Height, Gdk.RgbDither.Normal, 0, 0);
+					drawingArea.GdkWindow.DrawPixbuf (gc, lcdBuffer, 0, 0, 0, 0, Width, Height, Gdk.RgbDither.Normal, 0, 0);
+
 			}
 
 			public void ClearBuffer()
 			{
-				lcdBuffer = new Pixbuf("background.bmp");
+				lcdBuffer = new Pixbuf ("background.bmp");
 			}
 
 			public bool IsPixelSet(int x, int y)
