@@ -16,7 +16,6 @@ namespace EV3MonoBrickSimulator.Stub
 		{
 			if (!isOn) 
 			{
-				Console.WriteLine (TurnOnTimeMs);
 				System.Threading.Thread.Sleep (TurnOnTimeMs);
 				isOn = true;
 				return true;

@@ -21,12 +21,12 @@ namespace PositionPIDExample
 			motor.ResetTacho();
 			PositionPID PID = new PositionPID(motor, 4000, true, 50, P, I, D, 5000);
 			var waitHandle = PID.Run();
-			Console.WriteLine("Moving motor A to position 4000");
-			Console.WriteLine("Waiting for controller to finish");
+			LcdConsole.WriteLine("Moving motor A to position 4000");
+			LcdConsole.WriteLine("Waiting for controller to finish");
 			//Wait for controller to finish - you can do other stuff here
 			waitHandle.WaitOne();
-			Console.WriteLine("Done");
-			Console.WriteLine("Motor position: " + motor.GetTachoCount());
+			LcdConsole.WriteLine("Done");
+			LcdConsole.WriteLine("Motor position: " + motor.GetTachoCount());
 		}
 	}
 }

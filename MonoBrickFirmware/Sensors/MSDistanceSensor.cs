@@ -34,7 +34,6 @@ namespace MonoBrickFirmware.Sensors
 		public Range GetRange ()
 		{
 			string deviceId = base.GetDeviceId ();
-			Console.WriteLine("Length: " + deviceId.Length);
 			if (!range.HasValue) 
 			{ 
 				switch (deviceId) {
