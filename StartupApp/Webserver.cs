@@ -60,6 +60,7 @@ namespace StartupApp
 					WebResponse myResponse = myRequest.GetResponse();
 					StreamReader sr = new StreamReader(myResponse.GetResponseStream(), System.Text.Encoding.UTF8);
 					string result = sr.ReadToEnd();
+					Console.WriteLine(result);
 					sr.Close();
 					myResponse.Close();
 					loaded = true;
