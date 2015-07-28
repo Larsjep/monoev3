@@ -6,7 +6,7 @@ namespace MonoBrickFirmware.FileSystem
 	public interface IProgramManager
 	{
 		void CreateSDCardFolder ();
-		bool StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0, Action onCompleted = null);
+		bool StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0, Action<Exception> onCompleted = null);
 		void StopProgram (ProgramInformation program);
 		void DeleteProgram (ProgramInformation program);
 		bool AOTCompileProgram (ProgramInformation program);

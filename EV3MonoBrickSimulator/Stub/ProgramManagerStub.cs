@@ -15,7 +15,7 @@ namespace EV3MonoBrickSimulator.Stub
 		private object programLock = new object();
 		private List<ProgramInformation> programList = new List<ProgramInformation>();
 		private string ProgramPathEV3;
-		private Action onExit;
+		private Action<Exception> onExit;
 		public int AOTCompileTimeMs{ get; set;}
 		public ProgramManagerStub ()
 		{
@@ -34,7 +34,7 @@ namespace EV3MonoBrickSimulator.Stub
 			//Do nothing 
 		}
 
-		public bool StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0, Action onExit = null)
+		public bool StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0, Action<Exception> onExit = null)
 		{
 			if (RunningProgram != null)
 				return false;
@@ -102,21 +102,21 @@ namespace EV3MonoBrickSimulator.Stub
 
 		private void ProgramExecution()
 		{
+			Exception e = null;
 			try
 			{
 				AppDomain.CurrentDomain.ExecuteAssembly(RunningProgram.ExeFile);
 			}
-			catch(Exception e)
+			catch(Exception programException)
 			{
-				Console.WriteLine (e.Message);
-				Console.WriteLine (e.StackTrace);
+				e = programException;
 			}
 			lock (programLock)
 			{
 				RunningProgram = null;
 				if (onExit != null)
 				{
-					onExit ();
+					onExit (e);
 				}
 			}
 			programDone.Set ();

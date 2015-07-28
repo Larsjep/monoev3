@@ -10,14 +10,14 @@ namespace MonoBrickFirmware.FileSystem
 		private string ProgramPathSdCard = "/mnt/bootpar/apps";
 		private string ProgramPathEV3 = "/home/root/apps/";
 		private List<ProgramInformation> programList = new List<ProgramInformation>();
-		private Action onExit = null;
+		private Action<Exception> onExit = null;
 		public void CreateSDCardFolder ()
 		{
 			if (!Directory.Exists (ProgramPathSdCard))
 				Directory.CreateDirectory (ProgramPathSdCard);
 		}
 
-		public bool StartProgram(ProgramInformation program, bool runInAOT = false, int timeout = 0, Action onExit = null)
+		public bool StartProgram(ProgramInformation program, bool runInAOT = false, int timeout = 0, Action<Exception> onExit = null)
 		{
 			this.onExit = onExit;
 			if (!runInAOT)
@@ -87,7 +87,12 @@ namespace MonoBrickFirmware.FileSystem
 			RunningProgram = null;
 			if (onExit != null) 
 			{
-				onExit();
+				Exception e = null;
+				if (exitCode != 0)
+				{
+					e = new Exception ("Program exited with error code " + exitCode);
+				}
+				onExit(e);
 			}
 		}
 

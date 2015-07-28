@@ -19,7 +19,7 @@ namespace MonoBrickFirmware.FileSystem
 		}
 		internal static IProgramManager Instance{ get; set; }
 		public static void CreateSDCardFolder (){Instance.CreateSDCardFolder ();}
-		public static void StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0, Action onExit = null){Instance.StartProgram (program, runInAOT, timeout, onExit);}
+		public static void StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0, Action<Exception> onExit = null){Instance.StartProgram (program, runInAOT, timeout, onExit);}
 		public static void StopProgram (ProgramInformation program){Instance.StopProgram (program);}
 		public static void DeleteProgram (ProgramInformation program){Instance.DeleteProgram (program);}
 		public static bool AOTCompileProgram (ProgramInformation program){return Instance.AOTCompileProgram (program);}

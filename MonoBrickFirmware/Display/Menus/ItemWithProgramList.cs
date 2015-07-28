@@ -105,6 +105,7 @@ namespace MonoBrickFirmware.Display.Menus
 	internal class ExecuteProgramDialog : IChildItem
 	{
 		private ProgramInformation program;
+		private ExceptionInfoDialog exceptionInfoDialog = new ExceptionInfoDialog ();
 		private bool inAot;
 		private bool useEscToStop;
 
@@ -188,13 +189,20 @@ namespace MonoBrickFirmware.Display.Menus
 			
 		}
 
-		private void OnDone()
+		private void OnDone(Exception e)
 		{
 			if (!useEscToStop)
 			{
 				Parent.ResumeEvents (this);
 			}
-			Parent.RemoveFocus (this);
+			if (e != null) 
+			{
+				exceptionInfoDialog.SetFocus (Parent);
+			} 
+			else 
+			{
+				Parent.RemoveFocus (this);
+			}
 		}
 
 
@@ -275,6 +283,26 @@ namespace MonoBrickFirmware.Display.Menus
 
 		}
 
+
 	}
+
+	internal class ExceptionInfoDialog : ItemWithDialog<InfoDialog>
+	{
+		public ExceptionInfoDialog() : base (new InfoDialog("Exception during execution", true, "Error"))
+		{
+		
+		}
+
+		public override void OnExit (InfoDialog dialog)
+		{
+			
+		}
+
+
+
+	}
+
+
+
 }
 
