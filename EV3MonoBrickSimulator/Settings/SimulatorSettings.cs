@@ -13,6 +13,8 @@ namespace EV3MonoBrickSimulator.Settings
 			SettingsFileName = "SimulatorSettings.xml";
 			WiFiSettings = new WiFiSettings();
 			VersionSettings = new VersionSettings ();
+			BootSettings = new BootSettings ();
+			ProgramManagerSettings = new ProgramManagerSettings ();
 		}
 
 		[XmlElement("WiFiSettings")]
@@ -20,6 +22,12 @@ namespace EV3MonoBrickSimulator.Settings
 
 		[XmlElement("VersionSettings")]
 		public VersionSettings VersionSettings { get ; set;}
+
+		[XmlElement("BootSettings")]
+		public BootSettings BootSettings { get ; set;}
+
+		[XmlElement("ProgramManagerSettings")]
+		public ProgramManagerSettings ProgramManagerSettings { get ; set;}
 
 
 		public bool Save()
@@ -53,6 +61,9 @@ namespace EV3MonoBrickSimulator.Settings
 				var loadSettings = (SimulatorSettings)obj;
 				textReader.Close ();
 				WiFiSettings = loadSettings.WiFiSettings;
+				VersionSettings = loadSettings.VersionSettings;
+				BootSettings = loadSettings.BootSettings;
+				ProgramManagerSettings = loadSettings.ProgramManagerSettings;
 			}
 			catch
 			{
@@ -63,6 +74,8 @@ namespace EV3MonoBrickSimulator.Settings
 			return ok;
 		}
 	}
+
+
 
 	public class VersionSettings
 	{
@@ -111,6 +124,27 @@ namespace EV3MonoBrickSimulator.Settings
 		}
 	}
 
+	public class BootSettings
+	{
+		[XmlElement("ExecutionDelay")]
+		private int executionDelay = 4000;
+
+		public int ExecutionDelay {
+			get{return executionDelay; }
+			set { executionDelay = value; }
+		}
+	}
+
+	public class ProgramManagerSettings
+	{
+		[XmlElement("AOTCompileTimeMs")]
+		private int aotCompileTimeMs = 1500;
+
+		public int AotCompileTimeMs {
+			get{return aotCompileTimeMs; }
+			set { aotCompileTimeMs = value; }
+		}
+	}
 
 }
 
