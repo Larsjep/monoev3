@@ -24,6 +24,7 @@ public partial class MainWindow: Gtk.Window
 	private static SettingsStub settingsStub = new SettingsStub();
 	private static VersionHelperStub versionHelperStub = new VersionHelperStub();
 	private static FileSystemWatcher watcher = new FileSystemWatcher();
+	private static bool firmwareRunning = false;
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build ();
@@ -41,6 +42,8 @@ public partial class MainWindow: Gtk.Window
 
 		//Load and apply simulator settings
 		simulatorSettings = new SimulatorSettings ();
+		simulatorSettings.Load ();
+		simulatorSettings.Save ();	
 		ApplySettings ();
 
 		//Setup settings changed handler
@@ -50,12 +53,9 @@ public partial class MainWindow: Gtk.Window
 		watcher.Changed += OnSettingsFileChanged;
 		watcher.EnableRaisingEvents = true;
 
-		//Start the 
 		startupAppThread = new Thread(new ThreadStart(StartupAppExecution));
 		startupAppThread.IsBackground = true;
-		startupAppThread.Start ();
 		lcdDrawingarea.ExposeEvent += LcdExposed;
-
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
@@ -146,36 +146,40 @@ public partial class MainWindow: Gtk.Window
 
 	private static void OnSettingsFileChanged(object sender, FileSystemEventArgs e)
 	{
-		Console.WriteLine (e.ChangeType);
 		ApplySettings ();	
 	}
 
 	private static void ApplySettings()
 	{
-		if (simulatorSettings.Load ()) 
-		{
-			watcher.EnableRaisingEvents = false;
-			simulatorSettings.Save ();
-			watcher.EnableRaisingEvents = true;
-		}
-
+		simulatorSettings.Load ();
 		wiFiStub.TurnOnTimeMs = simulatorSettings.WiFiSettings.TurnOnTimeMs;
 		wiFiStub.TurnOffTimeMs = simulatorSettings.WiFiSettings.TurnOffTimeMs;
 
 		versionHelperStub.ImageVersion = simulatorSettings.VersionSettings.ImageVersion;
 		versionHelperStub.Repository = simulatorSettings.VersionSettings.Repository;
 		versionHelperStub.AddInVersion = simulatorSettings.VersionSettings.AddInVersion;
+
+		programManagerStub.AOTCompileTimeMs = simulatorSettings.ProgramManagerSettings.AotCompileTimeMs;
+
 	}
 
 	private static void LcdExposed(object o, ExposeEventArgs args)
 	{
-		Lcd.Update ();
+		if (firmwareRunning) 
+		{
+			Lcd.Update ();
+		} 
+		else 
+		{
+			startupAppThread.Start ();	
+		}
 	}
 
 	private static void StartupAppExecution()
 	{
-		System.Threading.Thread.Sleep (4000);
-		StartupApp.MainClass.Main (null);	
+		firmwareRunning = true;
+		Thread.Sleep (simulatorSettings.BootSettings.ExecutionDelay);
+		StartupApp.MainClass.Main (null);
 	}
 
 
