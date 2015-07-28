@@ -60,7 +60,7 @@ namespace MonoBrickFirmware.Display.Menus
 				case 2:
 					if (programInformation.IsAOTCompiled) 
 					{
-						var aotQuestion = new AotQuestionDialog ();
+						var aotQuestion = new AotQuestionDialog (this.programInformation);
 						aotQuestion.SetFocus (Parent);
 					} 
 					else 
@@ -115,18 +115,17 @@ namespace MonoBrickFirmware.Display.Menus
 			this.inAot = inAot;
 		}
 
-		private void StartProgramInANewThread()
+		private void StartProgram()
 		{
-			if (!program.IsRunning)
+			if (ProgramManager.RunningProgram == null)
 			{
-				(new Thread (() => {
-					if (useEscToStop) 
-					{
-						Parent.SuspendEvents (this);
-					}
-					ProgramManager.StartAndWaitForProgram (program, inAot);
-					OnDone ();
-				})).Start ();
+				if (!useEscToStop) 
+				{
+					Parent.SuspendEvents (this);
+				}
+				Lcd.Clear ();
+				Lcd.Update ();
+				ProgramManager.StartProgram (program, inAot, 0, OnDone);
 			} 
 			else 
 			{
@@ -139,7 +138,7 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			Parent = parent;
 			Parent.SetFocus (this);
-			StartProgramInANewThread ();
+			StartProgram ();
 		}
 
 		#region IChildItem implementation
@@ -191,7 +190,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		private void OnDone()
 		{
-			if (useEscToStop)
+			if (!useEscToStop)
 			{
 				Parent.ResumeEvents (this);
 			}
@@ -207,16 +206,18 @@ namespace MonoBrickFirmware.Display.Menus
 
 	internal class AotQuestionDialog : ItemWithDialog<QuestionDialog>
 	{
-		public AotQuestionDialog(): base(new QuestionDialog ("Progran already compiled. Recompile?", "AOT recompile"),"")
+		private ProgramInformation programInformation;
+		public AotQuestionDialog(ProgramInformation programInformation): base(new QuestionDialog ("Progran already compiled. Recompile?", "AOT recompile"),"")
 		{
-
+			this.programInformation = programInformation;
 		}
 
 		public override void OnExit (QuestionDialog dialog)
 		{
 			if (dialog.IsPositiveSelected) 
 			{
-				//AOTCompileAndShowDialog(false);
+				var aotDialog = new AotCompileDialog(this.programInformation);
+				aotDialog.SetFocus (Parent);
 			} 
 		}
 	}

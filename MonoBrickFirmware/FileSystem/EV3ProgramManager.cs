@@ -10,38 +10,32 @@ namespace MonoBrickFirmware.FileSystem
 		private string ProgramPathSdCard = "/mnt/bootpar/apps";
 		private string ProgramPathEV3 = "/home/root/apps/";
 		private List<ProgramInformation> programList = new List<ProgramInformation>();
-
+		private Action onExit = null;
 		public void CreateSDCardFolder ()
 		{
 			if (!Directory.Exists (ProgramPathSdCard))
 				Directory.CreateDirectory (ProgramPathSdCard);
 		}
 
-		public int StartAndWaitForProgram(ProgramInformation program, bool runInAOT = false, int timeout = 0)
+		public bool StartProgram(ProgramInformation program, bool runInAOT = false, int timeout = 0, Action onExit = null)
 		{
-			if (!runInAOT) {
-				return ProcessHelper.RunAndWaitForProcess ("/usr/local/bin/mono", program.ExeFile, timeout);
-			} else {
-				return ProcessHelper.RunAndWaitForProcess ("/usr/local/bin/mono", "--full-aot " + program.ExeFile, timeout);
-			}
-		}
-
-		public void StartProgram(ProgramInformation program, bool runInAOT = false, int timeout = 0)
-		{
+			this.onExit = onExit;
 			if (!runInAOT)
 			{
-				ProcessHelper.StartProcess("/usr/local/bin/mono", program.ExeFile);
+				RunningProgram = program;
+				ProcessHelper.StartProcess("/usr/local/bin/mono", program.ExeFile, OnProgramCompleted);
 			} 
 			else 
 			{
-				ProcessHelper.StartProcess("/usr/local/bin/mono", "--full-aot " + program.ExeFile);
+				RunningProgram = program;
+				ProcessHelper.StartProcess("/usr/local/bin/mono", "--full-aot " + program.ExeFile, OnProgramCompleted);
 			}
+			return true;
 		}
-
 
 		public void StopProgram(ProgramInformation program)
 		{
-			if(program.IsRunning) 
+			if(RunningProgram != null && RunningProgram.Name == program.Name) 
 			{
 				ProcessHelper.KillProcess(program.Name);
 			}
@@ -50,7 +44,7 @@ namespace MonoBrickFirmware.FileSystem
 
 		public void DeleteProgram(ProgramInformation program)
 		{
-			if(program.IsRunning) 
+			if(RunningProgram != null && RunningProgram.Name == program.Name) 
 			{
 				ProcessHelper.KillProcess(program.Name);
 			}
@@ -61,7 +55,7 @@ namespace MonoBrickFirmware.FileSystem
 		public bool AOTCompileProgram(ProgramInformation program)
 		{
 			bool ok = true;
-			if (!program.IsRunning) 
+			if (ProgramManager.RunningProgram == null) 
 			{
 				foreach (var file in program.DllFiles) 
 				{
@@ -84,6 +78,17 @@ namespace MonoBrickFirmware.FileSystem
 		{
 			UpdateProgramList ();
 			return programList;
+		}
+
+		public ProgramInformation RunningProgram{ get; private set;}
+
+		private void OnProgramCompleted(int exitCode)
+		{
+			RunningProgram = null;
+			if (onExit != null) 
+			{
+				onExit();
+			}
 		}
 
 		private void UpdateProgramList ()

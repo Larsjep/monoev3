@@ -6,7 +6,7 @@ namespace MonoBrickFirmware.Native
 {
 	public class ProcessHelper
 	{
-		public static void StartProcess (string fileName, string arguments = "")
+		public static void StartProcess (string fileName, string arguments = "", Action<int> onExit = null)
 		{
 			Process proc = new System.Diagnostics.Process ();
 			proc.EnableRaisingEvents = false; 
@@ -19,6 +19,10 @@ namespace MonoBrickFirmware.Native
 			}
 			proc.StartInfo.FileName = fileName;
 			proc.StartInfo.Arguments = arguments;
+			if (onExit != null) 
+			{
+				proc.Exited += (object sender, EventArgs e) => onExit (proc.ExitCode);
+			}
 			proc.Start();
 		}
 		

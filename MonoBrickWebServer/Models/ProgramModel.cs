@@ -14,7 +14,15 @@ namespace MonoBrickWebServer.Models
 		public string Name{ get {return programInfo.Name;}}
 		public string ProgramLocation{ get {return LocationToString(programInfo.ProgramLocation);}}
 		public bool IsAOTCompiled {get{return programInfo.IsAOTCompiled;}}
-		public bool IsRunning{ get { return programInfo.IsRunning;} }
+		public bool IsRunning {
+			get {
+				ProgramInformation runningProgram = ProgramManager.RunningProgram;
+				if (runningProgram != null) {
+					return runningProgram.Name == programInfo.Name;
+				}
+				return false;
+			}
+		}
 
 		public void Start()
 		{
