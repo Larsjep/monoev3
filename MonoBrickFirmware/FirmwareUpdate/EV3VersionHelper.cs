@@ -67,11 +67,12 @@ namespace MonoBrickFirmware.FirmwareUpdate
 						if(command.Contains("MonoBrickFirmware.dll"))
 						{
 							dllPath = command;
-							break;
+							goto Done;
 						}	
 					}
 				}
 			}
+			FoundPath: 
 			return Assembly.LoadFrom(dllPath).GetName().Version.ToString();
 		}
 
