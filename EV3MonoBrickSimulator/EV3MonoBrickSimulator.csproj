@@ -69,7 +69,6 @@
     <Compile Include="Stub\ButtonsStub.cs" />
     <Compile Include="Stub\ProgramManagerStub.cs" />
     <Compile Include="Stub\WiFiStub.cs" />
-    <Compile Include="Stub\SettingsStub.cs" />
     <Compile Include="Stub\VersionHelperStub.cs" />
     <Compile Include="Settings\SimulatorSettings.cs" />
   </ItemGroup>

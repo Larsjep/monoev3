@@ -9,14 +9,21 @@ namespace MonoBrickFirmware.Settings
 	[XmlRoot("ConfigRoot")]
 	public class EV3FirmwareSettings : IFirmwareSettings
 	{
-		protected object readWriteLock = new object();
-		protected string SettingsFileName = "/mnt/bootpar/firmwareSettings.xml";
-		public EV3FirmwareSettings()
+		private readonly object readWriteLock = new object();
+		private readonly string settingsFileName;
+		public EV3FirmwareSettings() :this("/mnt/bootpar/firmwareSettings.xml")
 		{
+		
+		}
+
+		public EV3FirmwareSettings(string settingsFileName)
+		{
+			this.settingsFileName = settingsFileName;
 			GeneralSettings = new GeneralSettings();
 			WiFiSettings = new WiFiSettings();
 			SoundSettings = new SoundSettings();
 			WebServerSettings = new WebServerSettings();
+
 		}
 
 		[XmlElement("GeneralSettings")]
@@ -37,7 +44,7 @@ namespace MonoBrickFirmware.Settings
 				TextWriter textWriter = null;
 				try {
 					XmlSerializer serializer = XmlHelper.CreateSerializer(typeof(EV3FirmwareSettings));
-					textWriter = new StreamWriter (SettingsFileName);
+					textWriter = new StreamWriter (settingsFileName);
 					serializer.Serialize (textWriter, this);
 					textWriter.Close ();
 					return true;
@@ -60,7 +67,7 @@ namespace MonoBrickFirmware.Settings
 				TextReader textReader = null;
 				try{
 					XmlSerializer deserializer = XmlHelper.CreateSerializer(typeof(EV3FirmwareSettings));
-					textReader = new StreamReader (SettingsFileName);
+					textReader = new StreamReader (settingsFileName);
 					Object obj = deserializer.Deserialize (textReader);
 					var loadSettings = (EV3FirmwareSettings)obj;
 					textReader.Close ();

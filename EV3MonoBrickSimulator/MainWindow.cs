@@ -21,7 +21,7 @@ public partial class MainWindow: Gtk.Window
 	private static WiFiStub wiFiStub = new WiFiStub(); 
 	private static SimulatorSettings simulatorSettings = new SimulatorSettings();
 	private static ProgramManagerStub programManagerStub = new ProgramManagerStub();
-	private static SettingsStub settingsStub = new SettingsStub();
+	private static EV3FirmwareSettings firmwareSettings = new EV3FirmwareSettings ("FirmwareSettings.xml");
 	private static VersionHelperStub versionHelperStub = new VersionHelperStub();
 	private static FileSystemWatcher watcher = new FileSystemWatcher();
 	private static bool firmwareRunning = false;
@@ -35,7 +35,7 @@ public partial class MainWindow: Gtk.Window
 		Lcd.Instance = lcdStub;
 		Buttons.Instance = buttonsStub;
 		ProgramManager.Instance = programManagerStub;
-		FirmwareSettings.Instance = settingsStub;
+		FirmwareSettings.Instance = firmwareSettings;
 		WiFiDevice.Instance = wiFiStub;
 		VersionHelper.Instance = versionHelperStub;
 
