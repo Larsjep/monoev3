@@ -9,6 +9,9 @@ namespace StartupApp
 {
 	public class MainClass
 	{
+
+		private static FirmwareMenuContainer container = null;
+
 		public static void Main (string[] args)
 		{
 			Menu menu = new Menu ("Main Menu");
@@ -21,12 +24,12 @@ namespace StartupApp
 			menu.AddItem(new ItemWithBrickInfo ());
 			menu.AddItem(new ItemWithShutDown ());
 
-			var container = new FirmwareMenuContainer (menu);
+			container = new FirmwareMenuContainer (menu);
 
 			Bitmap monoLogo = Bitmap.FromResouce(Assembly.GetExecutingAssembly(), "monologo.bitmap");
 			Lcd.DrawBitmap (monoLogo, new Point ((int)(Lcd.Width - monoLogo.Width) / 2, 5));					
 			Rectangle textRect = new Rectangle (new Point (0, Lcd.Height - (int)Font.SmallFont.maxHeight - 2), new Point (Lcd.Width, Lcd.Height - 2));
-			
+
 			Lcd.WriteTextBox (Font.SmallFont, textRect, "Initializing...", true, Lcd.Alignment.Center);
 			Lcd.Update ();
 			WiFiDevice.TurnOff ();
@@ -53,14 +56,23 @@ namespace StartupApp
 						dialog.Show ();
 					} 
 				} 
-		        else 
-		        {
-						var dialog = new InfoDialog ("Failed to connect to WiFI Network", true);
-						dialog.Show ();
+				else 
+				{
+					var dialog = new InfoDialog ("Failed to connect to WiFI Network", true);
+					dialog.Show ();
 				}
 			}
-			container.Show ();
+			container.Show ();	
 		}
+
+		public static void Kill()
+		{
+			if (container != null) 
+			{
+				container.Stop ();
+			}
+		}
+
 	}
 	
 }

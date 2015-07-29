@@ -1,16 +1,22 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using Gdk;
 using Gtk;
+
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.FileSystem;
 using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Connections;
 using MonoBrickFirmware.Settings;
 using MonoBrickFirmware.FirmwareUpdate;
+
 using EV3MonoBrickSimulator.Stub;
 using EV3MonoBrickSimulator.Settings;
-using System.Threading;
-using Gdk;
-using System.IO;
+using EV3MonoBrickSimulator;
+using System.Runtime.Remoting;
+using System.Reflection;
 
 
 public partial class MainWindow: Gtk.Window
@@ -25,6 +31,8 @@ public partial class MainWindow: Gtk.Window
 	private static VersionHelperStub versionHelperStub = new VersionHelperStub();
 	private static FileSystemWatcher watcher = new FileSystemWatcher();
 	private static bool firmwareRunning = false;
+	private static StartupApp.MainClass starUpApp;
+
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build ();
@@ -53,8 +61,6 @@ public partial class MainWindow: Gtk.Window
 		watcher.Changed += OnSettingsFileChanged;
 		watcher.EnableRaisingEvents = true;
 
-		startupAppThread = new Thread(new ThreadStart(StartupAppExecution));
-		startupAppThread.IsBackground = true;
 		lcdDrawingarea.ExposeEvent += LcdExposed;
 	}
 
@@ -171,15 +177,35 @@ public partial class MainWindow: Gtk.Window
 		} 
 		else 
 		{
-			startupAppThread.Start ();	
+			StartFirmware ();
 		}
+	}
+
+	private static void StartFirmware()
+	{
+		startupAppThread = new Thread(new ThreadStart(StartupAppExecution));
+		startupAppThread.IsBackground = true;
+		startupAppThread.Start ();	
+
+	}
+
+	private static void KillFirmware()
+	{
+		var method = starUpApp.GetType ().GetMethod ("Kill");
+		method.Invoke(null,null);
+
 	}
 
 	private static void StartupAppExecution()
 	{
 		firmwareRunning = true;
 		Thread.Sleep (simulatorSettings.BootSettings.ExecutionDelay);
-		StartupApp.MainClass.Main (null);
+		string startUpAppPath = BootHelper.GetStartUpAppPath ();
+		starUpApp = (StartupApp.MainClass)AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(startUpAppPath, "StartupApp.MainClass");
+		string arg = null;
+		var method = starUpApp.GetType ().GetMethod ("Main");
+		method.Invoke(null,new object[]{arg});
+		firmwareRunning = false;
 	}
 
 
