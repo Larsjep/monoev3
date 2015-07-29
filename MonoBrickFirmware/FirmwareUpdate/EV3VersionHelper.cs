@@ -67,7 +67,7 @@ namespace MonoBrickFirmware.FirmwareUpdate
 						if(command.Contains("MonoBrickFirmware.dll"))
 						{
 							dllPath = command;
-							goto Done;
+							goto FoundPath;
 						}	
 					}
 				}
