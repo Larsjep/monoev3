@@ -10,7 +10,7 @@ namespace MonoBrickFirmware.FirmwareUpdate
 		private static string PackageName = "package.xml";
 		private static string StartUPAppName = "StartupApp.exe";
 		private static string FirmwareDllName = "MonoBrickFirmware.dll";
-		private static string XmlSerializersName = "StartupApp.XmlSerializers.dll";
+		private static string XmlSerializersName = "MonoBrickFirmware.XmlSerializers.dll";
 		private static string StartupFile = @"/home/root/lejos/bin/startup";
 		private static string BinDir = @"/usr/local/bin";
 		private static string RepositoryFile = BinDir + "/repository.txt";
