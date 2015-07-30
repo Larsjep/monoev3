@@ -72,6 +72,7 @@
     <Compile Include="Stub\VersionHelperStub.cs" />
     <Compile Include="Settings\SimulatorSettings.cs" />
     <Compile Include="BootHelper.cs" />
+    <Compile Include="Stub\SystemCallsStub.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -22,8 +22,7 @@ namespace MonoBrickFirmware.Display.Menus
 				Lcd.Update();
 
 				Buttons.LedPattern(2);
-				ProcessHelper.RunAndWaitForProcess("/sbin/shutdown", "-h now");
-				Thread.Sleep(120000);
+				SystemCalls.ShutDown ();
 				Parent.RemoveFocus (this);
 			} 
 			else 

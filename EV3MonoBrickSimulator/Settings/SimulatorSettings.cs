@@ -129,10 +129,20 @@ namespace EV3MonoBrickSimulator.Settings
 		[XmlElement("ExecutionDelay")]
 		private int executionDelay = 4000;
 
+		[XmlElement("ShutdownDelay")]
+		private int shutdownDelay = 5000;
+
+
 		public int ExecutionDelay {
 			get{return executionDelay; }
 			set { executionDelay = value; }
 		}
+
+		public int ShutdownDelay {
+			get{return shutdownDelay; }
+			set { shutdownDelay = value; }
+		}
+
 	}
 
 	public class ProgramManagerSettings

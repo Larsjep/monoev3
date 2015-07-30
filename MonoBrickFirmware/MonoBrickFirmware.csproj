@@ -143,6 +143,9 @@
     <Compile Include="FirmwareUpdate\IVersionHelper.cs" />
     <Compile Include="FirmwareUpdate\VersionInfo.cs" />
     <Compile Include="FirmwareUpdate\EV3VersionHelper.cs" />
+    <Compile Include="Native\ISystemCalls.cs" />
+    <Compile Include="Native\EV3SystemCalls.cs" />
+    <Compile Include="Native\SystemCalls.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -11,11 +11,11 @@ using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Connections;
 using MonoBrickFirmware.Settings;
 using MonoBrickFirmware.FirmwareUpdate;
+using MonoBrickFirmware.Native;
 
 using EV3MonoBrickSimulator.Stub;
 using EV3MonoBrickSimulator.Settings;
 using EV3MonoBrickSimulator;
-using System.Runtime.Remoting;
 using System.Reflection;
 
 
@@ -32,7 +32,7 @@ public partial class MainWindow: Gtk.Window
 	private static FileSystemWatcher watcher = new FileSystemWatcher();
 	private static bool firmwareRunning = false;
 	private static StartupApp.MainClass starUpApp;
-
+	private static SystemCallsStub systemCallsStub = null;
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build ();
@@ -40,13 +40,16 @@ public partial class MainWindow: Gtk.Window
 
 		//Set stubs
 		lcdStub = new LcdStub (lcdDrawingarea);
+		systemCallsStub = new SystemCallsStub ();
+		systemCallsStub.OnShutDown += OnShutDown;
 		Lcd.Instance = lcdStub;
+
 		Buttons.Instance = buttonsStub;
 		ProgramManager.Instance = programManagerStub;
 		FirmwareSettings.Instance = firmwareSettings;
 		WiFiDevice.Instance = wiFiStub;
 		VersionHelper.Instance = versionHelperStub;
-
+		SystemCalls.Instance = systemCallsStub;
 
 		//Load and apply simulator settings
 		simulatorSettings = new SimulatorSettings ();
@@ -62,6 +65,12 @@ public partial class MainWindow: Gtk.Window
 		watcher.EnableRaisingEvents = true;
 
 		lcdDrawingarea.ExposeEvent += LcdExposed;
+	}
+
+	void OnShutDown ()
+	{
+		KillFirmware ();
+		StartFirmware ();
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
@@ -166,6 +175,8 @@ public partial class MainWindow: Gtk.Window
 		versionHelperStub.AddInVersion = simulatorSettings.VersionSettings.AddInVersion;
 
 		programManagerStub.AOTCompileTimeMs = simulatorSettings.ProgramManagerSettings.AotCompileTimeMs;
+
+		systemCallsStub.ShutDownTimeMs = simulatorSettings.BootSettings.ShutdownDelay;
 
 	}
 

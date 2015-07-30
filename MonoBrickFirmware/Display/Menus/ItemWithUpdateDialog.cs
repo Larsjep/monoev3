@@ -120,8 +120,7 @@ namespace MonoBrickFirmware.Display.Menus
 					rebootDialog.Show ();
 					Thread.Sleep (1000);
 				}
-				ProcessHelper.RunAndWaitForProcess ("/sbin/shutdown", "-h now");
-				Thread.Sleep (120000);
+				SystemCalls.ShutDown ();
 				var whyAreYouHereDialog = new InfoDialog ("Cut the power", false, "Reboot failed");
 				whyAreYouHereDialog.Show ();
 				new ManualResetEvent (false).WaitOne ();
