@@ -2,6 +2,8 @@
 using System.Net.NetworkInformation;
 using System.Linq;
 using System;
+using System.Net;
+using System.Net.Sockets;
 
 namespace EV3MonoBrickSimulator.Stub
 {
@@ -48,13 +50,18 @@ namespace EV3MonoBrickSimulator.Stub
 		public string GetIpAddress ()
 		{
 			if (IsLinkUp()) {
-				NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces ();
-				foreach (var ni in interfaces) {
-					foreach (var addr in ni.GetIPProperties().UnicastAddresses) {
-						if (addr.Address.ToString () != "127.0.0.1")
-							return addr.Address.ToString ();					
+				IPHostEntry host;
+				string localIP = "";
+				host = Dns.GetHostEntry(Dns.GetHostName());
+				foreach (IPAddress ip in host.AddressList)
+				{
+					if (ip.AddressFamily == AddressFamily.InterNetwork)
+					{
+						localIP = ip.ToString();
+						break;
 					}
 				}
+				return localIP;
 			}
 			return "Unknown";
 		}

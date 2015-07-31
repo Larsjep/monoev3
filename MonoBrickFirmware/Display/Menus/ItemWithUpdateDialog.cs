@@ -4,6 +4,7 @@ using MonoBrickFirmware.FirmwareUpdate;
 using System.Collections.Generic;
 using MonoBrickFirmware.Native;
 using System.Threading;
+using MonoBrickFirmware.UserInput;
 
 
 namespace MonoBrickFirmware.Display.Menus
@@ -35,7 +36,7 @@ namespace MonoBrickFirmware.Display.Menus
 			else {
 				if (newFirmwareApp)
 				{
-					UpdateQuestionDialog updateQuestion = new UpdateQuestionDialog ();
+					UpdateQuestionDialog updateQuestion = new UpdateQuestionDialog (this);
 					updateQuestion.SetFocus (this);
 				} 
 				else 
@@ -62,8 +63,8 @@ namespace MonoBrickFirmware.Display.Menus
 			VersionInfo versionInfo = null;
 			try 
 			{
-				versionInfo = VersionHelper.AvailableVersions ();
-				var currentVersion = VersionHelper.InstalledVersion();
+				versionInfo = UpdateHelper.AvailableVersions();
+				var currentVersion = UpdateHelper.InstalledVersion();
 				newImage = versionInfo.Image != currentVersion.Image;
 				newFirmwareApp = versionInfo.Firmware != currentVersion.Firmware;
 				if (currentVersion.AddIn != null)
@@ -114,12 +115,10 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			if (dialog.ExecutedOk) {
 				Parent.SuspendEvents (this);
-				for (int seconds = 10; seconds > 0; seconds--) 
-				{
-					var rebootDialog = new InfoDialog ("Update completed. Rebooting in  " + seconds, false);
-					rebootDialog.Show ();
-					Thread.Sleep (1000);
-				}
+				Lcd.Clear();
+				Lcd.WriteText(Font.MediumFont, new Point(0,0), "Shutting down...", true);
+				Lcd.Update();
+				Buttons.LedPattern(2);
 				SystemCalls.ShutDown ();
 				var whyAreYouHereDialog = new InfoDialog ("Cut the power", false, "Reboot failed");
 				whyAreYouHereDialog.Show ();
@@ -132,22 +131,19 @@ namespace MonoBrickFirmware.Display.Menus
 
 	internal class UpdateQuestionDialog : ItemWithDialog<QuestionDialog>
 	{
-		public UpdateQuestionDialog() : base(new QuestionDialog ("New firmware available. Update?", "New Fiwmware"))
+		private IParentItem parent;
+		private UpdateProgressDialog updateDialog = new UpdateProgressDialog();
+		public UpdateQuestionDialog(IParentItem parent) : base(new QuestionDialog ("New firmware available. Update?", "New Fiwmware"))
 		{
-		
+			this.parent = parent;	
 		}
 
 		public override void OnExit (QuestionDialog dialog)
 		{
 			if (dialog.IsPositiveSelected) 
 			{
-			
+				updateDialog.SetFocus (parent);
 			} 
-
-			else 
-			{
-				Parent.RemoveFocus (this);
-			}
 		}
 
 	}

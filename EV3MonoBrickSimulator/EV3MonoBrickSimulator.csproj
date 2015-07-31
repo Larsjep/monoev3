@@ -69,10 +69,9 @@
     <Compile Include="Stub\ButtonsStub.cs" />
     <Compile Include="Stub\ProgramManagerStub.cs" />
     <Compile Include="Stub\WiFiStub.cs" />
-    <Compile Include="Stub\VersionHelperStub.cs" />
     <Compile Include="Settings\SimulatorSettings.cs" />
-    <Compile Include="BootHelper.cs" />
     <Compile Include="Stub\SystemCallsStub.cs" />
+    <Compile Include="Stub\UpdateHelperStub.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -214,9 +213,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Images\background.bmp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Stub\StartUp.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -128,7 +128,6 @@
     <Compile Include="Display\Menus\ItemWithUpdateDialog.cs" />
     <Compile Include="FirmwareUpdate\InstallPackage.cs" />
     <Compile Include="FirmwareUpdate\UpdateHelper.cs" />
-    <Compile Include="FirmwareUpdate\VersionHelper.cs" />
     <Compile Include="Display\Menus\ItemWithBrickInfo.cs" />
     <Compile Include="Connections\IWiFiDevice.cs" />
     <Compile Include="Connections\EV3WiFiDevice.cs" />
@@ -140,12 +139,12 @@
     <Compile Include="FileSystem\EV3ProgramManager.cs" />
     <Compile Include="Settings\IFirmwareSettings.cs" />
     <Compile Include="Settings\EV3FirmwareSettings.cs" />
-    <Compile Include="FirmwareUpdate\IVersionHelper.cs" />
     <Compile Include="FirmwareUpdate\VersionInfo.cs" />
-    <Compile Include="FirmwareUpdate\EV3VersionHelper.cs" />
     <Compile Include="Native\ISystemCalls.cs" />
     <Compile Include="Native\EV3SystemCalls.cs" />
     <Compile Include="Native\SystemCalls.cs" />
+    <Compile Include="FirmwareUpdate\IUpdateHelper.cs" />
+    <Compile Include="FirmwareUpdate\EV3UpdateHelper.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -126,6 +126,9 @@ namespace EV3MonoBrickSimulator.Settings
 
 	public class BootSettings
 	{
+		[XmlElement("StartUpDir")]
+		private string startUpDir = Directory.GetCurrentDirectory();
+
 		[XmlElement("ExecutionDelay")]
 		private int executionDelay = 4000;
 
@@ -143,6 +146,11 @@ namespace EV3MonoBrickSimulator.Settings
 			set { shutdownDelay = value; }
 		}
 
+		public string StartUpDir
+		{
+			get{return startUpDir;}
+			set{startUpDir = value;}
+		}
 	}
 
 	public class ProgramManagerSettings

@@ -28,7 +28,7 @@ public partial class MainWindow: Gtk.Window
 	private static SimulatorSettings simulatorSettings = new SimulatorSettings();
 	private static ProgramManagerStub programManagerStub = new ProgramManagerStub();
 	private static EV3FirmwareSettings firmwareSettings = new EV3FirmwareSettings ("FirmwareSettings.xml");
-	private static VersionHelperStub versionHelperStub = new VersionHelperStub();
+	private static UpdateHelperStub updateHelperStub = new UpdateHelperStub();
 	private static FileSystemWatcher watcher = new FileSystemWatcher();
 	private static bool firmwareRunning = false;
 	private static StartupApp.MainClass starUpApp;
@@ -48,7 +48,7 @@ public partial class MainWindow: Gtk.Window
 		ProgramManager.Instance = programManagerStub;
 		FirmwareSettings.Instance = firmwareSettings;
 		WiFiDevice.Instance = wiFiStub;
-		VersionHelper.Instance = versionHelperStub;
+		UpdateHelper.Instance = updateHelperStub;
 		SystemCalls.Instance = systemCallsStub;
 
 		//Load and apply simulator settings
@@ -170,9 +170,9 @@ public partial class MainWindow: Gtk.Window
 		wiFiStub.TurnOnTimeMs = simulatorSettings.WiFiSettings.TurnOnTimeMs;
 		wiFiStub.TurnOffTimeMs = simulatorSettings.WiFiSettings.TurnOffTimeMs;
 
-		versionHelperStub.ImageVersion = simulatorSettings.VersionSettings.ImageVersion;
-		versionHelperStub.Repository = simulatorSettings.VersionSettings.Repository;
-		versionHelperStub.AddInVersion = simulatorSettings.VersionSettings.AddInVersion;
+		updateHelperStub.ImageVersion = simulatorSettings.VersionSettings.ImageVersion;
+		updateHelperStub.Repository = simulatorSettings.VersionSettings.Repository;
+		updateHelperStub.AddInVersion = simulatorSettings.VersionSettings.AddInVersion;
 
 		programManagerStub.AOTCompileTimeMs = simulatorSettings.ProgramManagerSettings.AotCompileTimeMs;
 
@@ -211,7 +211,13 @@ public partial class MainWindow: Gtk.Window
 	{
 		firmwareRunning = true;
 		Thread.Sleep (simulatorSettings.BootSettings.ExecutionDelay);
-		string startUpAppPath = BootHelper.GetStartUpAppPath ();
+		string startUpAppPath = System.IO.Path.Combine (simulatorSettings.BootSettings.StartUpDir, "StartupApp.exe");
+		if(!Directory.Exists(simulatorSettings.BootSettings.StartUpDir))
+		{
+			startUpAppPath = System.IO.Path.Combine (Directory.GetCurrentDirectory(), "StartupApp.exe");
+			simulatorSettings.BootSettings.StartUpDir = Directory.GetCurrentDirectory ();
+			simulatorSettings.Save ();
+		}
 		starUpApp = (StartupApp.MainClass)AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(startUpAppPath, "StartupApp.MainClass");
 		string arg = null;
 		var method = starUpApp.GetType ().GetMethod ("Main");
