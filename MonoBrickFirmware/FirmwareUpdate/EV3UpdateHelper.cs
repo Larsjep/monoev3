@@ -17,7 +17,6 @@ namespace MonoBrickFirmware.FirmwareUpdate
 		private  string StartUPAppName = "StartupApp.exe";
 		private  string FirmwareDllName = "MonoBrickFirmware.dll";
 		private  string XmlSerializersName = "MonoBrickFirmware.XmlSerializers.dll";
-		private  string RepositoryFile = @"/usr/local/bin/repository.txt";
 		private  string BinDir = @"/usr/local/bin";
 		private string availableFirmware = null;
 		private string availableImage = null;
