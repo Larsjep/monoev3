@@ -132,8 +132,8 @@ namespace EV3MonoBrickSimulator.Settings
 		[XmlElement("ExecutionDelay")]
 		private int executionDelay = 4000;
 
-		[XmlElement("ShutdownDelay")]
-		private int shutdownDelay = 5000;
+		[XmlElement("TurnOffDelay")]
+		private int turnOffDelay = 5000;
 
 
 		public int ExecutionDelay {
@@ -141,9 +141,9 @@ namespace EV3MonoBrickSimulator.Settings
 			set { executionDelay = value; }
 		}
 
-		public int ShutdownDelay {
-			get{return shutdownDelay; }
-			set { shutdownDelay = value; }
+		public int TurnOffDelay {
+			get{return turnOffDelay; }
+			set { turnOffDelay = value; }
 		}
 
 		public string StartUpDir

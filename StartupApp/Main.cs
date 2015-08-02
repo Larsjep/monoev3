@@ -22,7 +22,7 @@ namespace StartupApp
 			menu.AddItem(new ItemWithUpdateDialog ());
 			//menu.AddItem(new ItemWithWebserver ());
 			menu.AddItem(new ItemWithBrickInfo ());
-			menu.AddItem(new ItemWithShutDown ());
+			menu.AddItem(new ItemWithTurnOff ());
 
 			container = new FirmwareMenuContainer (menu);
 

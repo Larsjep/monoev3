@@ -11,7 +11,7 @@ using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Connections;
 using MonoBrickFirmware.Settings;
 using MonoBrickFirmware.FirmwareUpdate;
-using MonoBrickFirmware.Native;
+using MonoBrickFirmware.Device;
 
 using EV3MonoBrickSimulator.Stub;
 using EV3MonoBrickSimulator.Settings;
@@ -32,7 +32,7 @@ public partial class MainWindow: Gtk.Window
 	private static FileSystemWatcher watcher = new FileSystemWatcher();
 	private static bool firmwareRunning = false;
 	private static StartupApp.MainClass starUpApp;
-	private static SystemCallsStub systemCallsStub = null;
+	private static BrickStub brickStub = null;
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build ();
@@ -40,8 +40,8 @@ public partial class MainWindow: Gtk.Window
 
 		//Set stubs
 		lcdStub = new LcdStub (lcdDrawingarea);
-		systemCallsStub = new SystemCallsStub ();
-		systemCallsStub.OnShutDown += OnShutDown;
+		brickStub = new BrickStub ();
+		brickStub.OnShutDown += OnShutDown;
 		Lcd.Instance = lcdStub;
 
 		Buttons.Instance = buttonsStub;
@@ -49,7 +49,7 @@ public partial class MainWindow: Gtk.Window
 		FirmwareSettings.Instance = firmwareSettings;
 		WiFiDevice.Instance = wiFiStub;
 		UpdateHelper.Instance = updateHelperStub;
-		SystemCalls.Instance = systemCallsStub;
+		Brick.Instance = brickStub;
 
 		//Load and apply simulator settings
 		simulatorSettings = new SimulatorSettings ();
@@ -176,7 +176,7 @@ public partial class MainWindow: Gtk.Window
 
 		programManagerStub.AOTCompileTimeMs = simulatorSettings.ProgramManagerSettings.AotCompileTimeMs;
 
-		systemCallsStub.ShutDownTimeMs = simulatorSettings.BootSettings.ShutdownDelay;
+		brickStub.TurnOffTimeMs = simulatorSettings.BootSettings.TurnOffDelay;
 
 	}
 

@@ -1,14 +1,12 @@
-﻿using System;
-using MonoBrickFirmware.Display.Dialogs;
+﻿using MonoBrickFirmware.Display.Dialogs;
 using MonoBrickFirmware.UserInput;
-using MonoBrickFirmware.Native;
-using System.Threading;
+using MonoBrickFirmware.Device;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class ItemWithShutDown : ItemWithDialog<QuestionDialog>
+	public class ItemWithTurnOff : ItemWithDialog<QuestionDialog>
 	{
-		public ItemWithShutDown () : base (new QuestionDialog ("Are you sure?", "Shutdown EV3"), "Shutdown")
+		public ItemWithTurnOff () : base (new QuestionDialog ("Are you sure?", "Shutdown EV3"), "Shutdown")
 		{
 			
 		}
@@ -22,7 +20,7 @@ namespace MonoBrickFirmware.Display.Menus
 				Lcd.Update();
 
 				Buttons.LedPattern(2);
-				SystemCalls.ShutDown ();
+				Brick.TurnOff ();
 				Parent.RemoveFocus (this);
 			} 
 			else 
