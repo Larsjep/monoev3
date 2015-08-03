@@ -32,6 +32,8 @@
         <Command type="AfterBuild" command="sgen /force StartupApp.exe" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
