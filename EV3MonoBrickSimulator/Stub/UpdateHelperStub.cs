@@ -9,6 +9,11 @@ namespace EV3MonoBrickSimulator.Stub
 {
 	internal class UpdateHelperStub : EV3UpdateHelper
 	{
+		public UpdateHelperStub()
+		{
+			BinDir = Directory.GetCurrentDirectory ();
+		}
+
 		public string ImageVersion{ get; set;}
 
 		public string AddInVersion{ get; set;}
