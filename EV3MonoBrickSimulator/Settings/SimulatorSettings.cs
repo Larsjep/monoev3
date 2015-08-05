@@ -7,7 +7,7 @@ namespace EV3MonoBrickSimulator.Settings
 	[XmlRoot("ConfigRoot")]
 	public class SimulatorSettings
 	{
-		public string SettingsFileName{ get; private set;}
+		public string SettingsFileName{ get; set;}
 		public SimulatorSettings()
 		{
 			SettingsFileName = "SimulatorSettings.xml";
@@ -65,9 +65,10 @@ namespace EV3MonoBrickSimulator.Settings
 				BootSettings = loadSettings.BootSettings;
 				ProgramManagerSettings = loadSettings.ProgramManagerSettings;
 			}
-			catch
+			catch(Exception e)
 			{
-				ok = false;
+				Console.WriteLine(e.Message);
+        ok = false;
 			}
 			if(textReader!= null)
 				textReader.Close();

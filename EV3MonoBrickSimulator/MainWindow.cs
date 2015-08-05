@@ -31,7 +31,7 @@ public partial class MainWindow: Gtk.Window
 	private static UpdateHelperStub updateHelperStub = new UpdateHelperStub();
 	private static FileSystemWatcher watcher = new FileSystemWatcher();
 	private static bool firmwareRunning = false;
-	private static StartupApp.MainClass starUpApp;
+  private static MethodInfo killMethod;
 	private static BrickStub brickStub = null;
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
@@ -59,7 +59,7 @@ public partial class MainWindow: Gtk.Window
 
 		//Setup settings changed handler
 		watcher.Path = Directory.GetCurrentDirectory();
-		watcher.NotifyFilter = NotifyFilters.LastAccess;
+		watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite| NotifyFilters.CreationTime;
 		watcher.Filter = simulatorSettings.SettingsFileName;
 		watcher.Changed += OnSettingsFileChanged;
 		watcher.EnableRaisingEvents = true;
@@ -202,9 +202,7 @@ public partial class MainWindow: Gtk.Window
 
 	private static void KillFirmware()
 	{
-		var method = starUpApp.GetType ().GetMethod ("Kill");
-		method.Invoke(null,null);
-
+	  killMethod.Invoke(null, null);
 	}
 
 	private static void StartupAppExecution()
@@ -218,11 +216,29 @@ public partial class MainWindow: Gtk.Window
 			simulatorSettings.BootSettings.StartUpDir = Directory.GetCurrentDirectory ();
 			simulatorSettings.Save ();
 		}
-		starUpApp = (StartupApp.MainClass)AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(startUpAppPath, "StartupApp.MainClass");
+    
+    var test = AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(System.IO.Path.Combine (Directory.GetCurrentDirectory(), "Test.exe"), "StartupApp.MainClass");
 		string arg = null;
-		var method = starUpApp.GetType ().GetMethod ("Main");
+	  var methods = test.GetType().GetMethods();
+	  MethodInfo mainMethod = null; 
+    foreach (var method in methods)
+	  {
+	    if (method.Name == "Main")
+	    {
+	      mainMethod = method;
+	    }
+	    if (method.Name == "Kill")
+	    {
+	      killMethod = method;
+	    }
+	  }
+    mainMethod.Invoke(null, new object[] { arg });
+    firmwareRunning = false;
+
+
+    /*starUpApp.GetType ().GetMethod ("Main");
 		method.Invoke(null,new object[]{arg});
-		firmwareRunning = false;
+		firmwareRunning = false;*/
 	}
 
 
