@@ -7,8 +7,6 @@ namespace EV3MonoBrickSimulator
 	{
 		public event Action OnShutDown;
 
-		public int TurnOffTimeMs{ get; set;}
-
 		public float BatteryCurrent ()
 		{
 			return 0.75f;
@@ -21,7 +19,6 @@ namespace EV3MonoBrickSimulator
 
 		public void TurnOff ()
 		{
-			System.Threading.Thread.Sleep (TurnOffTimeMs);
 			OnShutDown ();
 		}
 

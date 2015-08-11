@@ -31,7 +31,7 @@ public partial class MainWindow: Gtk.Window
 	private static UpdateHelperStub updateHelperStub = new UpdateHelperStub();
 	private static FileSystemWatcher watcher = new FileSystemWatcher();
 	private static bool firmwareRunning = false;
-  private static MethodInfo killMethod;
+  	private static MethodInfo killMethod;
 	private static BrickStub brickStub = null;
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
@@ -69,8 +69,9 @@ public partial class MainWindow: Gtk.Window
 
 	void OnShutDown ()
 	{
-		KillFirmware ();
-		StartFirmware ();
+		killMethod.Invoke(null, null);
+		Thread.Sleep (simulatorSettings.BootSettings.TurnOffDelay);
+		Application.Quit();
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
@@ -175,9 +176,6 @@ public partial class MainWindow: Gtk.Window
 		updateHelperStub.AddInVersion = simulatorSettings.VersionSettings.AddInVersion;
 
 		programManagerStub.AOTCompileTimeMs = simulatorSettings.ProgramManagerSettings.AotCompileTimeMs;
-
-		brickStub.TurnOffTimeMs = simulatorSettings.BootSettings.TurnOffDelay;
-
 	}
 
 	private static void LcdExposed(object o, ExposeEventArgs args)
@@ -217,29 +215,24 @@ public partial class MainWindow: Gtk.Window
 			simulatorSettings.Save ();
 		}
     
-    var test = AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(System.IO.Path.Combine (Directory.GetCurrentDirectory(), "Test.exe"), "StartupApp.MainClass");
+		var test = AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(startUpAppPath, "StartupApp.MainClass");
 		string arg = null;
-	  var methods = test.GetType().GetMethods();
-	  MethodInfo mainMethod = null; 
-    foreach (var method in methods)
-	  {
-	    if (method.Name == "Main")
-	    {
-	      mainMethod = method;
-	    }
-	    if (method.Name == "Kill")
-	    {
-	      killMethod = method;
-	    }
-	  }
-    mainMethod.Invoke(null, new object[] { arg });
-    firmwareRunning = false;
-
-
-    /*starUpApp.GetType ().GetMethod ("Main");
-		method.Invoke(null,new object[]{arg});
-		firmwareRunning = false;*/
-	}
+	  	var methods = test.GetType().GetMethods();
+	  	MethodInfo mainMethod = null; 
+    	foreach (var method in methods)
+	  	{
+		    if (method.Name == "Main")
+		    {
+		      mainMethod = method;
+		    }
+		    if (method.Name == "Kill")
+		    {
+		      killMethod = method;
+		    }
+	  	}
+    	mainMethod.Invoke(null, new object[] { arg });
+    	firmwareRunning = false;
+ 	}
 
 
 }
