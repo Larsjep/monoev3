@@ -6,7 +6,6 @@ namespace MonoBrickFirmware.Display
 {
 	internal class EV3Lcd : ILcd
 	{
-
 		private const int height = 128;
 		private const int width = 178;
 		private static readonly int bytesPrLine = ((width+31)/32)*4;
@@ -91,6 +90,7 @@ namespace MonoBrickFirmware.Display
 
 		public virtual void SaveScreen ()
 		{
+
 			Array.Copy(displayBuf,savedScreen, bufferSize);
 		}
 

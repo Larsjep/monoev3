@@ -70,8 +70,8 @@
     <Compile Include="Stub\ProgramManagerStub.cs" />
     <Compile Include="Stub\WiFiStub.cs" />
     <Compile Include="Settings\SimulatorSettings.cs" />
-    <Compile Include="Stub\SystemCallsStub.cs" />
     <Compile Include="Stub\UpdateHelperStub.cs" />
+    <Compile Include="Stub\BrickStub.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

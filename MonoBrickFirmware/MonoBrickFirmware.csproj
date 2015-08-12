@@ -34,7 +34,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
   <ItemGroup>
-    <Compile Include="Management\Battery.cs" />
     <Compile Include="Native\Libc.cs" />
     <Compile Include="Tools\QueueThread.cs" />
     <Compile Include="Display\Console.cs" />
@@ -124,7 +123,6 @@
     <Compile Include="Settings\FirmwareSettings.cs" />
     <Compile Include="Display\Menus\ItemWithCheckBoxStep.cs" />
     <Compile Include="Display\Menus\ItemWithWiFiOptions.cs" />
-    <Compile Include="Display\Menus\ItemWithShutDown.cs" />
     <Compile Include="Display\Menus\ItemWithUpdateDialog.cs" />
     <Compile Include="FirmwareUpdate\InstallPackage.cs" />
     <Compile Include="FirmwareUpdate\UpdateHelper.cs" />
@@ -140,11 +138,13 @@
     <Compile Include="Settings\IFirmwareSettings.cs" />
     <Compile Include="Settings\EV3FirmwareSettings.cs" />
     <Compile Include="FirmwareUpdate\VersionInfo.cs" />
-    <Compile Include="Native\ISystemCalls.cs" />
-    <Compile Include="Native\EV3SystemCalls.cs" />
-    <Compile Include="Native\SystemCalls.cs" />
     <Compile Include="FirmwareUpdate\IUpdateHelper.cs" />
     <Compile Include="FirmwareUpdate\EV3UpdateHelper.cs" />
+    <Compile Include="Device\IBrick.cs" />
+    <Compile Include="Device\Brick.cs" />
+    <Compile Include="Device\EV3Brick.cs" />
+    <Compile Include="Native\GacHelper.cs" />
+    <Compile Include="Display\Menus\ItemWithTurnOff.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -169,5 +169,6 @@
     <Folder Include="FileSystem\" />
     <Folder Include="Settings\" />
     <Folder Include="FirmwareUpdate\" />
+    <Folder Include="Device\" />
   </ItemGroup>
 </Project>

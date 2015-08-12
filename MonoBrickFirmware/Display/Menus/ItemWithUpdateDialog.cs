@@ -2,7 +2,7 @@
 using MonoBrickFirmware.Display.Dialogs;
 using MonoBrickFirmware.FirmwareUpdate;
 using System.Collections.Generic;
-using MonoBrickFirmware.Native;
+using MonoBrickFirmware.Device;
 using System.Threading;
 using MonoBrickFirmware.UserInput;
 
@@ -119,7 +119,7 @@ namespace MonoBrickFirmware.Display.Menus
 				Lcd.WriteText(Font.MediumFont, new Point(0,0), "Shutting down...", true);
 				Lcd.Update();
 				Buttons.LedPattern(2);
-				SystemCalls.ShutDown ();
+				Brick.TurnOff ();
 				var whyAreYouHereDialog = new InfoDialog ("Cut the power", false, "Reboot failed");
 				whyAreYouHereDialog.Show ();
 				new ManualResetEvent (false).WaitOne ();

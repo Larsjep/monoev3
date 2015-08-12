@@ -4,11 +4,17 @@ using System.Reflection;
 using System.IO;
 using MonoBrickFirmware.Extensions;
 using EV3MonoBrickSimulator.Settings;
+using System.Xml;
 
 namespace EV3MonoBrickSimulator.Stub
 {
 	internal class UpdateHelperStub : EV3UpdateHelper
 	{
+		public UpdateHelperStub()
+		{
+			BinDir = Directory.GetCurrentDirectory ();
+		}
+
 		public string ImageVersion{ get; set;}
 
 		public string AddInVersion{ get; set;}
@@ -17,6 +23,14 @@ namespace EV3MonoBrickSimulator.Stub
 
 		public override bool UpdateBootFile ()
 		{
+			/* Not yet used need some building 
+			XmlDocument doc = new XmlDocument();
+			doc.Load("EV3MonoBrickSimulator.exe.config");
+			XmlNode node = doc.SelectSingleNode ("configuration/runtime").FirstChild.FirstChild;
+			node.Attributes [0].Value = GetAvailableFirmware ();
+			doc.Save ("EV3MonoBrickSimulator.exe.config");
+			*/
+
 			string newDir = Path.Combine (Directory.GetCurrentDirectory(), GetAvailableFirmware()); 
 			SimulatorSettings settings = new SimulatorSettings ();
 			if(settings.Load ())

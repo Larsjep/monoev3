@@ -137,10 +137,10 @@ namespace EV3MonoBrickSimulator.Stub
 		private class LcdDisplay
 		{
 
-			private Pixbuf backGroundPixBuffer = new Pixbuf("background.bmp");
-			private Pixbuf lcdBuffer = new Pixbuf("background.bmp");
+			private Pixbuf backGroundPixBuffer = new Pixbuf(System.IO.Path.Combine("Images","background.bmp"));
+			private Pixbuf lcdBuffer = new Pixbuf(System.IO.Path.Combine("Images","background.bmp"));
 			private DrawingArea drawingArea;
-			private Pixbuf savedScreenBuffer = new Pixbuf("background.bmp");
+			private Pixbuf savedScreenBuffer = new Pixbuf(System.IO.Path.Combine("Images","background.bmp"));
 			private Gdk.GC gc;
 			private int rowSize;
 			private const int Width = 178;
@@ -161,7 +161,7 @@ namespace EV3MonoBrickSimulator.Stub
 
 			public void ClearBuffer()
 			{
-				lcdBuffer = new Pixbuf ("background.bmp");
+				lcdBuffer = new Pixbuf (System.IO.Path.Combine("Images","background.bmp"));
 			}
 
 			public bool IsPixelSet(int x, int y)

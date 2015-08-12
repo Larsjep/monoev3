@@ -7,7 +7,7 @@ namespace EV3MonoBrickSimulator.Settings
 	[XmlRoot("ConfigRoot")]
 	public class SimulatorSettings
 	{
-		public string SettingsFileName{ get; private set;}
+		public string SettingsFileName{ get; set;}
 		public SimulatorSettings()
 		{
 			SettingsFileName = "SimulatorSettings.xml";
@@ -65,9 +65,10 @@ namespace EV3MonoBrickSimulator.Settings
 				BootSettings = loadSettings.BootSettings;
 				ProgramManagerSettings = loadSettings.ProgramManagerSettings;
 			}
-			catch
+			catch(Exception e)
 			{
-				ok = false;
+				Console.WriteLine(e.Message);
+        ok = false;
 			}
 			if(textReader!= null)
 				textReader.Close();
@@ -132,8 +133,8 @@ namespace EV3MonoBrickSimulator.Settings
 		[XmlElement("ExecutionDelay")]
 		private int executionDelay = 4000;
 
-		[XmlElement("ShutdownDelay")]
-		private int shutdownDelay = 5000;
+		[XmlElement("TurnOffDelay")]
+		private int turnOffDelay = 5000;
 
 
 		public int ExecutionDelay {
@@ -141,9 +142,9 @@ namespace EV3MonoBrickSimulator.Settings
 			set { executionDelay = value; }
 		}
 
-		public int ShutdownDelay {
-			get{return shutdownDelay; }
-			set { shutdownDelay = value; }
+		public int TurnOffDelay {
+			get{return turnOffDelay; }
+			set { turnOffDelay = value; }
 		}
 
 		public string StartUpDir

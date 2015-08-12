@@ -11,7 +11,7 @@ using MonoBrickFirmware.UserInput;
 using MonoBrickFirmware.Connections;
 using MonoBrickFirmware.Settings;
 using MonoBrickFirmware.FirmwareUpdate;
-using MonoBrickFirmware.Native;
+using MonoBrickFirmware.Device;
 
 using EV3MonoBrickSimulator.Stub;
 using EV3MonoBrickSimulator.Settings;
@@ -31,8 +31,8 @@ public partial class MainWindow: Gtk.Window
 	private static UpdateHelperStub updateHelperStub = new UpdateHelperStub();
 	private static FileSystemWatcher watcher = new FileSystemWatcher();
 	private static bool firmwareRunning = false;
-	private static StartupApp.MainClass starUpApp;
-	private static SystemCallsStub systemCallsStub = null;
+  	private static MethodInfo killMethod;
+	private static BrickStub brickStub = null;
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build ();
@@ -40,8 +40,8 @@ public partial class MainWindow: Gtk.Window
 
 		//Set stubs
 		lcdStub = new LcdStub (lcdDrawingarea);
-		systemCallsStub = new SystemCallsStub ();
-		systemCallsStub.OnShutDown += OnShutDown;
+		brickStub = new BrickStub ();
+		brickStub.OnShutDown += OnShutDown;
 		Lcd.Instance = lcdStub;
 
 		Buttons.Instance = buttonsStub;
@@ -49,7 +49,7 @@ public partial class MainWindow: Gtk.Window
 		FirmwareSettings.Instance = firmwareSettings;
 		WiFiDevice.Instance = wiFiStub;
 		UpdateHelper.Instance = updateHelperStub;
-		SystemCalls.Instance = systemCallsStub;
+		Brick.Instance = brickStub;
 
 		//Load and apply simulator settings
 		simulatorSettings = new SimulatorSettings ();
@@ -59,7 +59,7 @@ public partial class MainWindow: Gtk.Window
 
 		//Setup settings changed handler
 		watcher.Path = Directory.GetCurrentDirectory();
-		watcher.NotifyFilter = NotifyFilters.LastAccess;
+		watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite| NotifyFilters.CreationTime;
 		watcher.Filter = simulatorSettings.SettingsFileName;
 		watcher.Changed += OnSettingsFileChanged;
 		watcher.EnableRaisingEvents = true;
@@ -69,8 +69,9 @@ public partial class MainWindow: Gtk.Window
 
 	void OnShutDown ()
 	{
-		KillFirmware ();
-		StartFirmware ();
+		killMethod.Invoke(null, null);
+		Thread.Sleep (simulatorSettings.BootSettings.TurnOffDelay);
+		Application.Quit();
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
@@ -175,9 +176,6 @@ public partial class MainWindow: Gtk.Window
 		updateHelperStub.AddInVersion = simulatorSettings.VersionSettings.AddInVersion;
 
 		programManagerStub.AOTCompileTimeMs = simulatorSettings.ProgramManagerSettings.AotCompileTimeMs;
-
-		systemCallsStub.ShutDownTimeMs = simulatorSettings.BootSettings.ShutdownDelay;
-
 	}
 
 	private static void LcdExposed(object o, ExposeEventArgs args)
@@ -202,9 +200,7 @@ public partial class MainWindow: Gtk.Window
 
 	private static void KillFirmware()
 	{
-		var method = starUpApp.GetType ().GetMethod ("Kill");
-		method.Invoke(null,null);
-
+	  killMethod.Invoke(null, null);
 	}
 
 	private static void StartupAppExecution()
@@ -218,12 +214,25 @@ public partial class MainWindow: Gtk.Window
 			simulatorSettings.BootSettings.StartUpDir = Directory.GetCurrentDirectory ();
 			simulatorSettings.Save ();
 		}
-		starUpApp = (StartupApp.MainClass)AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(startUpAppPath, "StartupApp.MainClass");
+    
+		var test = AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(startUpAppPath, "StartupApp.MainClass");
 		string arg = null;
-		var method = starUpApp.GetType ().GetMethod ("Main");
-		method.Invoke(null,new object[]{arg});
-		firmwareRunning = false;
-	}
+	  	var methods = test.GetType().GetMethods();
+	  	MethodInfo mainMethod = null; 
+    	foreach (var method in methods)
+	  	{
+		    if (method.Name == "Main")
+		    {
+		      mainMethod = method;
+		    }
+		    if (method.Name == "Kill")
+		    {
+		      killMethod = method;
+		    }
+	  	}
+    	mainMethod.Invoke(null, new object[] { arg });
+    	firmwareRunning = false;
+ 	}
 
 
 }

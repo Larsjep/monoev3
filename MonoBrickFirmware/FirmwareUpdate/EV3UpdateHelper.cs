@@ -17,10 +17,9 @@ namespace MonoBrickFirmware.FirmwareUpdate
 		private  string StartUPAppName = "StartupApp.exe";
 		private  string FirmwareDllName = "MonoBrickFirmware.dll";
 		private  string XmlSerializersName = "MonoBrickFirmware.XmlSerializers.dll";
-		private  string RepositoryFile = @"/usr/local/bin/repository.txt";
-		private  string BinDir = @"/usr/local/bin";
 		private string availableFirmware = null;
 		private string availableImage = null;
+		protected string BinDir = @"/usr/local/bin";
 
 		public bool DownloadFirmware ()
 		{
@@ -94,6 +93,7 @@ namespace MonoBrickFirmware.FirmwareUpdate
 				if(overwriteFiles || (!overwriteFiles && !File.Exists(downloadFileName)))
 				{
 					string urlDownload = Path.Combine(url,file);
+					Console.WriteLine(urlDownload);
 					new WebClient ().DownloadFile (urlDownload, downloadFileName );
 				}
 			}
