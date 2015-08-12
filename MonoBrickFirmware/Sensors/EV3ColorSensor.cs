@@ -1,5 +1,6 @@
 using System;
 using MonoBrickFirmware.Extensions;
+using System.IO;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -106,7 +107,12 @@ namespace MonoBrickFirmware.Sensors
 			}
 			return color;
 		}
-
+		
+		private UInt16 GetUInt16(byte[] data, int offset)
+		{
+			return (UInt16)(data[offset] + (data[offset+1] << 8));
+		}
+		
         /// <summary>
         /// Reads the RGB color.
         /// </summary>
@@ -117,7 +123,10 @@ namespace MonoBrickFirmware.Sensors
             if (uartMode == UARTMode.Mode4)
             {
                 byte[] rawBytes = ReadBytes(6);
-                rgbColor = new RGBColor(rawBytes[0], rawBytes[2], rawBytes[4]);
+                var r = GetUInt16(rawBytes, 0);
+                var g = GetUInt16(rawBytes, 2);
+                var b = GetUInt16(rawBytes, 4);
+                rgbColor = new RGBColor(r, g ,b);
             }
             return rgbColor;
         }
@@ -126,7 +135,7 @@ namespace MonoBrickFirmware.Sensors
 		{
 			return(int) base.ReadByte();
 		}
-		
+	
 		private UARTMode ColorModeToSensorMode (ColorMode mode)
 		{
 			UARTMode sensorMode = UARTMode.Mode0;
