@@ -17,7 +17,7 @@ namespace MonoBrickFirmware.FileSystem
 				Directory.CreateDirectory (ProgramPathSdCard);
 		}
 
-		public bool StartProgram(ProgramInformation program, bool runInAOT = false, int timeout = 0, Action<Exception> onExit = null)
+		public bool StartProgram(ProgramInformation program, bool runInAOT = false, Action<Exception> onExit = null)
 		{
 			this.onExit = onExit;
 			if (!runInAOT)

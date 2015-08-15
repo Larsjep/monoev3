@@ -126,7 +126,7 @@ namespace MonoBrickFirmware.Display.Menus
 				}
 				Lcd.Clear ();
 				Lcd.Update ();
-				ProgramManager.StartProgram (program, inAot, 0, OnDone);
+				ProgramManager.StartProgram (program, inAot, OnDone);
 			} 
 			else 
 			{

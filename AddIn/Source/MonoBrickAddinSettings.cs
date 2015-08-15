@@ -17,7 +17,7 @@ namespace MonoBrickAddin
 
 		public UserSettings()
 		{
-			IPAddress = "0";
+			IPAddress = "10.0.1.1";
 			DebugPort = "12345";
 			Verbose = false;
 			LastUploadHash = "";

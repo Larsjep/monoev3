@@ -23,14 +23,13 @@
 // 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // 	THE SOFTWARE.
 
-using System;
-using System.IO;
 using System.Xml;
 using System.Reflection;
 using MonoDevelop.Projects;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Core.ProgressMonitoring;
+using System.IO;
 using System.Diagnostics;
 
 namespace MonoBrickAddin
@@ -38,7 +37,6 @@ namespace MonoBrickAddin
 	public class MonoBrickProject : DotNetAssemblyProject
 	{
 		FilePath referencePath = "";
-		string versionString ;
 		#region Constructors
 
 		public MonoBrickProject()
@@ -56,7 +54,7 @@ namespace MonoBrickAddin
 		{
 			referencePath = info.ProjectBasePath;
 			Init();
-			versionString = FileVersionInfo.GetVersionInfo("MonoBrickFirmware.dll").FileVersion;
+			//versionString = FileVersionInfo.GetVersionInfo("MonoBrickFirmware.dll").FileVersion;
 
 		}
 
@@ -149,6 +147,9 @@ namespace MonoBrickAddin
 					MonoBrickUtility.KillMonoApp(EV3IPAddress);
 
 					MonoBrickUtility.ShowMonoBrickLogo(EV3IPAddress);
+					
+					string versionString = FileVersionInfo.GetVersionInfo(Path.Combine(cmd.Config.OutputDirectory,"MonoBrickFirmware.dll")).FileVersion;
+					console.Log.WriteLine("Version string: "  + versionString);
 					MonoBrickUtility.CreateVersionFile(EV3IPAddress, versionString);
 
 					console.Log.WriteLine("Upload program to brick...");

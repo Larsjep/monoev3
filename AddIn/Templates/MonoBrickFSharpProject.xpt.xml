@@ -47,7 +47,7 @@ open MonoBrickFirmware.Display.Dialogs
 open MonoBrickFirmware.Display
 
 let main() =
-    Lcd.Instance.Clear()
+    Lcd.Clear()
     LcdConsole.WriteLine("Hello World!")
 
 main()]]>

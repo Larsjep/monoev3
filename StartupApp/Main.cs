@@ -35,13 +35,6 @@ namespace StartupApp
 			Lcd.Update ();
 			WiFiDevice.TurnOff ();
 			ProgramManager.CreateSDCardFolder();
-			/*if (!GacHelper.IsAssembyInGac ("FSharp.Core"))
-			{
-				Lcd.WriteTextBox (Font.SmallFont, textRect, "Adding DLL to GAC...", true, Lcd.Alignment.Center);
-				string okString = GacHelper.AddAssembly ("FSharp.Core") ? "succeeded" : "failed";
-				Lcd.WriteTextBox (Font.SmallFont, textRect, "Added FSharp DLL to GAC " + okString, true, Lcd.Alignment.Center);
-				System.Threading.Thread.Sleep (1000);
-			}*/
 			Lcd.WriteTextBox (Font.SmallFont, textRect, "Loading settings...", true, Lcd.Alignment.Center);
 			Lcd.Update ();
 			FirmwareSettings.Load ();
