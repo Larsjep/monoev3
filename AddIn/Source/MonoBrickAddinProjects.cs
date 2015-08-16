@@ -148,12 +148,13 @@ namespace MonoBrickAddin
 
 					MonoBrickUtility.ShowMonoBrickLogo(EV3IPAddress);
 					
-					string versionString = FileVersionInfo.GetVersionInfo(Path.Combine(cmd.Config.OutputDirectory,"MonoBrickFirmware.dll")).FileVersion;
-					console.Log.WriteLine("Version string: "  + versionString);
+					string filePath = Path.Combine(cmd.Config.OutputDirectory,"MonoBrickFirmware.dll");
+					File.Create(filePath);
+					string versionString = FileVersionInfo.GetVersionInfo(filePath).FileVersion;
+					console.Log.WriteLine("Using MonoBrickFirmware.dll version: "  + versionString);
 					MonoBrickUtility.CreateVersionFile(EV3IPAddress, versionString);
 
 					console.Log.WriteLine("Upload program to brick...");
-
 					var uploadOp = MonoBrickUtility.Upload(EV3IPAddress, cmd);
 					opMon.AddOperation(uploadOp);
 				
