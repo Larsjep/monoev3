@@ -34,7 +34,7 @@ namespace EV3MonoBrickSimulator.Stub
 			//Do nothing 
 		}
 
-		public bool StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0, Action<Exception> onExit = null)
+		public bool StartProgram (ProgramInformation program, bool runInAOT = false, Action<Exception> onExit = null)
 		{
 			if (RunningProgram != null)
 				return false;
