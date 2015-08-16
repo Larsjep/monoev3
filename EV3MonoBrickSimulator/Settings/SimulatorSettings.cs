@@ -81,7 +81,7 @@ namespace EV3MonoBrickSimulator.Settings
 	public class VersionSettings
 	{
 		[XmlElement("ImageVersion")]
-		private string imageVersion = "1.0.0.0";
+		private string imageVersion = "1.1.0.0";
 
 		[XmlElement("AddInVersion")]
 		private string addInVersion = null;
