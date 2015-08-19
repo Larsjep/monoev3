@@ -89,14 +89,14 @@ namespace MonoBrickFirmware.Display.Menus
 			Parent.RemoveFocus (item);
 		}
 
-		public void SuspendEvents (IChildItem item)
+		public void SuspendButtonEvents ()
 		{
-			Parent.SuspendEvents (item);
+			Parent.SuspendButtonEvents ();
 		}
 
-		public void ResumeEvents (IChildItem item)
+		public void ResumeButtonEvents ()
 		{
-			Parent.ResumeEvents (item);
+			Parent.ResumeButtonEvents ();
 		}
 
 		#endregion
@@ -122,7 +122,7 @@ namespace MonoBrickFirmware.Display.Menus
 			{
 				if (!useEscToStop) 
 				{
-					Parent.SuspendEvents (this);
+					Parent.SuspendButtonEvents ();
 				}
 				Lcd.Clear ();
 				Lcd.Update ();
@@ -193,7 +193,7 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			if (!useEscToStop)
 			{
-				Parent.ResumeEvents (this);
+				Parent.ResumeButtonEvents ();
 			}
 			if (e != null) 
 			{

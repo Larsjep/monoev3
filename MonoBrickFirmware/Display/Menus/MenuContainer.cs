@@ -99,21 +99,20 @@ namespace MonoBrickFirmware.Display.Menus
 		}
 
 
-		public void SuspendEvents (IChildItem item)
+		public void SuspendButtonEvents ()
 		{
 			continueRunning = true;
 			activeMenuItem.OnHideContent();
 			cancelSource.Cancel();	
 		}
 
-		public void ResumeEvents (IChildItem item)
+		public void ResumeButtonEvents ()
 		{
 			resume.Set();
 			continueRunning = true;
+			activeMenuItem.OnDrawContent ();
 		}
 		#endregion
-
-
 	}
 }
 

@@ -37,14 +37,14 @@ namespace MonoBrickFirmware.Display.Menus
 			Parent.RemoveFocus (item);
 		}
 
-		public void SuspendEvents (IChildItem item)
+		public void SuspendButtonEvents ()
 		{
-			Parent.SuspendEvents (item);
+			Parent.SuspendButtonEvents ();
 		}
 
-		public void ResumeEvents (IChildItem item)
+		public void ResumeButtonEvents ()
 		{
-			Parent.SuspendEvents (item);
+			Parent.SuspendButtonEvents ();
 		}
 
 		#endregion

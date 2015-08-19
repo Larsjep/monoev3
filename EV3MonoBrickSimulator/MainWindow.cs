@@ -215,9 +215,12 @@ public partial class MainWindow: Gtk.Window
 			simulatorSettings.Save ();
 		}
     
-		var test = AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(startUpAppPath, "StartupApp.MainClass");
+		var startUppApp = AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(startUpAppPath, "StartupApp.MainClass");
 		string arg = null;
-	  	var methods = test.GetType().GetMethods();
+
+	  	var methods = startUppApp.GetType().GetMethods();
+		var field = startUppApp.GetType().GetField("SuspendFile");
+		field.SetValue(null,System.IO.Path.Combine (Directory.GetCurrentDirectory(), "suspendFirmware.txt"));
 	  	MethodInfo mainMethod = null; 
     	foreach (var method in methods)
 	  	{

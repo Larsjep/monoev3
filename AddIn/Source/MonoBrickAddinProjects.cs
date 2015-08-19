@@ -143,9 +143,6 @@ namespace MonoBrickAddin
 					}
 					string EV3IPAddress = UserSettings.Instance.IPAddress;
 
-					console.Log.WriteLine("Killing any program already running on the brick");
-					MonoBrickUtility.KillMonoApp(EV3IPAddress);
-
 					MonoBrickUtility.ShowMonoBrickLogo(EV3IPAddress);
 					
 					string filePath = Path.Combine(cmd.Config.OutputDirectory,"MonoBrickFirmware.dll");
@@ -166,15 +163,22 @@ namespace MonoBrickAddin
 						monitor.ReportError(uploadOp.ErrorMessage, null);
 						return;
 					}
-					
-					console.Log.WriteLine("Running on brick...");
+
+					console.Log.WriteLine("Suspending firmware execution");
+					MonoBrickUtility.SuspendFirmware(EV3IPAddress);
+
+					console.Log.WriteLine("Executing program on EV3 brick...");
 
 					var ex = context.ExecutionHandler.Execute(cmd, console);
 					opMon.AddOperation(ex);
 					ex.WaitForCompleted();
-
+				
 					console.Log.WriteLine("");
-					console.Log.WriteLine("Finished!");
+					console.Log.WriteLine("Done executing program!");
+
+					console.Log.WriteLine("Resuming firmware execution");
+					MonoBrickUtility.ResumeFirmware(EV3IPAddress);
+
 				}
 				finally
 				{

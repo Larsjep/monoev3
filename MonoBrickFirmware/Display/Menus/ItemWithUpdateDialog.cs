@@ -87,14 +87,14 @@ namespace MonoBrickFirmware.Display.Menus
 			Parent.RemoveFocus (item);
 		}
 
-		public void SuspendEvents (IChildItem item)
+		public void SuspendButtonEvents ()
 		{
-			Parent.SuspendEvents (item);
+			Parent.SuspendButtonEvents ();
 		}
 
-		public void ResumeEvents (IChildItem item)
+		public void ResumeButtonEvents ()
 		{
-			Parent.SuspendEvents (item);
+			Parent.SuspendButtonEvents ();
 		}
 	}
 
@@ -114,7 +114,7 @@ namespace MonoBrickFirmware.Display.Menus
 		public override void OnExit (StepDialog dialog)
 		{
 			if (dialog.ExecutedOk) {
-				Parent.SuspendEvents (this);
+				Parent.SuspendButtonEvents ();
 				Lcd.Clear();
 				Lcd.WriteText(Font.MediumFont, new Point(0,0), "Shutting down...", true);
 				Lcd.Update();

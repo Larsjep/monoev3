@@ -4,17 +4,30 @@ using MonoBrickFirmware.Display.Dialogs;
 using MonoBrickFirmware.Settings;
 using MonoBrickFirmware.Connections;
 using MonoBrickFirmware.FileSystem;
-using MonoBrickFirmware.Native;
+using System.IO;
 using System.Reflection;
+
 namespace StartupApp
 {
 	public class MainClass
 	{
 
 		private static FirmwareMenuContainer container = null;
+		public static string SuspendFile = @"/usr/local/bin/suspendFirmware.txt";
 
 		public static void Main (string[] args)
 		{
+			if (!File.Exists (SuspendFile))
+			{
+				File.Create (SuspendFile);
+			}
+			FileSystemWatcher watcher = new FileSystemWatcher();
+			watcher.Path = Path.GetDirectoryName(SuspendFile);
+			watcher.NotifyFilter = NotifyFilters.LastAccess;
+			watcher.Filter = Path.GetFileName(SuspendFile);
+			watcher.Changed += OnSuspendFileChanged;
+			watcher.EnableRaisingEvents = true;
+
 			Menu menu = new Menu ("Main Menu");
 
 			menu.AddItem(new ItemWithProgramList ("Programs", false));
@@ -64,6 +77,21 @@ namespace StartupApp
 				}
 			}
 			container.Show ();	
+		}
+
+		private static void OnSuspendFileChanged(object sender, FileSystemEventArgs e)
+		{
+			if (container != null) 
+			{
+				if (File.ReadAllText (SuspendFile).Trim() == "1")
+				{
+					container.SuspendButtonEvents ();
+				} 
+				else 
+				{
+					container.ResumeButtonEvents ();
+				}
+			}
 		}
 
 		public static void Kill()

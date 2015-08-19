@@ -16,16 +16,15 @@ namespace MonoBrickFirmware.Display.Menus
 		/// <param name="item">Item to remove focus from</param>
 		void RemoveFocus(IChildItem item);
 
+		/// <summary>
+		/// Susspends button events from being fired
+		/// </summary>
+		void SuspendButtonEvents();
 
 		/// <summary>
-		/// Susspends events from being fired
+		/// Allow button events to be fired
 		/// </summary>
-		void SuspendEvents(IChildItem item);
-
-		/// <summary>
-		/// Allow events to be fired
-		/// </summary>
-		void ResumeEvents(IChildItem item);
+		void ResumeButtonEvents();
 	}
 }
 

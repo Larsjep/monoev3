@@ -116,14 +116,14 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 		}
 
-		public void SuspendEvents (IChildItem item)
+		public void SuspendButtonEvents ()
 		{
-			Parent.SuspendEvents (item);
+			Parent.SuspendButtonEvents ();
 		}
 
-		public void ResumeEvents (IChildItem item)
+		public void ResumeButtonEvents ()
 		{
-			Parent.ResumeEvents (item);
+			Parent.ResumeButtonEvents ();
 		}
 
 		public void OnHideContent ()
