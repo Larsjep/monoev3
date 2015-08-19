@@ -108,7 +108,6 @@
       <Link>MonoBrickFirmware.dll</Link>
       <LogicalName>MonoBrick.MonoBrickFirmware.dll</LogicalName>
       <DeployService-Deploy>True</DeployService-Deploy>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Templates\MonoBrickFSharpProject.xpt.xml">
       <DeployService-Deploy>True</DeployService-Deploy>
