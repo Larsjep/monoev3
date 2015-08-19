@@ -62,7 +62,7 @@ namespace MonoBrickAddin
 			ExecuteAndWaitForSSHCommand(IPAddress, @"echo 1" + @" > " + @"/usr/local/bin/suspendFirmware.txt" );		
 		}
 
-		public static void ResumeFirmware()
+		public static void ResumeFirmware(string IPAddress)
 		{
 			ExecuteAndWaitForSSHCommand(IPAddress, @"echo 0" + @" > " + @"/usr/local/bin/suspendFirmware.txt" );		
 		}
