@@ -5,17 +5,16 @@ using MonoBrickFirmware.UserInput;
 
 namespace MonoBrickFirmware.Display.Dialogs
 {
-	public class QuestionDialog : Dialog{
+	public class QuestionDialog : InfoDialog
+	{
 		private string negativeText;
 		private string positiveText;
 		private int textSize = 0;
-		private string question;
-		
-		public QuestionDialog (string question, string title, string positiveText="Yes", string negativeText="No", bool isPositiveSelected = true) : base (Font.MediumFont, title)
+
+		public QuestionDialog (string question, string title, string positiveText="Yes", string negativeText="No", bool isPositiveSelected = true) : base (question, title)
 		{
 			this.negativeText = negativeText;
 			this.positiveText = positiveText;
-			this.question = question;
 			this.IsPositiveSelected = isPositiveSelected;
 			int positiveSize = font.TextSize (positiveText).X;
 			int negativeSize = font.TextSize (negativeText).X;
@@ -41,14 +40,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 				IsPositiveSelected = false;
 		}
 		
-		internal override void OnEnterPressed ()
-		{
-			OnExit();
-		}
-		
 		protected override void OnDrawContent ()
 		{
-			WriteTextOnDialog(question);
+			DrawText ();
 			DrawLeftButton(positiveText, !IsPositiveSelected, textSize);
 			DrawRightButton(negativeText,IsPositiveSelected, textSize);
 		}

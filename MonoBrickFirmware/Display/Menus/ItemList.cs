@@ -240,7 +240,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 		private class EmptyListInfoDialog : ItemWithDialog<InfoDialog>
 		{
-			public EmptyListInfoDialog(string info) : base (new InfoDialog(info, true))
+			public EmptyListInfoDialog(string info) : base (new InfoDialog(info))
 			{
 
 			}

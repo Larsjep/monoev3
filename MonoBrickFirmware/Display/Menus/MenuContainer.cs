@@ -11,70 +11,60 @@ namespace MonoBrickFirmware.Display.Menus
 	public class MenuContainer : IParentItem
 	{
 		private bool buttonAction = false;
+		private ButtonEvents buttonEvents;
 		protected IChildItem activeMenuItem;
-		protected CancellationTokenSource cancelSource;
 		protected IChildItem topMenu;
-		protected ManualResetEvent resume = new ManualResetEvent(false);
+		protected ManualResetEvent stop = new ManualResetEvent(false);
 		protected bool continueRunning = true;
+
+		private void ExecuteButtonAction(Action action)
+		{
+			buttonAction = true;
+			action ();
+			activeMenuItem.OnDrawContent ();
+			buttonAction = false;
+		}
+
+
+		private void CreateButtonEvents ()
+		{
+			buttonEvents = new ButtonEvents ();
+			buttonEvents.DownPressed += () => ExecuteButtonAction (activeMenuItem.OnDownPressed);
+			buttonEvents.UpPressed += () => ExecuteButtonAction (activeMenuItem.OnUpPressed);
+			buttonEvents.LeftPressed += () => ExecuteButtonAction (activeMenuItem.OnLeftPressed);
+			buttonEvents.RightPressed += () => ExecuteButtonAction (activeMenuItem.OnRightPressed);
+			buttonEvents.EnterPressed += () => ExecuteButtonAction (activeMenuItem.OnEnterPressed);
+			buttonEvents.EscapePressed += () => ExecuteButtonAction (activeMenuItem.OnEscPressed);
+		}
+
 		public MenuContainer(Menu startMenu)
 		{
 			activeMenuItem = startMenu;
 			activeMenuItem.Parent = this;
 			startMenu.SetAsTopMenu ();
 			topMenu = startMenu;
-
+			
 		}
+
+
+
 
 		/// <summary>
 		/// Show menu. This is a blocking call. Will end when Stop is called 
 		/// </summary>
 		public void Show()
 		{
-			cancelSource = new CancellationTokenSource ();
-			Lcd.SaveScreen ();
-			while (continueRunning) {
-				cancelSource = new CancellationTokenSource ();
-				resume.Reset ();
-				while (!cancelSource.Token.IsCancellationRequested) 
-				{
-					activeMenuItem.OnDrawContent ();
-					buttonAction = false;
-					var action = Buttons.GetKeypress (cancelSource.Token);
-					buttonAction = true;
-					switch (action) 
-					{
-						case Buttons.ButtonStates.Down: 
-							activeMenuItem.OnDownPressed ();
-							 break;
-						case Buttons.ButtonStates.Up:
-							activeMenuItem.OnUpPressed ();
-							break;
-						case Buttons.ButtonStates.Escape:
-							activeMenuItem.OnEscPressed ();
-							break;
-						case Buttons.ButtonStates.Enter:
-							activeMenuItem.OnEnterPressed ();
-							break;
-						case Buttons.ButtonStates.Left:
-							activeMenuItem.OnLeftPressed ();
-							break;
-						case Buttons.ButtonStates.Right:
-							activeMenuItem.OnRightPressed ();
-							break;
-					}
-
-				}
-				resume.WaitOne ();
-			}
-			Lcd.LoadScreen ();
+			stop = new ManualResetEvent (false);
+			CreateButtonEvents ();
+			activeMenuItem.OnDrawContent ();
+			stop.WaitOne ();
 		}
+
 
 		public void Stop()
 		{
-			resume.Set();
-			continueRunning = false;
-			activeMenuItem.OnHideContent();
-			cancelSource.Cancel ();
+			buttonEvents.Kill ();
+			stop.Set ();
 		}
 
 		#region IParentMenuItem implementation
@@ -101,16 +91,24 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void SuspendButtonEvents ()
 		{
-			continueRunning = true;
-			activeMenuItem.OnHideContent();
-			cancelSource.Cancel();	
+			if (buttonEvents != null)
+			{
+				buttonEvents.Kill ();
+				buttonEvents = null;
+				Console.WriteLine ("Killing thread");
+			}
+			Console.WriteLine ("Suspend");
 		}
 
 		public void ResumeButtonEvents ()
 		{
-			resume.Set();
-			continueRunning = true;
-			activeMenuItem.OnDrawContent ();
+			if (buttonEvents == null)
+			{
+				CreateButtonEvents ();
+				activeMenuItem.OnDrawContent ();
+				Console.WriteLine ("Creating thread");
+			}
+			Console.WriteLine ("Resume");
 		}
 		#endregion
 	}

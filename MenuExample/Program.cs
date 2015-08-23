@@ -19,7 +19,11 @@ namespace MenuExample
 			Menu subMenu = new Menu("Sub menu");
 			Menu subSubMenu = new Menu ("sub sub Menu");
 
-			subSubMenu.AddItem( new ItemWithCharacterInput("Name", "Enter Name", "Anders"));
+			IStep turnOnStep = new StepContainer (TurnOn, "Turning On", "Error turning on", "Turned on sucesfully");
+			IStep turnOffStep = new StepContainer (TurnOff, "Turning Off", "Error turning off");
+
+
+			subSubMenu.AddItem( new ItemWithCheckBoxStep("Turned on", false, "Device", new CheckBoxStep(turnOnStep, turnOffStep ));
 			subSubMenu.AddItem( new ItemWithNumericInput("Age", 29, 0, 100));
 			subSubMenu.AddItem( new ItemWithOptions<string>("Option", new string[]{"Male","Female"}));
 			subSubMenu.AddItem( new ItemWithCheckBox("Loves C#", true));
@@ -36,6 +40,19 @@ namespace MenuExample
 			container.Show();
 			
 		}
+		
+		private static bool TurnOn()
+		{
+			System.Threading.Thread.Sleep (2000);
+			return true; //return false if it fails
+		}
+		
+		private static bool TurnOff()
+		{
+			System.Threading.Thread.Sleep (500);
+			return true; //return false if it fails
+		}
+		
 
 	}
 }

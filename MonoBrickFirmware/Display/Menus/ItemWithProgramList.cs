@@ -288,7 +288,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 	internal class ExceptionInfoDialog : ItemWithDialog<InfoDialog>
 	{
-		public ExceptionInfoDialog() : base (new InfoDialog("Exception during execution", true, "Error"))
+		public ExceptionInfoDialog() : base (new InfoDialog("Exception during execution", "Error"))
 		{
 		
 		}

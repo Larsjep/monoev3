@@ -35,7 +35,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		public Action OnShow = delegate {};
 		public Action OnExit = delegate {};
 		
-		public Dialog (Font f, string title, int width = 160, int height = 90, int topOffset = 0)
+		public Dialog (Font f, string title, int width = 170, int height = 90, int topOffset = 0)
 		{
 			dialogWidth = width;
 			dialogHeight = height;

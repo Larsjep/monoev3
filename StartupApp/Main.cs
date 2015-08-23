@@ -23,7 +23,7 @@ namespace StartupApp
 			}
 			FileSystemWatcher watcher = new FileSystemWatcher();
 			watcher.Path = Path.GetDirectoryName(SuspendFile);
-			watcher.NotifyFilter = NotifyFilters.LastAccess;
+			watcher.NotifyFilter = NotifyFilters.LastWrite;
 			watcher.Filter = Path.GetFileName(SuspendFile);
 			watcher.Changed += OnSuspendFileChanged;
 			watcher.EnableRaisingEvents = true;
@@ -66,13 +66,13 @@ namespace StartupApp
 					} 
 					else 
 					{
-						var dialog = new InfoDialog ("Connected Successfully " + WiFiDevice.GetIpAddress (), true);
+						var dialog = new InfoDialog ("Connected Successfully " + WiFiDevice.GetIpAddress ());
 						dialog.Show ();
 					} 
 				} 
 				else 
 				{
-					var dialog = new InfoDialog ("Failed to connect to WiFI Network", true);
+					var dialog = new InfoDialog ("Failed to connect to WiFI Network");
 					dialog.Show ();
 				}
 			}

@@ -30,7 +30,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 			if (newImage) 
 			{
-				var visitDialog = new ItemWithInfoDialog ("New image available. Download it at monobrick.dk");
+				var visitDialog = new ItemWithInfoDialog ("New image available. Download it from www.monobrick.dk or ftp://soborg.net");
 				visitDialog.SetFocus (this);
 			} 
 			else {
@@ -43,7 +43,7 @@ namespace MonoBrickFirmware.Display.Menus
 				{
 					if (newAddin) 
 					{
-						var visitDialog = new ItemWithInfoDialog ("New Xamarin Add-in. Download it at monobrick.dk");
+						var visitDialog = new ItemWithInfoDialog ("New Xamarin Add-in. Download it from www.monobrick.dk or ftp://soborg.net");
 						visitDialog.SetFocus (this);
 					} 
 					else 
@@ -120,8 +120,9 @@ namespace MonoBrickFirmware.Display.Menus
 				Lcd.Update();
 				Buttons.LedPattern(2);
 				Brick.TurnOff ();
-				var whyAreYouHereDialog = new InfoDialog ("Cut the power", false, "Reboot failed");
+				var whyAreYouHereDialog = new InfoDialog ("Cut the power", "Reboot failed");
 				whyAreYouHereDialog.Show ();
+				Lcd.Clear ();
 				new ManualResetEvent (false).WaitOne ();
 			}
 			Parent.RemoveFocus (this);
@@ -151,7 +152,7 @@ namespace MonoBrickFirmware.Display.Menus
 
 	internal class ItemWithInfoDialog : ItemWithDialog<InfoDialog>
 	{
-		public ItemWithInfoDialog(string text) : base(new InfoDialog (text, true))
+		public ItemWithInfoDialog(string text) : base(new InfoDialog (text))
 		{
 		
 		}
