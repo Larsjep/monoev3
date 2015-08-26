@@ -10,11 +10,11 @@ namespace MonoBrickFirmware.Display.Menus
 		private const int lineSize = 2;
 		private const int edgeSize = 2;
 		private bool isChecked;
-		public Action<bool> OnCheckedChanged = delegate {};
-
-		public ItemWithCheckBox (string text, bool checkedAtStart){
+		protected Action<bool> OnCheckedChanged = delegate {};
+		public ItemWithCheckBox (string text, bool checkedAtStart, Action<bool> OnCheckedChanged = null){
 			this.text = text;
 			this.Checked = checkedAtStart;
+			this.OnCheckedChanged = OnCheckedChanged;
 		}
 
 		public IParentItem Parent { get; set;}
@@ -74,7 +74,18 @@ namespace MonoBrickFirmware.Display.Menus
 
 		}
 
-		public bool Checked{get{return isChecked;}internal set{isChecked = value; OnCheckedChanged (isChecked);}}
+		public bool Checked
+		{
+			get{return isChecked;}
+			internal 
+			set{
+				isChecked = value; 
+				if (OnCheckedChanged != null) 
+				{
+					OnCheckedChanged(isChecked);
+				} 
+			}
+		}
 	}
 
 }

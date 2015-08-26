@@ -29,7 +29,7 @@ namespace MonoBrickWebserverEV3Test
 			var step = new StepContainer (StartWebserver, "Starting server", "Failed to start");
 			Dialog dialog = new ProgressDialog("Webserver", step);
 			if (dialog.Show ()) {
-				dialog = new InfoDialog ("Press enter to stop", true, "Webserver");
+				dialog = new InfoDialog ("Press enter to stop", "Webserver");
 				dialog.Show ();
 				StopWebserver ();
 			}

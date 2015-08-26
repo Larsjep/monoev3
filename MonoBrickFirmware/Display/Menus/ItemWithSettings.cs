@@ -17,10 +17,8 @@ namespace MonoBrickFirmware.Display.Menus
 
 		protected override List<IChildItem> OnCreateChildList ()
 		{
-			autoConnect = new ItemWithCheckBox ("WiFi auto connect", FirmwareSettings.GeneralSettings.ConnectToWiFiAtStartUp);
-			autoConnect.OnCheckedChanged += OnAutoConnectChanged;
-			autoCheck = new ItemWithCheckBox("Update check",FirmwareSettings.GeneralSettings.CheckForSwUpdatesAtStartUp);
-			autoCheck.OnCheckedChanged += OnAutoCheckChanged;
+			autoConnect = new ItemWithCheckBox ("WiFi auto connect", FirmwareSettings.GeneralSettings.ConnectToWiFiAtStartUp, OnAutoConnectChanged);
+			autoCheck = new ItemWithCheckBox("Update check",FirmwareSettings.GeneralSettings.CheckForSwUpdatesAtStartUp, OnAutoCheckChanged);
 			var childList = new List<IChildItem> ();
 			childList.Add (autoConnect);
 			childList.Add (autoCheck);

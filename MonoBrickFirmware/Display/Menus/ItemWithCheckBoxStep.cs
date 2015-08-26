@@ -7,7 +7,13 @@ namespace MonoBrickFirmware.Display.Menus
 	{
 		private CheckBoxStep itemStep = null;
 		private ItemWithProgressDialog dialogItem;
-		public ItemWithCheckBoxStep (string text, bool checkedAtStart, string stepTitle, CheckBoxStep step) : base(text, checkedAtStart)
+
+		public ItemWithCheckBoxStep (string text, bool checkedAtStart, string stepTitle, CheckBoxStep step) : this(text, checkedAtStart, stepTitle, step, null)
+		{
+			
+		}
+
+		public ItemWithCheckBoxStep (string text, bool checkedAtStart, string stepTitle, CheckBoxStep step, Action<bool> OnCheckedChanged) : base(text, checkedAtStart, OnCheckedChanged)
 		{
 			this.itemStep = step;
 			dialogItem = new ItemWithProgressDialog (new ProgressDialog(stepTitle, itemStep));

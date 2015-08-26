@@ -10,7 +10,7 @@ namespace MonoBrickFirmware.Display.Menus
 	{
 		private bool hasFocus = false;
 		private GetInfoDialog dialog;
-		Information information = null;
+		private Information information = null;
 
 		public ItemWithBrickInfo ()
 		{

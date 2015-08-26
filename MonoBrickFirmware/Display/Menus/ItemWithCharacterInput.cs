@@ -13,22 +13,28 @@ namespace MonoBrickFirmware.Display.Menus
 		private bool hide;
 		private bool show = false;
 		private CharacterDialog dialog; 
-		public Action<CharacterDialog> OnShowDialog = delegate {};
-		public Action<string> OnDialogExit = delegate {};
+		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText) : this(subject, dialogTitle, startText, null, false)
+		{
+		
+		}
 
-		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText, bool hideInput = false){
+		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText, Action<string> OnChanged ) : this(subject, dialogTitle, startText, OnChanged, false)
+		{
+
+		}
+
+		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText, Action<string> OnChanged, bool hideInput){
 			this.subject = subject;
 			this.Text = startText;
 			this.hide = hideInput;
 			dialog = new Dialogs.CharacterDialog(dialogTitle);
-			dialog.OnShow += delegate
-			{
-				this.OnShowDialog(dialog);
-			};
 			dialog.OnExit += delegate
 			{
 				Text = dialog.GetUserInput();
-				this.OnDialogExit(Text); 
+				if(OnChanged != null)
+				{
+					OnChanged(Text);
+				}
 				show = false; 
 				Parent.RemoveFocus(this);
 			};
@@ -57,13 +63,15 @@ namespace MonoBrickFirmware.Display.Menus
 			int textValueWidth = totalWidth - subjectWidth;
 			Rectangle textRect = new Rectangle (new Point (r.P1.X + subjectWidth, r.P1.Y), r.P2);
 			Rectangle subjectRect = new Rectangle (r.P1, new Point (r.P2.X - textValueWidth, r.P2.Y));
-			if ((int)(f.TextSize (Text).X) < textValueWidth) {
+			if ((int)(f.TextSize (Text).X) < textValueWidth) 
+			{
 				showTextString = Text;
 				if (hide) {
 					showTextString = new string ('*', showTextString.Length); 
 				}	
-			} else {
-				
+			} 
+			else 
+			{
 				showTextString = "";
 				for (int i = 0; i < Text.Length; i++) {
 					if (f.TextSize (showTextString + this.Text [i] + "...").X < textValueWidth) {

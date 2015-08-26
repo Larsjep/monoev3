@@ -10,14 +10,14 @@ namespace MonoBrickFirmware.Display.Menus
 		private OptionType[] options;
 		private const int rightArrowOffset = 4;
 		private const int arrowEdge = 4;
-		public Action<OptionType> OnOptionChanged = delegate {};
+		private Action<OptionType> OnOptionChanged;
 		public IParentItem Parent { get; set;}
-        public ItemWithOptions(string text, OptionType[] options, int startIdx = 0)
+        public ItemWithOptions(string text, OptionType[] options, Action<OptionType> OnOptionChanged, int startIdx = 0)
         {
 			this.text = text;
 			this.options = options;
 			this.OptionIndex = startIdx;
-
+			this.OnOptionChanged = OnOptionChanged;
 		}
 		public void OnEnterPressed()
 		{

@@ -22,12 +22,13 @@ namespace MonoBrickFirmware.Display.Menus
 		private Rectangle rect;
 		private CancellationTokenSource cancelSource = new CancellationTokenSource();
 
-		public Action<int> OnValueChanged = delegate {};
-		public ItemWithNumericInput (string text, int startValue, int min = int.MinValue, int max= int.MaxValue){
+		private Action<int> OnValueChanged;
+		public ItemWithNumericInput (string text, int startValue, Action<int> OnValueChanged = null, int min = int.MinValue, int max= int.MaxValue){
 			this.text = text;
 			this.Value = startValue;
 			this.min = min;
 			this.max = max;
+			this.OnValueChanged = OnValueChanged;
 		}
 
 		public IParentItem Parent { get; set;}
@@ -61,7 +62,10 @@ namespace MonoBrickFirmware.Display.Menus
 				Lcd.Update();
 				System.Threading.Thread.Sleep(holdSleepTime);
 			}while (Buttons.GetStates()== Buttons.ButtonStates.Left && !cancelSource.Token.IsCancellationRequested);
-			OnValueChanged(Value);
+			if (OnValueChanged != null) 
+			{
+				OnValueChanged (Value);
+			}
 		}
 		
 		public void OnRightPressed(){
@@ -92,7 +96,10 @@ namespace MonoBrickFirmware.Display.Menus
 				Lcd.Update();
 				System.Threading.Thread.Sleep(holdSleepTime);
 			}while (Buttons.GetStates()== Buttons.ButtonStates.Right && !cancelSource.Token.IsCancellationRequested);
-			OnValueChanged(Value);
+			if (OnValueChanged != null) 
+			{
+				OnValueChanged (Value);
+			}
 		}
 
 		public void OnDrawTitle (Font f, Rectangle r, bool color)

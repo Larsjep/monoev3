@@ -21,12 +21,9 @@ namespace MonoBrickFirmware.Display.Menus
 
 		protected override List<IChildItem> OnCreateChildList ()
 		{
-			ssidItem = new ItemWithCharacterInput("SSID", "Enter SSID", FirmwareSettings.WiFiSettings.SSID);
-			ssidItem.OnDialogExit += OnSsidChanged;
-			passwordItem = new ItemWithCharacterInput("Password", "Password", FirmwareSettings.WiFiSettings.Password, true);
-			passwordItem.OnDialogExit += OnPasswordChanged;
-			encryptionItem = new ItemWithOptions<string>("Encryption", new string[]{"None","WPA/2"}, FirmwareSettings.WiFiSettings.Encryption ? 1 : 0);
-			encryptionItem.OnOptionChanged += OnEncryptionOptionChanged;
+			ssidItem = new ItemWithCharacterInput("SSID", "Enter SSID", FirmwareSettings.WiFiSettings.SSID, OnSsidChanged);
+			passwordItem = new ItemWithCharacterInput("Password", "Password", FirmwareSettings.WiFiSettings.Password, OnPasswordChanged, true);
+			encryptionItem = new ItemWithOptions<string>("Encryption", new string[]{"None","WPA/2"}, OnEncryptionOptionChanged, FirmwareSettings.WiFiSettings.Encryption ? 1 : 0);
 			connectItem = new TurnWiFiOnOffCheckBox ();
 			var childList = new List<IChildItem> ();
 			childList.Add (ssidItem);
@@ -59,9 +56,9 @@ namespace MonoBrickFirmware.Display.Menus
 	internal class TurnWiFiOnOffCheckBox : ItemWithCheckBoxStep
 	{
 		private const int ConnectTimeout = 40000;
-		public TurnWiFiOnOffCheckBox(): base("Connected", WiFiDevice.IsLinkUp (), "WiFi", new CheckBoxStep(new StepContainer(OnTurnWiFiOn, "Connecting" ,"Failed to connect" ), new StepContainer(OnTurnWiFiOff, "Disconnecting", "Error disconnecting")))
+		public TurnWiFiOnOffCheckBox(): base("Connected", WiFiDevice.IsLinkUp (), "WiFi", new CheckBoxStep(new StepContainer(OnTurnWiFiOn, "Connecting" ,"Failed to connect" ), new StepContainer(OnTurnWiFiOff, "Disconnecting", "Error disconnecting")), null)
 		{
-			this.OnCheckedChanged += CheckedChanged;
+			base.OnCheckedChanged = CheckedChanged;	
 		}
 
 		private static bool OnTurnWiFiOn()
