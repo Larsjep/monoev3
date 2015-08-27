@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.FileSystem
 {
@@ -7,12 +8,12 @@ namespace MonoBrickFirmware.FileSystem
 	{
 		static ProgramManager()
 		{
-			try
+			if(PlatFormHelper.RunningPlatform == PlatFormHelper.Platform.EV3)
 			{
 				Instance = new EV3ProgramManager();
 
 			}
-			catch
+			else
 			{
 				Instance = null; //Not running on a EV3
 			}

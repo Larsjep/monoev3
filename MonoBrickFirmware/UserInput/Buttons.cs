@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.UserInput
 {
@@ -21,11 +22,11 @@ namespace MonoBrickFirmware.UserInput
 
     static Buttons()
     {
-		try
+		if(PlatFormHelper.RunningPlatform == PlatFormHelper.Platform.EV3)
 		{
 			Instance = new EV3Buttons();
 		}
-		catch
+		else
 		{
 			Instance = null;		
 		}

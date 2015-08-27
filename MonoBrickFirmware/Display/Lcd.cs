@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using MonoBrickFirmware.Tools;
 
 
 namespace MonoBrickFirmware.Display
@@ -10,12 +11,12 @@ namespace MonoBrickFirmware.Display
 
 	static Lcd()
     {
-		try
+		if(PlatFormHelper.RunningPlatform == PlatFormHelper.Platform.EV3)
 		{
 			Instance = new EV3Lcd();
 			((EV3Lcd)Instance).Initialize();
 		}
-		catch
+		else
 		{
 			Instance = null; //Not running on a EV3
 		}

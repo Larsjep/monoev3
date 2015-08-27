@@ -1,3 +1,5 @@
+using MonoBrickFirmware.Tools;
+
 namespace MonoBrickFirmware.Connections
 {
 	
@@ -5,11 +7,11 @@ namespace MonoBrickFirmware.Connections
 	{
 		static WiFiDevice()
 		{
-			try
+			if(PlatFormHelper.RunningPlatform == PlatFormHelper.Platform.EV3)
 			{
 				Instance = new EV3WiFiDevice();	
 			}	
-			catch
+			else
 			{
 				Instance = null;
 			}

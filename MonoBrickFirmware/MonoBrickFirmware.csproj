@@ -145,6 +145,7 @@
     <Compile Include="Device\EV3Brick.cs" />
     <Compile Include="Native\GacHelper.cs" />
     <Compile Include="Display\Menus\ItemWithTurnOff.cs" />
+    <Compile Include="Native\PlatFormHelper.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
