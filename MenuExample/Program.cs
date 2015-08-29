@@ -73,7 +73,7 @@ namespace MenuExample
 
 		private class MonoBrickQuestion : ItemWithDialog<QuestionDialog>
 		{
-			public MonoBrickQuestion() : base( new QuestionDialog ("Do you Like MonoBrick?", "MonoBrick"))
+			public MonoBrickQuestion() : base( new QuestionDialog ("Do you Like MonoBrick?", "MonoBrick"),"Question")
 			{
 				
 			}

@@ -40,6 +40,10 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void RemoveFocus (IChildItem item)
 		{
+			if (dialogItem.Dialog.Ok)
+			{
+				this.Checked = !this.Checked;
+			}
 			Parent.RemoveFocus (item);
 		}
 
@@ -84,15 +88,14 @@ namespace MonoBrickFirmware.Display.Menus
 	{
 		public ItemWithProgressDialog(ProgressDialog dialog): base(dialog)
 		{
-
+			
 		}
+
+		public ProgressDialog Dialog{get{return this.dialog;}}
 
 		public override void OnExit (ProgressDialog dialog)
 		{
-			if (dialog.Ok)
-			{
-				((ItemWithCheckBox)Parent).Checked	 = !((ItemWithCheckBox)Parent).Checked;
-			}
+			
 		}
 	}
 }
