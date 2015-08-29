@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using MonoBrickFirmware.UserInput;
 using System.Collections.ObjectModel;
-
+using MonoBrickFirmware.Tools;
 namespace MonoBrickFirmware.Display.Menus
 {
 	
@@ -13,10 +13,9 @@ namespace MonoBrickFirmware.Display.Menus
 		private bool buttonAction = false;
 		private ButtonEvents buttonEvents;
 		protected IChildItem activeMenuItem;
-		protected IChildItem topMenu;
+		protected Menu topMenu;
 		protected ManualResetEvent stop = new ManualResetEvent(false);
 		protected bool continueRunning = true;
-
 		private void ExecuteButtonAction(Action action)
 		{
 			buttonAction = true;
@@ -41,27 +40,27 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			activeMenuItem = startMenu;
 			activeMenuItem.Parent = this;
-			startMenu.SetAsTopMenu ();
 			topMenu = startMenu;
 			
 		}
 
-
-
-
 		/// <summary>
-		/// Show menu. This is a blocking call. Will end when Stop is called 
+		/// Show menu. This is a blocking call. 
 		/// </summary>
-		public void Show()
+		/// <param name="allowTerminationWithEsc">If set to <c>true</c> esc can be used to terminate menu.</param>
+		public void Show(bool allowTerminationWithEsc = false)
 		{
+			topMenu.SetAsTopMenu (allowTerminationWithEsc);
 			stop = new ManualResetEvent (false);
 			CreateButtonEvents ();
 			activeMenuItem.OnDrawContent ();
 			stop.WaitOne ();
 		}
 
-
-		public void Stop()
+		/// <summary>
+		/// Stop terminate menu
+		/// </summary>
+		public void Terminate()
 		{
 			buttonEvents.Kill ();
 			stop.Set ();
@@ -80,14 +79,11 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public void RemoveFocus (IChildItem item)
 		{
-			
+			if (item.Equals (topMenu)) 
+			{
+				Terminate ();
+			}	
 		}
-
-		public void RequestRedraw (IChildItem item)
-		{
-			activeMenuItem.OnDrawContent ();
-		}
-
 
 		public void SuspendButtonEvents ()
 		{
@@ -95,9 +91,7 @@ namespace MonoBrickFirmware.Display.Menus
 			{
 				buttonEvents.Kill ();
 				buttonEvents = null;
-				Console.WriteLine ("Killing thread");
 			}
-			Console.WriteLine ("Suspend");
 		}
 
 		public void ResumeButtonEvents ()
@@ -106,9 +100,7 @@ namespace MonoBrickFirmware.Display.Menus
 			{
 				CreateButtonEvents ();
 				activeMenuItem.OnDrawContent ();
-				Console.WriteLine ("Creating thread");
 			}
-			Console.WriteLine ("Resume");
 		}
 		#endregion
 	}

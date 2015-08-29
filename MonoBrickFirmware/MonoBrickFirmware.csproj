@@ -146,6 +146,9 @@
     <Compile Include="Native\GacHelper.cs" />
     <Compile Include="Display\Menus\ItemWithTurnOff.cs" />
     <Compile Include="Native\PlatFormHelper.cs" />
+    <Compile Include="Display\Menus\ChildItem.cs" />
+    <Compile Include="Display\Menus\ParentItem.cs" />
+    <Compile Include="Display\Menus\ChildItemWithParent.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

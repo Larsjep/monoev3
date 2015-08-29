@@ -98,7 +98,7 @@ namespace StartupApp
 		{
 			if (container != null) 
 			{
-				container.Stop ();
+				container.Terminate ();
 			}
 		}
 

@@ -20,96 +20,135 @@ namespace MonoBrickFirmware.Display.Menus
 			var childList = new List<IChildItem> ();
 			foreach(var program in programs)
 			{
-				childList.Add (new ProgramDialog (program, useEscToStop));
+				childList.Add (new ProgramItem (program, useEscToStop));
 			}
 			return childList;
 		}
 	}
 
-
-	internal class ProgramDialog : ItemWithDialog<SelectDialog<string>>, IParentItem
+	internal class ProgramItem : ChildItemWithParent
 	{
 		private ProgramInformation programInformation;
 		private bool useEscToStop;
-		public ProgramDialog(ProgramInformation programInformation, bool useEscToStop): base(new SelectDialog<string> (new string[] {"Run Program", "Run In AOT", "AOT Compile", "Delete Program"}, "Options", true), programInformation.Name)
+		private ItemWithDialog<SelectDialog<string>> programSelectDialog = null;
+		private ItemWithDialog<QuestionDialog> aotQuestionDialog = null;
+		private ItemWithDialog<StepDialog> compileDialog = null;
+		private ItemWithDialog<QuestionDialog> deleteQuestionDialog = null;
+		private ItemWithDialog<ProgressDialog> deleteDialog = null;
+		private ItemWithDialog<InfoDialog> compileBeforeExecution = new ItemWithDialog<InfoDialog>( new InfoDialog("Program will be AOT compiled"));
+		private readonly string[] selectArray = new string[]{ "Run Program", "Run In AOT", "AOT Compile", "Delete Program" };
+
+		public ProgramItem (ProgramInformation programInformation, bool useEscToStop) : base(programInformation.Name)
 		{
 			this.programInformation = programInformation;
 			this.useEscToStop = useEscToStop;
+			programSelectDialog = new ItemWithDialog<SelectDialog<string>>( new SelectDialog<string> (selectArray, "Options", true));
+			aotQuestionDialog = new ItemWithDialog<QuestionDialog> (new QuestionDialog ("Progran already compiled. Recompile?", "AOT recompile"));
+			compileDialog = new ItemWithDialog<StepDialog>(new StepDialog ("Compiling", new List<IStep> (){ new StepContainer (CompileProgram, "compiling program", "Failed to compile")}));
+			deleteQuestionDialog = new ItemWithDialog<QuestionDialog> (new QuestionDialog ("Are you sure?", "Delete"));
+			deleteDialog = new ItemWithDialog<ProgressDialog> (new ProgressDialog ("", new StepContainer (DeleteProgram, "Deleting ", "Error deleting program")));
 		}
 
-		public override void OnExit (SelectDialog<string> dialog)
+		public override void OnEnterPressed ()
+		{
+			programSelectDialog.SetFocus (this, OnSelectDialogExit);
+		}
+
+		private bool DeleteProgram()
+		{
+			ProgramManager.DeleteProgram (programInformation); 
+			return true;
+
+		}
+
+		private void OnStartProgramCompileExit(StepDialog dialog)
+		{
+			if (dialog.ExecutedOk)
+			{
+				var start = new ExecuteProgramDialog (this.programInformation, true, useEscToStop);
+				start.Start (Parent);		
+			}			
+		}
+		
+		private bool CompileProgram()
+		{
+			return ProgramManager.AOTCompileProgram(programInformation);	
+		}
+
+		private void OnCompileDialogExit(QuestionDialog dialog)
+		{
+			if (dialog.IsPositiveSelected) 
+			{
+				compileDialog.SetFocus (Parent);
+			} 
+			else 
+			{
+				programSelectDialog.SetFocus (this, OnSelectDialogExit);		
+			}
+		}
+
+		private void OnDeleteDialogExit(QuestionDialog dialog)
+		{
+			if (dialog.IsPositiveSelected) 
+			{
+				deleteDialog.SetFocus (this.Parent);
+			} 
+			else 
+			{
+				programSelectDialog.SetFocus (this, OnSelectDialogExit);
+			}
+		} 
+
+		private void OnCompileInfoDialogExit(InfoDialog dialog)
+		{
+			compileDialog.SetFocus (Parent, OnStartProgramCompileExit);
+		}
+
+		private void OnSelectDialogExit(SelectDialog<string> dialog)
 		{
 			if (!dialog.EscPressed) {
 				switch (dialog.GetSelectionIndex ()) {
 				case 0:
 					var startDialog = new ExecuteProgramDialog (this.programInformation, false, useEscToStop);
-					startDialog.Start (this);
+					startDialog.Start (Parent);
 					break;
 				case 1:
-					if (!programInformation.IsAOTCompiled) 
+					if (!programInformation.IsAOTCompiled)
 					{
-						var aotDialog = new AotCompileDialog(this.programInformation);
-						aotDialog.SetFocus (Parent);
+						compileBeforeExecution.SetFocus (Parent, OnCompileInfoDialogExit); 
 					} 
 					else 
 					{
-						var start = new ExecuteProgramDialog (this.programInformation,true, useEscToStop);
-						start.Start (this);
+						var start = new ExecuteProgramDialog (this.programInformation, true, useEscToStop);
+						start.Start (Parent);
 					}
 					break;
 				case 2:
-					if (programInformation.IsAOTCompiled) 
+					if (programInformation.IsAOTCompiled)
 					{
-						var aotQuestion = new AotQuestionDialog (this.programInformation);
-						aotQuestion.SetFocus (Parent);
+						aotQuestionDialog.SetFocus (Parent,OnCompileDialogExit);
 					} 
 					else 
 					{
-						var aotDialog = new AotCompileDialog(this.programInformation);
-						aotDialog.SetFocus (Parent);
+						compileDialog.SetFocus (Parent);
 					}
 					break;
 				case 3:
-					var deleteDialog = new DeleteDialog (this.programInformation);
-					deleteDialog.SetFocus (Parent);
+					deleteQuestionDialog.SetFocus (Parent,OnDeleteDialogExit);
 					break;
 				}
-			} 
+			}		
 		}
-
-		#region IParentItem implementation
-
-		public void SetFocus (IChildItem item)
-		{
-			Parent.SetFocus (item);
-		}
-
-		public void RemoveFocus (IChildItem item)
-		{
-			Parent.RemoveFocus (item);
-		}
-
-		public void SuspendButtonEvents ()
-		{
-			Parent.SuspendButtonEvents ();
-		}
-
-		public void ResumeButtonEvents ()
-		{
-			Parent.ResumeButtonEvents ();
-		}
-
-		#endregion
 	}
 
-	internal class ExecuteProgramDialog : IChildItem
+	internal class ExecuteProgramDialog : ChildItem
 	{
 		private ProgramInformation program;
-		private ExceptionInfoDialog exceptionInfoDialog = new ExceptionInfoDialog ();
+		private ItemWithDialog<InfoDialog> exceptionInfoDialog = new ItemWithDialog<InfoDialog> (new InfoDialog("Exception during execution", "Error"));
 		private bool inAot;
-		private bool useEscToStop;
+		private readonly bool useEscToStop;
 
-		public ExecuteProgramDialog(ProgramInformation programInfo, bool inAot, bool useEscToStop)
+		public ExecuteProgramDialog(ProgramInformation programInfo, bool inAot, bool useEscToStop) : base("")
 		{
 			this.program = programInfo;
 			this.useEscToStop = useEscToStop;
@@ -142,51 +181,9 @@ namespace MonoBrickFirmware.Display.Menus
 			StartProgram ();
 		}
 
-		#region IChildItem implementation
-
-		public void OnEnterPressed ()
-		{
-		
-		}
-
-		public void OnLeftPressed ()
-		{
-			
-		}
-
-		public void OnRightPressed ()
-		{
-			
-		}
-
-		public void OnUpPressed ()
-		{
-			
-		}
-
-		public void OnDownPressed ()
-		{
-			
-		}
-
-		public void OnEscPressed ()
+		public override void OnEscPressed ()
 		{
 			ProgramManager.StopProgram (this.program);		
-		}
-
-		public void OnDrawTitle (Font font, Rectangle rectangle, bool selected)
-		{
-			
-		}
-
-		public void OnDrawContent ()
-		{
-			
-		}
-
-		public void OnHideContent ()
-		{
-			
 		}
 
 		private void OnDone(Exception e)
@@ -204,105 +201,6 @@ namespace MonoBrickFirmware.Display.Menus
 				Parent.RemoveFocus (this);
 			}
 		}
-
-
-		public IParentItem Parent { get; set;}
-
-		#endregion
 	}
-
-
-	internal class AotQuestionDialog : ItemWithDialog<QuestionDialog>
-	{
-		private ProgramInformation programInformation;
-		public AotQuestionDialog(ProgramInformation programInformation): base(new QuestionDialog ("Progran already compiled. Recompile?", "AOT recompile"),"")
-		{
-			this.programInformation = programInformation;
-		}
-
-		public override void OnExit (QuestionDialog dialog)
-		{
-			if (dialog.IsPositiveSelected) 
-			{
-				var aotDialog = new AotCompileDialog(this.programInformation);
-				aotDialog.SetFocus (Parent);
-			} 
-		}
-	}
-
-	internal class AotCompileDialog : ItemWithDialog<StepDialog>
-	{
-		public AotCompileDialog(ProgramInformation programInformation): base(new StepDialog("Compiling", 
-			new List<IStep> (){new StepContainer (delegate() {return ProgramManager.AOTCompileProgram(programInformation);}, 
-				"compiling program", "Failed to compile")}),"")
-		{
-			
-		
-		}
-
-		public override void OnExit (StepDialog dialog)
-		{
-			if(!dialog.ExecutedOk)
-			{
-
-			}
-		}
-	}
-
-	internal class DeleteDialog : ItemWithDialog<QuestionDialog>
-	{
-		private ProgramInformation program;
-		public DeleteDialog(ProgramInformation programInformation): base(new QuestionDialog ("Are you sure?", "Delete"), "")
-		{
-			this.program = programInformation;
-		}
-
-		public override void OnExit(QuestionDialog dialog)
-		{
-			if (dialog.IsPositiveSelected)
-			{
-				var deleteDialog = new DeleteStepsDialog(this.program);
-				deleteDialog.SetFocus(this.Parent);
-			}		
-		}
-
-		private class DeleteStepsDialog : ItemWithDialog<ProgressDialog>
-		{
-			public DeleteStepsDialog(ProgramInformation programInformation): base(new ProgressDialog("", new StepContainer (() => {
-				ProgramManager.DeleteProgram (programInformation);
-				return true;
-			}, "Deleting ", "Error deleting program")),"")
-			{
-
-			}
-
-			public override void OnExit (ProgressDialog dialog)
-			{
-
-			}
-
-		}
-
-
-	}
-
-	internal class ExceptionInfoDialog : ItemWithDialog<InfoDialog>
-	{
-		public ExceptionInfoDialog() : base (new InfoDialog("Exception during execution", "Error"))
-		{
-		
-		}
-
-		public override void OnExit (InfoDialog dialog)
-		{
-			
-		}
-
-
-
-	}
-
-
-
 }
 

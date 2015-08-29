@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using MonoBrickFirmware.Display;
 using MonoBrickFirmware.Display.Dialogs;
 using MonoBrickFirmware.Display.Menus;
-using MonoBrickFirmware.UserInput;
 
 namespace MenuExample
 {
@@ -35,8 +32,7 @@ namespace MenuExample
 			mainMenu.AddItem (new ItemWithProgramList ("Programs"));
 			
 			container = new MenuContainer(mainMenu);
-			container.Show();
-			
+			container.Show (true);
 		}
 
 		private static void OnTurnOnChanged(bool isOn)
@@ -71,25 +67,26 @@ namespace MenuExample
 			return true; //return false if it fails
 		}
 
-		private class MonoBrickQuestion : ItemWithDialog<QuestionDialog>
-		{
-			public MonoBrickQuestion() : base( new QuestionDialog ("Do you Like MonoBrick?", "MonoBrick"),"Question")
-			{
-				
-			}
+	}
 
-			public override void OnExit (QuestionDialog dialog)
-			{
-				Console.WriteLine ("Do you like MonoBrick is set to " + dialog.IsPositiveSelected);
-			}
+	public class MonoBrickQuestion : ChildItemWithParent
+	{
+		private ItemWithDialog<QuestionDialog> questionDialog = new ItemWithDialog<QuestionDialog>(new QuestionDialog ("Do you Like MonoBrick?", "MonoBrick"));
+		public MonoBrickQuestion() : base("Question")
+		{
 
 		}
 
+		public override void OnEnterPressed ()
+		{
+			questionDialog.SetFocus(this, OnExit);	
+		}
 
-
-
-
-		
+		public void OnExit (QuestionDialog dialog)
+		{
+			Console.WriteLine ("Do you like MonoBrick is set to " + dialog.IsPositiveSelected);
+		}
 
 	}
+
 }

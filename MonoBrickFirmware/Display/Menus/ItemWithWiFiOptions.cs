@@ -56,9 +56,11 @@ namespace MonoBrickFirmware.Display.Menus
 	internal class TurnWiFiOnOffCheckBox : ItemWithCheckBoxStep
 	{
 		private const int ConnectTimeout = 40000;
+		private ItemWithDialog<QuestionDialog> questionDialog = new ItemWithDialog<QuestionDialog> (new QuestionDialog("Do you want to connect at start-up?", "Settings"));
+			
 		public TurnWiFiOnOffCheckBox(): base("Connected", WiFiDevice.IsLinkUp (), "WiFi", new CheckBoxStep(new StepContainer(OnTurnWiFiOn, "Connecting" ,"Failed to connect" ), new StepContainer(OnTurnWiFiOff, "Disconnecting", "Error disconnecting")), null)
 		{
-			base.OnCheckedChanged = CheckedChanged;	
+				
 		}
 
 		private static bool OnTurnWiFiOn()
@@ -72,29 +74,24 @@ namespace MonoBrickFirmware.Display.Menus
 			return true;
 		}
 
-		private void CheckedChanged(bool isChecked)
+		public override void RemoveFocus (IChildItem item)
 		{
-			if (isChecked) 
+			base.RemoveFocus (item);
+			if (item is ItemWithDialog<QuestionDialog>) 
 			{
-				ConnectAtStartUpDialog dialog = new ConnectAtStartUpDialog ();
-				dialog.SetFocus (this);
-			}
-		}
-	}
-
-	internal class ConnectAtStartUpDialog : ItemWithDialog<QuestionDialog>
-	{
-		public ConnectAtStartUpDialog(): base (new QuestionDialog("Do you want to connect at start-up?", "Settings"))
-		{
-		}
-
-		public override void OnExit (QuestionDialog dialog)
-		{
-			if (dialog.IsPositiveSelected) 
+				if (questionDialog.Dialog.IsPositiveSelected) 
+				{
+					FirmwareSettings.GeneralSettings.ConnectToWiFiAtStartUp = true;
+					FirmwareSettings.GeneralSettings.CheckForSwUpdatesAtStartUp = true;
+					FirmwareSettings.Save();
+				}
+			} 
+			else 
 			{
-				FirmwareSettings.GeneralSettings.ConnectToWiFiAtStartUp = true;
-				FirmwareSettings.GeneralSettings.CheckForSwUpdatesAtStartUp = true;
-				FirmwareSettings.Save();
+				if (this.Checked) 
+				{
+					questionDialog.SetFocus (this);
+				}
 			}
 		}
 	}

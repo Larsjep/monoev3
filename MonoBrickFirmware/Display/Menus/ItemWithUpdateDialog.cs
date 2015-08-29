@@ -9,20 +9,63 @@ using MonoBrickFirmware.UserInput;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class ItemWithUpdateDialog : ItemWithDialog<ProgressDialog>, IParentItem
+	public class ItemWithUpdateDialog : IParentItem, IChildItem
 	{
-		private static bool newImage = false;
-		private static bool newFirmwareApp = false;
-		private static bool newAddin = false;
-
-		public ItemWithUpdateDialog () : base( new ProgressDialog ("Updates", new StepContainer(CheckForUpdate,"Checking server", "Failed to check for Updates")), "Check for update")
+		private bool newImage = false;
+		private bool newFirmwareApp = false;
+		private bool newAddin = false;
+		private ItemWithDialog<ProgressDialog> checkDialog = null;
+		private ItemWithDialog<InfoDialog> infoDialog = null;
+		private ItemWithDialog<QuestionDialog> questionDialog = null;
+		private ItemWithDialog<StepDialog> updateDialog = null;
+		public ItemWithUpdateDialog ()
 		{
-				
+			checkDialog = new ItemWithDialog<ProgressDialog>(new ProgressDialog("Updates", new StepContainer(CheckForUpdate,"Checking server", "Failed to check for Updates")));
+			questionDialog = new ItemWithDialog<QuestionDialog>( new QuestionDialog ("New firmware available. Update?", "New Fiwmware"));
+			updateDialog = new ItemWithDialog<StepDialog> 
+			(
+				new StepDialog ("Updating", 
+					new List<IStep> {
+						new StepContainer (UpdateHelper.DownloadFirmware, "Downloading...", "Failed to download files"),
+						new StepContainer (UpdateHelper.UpdateBootFile, "Updating system", "Failed to update boot file")
+					}
+				)
+			);
 		}
 
-		public override void OnExit (ProgressDialog dialog)
+		public void OnEnterPressed ()
 		{
-			if (!dialog.Ok) 
+			checkDialog.SetFocus (this,OnCheckCompleted);
+		}
+
+		private void OnQuestionCompleted(QuestionDialog dialog)
+		{
+			if (dialog.IsPositiveSelected) 
+			{
+				updateDialog.SetFocus (this, OnUpdateCompleted);
+			} 	
+		}
+
+		private void OnUpdateCompleted(StepDialog dialog)
+		{
+			if (dialog.ExecutedOk)
+			{
+				Parent.SuspendButtonEvents ();
+				Lcd.Clear ();
+				Lcd.WriteText (Font.MediumFont, new Point (0, 0), "Shutting down...", true);
+				Lcd.Update ();
+				Buttons.LedPattern (2);
+				Brick.TurnOff ();
+				var whyAreYouHereDialog = new InfoDialog ("Cut the power", "Reboot failed");
+				whyAreYouHereDialog.Show ();
+				Lcd.Clear ();
+				new ManualResetEvent (false).WaitOne ();
+			} 
+		}
+
+		private void OnCheckCompleted(ProgressDialog dialog)
+		{
+			if (!checkDialog.Dialog.Ok) 
 			{
 				Parent.RemoveFocus (this);
 				return;
@@ -30,32 +73,38 @@ namespace MonoBrickFirmware.Display.Menus
 
 			if (newImage) 
 			{
-				var visitDialog = new ItemWithInfoDialog ("New image available. Download it from www.monobrick.dk or ftp://soborg.net");
-				visitDialog.SetFocus (this);
+				infoDialog = new ItemWithDialog<InfoDialog>( new InfoDialog("New image available. Download it from www.monobrick.dk or ftp://soborg.net"));
+				infoDialog.SetFocus (this);
 			} 
 			else {
 				if (newFirmwareApp)
 				{
-					UpdateQuestionDialog updateQuestion = new UpdateQuestionDialog (this);
-					updateQuestion.SetFocus (this);
+					questionDialog.SetFocus (this, OnQuestionCompleted);
 				} 
 				else 
 				{
 					if (newAddin) 
 					{
-						var visitDialog = new ItemWithInfoDialog ("New Xamarin Add-in. Download it from www.monobrick.dk or ftp://soborg.net");
-						visitDialog.SetFocus (this);
+						infoDialog = new ItemWithDialog<InfoDialog>( new InfoDialog("New Xamarin Add-in. Download it from www.monobrick.dk or ftp://soborg.net"));
+						infoDialog.SetFocus (this);
 					} 
 					else 
 					{
-						var noUpdateDialog = new ItemWithInfoDialog ("No updates available");
-						noUpdateDialog.SetFocus (this);
+						infoDialog = new ItemWithDialog<InfoDialog>( new InfoDialog("No updates available"));
+						infoDialog.SetFocus (this);
 					} 
 				}
-			}	
+			}		
 		}
 
-		private static bool CheckForUpdate()
+		public void OnDrawTitle (Font font, Rectangle rectangle, bool selected)
+		{
+			Lcd.WriteTextBox (font, rectangle, "Check for update", selected);	
+		}
+
+		public IParentItem Parent { get; set;}
+	
+		private bool CheckForUpdate()
 		{
 			newImage = false;
 			newFirmwareApp = false;
@@ -77,14 +126,14 @@ namespace MonoBrickFirmware.Display.Menus
 			return true;
 		}
 
-		public void SetFocus (IChildItem item)
-		{
-			Parent.SetFocus (item);
-		}
-
 		public void RemoveFocus (IChildItem item)
 		{
 			Parent.RemoveFocus (item);
+		}
+
+		public void SetFocus (IChildItem item)
+		{
+			Parent.SetFocus (item);
 		}
 
 		public void SuspendButtonEvents ()
@@ -96,72 +145,41 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			Parent.SuspendButtonEvents ();
 		}
-	}
 
-	internal class UpdateProgressDialog : ItemWithDialog<StepDialog>
-	{
-		public UpdateProgressDialog() : base(new StepDialog ("Updating", 
-			new List<IStep>
-			{
-				new StepContainer (UpdateHelper.DownloadFirmware, "Downloading...", "Failed to download files"),
-				new StepContainer (UpdateHelper.UpdateBootFile, "Updating system", "Failed to update boot file")
-			}
-		))
+		public void OnDrawContent ()
 		{
-		
+
 		}
 
-		public override void OnExit (StepDialog dialog)
+		public void OnHideContent ()
 		{
-			if (dialog.ExecutedOk) {
-				Parent.SuspendButtonEvents ();
-				Lcd.Clear();
-				Lcd.WriteText(Font.MediumFont, new Point(0,0), "Shutting down...", true);
-				Lcd.Update();
-				Buttons.LedPattern(2);
-				Brick.TurnOff ();
-				var whyAreYouHereDialog = new InfoDialog ("Cut the power", "Reboot failed");
-				whyAreYouHereDialog.Show ();
-				Lcd.Clear ();
-				new ManualResetEvent (false).WaitOne ();
-			}
-			Parent.RemoveFocus (this);
+
 		}
 
-	}
-
-	internal class UpdateQuestionDialog : ItemWithDialog<QuestionDialog>
-	{
-		private IParentItem parent;
-		private UpdateProgressDialog updateDialog = new UpdateProgressDialog();
-		public UpdateQuestionDialog(IParentItem parent) : base(new QuestionDialog ("New firmware available. Update?", "New Fiwmware"))
+		public void OnLeftPressed ()
 		{
-			this.parent = parent;	
+
 		}
 
-		public override void OnExit (QuestionDialog dialog)
+		public void OnRightPressed ()
 		{
-			if (dialog.IsPositiveSelected) 
-			{
-				updateDialog.SetFocus (parent);
-			} 
+
 		}
 
-	}
-
-
-	internal class ItemWithInfoDialog : ItemWithDialog<InfoDialog>
-	{
-		public ItemWithInfoDialog(string text) : base(new InfoDialog (text))
+		public void OnUpPressed ()
 		{
-		
+
 		}
 
-		public override void OnExit (InfoDialog dialog)
+		public void OnDownPressed ()
 		{
-			Parent.RemoveFocus (this);		
+
 		}
 
+		public void OnEscPressed ()
+		{
+
+		}
 
 	}
 }

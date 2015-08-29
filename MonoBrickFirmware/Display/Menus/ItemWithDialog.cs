@@ -3,15 +3,14 @@ using MonoBrickFirmware.Display.Dialogs;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public abstract class ItemWithDialog<DialogType> : IChildItem
+	public class ItemWithDialog<DialogType> : IChildItem
 		where DialogType : Dialog
 	{
 
 		private string title;
+		private Action<DialogType> OnExit = null;
 		protected bool hasFocus = false;
-		protected DialogType dialog;
 
-		public abstract void OnExit (DialogType dialog);
 
 		public ItemWithDialog(DialogType dialog):this(dialog, "")
 		{
@@ -22,30 +21,33 @@ namespace MonoBrickFirmware.Display.Menus
 		public ItemWithDialog(DialogType dialog, String title)
 		{
 			this.title = title;
-			this.dialog = dialog;
+			this.Dialog = dialog;
 			dialog.OnExit += OnDone;
 		}
 
 		public IParentItem Parent { get; set;}
 
 
+		public DialogType Dialog{ get; protected set;}
+
 		/// <summary>
 		/// Set focus from this parent menu item
 		/// </summary>
 		/// <param name="menuItem">Menu item.</param>
-		public void SetFocus(IParentItem menuItem)
+		/// <param name="OnExit">Action to do when dialog exits</param>
+		public void SetFocus(IParentItem menuItem, Action<DialogType> OnExit = null)
 		{
-			this.Parent = menuItem;
+			this.OnExit = OnExit;
+			Parent = menuItem;
 			hasFocus = true;
 			Parent.SetFocus (this);
 		}
-
 
 		public void OnEnterPressed ()
 		{
 			if (hasFocus) 
 			{
-				dialog.OnEnterPressed();	
+				Dialog.OnEnterPressed();	
 			} 
 			else 
 			{
@@ -59,7 +61,7 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			if (hasFocus) 
 			{
-				dialog.OnLeftPressed ();
+				Dialog.OnLeftPressed ();
 			}
 		}
 
@@ -67,7 +69,7 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			if (hasFocus) 
 			{
-				dialog.OnRightPressed ();
+				Dialog.OnRightPressed ();
 			}
 		}
 
@@ -75,7 +77,7 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			if (hasFocus) 
 			{
-				dialog.OnUpPressed ();
+				Dialog.OnUpPressed ();
 			}
 		}
 
@@ -83,14 +85,14 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			if (hasFocus) 
 			{
-				dialog.OnDownPressed ();
+				Dialog.OnDownPressed ();
 			}
 		}
 		public void OnEscPressed ()
 		{
 			if (hasFocus) 
 			{
-				dialog.OnEscPressed ();
+				Dialog.OnEscPressed ();
 			}
 		}
 
@@ -103,22 +105,26 @@ namespace MonoBrickFirmware.Display.Menus
 		{
 			if (hasFocus) 
 			{
-				dialog.Draw ();
+				Dialog.Draw ();
 			}
 		}
 		public void OnHideContent ()
 		{
 			if (hasFocus)
 			{
-				dialog.Hide ();
+				Dialog.Hide ();
 			}
 		}
 
 		private void OnDone()
 		{
 			Parent.RemoveFocus (this);
-			OnExit(this.dialog);
 			hasFocus = false;
+			if (OnExit != null)
+			{
+				OnExit (this.Dialog);
+			}
+
 		}
 
 	}

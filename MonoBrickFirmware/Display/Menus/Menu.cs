@@ -11,7 +11,7 @@ namespace MonoBrickFirmware.Display.Menus
 	public class Menu : ItemList
 	{
 
-		private bool topMenu = false;
+		private bool useEscForTermination = true;
 		private List<IChildItem> childItems = new List<IChildItem>();
 
 		public Menu(string title) : base(title, Font.MediumFont, false)
@@ -31,16 +31,16 @@ namespace MonoBrickFirmware.Display.Menus
 
 		public override void OnEscPressed ()
 		{
-			if (!topMenu && show)
+			if (useEscForTermination && show) 
 			{
 				show = false;
-				Parent.RemoveFocus(this);
-			}	
+				Parent.RemoveFocus (this);
+			} 
 		}
 
-		public void SetAsTopMenu()
+		internal void SetAsTopMenu(bool useEscForTermination)
 		{
-			topMenu = true;
+			this.useEscForTermination = useEscForTermination;
 			show = true;
 		}
 	}

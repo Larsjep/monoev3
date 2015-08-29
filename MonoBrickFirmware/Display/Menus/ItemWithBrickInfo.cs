@@ -9,13 +9,12 @@ namespace MonoBrickFirmware.Display.Menus
 	public class ItemWithBrickInfo : IChildItem, IParentItem
 	{
 		private bool hasFocus = false;
-		private GetInfoDialog dialog;
+		private ItemWithDialog<ProgressDialog> dialog;
 		private Information information = null;
 
 		public ItemWithBrickInfo ()
 		{
-			dialog = new GetInfoDialog();
-			dialog.OnInformationLoaded += this.OnInformationLoaded;
+			dialog = new ItemWithDialog<ProgressDialog>(new ProgressDialog("Getting Info", new StepContainer(LoadSettings, "Loading", "Failed to load info")));
 		}
 
 		public void OnEnterPressed ()
@@ -24,7 +23,7 @@ namespace MonoBrickFirmware.Display.Menus
 			{
 				if (information == null) 
 				{
-					dialog.SetFocus (this);
+					dialog.SetFocus (this,OnDialogExit );
 				} 
 				else 
 				{
@@ -94,16 +93,15 @@ namespace MonoBrickFirmware.Display.Menus
 			Lcd.WriteText(Font.MediumFont, startPos+offset*2, "Mono version: " + monoVersion.Substring(0,7), true);
 			Lcd.WriteText(Font.MediumFont, startPos+offset*3, "Mono CLR: " + monoCLR, true);			
 			Lcd.WriteText(Font.MediumFont, startPos+offset*4, "IP: " + WiFiDevice.GetIpAddress(), true);			
-
 			Lcd.Update();
 		}
 
 		public void SetFocus (IChildItem item)
 		{
-			Parent.SetFocus (item);
+			Parent.SetFocus (item);	
 		}
 
-		public void RemoveFocus (IChildItem item)
+		private void OnDialogExit(ProgressDialog dialog)
 		{
 			if (dialog.Ok) 
 			{
@@ -114,6 +112,11 @@ namespace MonoBrickFirmware.Display.Menus
 			{
 				Parent.RemoveFocus (this);
 			}
+		}
+	
+		public void RemoveFocus (IChildItem item)
+		{
+			
 		}
 
 		public void SuspendButtonEvents ()
@@ -136,37 +139,7 @@ namespace MonoBrickFirmware.Display.Menus
 			information = info;
 		}
 
-		public IParentItem Parent { get; set; }
-	}
-
-	internal class Information
-	{
-		public string FirmwareVersion;
-		public string ImageVersion;
-		public string MonoVersion;
-		public string MonoCLRVersion;
-		public string IpAddress;	
-	}
-
-
-	internal class GetInfoDialog : ItemWithDialog<ProgressDialog>
-	{
-		private static Information info = null;
-		public Action<Information> OnInformationLoaded = delegate {};
-		public GetInfoDialog():base( new ProgressDialog("Getting Info", new StepContainer(LoadSettings, "Loading", "Failed to load info")))
-		{
-		
-		}
-
-		public bool Ok{get{return this.dialog.Ok;}}
-
-		public override void OnExit (ProgressDialog dialog)
-		{
-			OnInformationLoaded(info);
-			Parent.RemoveFocus (this);		
-		}
-
-		private static bool LoadSettings()
+		private bool LoadSettings()
 		{
 			bool ok = true;
 			try
@@ -182,12 +155,12 @@ namespace MonoBrickFirmware.Display.Menus
 				string monoCLR = System.Reflection.Assembly.GetExecutingAssembly().ImageRuntimeVersion;
 				var currentVersion = UpdateHelper.InstalledVersion ();
 				string ip = WiFiDevice.GetIpAddress();
-				info = new Information();
-				info.FirmwareVersion = currentVersion.Firmware;
-				info.ImageVersion = currentVersion.Image;
-				info.IpAddress = ip;
-				info.MonoCLRVersion = monoCLR;
-				info.MonoVersion = monoVersion;
+				information = new Information();
+				information.FirmwareVersion = currentVersion.Firmware;
+				information.ImageVersion = currentVersion.Image;
+				information.IpAddress = ip;
+				information.MonoCLRVersion = monoCLR;
+				information.MonoVersion = monoVersion;
 			}
 			catch
 			{
@@ -195,10 +168,17 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 			return ok;
 		}
-	
+
+		public IParentItem Parent { get; set; }
 	}
 
-
-
+	internal class Information
+	{
+		public string FirmwareVersion;
+		public string ImageVersion;
+		public string MonoVersion;
+		public string MonoCLRVersion;
+		public string IpAddress;	
+	}
 }
 

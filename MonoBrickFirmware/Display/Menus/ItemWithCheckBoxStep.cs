@@ -6,7 +6,7 @@ namespace MonoBrickFirmware.Display.Menus
 	public class ItemWithCheckBoxStep : ItemWithCheckBox, IParentItem
 	{
 		private CheckBoxStep itemStep = null;
-		private ItemWithProgressDialog dialogItem;
+		private ItemWithDialog<ProgressDialog> dialogItem;
 
 		public ItemWithCheckBoxStep (string text, bool checkedAtStart, string stepTitle, CheckBoxStep step) : this(text, checkedAtStart, stepTitle, step, null)
 		{
@@ -16,7 +16,7 @@ namespace MonoBrickFirmware.Display.Menus
 		public ItemWithCheckBoxStep (string text, bool checkedAtStart, string stepTitle, CheckBoxStep step, Action<bool> OnCheckedChanged) : base(text, checkedAtStart, OnCheckedChanged)
 		{
 			this.itemStep = step;
-			dialogItem = new ItemWithProgressDialog (new ProgressDialog(stepTitle, itemStep));
+			dialogItem = new ItemWithDialog<ProgressDialog>(new ProgressDialog(stepTitle, itemStep));
 		}
 
 		public override void OnEnterPressed ()
@@ -38,7 +38,7 @@ namespace MonoBrickFirmware.Display.Menus
 			Parent.SetFocus (item);
 		}
 
-		public void RemoveFocus (IChildItem item)
+		public virtual void RemoveFocus (IChildItem item)
 		{
 			if (dialogItem.Dialog.Ok)
 			{
@@ -81,21 +81,6 @@ namespace MonoBrickFirmware.Display.Menus
 		public bool Execute ()
 		{
 			return Checked ? unCheckStep.Execute () : checkedStep.Execute ();
-		}
-	}
-
-	internal class ItemWithProgressDialog : ItemWithDialog<ProgressDialog>
-	{
-		public ItemWithProgressDialog(ProgressDialog dialog): base(dialog)
-		{
-			
-		}
-
-		public ProgressDialog Dialog{get{return this.dialog;}}
-
-		public override void OnExit (ProgressDialog dialog)
-		{
-			
 		}
 	}
 }

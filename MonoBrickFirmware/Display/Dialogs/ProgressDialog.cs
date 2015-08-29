@@ -83,8 +83,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 				{
 					Ok = false;
 					endText =  "Exception executing " + step.StepText;
-					Console.WriteLine("Exception " + e.Message);
-					Console.WriteLine(e.StackTrace);
 				}
 				StopProgressAnimation ();
 				if ((step.ShowOkText && Ok) || !Ok) 

@@ -43,21 +43,25 @@ namespace EV3MonoBrickSimulator.Stub
 
 		protected override string GetRepository ()
 		{
+			System.Threading.Thread.Sleep (100);
 			return Repository;
 		}
 
 		protected override string CurrentImageVersion ()
 		{
+			System.Threading.Thread.Sleep (100);
 			return ImageVersion;
 		}
 
 		protected override string CurrentAddInVersion ()
 		{
+			System.Threading.Thread.Sleep (100);
 			return AddInVersion;	
 		}
 
 		protected override string CurrentFirmwareVersion ()
 		{
+			System.Threading.Thread.Sleep (100);
 			SimulatorSettings settings = new SimulatorSettings ();
 			settings.Load ();
 			string runningPath = settings.BootSettings.StartUpDir;
