@@ -4,74 +4,18 @@ using MonoBrickFirmware.Device;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class ItemWithTurnOff : IChildItem, IParentItem
+	public class ItemWithTurnOff : ChildItemWithParent
 	{
 		private ItemWithDialog<QuestionDialog> questionDialog = new ItemWithDialog<QuestionDialog> (new QuestionDialog ("Are you sure?", "Shutdown EV3")); 
-		public ItemWithTurnOff ()
+		public ItemWithTurnOff () : base("Shutdown")
 		{
 			
 		}
 
-		public void OnEnterPressed ()
+		public override void OnEnterPressed ()
 		{
 			questionDialog.SetFocus (this, OnExit);	
 		}
-		public void OnLeftPressed ()
-		{
-			
-		}
-		public void OnRightPressed ()
-		{
-			
-		}
-		public void OnUpPressed ()
-		{
-			
-		}
-		public void OnDownPressed ()
-		{
-			
-		}
-		public void OnEscPressed ()
-		{
-			
-		}
-		public void OnDrawTitle (Font font, Rectangle rectangle, bool selected)
-		{
-			Lcd.WriteTextBox (font, rectangle, "Shutdown", selected);
-
-		}
-
-		public void OnDrawContent ()
-		{
-			
-		}
-		public void OnHideContent ()
-		{
-			
-		}
-		public IParentItem Parent { get; set; }
-
-		public void SetFocus (IChildItem item)
-		{
-			Parent.SetFocus (item);	
-		}
-
-		public void RemoveFocus (IChildItem item)
-		{
-			Parent.RemoveFocus (item);
-		}
-
-		public void SuspendButtonEvents ()
-		{
-			Parent.SuspendButtonEvents ();	
-		}
-
-		public void ResumeButtonEvents ()
-		{
-			Parent.ResumeButtonEvents ();	
-		}
-
 
 		private void OnExit (QuestionDialog dialog)
 		{

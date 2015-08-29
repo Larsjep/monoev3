@@ -3,7 +3,7 @@ using MonoBrickFirmware.Display;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class ItemWithOptions<OptionType> : IChildItem
+	public class ItemWithOptions<OptionType> : ChildItem
 	{
 		
 		private string text;
@@ -11,20 +11,20 @@ namespace MonoBrickFirmware.Display.Menus
 		private const int rightArrowOffset = 4;
 		private const int arrowEdge = 4;
 		private Action<OptionType> OnOptionChanged;
-		public IParentItem Parent { get; set;}
-        public ItemWithOptions(string text, OptionType[] options, Action<OptionType> OnOptionChanged, int startIdx = 0)
+
+		public ItemWithOptions(string text, OptionType[] options, Action<OptionType> OnOptionChanged, int startIdx = 0)
         {
 			this.text = text;
 			this.options = options;
 			this.OptionIndex = startIdx;
 			this.OnOptionChanged = OnOptionChanged;
 		}
-		public void OnEnterPressed()
+		public override void OnEnterPressed()
 		{
 			OnRightPressed();
 		}
 		
-		public void OnLeftPressed ()
+		public override void OnLeftPressed ()
 		{
 			OptionIndex = OptionIndex -1;
 			if(OptionIndex < 0)
@@ -32,13 +32,13 @@ namespace MonoBrickFirmware.Display.Menus
 			OnOptionChanged(options[OptionIndex]);
 		}
 
-		public void OnRightPressed(){
+		public override void OnRightPressed(){
 			OptionIndex = (OptionIndex+1)%options.Length;
 			OnOptionChanged(options[OptionIndex]);
 
 		}
 
-		public void OnDrawTitle (Font f, Rectangle r, bool color)
+		public override void OnDrawTitle (Font f, Rectangle r, bool color)
 		{
 			int arrowWidth = (int)f.maxWidth / 4;
 			
@@ -54,32 +54,6 @@ namespace MonoBrickFirmware.Display.Menus
 			Lcd.DrawArrow(leftArrowRect, Lcd.ArrowOrientation.Left, color);
 			Lcd.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
 
-		}
-
-		public void OnUpPressed ()
-		{
-			
-		}
-
-		public void OnDownPressed ()
-		{
-			
-		}
-
-		public void OnEscPressed ()
-		{
-			
-		}
-
-
-		public void OnDrawContent ()
-		{
-			
-		}
-
-		public void OnHideContent()
-		{
-		
 		}
 
 		public int OptionIndex{get;private set;}

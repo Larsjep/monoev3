@@ -6,7 +6,7 @@ namespace MonoBrickFirmware.Display.Menus
 {
 	public enum ItemSymbole {None, LeftArrow, RightArrow};
 	
-	public class ItemWithAction : IChildItem
+	public class ItemWithAction : ChildItem
 	{
 		
 		private string text;
@@ -24,9 +24,8 @@ namespace MonoBrickFirmware.Display.Menus
 			this.symbole = symbole;
 			this.useEscToCancel = useEscToCancel;
 		}
-		public IParentItem Parent{ get; set;}
 
-		public void OnEnterPressed()
+		public override void OnEnterPressed()
 		{
 			if (!hasFocus) 
 			{
@@ -41,7 +40,7 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 		}
 
-		public void OnDrawTitle(Font f, Rectangle r, bool selected)
+		public override void OnDrawTitle(Font f, Rectangle r, bool selected)
 		{
 			Lcd.WriteTextBox (f, r, text, selected);
 			if (symbole == ItemSymbole.LeftArrow || symbole == ItemSymbole.RightArrow) {
@@ -54,7 +53,7 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 		}
 
-		public void OnEscPressed ()
+		public override void OnEscPressed ()
 		{
 			if (useEscToCancel) 
 			{
@@ -62,32 +61,7 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 		}
 
-		public void OnLeftPressed ()
-		{
-
-		}
-
-		public void OnRightPressed()
-		{
-
-		}
-
-		public void OnUpPressed ()
-		{
-
-		}
-
-		public void OnDownPressed ()
-		{
-
-		}
-
-		public void OnDrawContent ()
-		{
-
-		}
-
-		public void OnHideContent()
+		public override void OnHideContent()
 		{
 			cancelSource.Cancel ();	
 		}

@@ -26,7 +26,7 @@ namespace MonoBrickFirmware.Display.Menus
 		private const int arrowOffset = 4;
 		private bool hasLoadedList = false;
 		private bool reloadOnFocus;
-		private EmptyListInfoDialog emptyListListInfoDialog = null;
+		private ItemWithDialog<InfoDialog> emptyListListInfoDialog = null;
 		protected bool show;
 		public ItemList (string title, Font font, bool reloadListOnFocus = true) : this(title, font, reloadListOnFocus, null) 
 		{
@@ -38,7 +38,7 @@ namespace MonoBrickFirmware.Display.Menus
 			this.title = title;
 			this.font = font;
 			this.reloadOnFocus = reloadListOnFocus;
-			emptyListListInfoDialog = new EmptyListInfoDialog (emptyListInfo);
+			emptyListListInfoDialog = new ItemWithDialog<InfoDialog>(new InfoDialog(emptyListInfo));
 		}
 
 
@@ -236,19 +236,6 @@ namespace MonoBrickFirmware.Display.Menus
 				i.Parent = this;
 			}
 			hasLoadedList = true;
-		}
-
-		private class EmptyListInfoDialog : ItemWithDialog<InfoDialog>
-		{
-			public EmptyListInfoDialog(string info) : base (new InfoDialog(info))
-			{
-
-			}
-
-			public override void OnExit (InfoDialog dialog)
-			{
-
-			}
 		}
 	}
 }

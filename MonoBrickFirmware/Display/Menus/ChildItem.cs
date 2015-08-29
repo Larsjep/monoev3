@@ -5,6 +5,11 @@ namespace MonoBrickFirmware.Display.Menus
 	public class ChildItem : IChildItem
 	{
 		private string title;
+		public ChildItem (): this("")
+		{
+			
+		}
+
 		public ChildItem (string title)
 		{
 			this.title = title;

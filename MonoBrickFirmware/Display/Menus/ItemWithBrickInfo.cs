@@ -6,18 +6,18 @@ using MonoBrickFirmware.Display.Dialogs;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class ItemWithBrickInfo : IChildItem, IParentItem
+	public class ItemWithBrickInfo : ChildItemWithParent
 	{
 		private bool hasFocus = false;
 		private ItemWithDialog<ProgressDialog> dialog;
 		private Information information = null;
 
-		public ItemWithBrickInfo ()
+		public ItemWithBrickInfo () : base("Brick information")
 		{
 			dialog = new ItemWithDialog<ProgressDialog>(new ProgressDialog("Getting Info", new StepContainer(LoadSettings, "Loading", "Failed to load info")));
 		}
 
-		public void OnEnterPressed ()
+		public override void OnEnterPressed ()
 		{
 			if (!hasFocus) 
 			{
@@ -38,27 +38,7 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 		}
 
-		public void OnLeftPressed ()
-		{
-			
-		}
-
-		public void OnRightPressed ()
-		{
-			
-		}
-
-		public void OnUpPressed ()
-		{
-			
-		}
-
-		public void OnDownPressed ()
-		{
-			
-		}
-
-		public void OnEscPressed ()
+		public override void OnEscPressed ()
 		{
 			if (hasFocus) 
 			{
@@ -67,12 +47,7 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 		}
 
-		public void OnDrawTitle (Font font, Rectangle rectangle, bool selected)
-		{
-			Lcd.WriteTextBox(font, rectangle, "Brick information", selected);	
-		}
-
-		public void OnDrawContent ()
+		public override void OnDrawContent ()
 		{
 			string monoVersion = "Unknown";
 			Type type = Type.GetType("Mono.Runtime");
@@ -96,11 +71,6 @@ namespace MonoBrickFirmware.Display.Menus
 			Lcd.Update();
 		}
 
-		public void SetFocus (IChildItem item)
-		{
-			Parent.SetFocus (item);	
-		}
-
 		private void OnDialogExit(ProgressDialog dialog)
 		{
 			if (dialog.Ok) 
@@ -114,22 +84,7 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 		}
 	
-		public void RemoveFocus (IChildItem item)
-		{
-			
-		}
-
-		public void SuspendButtonEvents ()
-		{
-			Parent.SuspendButtonEvents ();
-		}
-
-		public void ResumeButtonEvents ()
-		{
-			Parent.ResumeButtonEvents ();
-		}
-
-		public void OnHideContent ()
+		public override void RemoveFocus (IChildItem item)
 		{
 			
 		}
@@ -168,8 +123,6 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 			return ok;
 		}
-
-		public IParentItem Parent { get; set; }
 	}
 
 	internal class Information

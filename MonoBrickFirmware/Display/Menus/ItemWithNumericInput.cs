@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class ItemWithNumericInput : IChildItem
+	public class ItemWithNumericInput : ChildItem
 	{
 		private string text;
 		private int min;
@@ -31,9 +31,7 @@ namespace MonoBrickFirmware.Display.Menus
 			this.OnValueChanged = OnValueChanged;
 		}
 
-		public IParentItem Parent { get; set;}
-
-		public void OnLeftPressed ()
+		public override void OnLeftPressed ()
 		{
 			int counter = 0;
 			Value--;
@@ -68,7 +66,7 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 		}
 		
-		public void OnRightPressed(){
+		public override void OnRightPressed(){
 			int counter = 0;
 			Value++;
 			do{
@@ -102,7 +100,7 @@ namespace MonoBrickFirmware.Display.Menus
 			}
 		}
 
-		public void OnDrawTitle (Font f, Rectangle r, bool color)
+		public override void OnDrawTitle (Font f, Rectangle r, bool color)
 		{
 			font = f;
 			rect = r;
@@ -120,31 +118,6 @@ namespace MonoBrickFirmware.Display.Menus
 			Lcd.WriteTextBox (f, numericRect, valueAsString, color, Lcd.Alignment.Right);
 			Lcd.DrawArrow(leftArrowRect, Lcd.ArrowOrientation.Left, color);
 			Lcd.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
-		}
-
-		public void OnEnterPressed()
-		{
-		
-		}
-
-		public void OnUpPressed ()
-		{
-			
-		}
-
-		public void OnDownPressed ()
-		{
-			
-		}
-
-		public void OnEscPressed ()
-		{
-			
-		}
-
-		public void OnDrawContent ()
-		{
-			
 		}
 
 		public void OnHideContent ()

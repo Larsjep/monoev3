@@ -9,7 +9,7 @@ using MonoBrickFirmware.UserInput;
 
 namespace MonoBrickFirmware.Display.Menus
 {
-	public class ItemWithUpdateDialog : IParentItem, IChildItem
+	public class ItemWithUpdateDialog : ChildItemWithParent
 	{
 		private bool newImage = false;
 		private bool newFirmwareApp = false;
@@ -18,7 +18,7 @@ namespace MonoBrickFirmware.Display.Menus
 		private ItemWithDialog<InfoDialog> infoDialog = null;
 		private ItemWithDialog<QuestionDialog> questionDialog = null;
 		private ItemWithDialog<StepDialog> updateDialog = null;
-		public ItemWithUpdateDialog ()
+		public ItemWithUpdateDialog () : base("Check for update")
 		{
 			checkDialog = new ItemWithDialog<ProgressDialog>(new ProgressDialog("Updates", new StepContainer(CheckForUpdate,"Checking server", "Failed to check for Updates")));
 			questionDialog = new ItemWithDialog<QuestionDialog>( new QuestionDialog ("New firmware available. Update?", "New Fiwmware"));
@@ -33,7 +33,7 @@ namespace MonoBrickFirmware.Display.Menus
 			);
 		}
 
-		public void OnEnterPressed ()
+		public override void OnEnterPressed ()
 		{
 			checkDialog.SetFocus (this,OnCheckCompleted);
 		}
@@ -97,13 +97,6 @@ namespace MonoBrickFirmware.Display.Menus
 			}		
 		}
 
-		public void OnDrawTitle (Font font, Rectangle rectangle, bool selected)
-		{
-			Lcd.WriteTextBox (font, rectangle, "Check for update", selected);	
-		}
-
-		public IParentItem Parent { get; set;}
-	
 		private bool CheckForUpdate()
 		{
 			newImage = false;
@@ -124,61 +117,6 @@ namespace MonoBrickFirmware.Display.Menus
 				return false;
 			}
 			return true;
-		}
-
-		public void RemoveFocus (IChildItem item)
-		{
-			Parent.RemoveFocus (item);
-		}
-
-		public void SetFocus (IChildItem item)
-		{
-			Parent.SetFocus (item);
-		}
-
-		public void SuspendButtonEvents ()
-		{
-			Parent.SuspendButtonEvents ();
-		}
-
-		public void ResumeButtonEvents ()
-		{
-			Parent.SuspendButtonEvents ();
-		}
-
-		public void OnDrawContent ()
-		{
-
-		}
-
-		public void OnHideContent ()
-		{
-
-		}
-
-		public void OnLeftPressed ()
-		{
-
-		}
-
-		public void OnRightPressed ()
-		{
-
-		}
-
-		public void OnUpPressed ()
-		{
-
-		}
-
-		public void OnDownPressed ()
-		{
-
-		}
-
-		public void OnEscPressed ()
-		{
-
 		}
 
 	}

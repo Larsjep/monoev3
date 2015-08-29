@@ -4,7 +4,7 @@ using MonoBrickFirmware.Display;
 namespace MonoBrickFirmware.Display.Menus
 {
 
-	public class ItemWithCheckBox : IChildItem
+	public class ItemWithCheckBox : ChildItem
 	{
 		private string text;
 		private const int lineSize = 2;
@@ -17,14 +17,12 @@ namespace MonoBrickFirmware.Display.Menus
 			this.OnCheckedChanged = OnCheckedChanged;
 		}
 
-		public IParentItem Parent { get; set;}
-		
-		public virtual void OnEnterPressed ()
+		public override void OnEnterPressed ()
 		{
 			Checked = !Checked;
 		}
 		
-		public void OnDrawTitle (Font f, Rectangle r, bool color)
+		public override void OnDrawTitle (Font f, Rectangle r, bool color)
 		{
 			int xCheckBoxSize =(int) f.maxWidth;
 			Rectangle outer = new Rectangle(new Point(Lcd.Width - xCheckBoxSize + edgeSize, r.P1.Y + edgeSize), new Point(r.P2.X - edgeSize,r.P2.Y - edgeSize));
@@ -37,41 +35,6 @@ namespace MonoBrickFirmware.Display.Menus
 			Lcd.DrawRectangle(innter,!color, true);
 			if(Checked)
 				Lcd.WriteText(f,checkPoint,"v", color);
-		}
-
-		public void OnDrawContent ()
-		{
-
-		}
-
-		public void OnLeftPressed ()
-		{
-			
-		}
-
-		public void OnRightPressed()
-		{
-			
-		}
-
-		public virtual void OnHideContent ()
-		{
-			
-		}
-
-		public void OnUpPressed ()
-		{
-
-		}
-
-		public void OnDownPressed ()
-		{
-	
-		}
-
-		public void OnEscPressed ()
-		{
-
 		}
 
 		public bool Checked
