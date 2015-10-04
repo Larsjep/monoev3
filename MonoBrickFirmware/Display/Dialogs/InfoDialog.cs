@@ -94,6 +94,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 
 		private void DrawScrollBar()
 		{
+			Lcd.DrawRectangle (scrollBar, false, true);
 			Lcd.DrawRectangle (scrollBar, true, false);
 			Rectangle indexRec = new Rectangle (new Point(scrollBar.P1.X + (scrollBarWidth - scrollIndexWith)/2, scrollBar.P1.Y + pagePos * indexHeight), new Point(scrollBar.P2.X - (scrollBarWidth - scrollIndexWith)/2, scrollBar.P1.Y + pagePos * indexHeight + indexHeight ) );
 			Lcd.DrawRectangle (indexRec, true, true);

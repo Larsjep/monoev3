@@ -24,7 +24,7 @@ namespace MenuExample
 			subSubMenu.AddItem( new ItemWithBrickInfo());
 
 			subMenu.AddItem (subSubMenu);
-			subMenu.AddItem( new ItemWithCharacterInput("Name", "Enter Name", "Anders", OnNameChanged));
+			subMenu.AddItem( new ItemWithCharacterInput("Name", "Enter Name", "Anders", OnNameChanged, false, true, true));
 			subMenu.AddItem( new ItemWithNumericInput("Age", 29, OnAgeChanged, 0, 100));
 			subMenu.AddItem( new ItemWithCheckBox("Loves C#", true, OnCheckedChanged));
 

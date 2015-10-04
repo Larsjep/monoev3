@@ -21,8 +21,8 @@ namespace MonoBrickFirmware.Display.Menus
 
 		protected override List<IChildItem> OnCreateChildList ()
 		{
-			ssidItem = new ItemWithCharacterInput("SSID", "Enter SSID", FirmwareSettings.WiFiSettings.SSID, OnSsidChanged);
-			passwordItem = new ItemWithCharacterInput("Password", "Password", FirmwareSettings.WiFiSettings.Password, OnPasswordChanged, true);
+			ssidItem = new ItemWithCharacterInput("SSID", "Enter SSID", FirmwareSettings.WiFiSettings.SSID, OnSsidChanged,false, true , false);
+			passwordItem = new ItemWithCharacterInput("Password", "Password", FirmwareSettings.WiFiSettings.Password, OnPasswordChanged, true, true, false);
 			encryptionItem = new ItemWithOptions<string>("Encryption", new string[]{"None","WPA/2"}, OnEncryptionOptionChanged, FirmwareSettings.WiFiSettings.Encryption ? 1 : 0);
 			connectItem = new TurnWiFiOnOffCheckBox ();
 			var childList = new List<IChildItem> ();

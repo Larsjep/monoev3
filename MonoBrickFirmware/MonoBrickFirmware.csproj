@@ -149,6 +149,10 @@
     <Compile Include="Display\Menus\ChildItem.cs" />
     <Compile Include="Display\Menus\ParentItem.cs" />
     <Compile Include="Display\Menus\ChildItemWithParent.cs" />
+    <Compile Include="Display\Dialogs\UserInput\ButtonContainer.cs" />
+    <Compile Include="Display\Dialogs\UserInput\Buttons.cs" />
+    <Compile Include="Display\Dialogs\UserInput\CharacterSets.cs" />
+    <Compile Include="Display\Dialogs\UserInput\Keyboard.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -174,5 +178,6 @@
     <Folder Include="Settings\" />
     <Folder Include="FirmwareUpdate\" />
     <Folder Include="Device\" />
+    <Folder Include="Display\Dialogs\UserInput\" />
   </ItemGroup>
 </Project>

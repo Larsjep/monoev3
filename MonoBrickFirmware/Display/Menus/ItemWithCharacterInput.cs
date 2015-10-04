@@ -13,25 +13,29 @@ namespace MonoBrickFirmware.Display.Menus
 		private bool hide;
 		private bool show = false;
 		private CharacterDialog dialog; 
-		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText) : this(subject, dialogTitle, startText, null, false)
+		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText) : this(subject, dialogTitle, startText, null, false, false, false)
 		{
 		
 		}
 
-		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText, Action<string> OnChanged ) : this(subject, dialogTitle, startText, OnChanged, false)
+		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText, Action<string> OnChanged) : this(subject, dialogTitle, startText, OnChanged, false, false, false)
 		{
 
 		}
 
-		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText, Action<string> OnChanged, bool hideInput){
+		public  ItemWithCharacterInput (string subject, string dialogTitle, string startText, Action<string> OnChanged, bool hideInput, bool disableEnter, bool disableNumberAndSymbols){
 			this.subject = subject;
 			this.Text = startText;
 			this.hide = hideInput;
-			dialog = new Dialogs.CharacterDialog(dialogTitle);
+			dialog = new Dialogs.CharacterDialog(dialogTitle, disableNumberAndSymbols, disableEnter);
 			dialog.OnExit += delegate
 			{
-				Text = dialog.GetUserInput();
-				if(OnChanged != null)
+				string newText = dialog.GetUserInput();
+				if(newText != null)
+				{
+					Text = newText;	
+				}
+				if(OnChanged != null && newText != null)
 				{
 					OnChanged(Text);
 				}
@@ -63,8 +67,7 @@ namespace MonoBrickFirmware.Display.Menus
 			int textValueWidth = totalWidth - subjectWidth;
 			Rectangle textRect = new Rectangle (new Point (r.P1.X + subjectWidth, r.P1.Y), r.P2);
 			Rectangle subjectRect = new Rectangle (r.P1, new Point (r.P2.X - textValueWidth, r.P2.Y));
-			if ((int)(f.TextSize (Text).X) < textValueWidth) 
-			{
+			if ((int)(f.TextSize (Text).X) < textValueWidth) {
 				showTextString = Text;
 				if (hide) {
 					showTextString = new string ('*', showTextString.Length); 
@@ -80,12 +83,9 @@ namespace MonoBrickFirmware.Display.Menus
 						break;
 					} 
 				}
-				if (hide) 
-				{
+				if (hide) {
 					showTextString = new string ('*', showTextString.Length); 
-				} 
-				else 
-				{
+				} else {
 					showTextString = showTextString + "...";
 				}
 			}

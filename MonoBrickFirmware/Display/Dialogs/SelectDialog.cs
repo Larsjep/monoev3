@@ -34,7 +34,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 				WriteTextOnLine(options [i + scrollPos].ToString (), i, i != cursorPos);
 			}
 			Lcd.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + lines.Count < options.Length);
-			
         }
 
 		internal override void OnUpPressed ()

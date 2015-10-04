@@ -9,8 +9,6 @@ namespace MonoBrickFirmware.Display.Dialogs
 {
     public abstract class Dialog
 	{
-		
-
 		private Rectangle titleRect;
 		private Point bottomLineCenter;
         
@@ -22,13 +20,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private const int buttonEdge = 2;
 		private const int buttonTextOffset = 2;
 		private const int boxMiddleOffset = 8;
-		private bool OnShowCalled = false;
 		private CancellationTokenSource cancelSource = new CancellationTokenSource();
-
+		private bool drawTitle;
+		private bool useSmallTitle = false;
 		protected Font font;
 		protected Rectangle outherWindow; 
 		protected Rectangle innerWindow;
 		protected List<Rectangle> lines;
+		protected bool OnShowCalled = false;
+
 		internal string title;
 
 
@@ -46,9 +46,18 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Point startPoint1 = new Point (xEdge, yEdge);
 			Point startPoint2 = new Point (xEdge + dialogWidth, yEdge + dialogHeight);
 			this.titleSize = font.TextSize (this.title).X + (int)f.maxWidth;
+			if (title == "") {
+			}
+			this.drawTitle = title != "";
 			outherWindow = new Rectangle (startPoint1, startPoint2);
 			innerWindow = new Rectangle (new Point (startPoint1.X + dialogEdge, startPoint1.Y + dialogEdge), new Point (startPoint2.X - dialogEdge, startPoint2.Y - dialogEdge));
 			titleRect = new Rectangle (new Point ((int)(Lcd.Width / 2 - titleSize / 2), (int)(startPoint1.Y - (font.maxHeight / 2))), new Point ((int)(Lcd.Width / 2 + titleSize / 2), (int)(startPoint1.Y + (font.maxHeight / 2))));
+			if (titleRect.P1.Y < 0)
+			{
+				this.titleSize = Font.SmallFont.TextSize(this.title).X + (int)f.maxWidth;
+				titleRect = new Rectangle (new Point ((int)(Lcd.Width / 2 - titleSize / 2), (int)(startPoint1.Y - (Font.SmallFont.maxHeight / 2))), new Point ((int)(Lcd.Width / 2 + titleSize / 2), (int)(startPoint1.Y + (Font.SmallFont.maxHeight / 2))));
+				useSmallTitle = true;
+			}
 			int top = innerWindow.P1.Y + (int)( f.maxHeight/2) + topOffset;
 			int middel = innerWindow.P1.Y  + ((innerWindow.P2.Y - innerWindow.P1.Y) / 2) - (int)(f.maxHeight)/2;
 			int count = 0;
@@ -141,12 +150,15 @@ namespace MonoBrickFirmware.Display.Dialogs
 			if (!OnShowCalled) 
 			{
 				OnShow ();
+				Lcd.DrawRectangle(outherWindow, true, true);
+				Lcd.DrawRectangle(innerWindow, false, true);
+				if (drawTitle)
+				{
+					WriteTitle ();
+				}
 				OnShowCalled = true;
 			}
-			Lcd.DrawRectangle(outherWindow, true, true);
-			Lcd.DrawRectangle(innerWindow, false, true);
 			OnDrawContent();
-			Lcd.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 			Lcd.Update();
 
 		}
@@ -246,6 +258,18 @@ namespace MonoBrickFirmware.Display.Dialogs
 			
 			Lcd.WriteTextBox(font, rightRect, text, color, Lcd.Alignment.Center);
 		
+		}
+
+		protected void WriteTitle()
+		{
+			if (!useSmallTitle)
+			{
+				Lcd.WriteTextBox (font, titleRect, title, false, Lcd.Alignment.Center);
+			} 
+			else 
+			{
+				Lcd.WriteTextBox (Font.SmallFont, titleRect, title, false, Lcd.Alignment.Center);
+			}
 		}
 
 		protected void WriteTextOnDialog (string text)
