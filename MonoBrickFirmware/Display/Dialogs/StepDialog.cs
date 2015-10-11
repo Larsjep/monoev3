@@ -111,7 +111,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 						{
 							StopProgressAnimation ();
 							ClearContent ();
-							WriteTextOnDialog (steps [stepIndex].ErrorText);
+							WriteTextOnDialog (steps [stepIndex].OkText);
 							DrawCenterButton ("Ok", false);
 							waitForOk.Reset(); 
 							Lcd.Update ();
@@ -133,6 +133,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 						break;
 					}
 				}
+				stepIndex = 0;
 				StopProgressAnimation ();
 				if (allDoneText != "" && ok && !token.IsCancellationRequested) 
 				{
