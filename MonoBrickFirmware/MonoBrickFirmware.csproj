@@ -112,7 +112,6 @@
     <Compile Include="Display\Menus\IChildItem.cs" />
     <Compile Include="Display\Menus\IParentItem.cs" />
     <Compile Include="Display\Menus\ItemList.cs" />
-    <Compile Include="Display\Menus\ItemWithAction.cs" />
     <Compile Include="Display\Menus\ItemWithCharacterInput.cs" />
     <Compile Include="Display\Menus\ItemWithCheckBox.cs" />
     <Compile Include="Display\Menus\ItemWithNumericInput.cs" />

@@ -36,8 +36,8 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build ();
-		lcdDrawingarea.SetSizeRequest(178, 128);
 
+		lcdDrawingarea.SetSizeRequest(178, 128);
 		//Set stubs
 		lcdStub = new LcdStub (lcdDrawingarea);
 		brickStub = new BrickStub ();
