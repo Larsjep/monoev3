@@ -3,119 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using MonoBrickFirmware.Display;
 using MonoBrickFirmware.UserInput;
+using System.Threading;
 
 namespace MonoBrickFirmware.Display.Menus
 {
 	
-	public class Menu
+	public class Menu : ItemList
 	{
-		IMenuItem[] menuItems;
-		Font font;
-		string title;
-		Point itemSize;
-		Point itemHeight;
-		int itemsOnScreen;
-		int cursorPos;
-		int scrollPos;
-		int arrowHeight = 5;
-		int arrowWidth = 10;
-		
-		public Menu (string title, IEnumerable<IMenuItem> items):this(Font.MediumFont, title,items)
-		{
-			
-		}
-		
-		
-		public Menu (Font f, string title, IEnumerable<IMenuItem> items)
-		{
-			this.font = f;
-			this.title = title;
-			this.menuItems = items.ToArray ();			
-			this.itemSize = new Point (Lcd.Width, (int)font.maxHeight);
-			this.itemHeight = new Point (0, (int)font.maxHeight);
-			this.itemsOnScreen = (int)((Lcd.Height-arrowHeight)/ font.maxHeight - 1); // -1 Because of the title
-			cursorPos = 0;
-			scrollPos = 0;
-		}
-		
-		private void RedrawMenu ()
-		{
-			Lcd.Instance.Clear ();
-			Rectangle currentPos = new Rectangle (new Point (0, 0), itemSize);
-			Rectangle arrowRect = new Rectangle (new Point (Lcd.Width / 2 - arrowWidth / 2, Lcd.Height - arrowHeight), new Point (Lcd.Width / 2 + arrowWidth / 2, Lcd.Height-1));
 
-			Lcd.Instance.WriteTextBox (font, currentPos, title, true, Lcd.Alignment.Center);
-			int i = 0;
-			while (i != itemsOnScreen) {
-				if (i + scrollPos >= menuItems.Length)
-					break;
-				menuItems [i + scrollPos].Draw (font, currentPos + itemHeight * (i + 1), i != cursorPos);
-				i++;
-			}
-			Lcd.Instance.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + itemsOnScreen < menuItems.Length);
-			Lcd.Instance.Update();
-		}
-		
-		private void MoveUp()
+		private bool useEscForTermination = true;
+		private List<IChildItem> childItems = new List<IChildItem>();
+
+		public Menu(string title) : base(title, Font.MediumFont, false)
 		{
-			if (cursorPos+scrollPos > 0)
-			{
-				if (cursorPos > 0)
-					cursorPos--;
-				else
-					scrollPos--;
-			}
+								
 		}
-		
-		private void MoveDown()
+
+		protected override List<IChildItem> OnCreateChildList ()
 		{
-			if (scrollPos+cursorPos < menuItems.Length-1)
-			{
-				if (cursorPos < itemsOnScreen-1)
-					cursorPos++;
-				else
-					scrollPos++;
-			}
+			return childItems;
 		}
-		
-		public void Show()
+
+		public void AddItem(IChildItem item)
 		{
-			bool exit = false;
-			while (!exit)
+			childItems.Add (item);
+		}
+
+		public override void OnEscPressed ()
+		{
+			if (useEscForTermination && show) 
 			{
-			  	RedrawMenu();
-				switch (Buttons.Instance.GetKeypress())
-				{
-					case Buttons.ButtonStates.Down: 
-					  MoveDown();
-					break;
-					case Buttons.ButtonStates.Up:
-					  MoveUp();
-					break;
-					case Buttons.ButtonStates.Escape:
-					  exit = true;
-					break;
-					case Buttons.ButtonStates.Enter:
-						if (menuItems[scrollPos+cursorPos].EnterAction())
-				   		{
-					    	exit = true;
-						}
-					break;
-					case Buttons.ButtonStates.Left:
-						if (menuItems[scrollPos+cursorPos].LeftAction())
-				   		{
-					    	exit = true;
-						}
-					break;
-					case Buttons.ButtonStates.Right:
-						if (menuItems[scrollPos+cursorPos].RightAction())
-				   		{
-					    	exit = true;
-						}
-					break;
-				}
-			}
-			
+				show = false;
+				Parent.RemoveFocus (this);
+			} 
+		}
+
+		internal void SetAsTopMenu(bool useEscForTermination)
+		{
+			this.useEscForTermination = useEscForTermination;
+			show = true;
 		}
 	}
 }

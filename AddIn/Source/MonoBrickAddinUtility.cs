@@ -57,6 +57,16 @@ namespace MonoBrickAddin
 			ExecuteAndWaitForSSHCommand(IPAddress,@"echo " + version + @" > " + @"/usr/local/bin/add-inVersion.txt" );
 		}
 
+		public static void SuspendFirmware(string IPAddress)
+		{
+			ExecuteAndWaitForSSHCommand(IPAddress, @"echo 1" + @" > " + @"/usr/local/bin/suspendFirmware.txt" );		
+		}
+
+		public static void ResumeFirmware(string IPAddress)
+		{
+			ExecuteAndWaitForSSHCommand(IPAddress, @"echo 0" + @" > " + @"/usr/local/bin/suspendFirmware.txt" );		
+		}
+
 		public static ScpUpload Upload(string IPAddress, MonoBrickExecutionCommand cmd)
 		{
 			var scp = new ScpUpload(IPAddress, cmd.Config.OutputDirectory, cmd.DeviceDirectory);

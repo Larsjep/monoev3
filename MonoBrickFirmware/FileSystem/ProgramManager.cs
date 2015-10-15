@@ -1,128 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using MonoBrickFirmware.Native;
-using System.Threading;
+using MonoBrickFirmware.Tools;
 
 namespace MonoBrickFirmware.FileSystem
 {
-	public class ProgramManager
+	public static class ProgramManager
 	{
-		private static readonly ProgramManager instance = new ProgramManager();
-		private static string ProgramPathSdCard = "/mnt/bootpar/apps";
-		private static string ProgramPathEV3 = "/home/root/apps/";
-		private List<ProgramInformation> programList = new List<ProgramInformation>();
-
-		private ProgramManager ()
+		static ProgramManager()
 		{
-
-
-		}
-
-		public static ProgramManager Instance
-		{
-			get{return instance;}
-		}
-
-		public void CreateSDCardFolder ()
-		{
-			if (!Directory.Exists (ProgramPathSdCard))
-				Directory.CreateDirectory (ProgramPathSdCard);
-		}
-
-		public WaitHandle StartProgram (ProgramInformation program, bool runInAOT = false, int timeout = 0)
-		{
-			ManualResetEvent waitHandle = new ManualResetEvent(false);
-			lock (this) 
+			if(PlatFormHelper.RunningPlatform == PlatFormHelper.Platform.EV3)
 			{
-				if (!program.IsRunning) 
-				{
-					(new Thread (() => {
-						
-						if (!runInAOT) {
-							ProcessHelper.RunAndWaitForProcess ("/usr/local/bin/mono", program.ExeFile, timeout);
-						} else {
-							ProcessHelper.RunAndWaitForProcess ("/usr/local/bin/mono", "--full-aot " + program.ExeFile, timeout);
-						}
-						waitHandle.Set();
-					})).Start ();
-				}
+				Instance = new EV3ProgramManager();
+
 			}
-			return waitHandle;
-		}
-
-		public void StopProgram(ProgramInformation program)
-		{
-			lock (this) 
+			else
 			{
-				if(program.IsRunning) 
-				{
-					ProcessHelper.KillProcess(program.Name);
-				}
+				Instance = null; //Not running on a EV3
 			}
 		}
-
-		public void DeleteProgram(ProgramInformation program)
-		{
-			lock (this) 
-			{
-				if(program.IsRunning) 
-				{
-					ProcessHelper.KillProcess(program.Name);
-				}
-				Directory.Delete(program.Path,true);
-			}
-		}
-
-		public bool AOTCompileProgram(ProgramInformation program)
-		{
-			bool ok = true;
-			lock (this) 
-			{
-				if (!program.IsRunning) 
-				{
-					foreach (var file in program.DllFiles) 
-					{
-						if (!AOTHelper.Compile (System.IO.Path.Combine (program.Path, file))) 
-						{
-							ok = false;
-							break;
-						}
-					}
-					ok = AOTHelper.Compile (program.ExeFile);
-				} 
-				else 
-				{
-					ok = false;
-				}
-			}
-			return ok;
-		}
-
-		public List<ProgramInformation> GetProgramInformationList()
-		{
-			lock (this) 
-			{
-				UpdateProgramList ();
-				return programList;
-			}	
-		}
-
-		private void UpdateProgramList ()
-		{
-			var media = new string[]{ ProgramPathSdCard, ProgramPathEV3 };
-			programList = new List<ProgramInformation> ();
-			foreach (var mediaPath in media) {
-				IEnumerable<string> programsFolders = Directory.EnumerateDirectories (mediaPath);
-				foreach (var programFolder in programsFolders) {
-					ProgramLocation location = programFolder.Contains (ProgramPathSdCard) ? ProgramLocation.SDCard : ProgramLocation.ProgramFolder; 
-					programList.Add (new ProgramInformation (programFolder, location));
-				}
-			}
-			
-		}
-
+		internal static IProgramManager Instance{ get; set; }
+		public static void CreateSDCardFolder (){Instance.CreateSDCardFolder ();}
+		public static void StartProgram (ProgramInformation program, bool runInAOT = false, Action<Exception> onExit = null){Instance.StartProgram (program, runInAOT, onExit);}
+		public static void StopProgram (ProgramInformation program){Instance.StopProgram (program);}
+		public static void DeleteProgram (ProgramInformation program){Instance.DeleteProgram (program);}
+		public static bool AOTCompileProgram (ProgramInformation program){return Instance.AOTCompileProgram (program);}
+		public static List<ProgramInformation> GetProgramInformationList (){return Instance.GetProgramInformationList ();}
+		public static ProgramInformation RunningProgram{get{ return Instance.RunningProgram; }}
 
 	}
 }

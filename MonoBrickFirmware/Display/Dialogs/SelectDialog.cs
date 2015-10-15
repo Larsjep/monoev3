@@ -13,7 +13,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		int arrowWidth = 10;
 		Rectangle arrowRect;
 		
-		public SelectDialog (SelectionType[] options, string title, bool allowEsc) : base (Font.MediumFont, title, 160,90+(int)Font.MediumFont.maxHeight/2,(int)Font.MediumFont.maxHeight/4)
+		public SelectDialog (SelectionType[] options, string title, bool allowEsc) : base (Font.MediumFont, title, 170,90+(int)Font.MediumFont.maxHeight/2,(int)Font.MediumFont.maxHeight/4)
 		{
 			this.options = options;
 			cursorPos = 0;
@@ -33,11 +33,10 @@ namespace MonoBrickFirmware.Display.Dialogs
 					break;
 				WriteTextOnLine(options [i + scrollPos].ToString (), i, i != cursorPos);
 			}
-			Lcd.Instance.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + lines.Count < options.Length);
-			
+			Lcd.DrawArrow (arrowRect, Lcd.ArrowOrientation.Down, scrollPos + lines.Count < options.Length);
         }
 
-        protected override bool OnUpAction ()
+		internal override void OnUpPressed ()
 		{
 			if (cursorPos + scrollPos > 0) {
 				if (cursorPos > 0)
@@ -45,10 +44,9 @@ namespace MonoBrickFirmware.Display.Dialogs
 				 else 
 					scrollPos--;
 			} 
-			return false;
         }
 
-        protected override bool OnDownAction ()
+		internal override void OnDownPressed ()
 		{
 			if (scrollPos + cursorPos < options.Length - 1) {
 				if (cursorPos < lines.Count - 1)
@@ -56,21 +54,19 @@ namespace MonoBrickFirmware.Display.Dialogs
 				else
 					scrollPos++;
 			} 
-           	return false;
         }
         
-        protected override bool OnEnterAction ()
+		internal override void OnEnterPressed ()
 		{
-			return true;
+			OnExit ();
 		}
 		
-		protected override bool OnEscape ()
+		internal override void OnEscPressed ()
 		{
 			if (allowEsc) {
 				EscPressed = true;
-				return true;
+				OnExit ();
 			}
-			return false;
 		}
         
 		public SelectionType GetSelection()

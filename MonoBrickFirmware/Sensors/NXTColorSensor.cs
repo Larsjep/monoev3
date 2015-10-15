@@ -20,9 +20,9 @@ namespace MonoBrickFirmware.Sensors
 	/// Class that holds RGB colors
 	/// </summary>
     public class RGBColor {
-        private byte red;
-        private byte green;
-        private byte blue;
+        private UInt16 red;
+        private UInt16 green;
+        private UInt16 blue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.RGBColor"/> class.
@@ -36,7 +36,7 @@ namespace MonoBrickFirmware.Sensors
         /// <param name='blue'>
         /// Blue value
         /// </param>
-		public RGBColor(byte red, byte green, byte blue) { this.red = red; this.green = green; this.blue = blue; }
+		public RGBColor(UInt16 red, UInt16 green, UInt16 blue) { this.red = red; this.green = green; this.blue = blue; }
         
 		/// <summary>
 		/// Gets the red value
@@ -44,7 +44,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <value>
 		/// The red value
 		/// </value>
-		public byte Red { get { return red; } }
+		public UInt16 Red { get { return red; } }
         
 		/// <summary>
 		/// Gets the green value
@@ -52,7 +52,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <value>
 		/// The green value
 		/// </value>
-		public byte Green { get { return green; } }
+		public UInt16 Green { get { return green; } }
         
 		/// <summary>
 		/// Gets the blue value
@@ -60,7 +60,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <value>
 		/// The blue value
 		/// </value>
-		public byte Blue { get { return blue; } }
+		public UInt16 Blue { get { return blue; } }
 
 	    public override string ToString()
 	    {

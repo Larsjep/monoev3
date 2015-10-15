@@ -17,9 +17,9 @@ namespace MonoBrickFirmware.FileSystem
 
 		internal ProgramInformation (string programFolder, ProgramLocation location)
 		{
-			Name = programFolder; 
+			Path = programFolder; 
 			ProgramLocation = location;
-			Path =  new DirectoryInfo(programFolder).Name;
+			Name =  new DirectoryInfo(programFolder).Name;
 			IEnumerable<string> files = Directory.EnumerateFiles (programFolder);
 			DllFiles = files.Where(s => s.EndsWith(".dll")).ToList();
 			ExeFile = System.IO.Path.Combine(programFolder, files.First(f => f.EndsWith("exe")));  
@@ -42,16 +42,13 @@ namespace MonoBrickFirmware.FileSystem
 						break;
 					}
 				}
-				ok = AOTHelper.IsFileCompiled (ExeFile);
+				if (ok) 
+				{
+					ok = AOTHelper.IsFileCompiled (ExeFile);
+				}
 				return ok;
 			}
 		}
-
-		public bool IsRunning 
-		{
-			get {return ProcessHelper.IsProcessRunning (ExeFile);}
-		}
-
 	}
 }
 

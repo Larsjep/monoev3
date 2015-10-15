@@ -4,24 +4,24 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Collections.Specialized;
-using StartupApp;
 using System.Linq;
+using MonoBrickFirmware.FirmwareUpdate;
+
 namespace InstallCreator
 {
 	class MainClass
 	{
 		
+		private static string installFileName = "package.xml";
+		private static string currentDir;
 		private static List<DownloadElement> downloadList = new List<DownloadElement>();
 		private static List<string> extensionExclude = new List<string>{"mdb", "DS_Store"};
-		private static List<string> fileExclude = new List<string>{"package.xml"};
+		private static List<string> fileExclude = new List<string>{installFileName, "InstallCreator.exe"};
 
-		private static string currentDir;
-		private static string url;
-		private static string installFileName = "package.xml";
 
 	    static public string NormalizeFilepath(string filepath)
 	    {
-	        string result = System.IO.Path.GetFullPath(filepath).ToLowerInvariant();
+	        string result = System.IO.Path.GetFullPath(filepath);
 			var removeChars = new char[] { '\\'};
 
 	        result = result.TrimEnd(removeChars);
@@ -53,7 +53,7 @@ namespace InstallCreator
 					if(!exclude)
 					{
 						string subdir =  GetRelativePath(currentDir, Path.GetDirectoryName(f));
-						DownloadElement element = new DownloadElement(url, fileName, subdir);
+						DownloadElement element = new DownloadElement(fileName, subdir);
 						downloadList.Add(element);
 					}
 		        }
@@ -71,10 +71,6 @@ namespace InstallCreator
 
 		public static void Main (string[] args)
 		{
-			if (args.Length > 0)
-				url = args [0];
-			else 
-				url = "";
 			currentDir = Directory.GetCurrentDirectory ();
 			DirSearch (currentDir);
 			InstallPackage installSettings = new InstallPackage();

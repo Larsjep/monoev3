@@ -52,7 +52,7 @@ namespace MonoBrickFirmware.Native
 	public class UnixDevice : IDisposable
 	{
 		static System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
-		int fd;
+		int fd = -1;
 		public UnixDevice(string name)
 		{			
 			

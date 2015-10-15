@@ -10,6 +10,7 @@
     <RootNamespace>MindsensorsAngleExample</RootNamespace>
     <AssemblyName>MindsensorsAngleExample</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <ReleaseVersion>1.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

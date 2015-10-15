@@ -23,25 +23,25 @@ namespace LcdDraw
 			while (run) {
 				for (int k = 0; k < 4; k++) {
 					for (int i = 1; i < centerY; i++) {
-						Lcd.Instance.Clear ();
-						Lcd.Instance.DrawCircle(center, (ushort)i, true, true);
-						Lcd.Instance.Update ();
+						Lcd.Clear ();
+						Lcd.DrawCircle(center, (ushort)i, true, true);
+						Lcd.Update ();
 						stopped.WaitOne (refreshRate);
 					}
 					for (int i = centerY - 1; i > 0; i--) {
-						Lcd.Instance.Clear ();
-						Lcd.Instance.DrawCircle(center, (ushort)i, true, true);
-						Lcd.Instance.Update ();
+						Lcd.Clear ();
+						Lcd.DrawCircle(center, (ushort)i, true, true);
+						Lcd.Update ();
 						stopped.WaitOne (refreshRate);
 					}
 				}
 
 				for (int k = 0; k < 20; k++) {
-					Lcd.Instance.Clear();
-					Lcd.Instance.DrawHLine(center, centerX/2, true);
+					Lcd.Clear();
+					Lcd.DrawHLine(center, centerX/2, true);
 					stopped.WaitOne (refreshRate);
-					Lcd.Instance.Clear();
-					Lcd.Instance.DrawVLine(center, centerY/2, true);
+					Lcd.Clear();
+					Lcd.DrawVLine(center, centerY/2, true);
 				}
 
 			}

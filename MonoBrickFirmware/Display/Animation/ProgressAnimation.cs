@@ -64,9 +64,9 @@ namespace MonoBrickFirmware.Display.Animation
 		{
 			while (run) {
 				for (int i = 0; i < rects.Count; i++) {
-					Lcd.Instance.DrawRectangle (rects [i], i == showIndex, true);
+					Lcd.DrawRectangle (rects [i], i == showIndex, true);
 				}
-				Lcd.Instance.Update ();
+				Lcd.Update ();
 				if (leftToRight) 
 				{
 					showIndex++;

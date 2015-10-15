@@ -9,55 +9,94 @@ namespace MonoBrickFirmware.Display.Dialogs
 	{
 		private IStep step;
 		private int progressLine;
-		
+		private Thread progress = null;
+		private ManualResetEvent waitForOk = new ManualResetEvent (false);
 		public ProgressDialog (string title,IStep step): base(Font.MediumFont, title)
 		{
 			this.step = step;
 			progressLine = 1;
+			CreateProcessThread ();
 		}
 		
-		public override bool Show (CancellationToken token)
+		internal override void Draw ()
 		{
-			bool ok = true;
-			string endText;
-			OnShow ();
-			Draw ();
-			StartProgressAnimation (progressLine);
-			try {
-				if (step.Execute ()) 
-				{
-					endText = step.OkText;
-				} 
-				else 
-				{
-					ok = false;
-					endText = step.ErrorText;
-				}
+			if (!progress.IsAlive) 
+			{
+				CreateProcessThread ();
+				progress.Start ();
 			} 
-			catch (Exception e) 
-			{
-				ok = false;
-				endText =  "Exception executing " + step.StepText;
-				Console.WriteLine("Exception " + e.Message);
-				Console.WriteLine(e.StackTrace);
-			}
-			StopProgressAnimation ();
-			if ((step.ShowOkText && ok) || !ok) 
-			{
-				ClearContent ();
-				WriteTextOnDialog (endText);
-				DrawCenterButton ("Ok", false);
-				Lcd.Instance.Update ();
-				Buttons.Instance.GetKeypress ();//Wait for any key
-			}
-			OnExit();
-			return ok;
 		}
-		
+
+		public bool Ok{ get; private set;}
+
+		public override void Hide ()
+		{
+			base.Hide ();
+			if (progress.IsAlive) 
+			{
+				progress.Join ();
+			}
+		}
+
 		protected override void OnDrawContent ()
 		{
 			WriteTextOnLine(step.StepText, 0);
 			WriteTextOnLine("Please wait...", 2);
+		}
+
+		/// <summary>
+		/// Show menu. Returns true if step executed ok otherwise false
+		/// </summary>
+		public override bool Show ()
+		{
+			base.Show ();
+			return Ok;
+		}
+
+		internal override void OnEnterPressed ()
+		{
+			waitForOk.Set ();	
+		}
+
+		private void CreateProcessThread()
+		{
+			progress = new Thread (delegate() 
+			{
+				Ok = true;
+				string endText;
+				StartProgressAnimation (progressLine);
+				OnShow ();
+				base.Draw();
+				try {
+					
+					if (step.Execute ()) 
+					{
+						endText = step.OkText;
+					} 
+					else 
+					{
+						Ok = false;
+						endText = step.ErrorText;
+					}
+				} 
+				catch
+				{
+					Ok = false;
+					endText =  "Exception executing " + step.StepText;
+				}
+				StopProgressAnimation ();
+				if ((step.ShowOkText && Ok) || !Ok) 
+				{
+					ClearContent ();
+					WriteTextOnDialog (endText);
+					DrawCenterButton ("Ok", false);
+					waitForOk.Reset();
+					Lcd.Update ();
+					waitForOk.WaitOne();
+				}
+				OnExit();
+			});
+		
 		}
 	}
 }

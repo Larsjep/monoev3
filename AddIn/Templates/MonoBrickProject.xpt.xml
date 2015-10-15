@@ -57,7 +57,8 @@ namespace MonoBrickHelloWorld
 			motor.SetSpeed(50);
 			Thread.Sleep(3000);
 			motor.Off();
-			Lcd.Instance.Clear();
+			Lcd.Clear();
+			Lcd.Update();
 		}
 	}
 }

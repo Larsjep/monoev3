@@ -26,7 +26,7 @@ namespace SensorFactoryExample
 	          if (obj != null)
 	          {
 	            sensor[(int) obj.Port] = obj;
-	            Console.WriteLine(obj.GetSensorName() + " attached on " + obj.Port);
+	           
 	          }
 	        }
 	      };
@@ -34,7 +34,6 @@ namespace SensorFactoryExample
 	      {
 	        lock (sensorLock)
 	        {
-	          Console.WriteLine(sensor[(int) obj] + " detached from " + obj);
 	          sensor[(int) obj] = null;
 	        }
 	      };

@@ -9,19 +9,10 @@ namespace MonoBrickFirmware.Display.Dialogs
 {
     public abstract class Dialog
 	{
-		
-		protected Font font;
-		protected Rectangle outherWindow; 
-		protected Rectangle innerWindow;
-		protected List<Rectangle> lines;
-        
-				
-		private string title;
-        
 		private Rectangle titleRect;
 		private Point bottomLineCenter;
         
-        private int titleSize;
+    	private int titleSize;
 		private int dialogWidth;
 		private int dialogHeight;
 
@@ -29,11 +20,20 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private const int buttonEdge = 2;
 		private const int buttonTextOffset = 2;
 		private const int boxMiddleOffset = 8;
+		private CancellationTokenSource cancelSource = new CancellationTokenSource();
+		private bool useSmallTitle = false;
+		protected Font font;
+		protected Rectangle outherWindow; 
+		protected Rectangle innerWindow;
+		protected List<Rectangle> lines;
+		protected bool drawTitle;
+
+		internal string title;
 
 		public Action OnShow = delegate {};
 		public Action OnExit = delegate {};
 		
-		public Dialog (Font f, string title, int width = 160, int height = 90, int topOffset = 0)
+		public Dialog (Font f, string title, int width = 170, int height = 90, int topOffset = 0)
 		{
 			dialogWidth = width;
 			dialogHeight = height;
@@ -44,9 +44,18 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Point startPoint1 = new Point (xEdge, yEdge);
 			Point startPoint2 = new Point (xEdge + dialogWidth, yEdge + dialogHeight);
 			this.titleSize = font.TextSize (this.title).X + (int)f.maxWidth;
+			if (title == "") {
+			}
+			this.drawTitle = title != "";
 			outherWindow = new Rectangle (startPoint1, startPoint2);
 			innerWindow = new Rectangle (new Point (startPoint1.X + dialogEdge, startPoint1.Y + dialogEdge), new Point (startPoint2.X - dialogEdge, startPoint2.Y - dialogEdge));
 			titleRect = new Rectangle (new Point ((int)(Lcd.Width / 2 - titleSize / 2), (int)(startPoint1.Y - (font.maxHeight / 2))), new Point ((int)(Lcd.Width / 2 + titleSize / 2), (int)(startPoint1.Y + (font.maxHeight / 2))));
+			if (titleRect.P1.Y < 0)
+			{
+				this.titleSize = Font.SmallFont.TextSize(this.title).X + (int)f.maxWidth;
+				titleRect = new Rectangle (new Point ((int)(Lcd.Width / 2 - titleSize / 2), (int)(startPoint1.Y - (Font.SmallFont.maxHeight / 2))), new Point ((int)(Lcd.Width / 2 + titleSize / 2), (int)(startPoint1.Y + (Font.SmallFont.maxHeight / 2))));
+				useSmallTitle = true;
+			}
 			int top = innerWindow.P1.Y + (int)( f.maxHeight/2) + topOffset;
 			int middel = innerWindow.P1.Y  + ((innerWindow.P2.Y - innerWindow.P1.Y) / 2) - (int)(f.maxHeight)/2;
 			int count = 0;
@@ -62,94 +71,94 @@ namespace MonoBrickFirmware.Display.Dialogs
 				lines.Add(new Rectangle(new Point(start1.X, start1.Y+(i*(int)f.maxHeight)),new Point(start2.X,start2.Y+(i*(int)f.maxHeight))));	
             }
 			bottomLineCenter = new Point(innerWindow.P1.X + ((innerWindow.P2.X-innerWindow.P1.X)/2) , outherWindow.P2.Y - dialogEdge/2);
-			OnShow += delegate {Lcd.Instance.SaveScreen();};
-			OnExit += delegate {Lcd.Instance.LoadScreen();};	
+			OnShow += delegate {Lcd.SaveScreen();};
+			OnExit += delegate {Lcd.LoadScreen(); cancelSource.Cancel ();};	
 		}
 
-		public bool Show ()
+		/// <summary>
+		/// Show menu. This is a blocking call. Will end if dialog 
+		/// </summary>
+		public virtual bool Show()
 		{
-			return Show(CancellationToken.None);
-		}
-
-
-
-		public virtual bool Show(CancellationToken token)
-		{
-			bool exit = false;
-			OnShow();
-			while (!exit && !token.IsCancellationRequested) {
+			cancelSource = new CancellationTokenSource ();
+			while (!cancelSource.Token.IsCancellationRequested)
+			{
 				Draw ();
-				switch (Buttons.Instance.GetKeypress(token)) {
-					case Buttons.ButtonStates.Down: 
-						if (OnDownAction()) 
-						{
-							exit = true;
-						}
-						break;
-					case Buttons.ButtonStates.Up:
-						if (OnUpAction ()) 
-						{
-							exit = true;
-						}
-						break;
-					case Buttons.ButtonStates.Escape:
-						if (OnEscape()) 
-						{
-							exit = true;
-						}
-						break;
-					case Buttons.ButtonStates.Enter:
-						if (OnEnterAction ()) 
-						{
-							exit = true;
-						}
-						break;
-					case Buttons.ButtonStates.Left:
-						if (OnLeftAction()) 
-						{
-							exit = true;
-						}
-						break;
-					case Buttons.ButtonStates.Right:
-						if (OnRightAction()) 
-						{
-							exit = true;
-						}
-						break;
+				switch (Buttons.GetKeypress (cancelSource.Token)) {
+				case Buttons.ButtonStates.Down: 
+					OnDownPressed ();
+					break;
+				case Buttons.ButtonStates.Up:
+					OnUpPressed ();
+					break;
+				case Buttons.ButtonStates.Escape:
+					OnEscPressed ();
+					break;
+				case Buttons.ButtonStates.Enter:
+					OnEnterPressed ();
+					break;
+				case Buttons.ButtonStates.Left:
+					OnLeftPressed ();
+					break;
+				case Buttons.ButtonStates.Right:
+					OnRightPressed ();
+					break;
 				}
 			}
-			OnExit();
 			return true;
 		}
-		
-		protected virtual bool OnEnterAction ()
+
+		public virtual void Hide()
 		{
-			return false;
+			cancelSource.Cancel ();
+			OnExit ();
 		}
 		
-		protected virtual bool OnLeftAction ()
+		internal virtual void OnEnterPressed ()
 		{
-			return false;
+			
 		}
 		
-		protected virtual bool OnRightAction ()
+		internal virtual void OnLeftPressed ()
 		{
-			return false;
+			
 		}
 		
-		protected virtual bool OnUpAction ()
+		internal virtual void OnRightPressed ()
 		{
-			return false;
+			
 		}
 		
-		protected virtual bool OnDownAction ()
+		internal virtual void OnUpPressed ()
 		{
-			return false;
+			
 		}
 		
-		protected virtual bool OnEscape(){
-			return false;
+		internal virtual void OnDownPressed ()
+		{
+		
 		}
+		
+		internal virtual void OnEscPressed(){
+			
+		}
+
+		internal virtual void Draw ()
+		{
+			OnShow ();
+			Lcd.DrawRectangle(outherWindow, true, true);
+			Lcd.DrawRectangle(innerWindow, false, true);
+			if (drawTitle)
+			{
+				WriteTitle ();
+			}
+			OnDrawContent();
+			Lcd.Update();
+
+		}
+
+		protected  abstract void OnDrawContent ();
+
 
 		protected void WriteTextOnLine (string text, int lineIndex, bool color = true, Lcd.Alignment alignment = Lcd.Alignment.Center)
 		{
@@ -164,7 +173,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 					s = s.Remove(s.Length-1);
 				}
 			}
-			Lcd.Instance.WriteTextBox(f, lines[lineIndex], s, color, alignment); 
+			Lcd.WriteTextBox(f, lines[lineIndex], s, color, alignment); 
 		}
 		
 		protected void DrawCenterButton (string text, bool color)
@@ -188,8 +197,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle buttonRect = new Rectangle(buttonP1, buttonP2);
 			Rectangle buttonRectEdge = new Rectangle(buttonP1Outer, buttonp2Outer);
 			
-			Lcd.Instance.DrawRectangle(buttonRectEdge,true, true);
-			Lcd.Instance.WriteTextBox(font,buttonRect,text, color, Lcd.Alignment.Center);		
+			Lcd.DrawRectangle(buttonRectEdge,true, true);
+			Lcd.WriteTextBox(font,buttonRect,text, color, Lcd.Alignment.Center);		
 		}
 		
 		protected void DrawLeftButton (string text, bool color)
@@ -213,8 +222,8 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle leftRect = new Rectangle(left1, left2);
 			Rectangle leftOuterRect = new Rectangle(leftOuter1, leftOuter2);
 			
-			Lcd.Instance.DrawRectangle(leftOuterRect,true, true);
-			Lcd.Instance.WriteTextBox(font, leftRect, text, color, Lcd.Alignment.Center);
+			Lcd.DrawRectangle(leftOuterRect,true, true);
+			Lcd.WriteTextBox(font, leftRect, text, color, Lcd.Alignment.Center);
 		
 		}
 		
@@ -239,10 +248,22 @@ namespace MonoBrickFirmware.Display.Dialogs
 			Rectangle rightRect = new Rectangle(right1, right2);
 			Rectangle rightOuterRect = new Rectangle(rightOuter1, rightOuter2);
 			
-			Lcd.Instance.DrawRectangle(rightOuterRect, true, true);
+			Lcd.DrawRectangle(rightOuterRect, true, true);
 			
-			Lcd.Instance.WriteTextBox(font, rightRect, text, color, Lcd.Alignment.Center);
+			Lcd.WriteTextBox(font, rightRect, text, color, Lcd.Alignment.Center);
 		
+		}
+
+		protected void WriteTitle()
+		{
+			if (!useSmallTitle)
+			{
+				Lcd.WriteTextBox (font, titleRect, title, false, Lcd.Alignment.Center);
+			} 
+			else 
+			{
+				Lcd.WriteTextBox (Font.SmallFont, titleRect, title, false, Lcd.Alignment.Center);
+			}
 		}
 
 		protected void WriteTextOnDialog (string text)
@@ -251,7 +272,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 			int textRectRatio = font.TextSize (text).X / (width);
 			if (textRectRatio == 0) {
 				int middle = (lines.Count / 2);
-				Lcd.Instance.WriteTextBox (font, lines [middle], text, true, Lcd.Alignment.Center);
+				Lcd.WriteTextBox (font, lines [middle], text, true, Lcd.Alignment.Center);
 			} 
 			else 
 			{
@@ -266,7 +287,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 							s = s + " " + words [i];
 						}
 					} else {
-						Lcd.Instance.WriteTextBox (font, lines [rectIndex], s, true, Lcd.Alignment.Center);
+						Lcd.WriteTextBox (font, lines [rectIndex], s, true, Lcd.Alignment.Center);
 						s = words [i];
 						rectIndex++;
 						if (rectIndex >= lines.Count)
@@ -275,30 +296,20 @@ namespace MonoBrickFirmware.Display.Dialogs
 				
 				}
 				if (s != "" && rectIndex < lines.Count) {
-					Lcd.Instance.WriteTextBox (font, lines [rectIndex], s, true, Lcd.Alignment.Center);
+					Lcd.WriteTextBox (font, lines [rectIndex], s, true, Lcd.Alignment.Center);
 				}
 			}
 		}
 		
-		protected  abstract void OnDrawContent ();
-		
+
 		protected void ClearContent ()
 		{
-			Lcd.Instance.LoadScreen();
-			Lcd.Instance.DrawRectangle(outherWindow, true, true);
-			Lcd.Instance.DrawRectangle(innerWindow, false, true);
-			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
+			Lcd.LoadScreen();
+			Lcd.DrawRectangle(outherWindow, true, true);
+			Lcd.DrawRectangle(innerWindow, false, true);
+			Lcd.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
 		}
-		
-		protected virtual void Draw ()
-		{
-			Lcd.Instance.DrawRectangle(outherWindow, true, true);
-			Lcd.Instance.DrawRectangle(innerWindow, false, true);
-			OnDrawContent();
-			Lcd.Instance.WriteTextBox(font,titleRect,title, false,Lcd.Alignment.Center); 
-			Lcd.Instance.Update();
-			 
-		}
+
 	}
 }
 

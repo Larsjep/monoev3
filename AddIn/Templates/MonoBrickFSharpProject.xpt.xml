@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<Template originator   = "Bernhard Straub"
+          created      = "2013/12/31"
+          lastModified = "2014/12/29">
+	
+	<!-- Template Header -->
+	<TemplateConfiguration>
+		<_Name>MonoBrick F# Project</_Name>
+		<_Category>MonoBrick</_Category>
+		<Icon>md-project-gui</Icon>
+		<LanguageName>F#</LanguageName>
+		<_Description>MonoBrick F# Project</_Description>
+		<DefaultFilename>MonoBrickFSharpProject</DefaultFilename>
+	</TemplateConfiguration>
+	
+	<!-- Actions -->
+	<Actions>
+		<Open filename = "Program.fs"/>
+	</Actions>
+
+	<!-- Template Content -->
+	<Combine name = "${ProjectName}" directory = ".">
+		<Options>
+			<StartupProject>${ProjectName}</StartupProject>
+		</Options>
+		
+		<Project name = "${ProjectName}" directory = "." type = "MonoBrick">
+			<Options Target = "Exe" MainFile = "Program.fs" TargetFrameworkVersion="4.0"/>
+			<Options>
+				<UseMSBuildEngine>False</UseMSBuildEngine>
+			</Options>
+
+			<References>
+				<Reference type="Assembly" refto="MonoBrickFirmware.dll" />
+				<Reference type="Package" refto="mscorlib" />
+				<Reference type="Gac" refto="FSharp.Core" />
+				<Reference type="Package" refto="System" />
+				<Reference type="Package" refto="System.Core" />
+			</References>
+
+			<Files>
+				<File name="Program.fs">
+<![CDATA[open System
+open System.Threading
+open MonoBrickFirmware
+open MonoBrickFirmware.Display.Dialogs
+open MonoBrickFirmware.Display
+
+let main() =
+    Lcd.Clear()
+    LcdConsole.WriteLine("Hello World!")
+
+main()]]>
+				</File>
+			</Files>
+		</Project>
+	</Combine>
+</Template>

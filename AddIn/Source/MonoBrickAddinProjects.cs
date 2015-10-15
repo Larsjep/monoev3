@@ -23,22 +23,20 @@
 // 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // 	THE SOFTWARE.
 
-using System;
-using System.IO;
 using System.Xml;
 using System.Reflection;
 using MonoDevelop.Projects;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Core.ProgressMonitoring;
-using MonoDevelop.Debugger;
+using System.IO;
+using System.Diagnostics;
 
 namespace MonoBrickAddin
 {
 	public class MonoBrickProject : DotNetAssemblyProject
 	{
 		FilePath referencePath = "";
-		static string versionString  = "AddIn: 1.2.0.0";
 		#region Constructors
 
 		public MonoBrickProject()
@@ -56,6 +54,8 @@ namespace MonoBrickAddin
 		{
 			referencePath = info.ProjectBasePath;
 			Init();
+			//versionString = FileVersionInfo.GetVersionInfo("MonoBrickFirmware.dll").FileVersion;
+
 		}
 
 		void Init()
@@ -143,14 +143,9 @@ namespace MonoBrickAddin
 					}
 					string EV3IPAddress = UserSettings.Instance.IPAddress;
 
-					console.Log.WriteLine("Killing any program already running on the brick");
-					MonoBrickUtility.KillMonoApp(EV3IPAddress);
-
 					MonoBrickUtility.ShowMonoBrickLogo(EV3IPAddress);
-					MonoBrickUtility.CreateVersionFile(EV3IPAddress, versionString);
-
+					
 					console.Log.WriteLine("Upload program to brick...");
-
 					var uploadOp = MonoBrickUtility.Upload(EV3IPAddress, cmd);
 					opMon.AddOperation(uploadOp);
 				
@@ -162,15 +157,22 @@ namespace MonoBrickAddin
 						monitor.ReportError(uploadOp.ErrorMessage, null);
 						return;
 					}
-					
-					console.Log.WriteLine("Running on brick...");
+
+					console.Log.WriteLine("Suspending firmware execution");
+					MonoBrickUtility.SuspendFirmware(EV3IPAddress);
+
+					console.Log.WriteLine("Executing program on EV3 brick...");
 
 					var ex = context.ExecutionHandler.Execute(cmd, console);
 					opMon.AddOperation(ex);
 					ex.WaitForCompleted();
-
+				
 					console.Log.WriteLine("");
-					console.Log.WriteLine("Finished!");
+					console.Log.WriteLine("Done executing program!");
+
+					console.Log.WriteLine("Resuming firmware execution");
+					MonoBrickUtility.ResumeFirmware(EV3IPAddress);
+
 				}
 				finally
 				{

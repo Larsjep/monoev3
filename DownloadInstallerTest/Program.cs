@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using StartupApp;
+using MonoBrickFirmware.FirmwareUpdate;
+
 namespace DownloadInstallerTest
 {
 	class MainClass
@@ -18,6 +19,7 @@ namespace DownloadInstallerTest
 			}
 			catch(Exception e)
 			{
+
 				Console.WriteLine(e.Message);
 				ok = false;
 			}
@@ -35,8 +37,9 @@ namespace DownloadInstallerTest
 				{
 					installPackage = installPackage.LoadFromXML(Path.Combine(downloadPath,packageName));
 				}
-				catch
+				catch(Exception e)
 				{
+					Console.WriteLine (e.Message);
 					ok = false;
 				}
 				if(ok)
@@ -44,7 +47,7 @@ namespace DownloadInstallerTest
 					var downloadElements = installPackage.DownloadElementToArray();
 					foreach(var element in downloadElements)
 					{
-						ok = DownloadFile(element.FileName, Path.Combine(element.Url, element.Subdir), Path.Combine(downloadPath, element.Subdir));
+						ok = DownloadFile(element.FileName, Path.Combine(packageUrl, element.Subdir), Path.Combine(downloadPath, element.Subdir));
 						if(!ok)
 						{
 							break;
@@ -57,7 +60,7 @@ namespace DownloadInstallerTest
 
 		public static void Main (string[] args)
 		{
-			DownloadAndInstallPackage("install.xml", "http://monobrick.dk/MonoBrickFirmwareRelease/Test/webserverPackage", Directory.GetCurrentDirectory());		
+			DownloadAndInstallPackage("package.xml", "ftp://soborg.net/test/StartupApp/", Path.Combine(Directory.GetCurrentDirectory(),"download"));		
 		}
 	}
 }

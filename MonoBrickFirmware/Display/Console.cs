@@ -28,17 +28,17 @@ namespace MonoBrickFirmware.Display
 			public void WriteLine(string line)
 			{
 				Point p = new Point(0, (int)(scrollPos * lineHeigth));
-				Lcd.Instance.WriteTextBox(f, lineSize + p, line, true);
+				Lcd.WriteTextBox(f, lineSize + p, line, true);
 				scrollPos++;
 				
-				Lcd.Instance.Update((int)(scrollPos * lineHeigth));				
+				Lcd.Update((int)(scrollPos * lineHeigth));				
 				if (scrollPos >= lines)
 					scrollPos = 0;
 			}
 			
 			public void Clear ()
 			{
-				Lcd.Instance.Clear();
+				Lcd.Clear();
 				Reset();
 			}
 			

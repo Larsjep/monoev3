@@ -11,7 +11,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private const int progressEdgeY = 8;
 		private int animationLine = -1;
 
-		public DialogWithProgessAnimation (Font f, string title, int width = 160, int height = 90, int topOffset = 0): base(f,title,width, height, topOffset)
+		public DialogWithProgessAnimation (Font f, string title, int width = 170, int height = 90, int topOffset = 0): base(f,title,width, height, topOffset)
 		{
 			
 		}

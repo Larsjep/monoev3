@@ -60,7 +60,7 @@ namespace MonoBrickWebServer.Models
 			}
 			else
 			{
-				var programInfoList = ProgramManager.Instance.GetProgramInformationList ();
+				var programInfoList = ProgramManager.GetProgramInformationList ();
 				programs = new System.Collections.Generic.List<IProgramModel> ();
 				foreach (var program in programInfoList) 
 				{

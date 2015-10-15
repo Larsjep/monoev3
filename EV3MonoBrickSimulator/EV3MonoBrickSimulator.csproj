@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3EF1E56E-4877-4C6C-ADED-806A5F3D4B82}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>EV3MonoBrickSimulator</RootNamespace>
+    <AssemblyName>EV3MonoBrickSimulator</AssemblyName>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <ReleaseVersion>1.2</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="glade-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="pango-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="atk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Mono.Posix" />
+    <Reference Include="System.Xml.Serialization" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="gtk-gui\gui.stetic">
+      <LogicalName>gui.stetic</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="MainWindow.cs" />
+    <Compile Include="gtk-gui\MainWindow.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stub\LcdStub.cs" />
+    <Compile Include="Stub\ButtonsStub.cs" />
+    <Compile Include="Stub\ProgramManagerStub.cs" />
+    <Compile Include="Stub\WiFiStub.cs" />
+    <Compile Include="Settings\SimulatorSettings.cs" />
+    <Compile Include="Stub\UpdateHelperStub.cs" />
+    <Compile Include="Stub\BrickStub.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Content Include="Images\EV3-multibrick_01.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_02.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_04.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_05.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_06.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_07.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_09.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_11.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_12.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_13.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_14.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_15.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_16.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_17.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_18.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_19.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_20.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_21.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_22.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_23.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_24.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_25.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_26.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_08.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\EV3-multibrick_10.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Images\" />
+    <Folder Include="Stub\" />
+    <Folder Include="Settings\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\EV3-multibrick_07_P.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\EV3-multibrick_11_P.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\EV3-multibrick_15_P.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\EV3-multibrick_16_P.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\EV3-multibrick_17_P.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\EV3-multibrick_18_P.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\EV3-multibrick_19_P.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\EV3-multibrick_21_P.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\EV3-multibrick_22_P.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\EV3-multibrick_24_P.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Images\background.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonoBrickFirmware\MonoBrickFirmware.csproj">
+      <Project>{67261E03-D263-4C42-A5AD-2A4820231B28}</Project>
+      <Name>MonoBrickFirmware</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StartupApp\StartupApp.csproj">
+      <Project>{75E781D0-7313-445B-8430-DECB0AD3C96E}</Project>
+      <Name>StartupApp</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

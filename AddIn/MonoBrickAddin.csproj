@@ -4,11 +4,9 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{314570C2-D0F1-45D2-868D-FA54E2F538F8}</ProjectGuid>
-    <ProjectTypeGuids>{7DBEB09D-BB9F-4D92-A141-A009135475EF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>MonoBrickAddin</RootNamespace>
     <AssemblyName>MonoBrickAddin</AssemblyName>
-    <SynchReleaseVersion>false</SynchReleaseVersion>
     <Description>MonoBrick addin for EV3 development.</Description>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -73,7 +71,6 @@
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="GUI\EV3OptionsPanel.cs" />
     <Compile Include="gtk-gui\MonoBrickAddin.EV3OptionsPanel.cs" />
-    <Compile Include="Source\AssemblyInfo.cs" />
     <Compile Include="Source\MonoBrickAddinScpUpload.cs" />
     <Compile Include="Source\MonoBrickAddinConfiguration.cs" />
     <Compile Include="Source\MonoBrickAddinDebuggerEngine.cs" />
@@ -86,6 +83,9 @@
     <Compile Include="Source\MonoBrickAddinUtility.cs" />
     <Compile Include="Source\MonoBrickAddinSshExecute.cs" />
     <Compile Include="Source\MonoBrickAddinSettings.cs" />
+    <Compile Include="..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\MonoBrickProject.xpt.xml">
@@ -108,6 +108,10 @@
       <Link>MonoBrickFirmware.dll</Link>
       <LogicalName>MonoBrick.MonoBrickFirmware.dll</LogicalName>
       <DeployService-Deploy>True</DeployService-Deploy>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\MonoBrickFSharpProject.xpt.xml">
+      <DeployService-Deploy>True</DeployService-Deploy>
+      <LogicalName>MonoBrickFSharpProject.xpt.xml</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
