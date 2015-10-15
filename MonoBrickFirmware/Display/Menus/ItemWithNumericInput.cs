@@ -120,7 +120,7 @@ namespace MonoBrickFirmware.Display.Menus
 			Lcd.DrawArrow(rightArrowRect, Lcd.ArrowOrientation.Right, color);
 		}
 
-		public void OnHideContent ()
+		public override void OnHideContent ()
 		{
 			cancelSource.Cancel ();	
 		}

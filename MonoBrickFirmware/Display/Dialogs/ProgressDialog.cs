@@ -79,7 +79,7 @@ namespace MonoBrickFirmware.Display.Dialogs
 						endText = step.ErrorText;
 					}
 				} 
-				catch (Exception e) 
+				catch
 				{
 					Ok = false;
 					endText =  "Exception executing " + step.StepText;

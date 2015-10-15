@@ -151,13 +151,11 @@ namespace MonoBrickFirmware.Display.Dialogs.UserInput
 	public class Shift : Button
 	{
 		private Rectangle arrowRect;
-		private bool small;
 		Point lineStart;
 		int lineLength;
 		Point textDisplacement;
 		public Shift(Position position, Rectangle container, ExitType exitType, bool small = true) : base("Shift", position, small ? new Position(3,1) : new Position(2,2), container, "Shift", false, exitType)
 		{
-			this.small = small;
 			arrowRect = new Rectangle (new Point (outherBox.P1.X + 3 * characterEdge, outherBox.P1.Y + 2 * characterEdge), new Point (outherBox.P1.X + 14 * characterEdge, outherBox.P2.Y - 7 * characterEdge));
 			if (!small)
 			{

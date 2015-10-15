@@ -12,7 +12,6 @@ namespace MonoBrickFirmware.Display.Dialogs.UserInput
 		private int characterSetsIdx = 0;
 		private bool shiftSet = false;
 		private TextButton textButton;
-		private bool okWithEsc = false;
 		public Keyboard (Rectangle container, bool disableEnter, bool disableSelect) : base(container, 10, 6)
 		{
 			this.disableSelect = disableSelect;
@@ -24,7 +23,7 @@ namespace MonoBrickFirmware.Display.Dialogs.UserInput
 		}
 		public event Action OnOk = delegate() {};
 		public event Action OnCancel = delegate() {};
-		public string Text{ get{ return textButton.Text;}}
+		public string Text{ get{ return textButton.CompleteText;}}
 
 		public override void Enter ()
 		{
@@ -57,7 +56,6 @@ namespace MonoBrickFirmware.Display.Dialogs.UserInput
 		public override void Esc ()
 		{
 			if (SelectedButton.Id == "Ok") {
-				okWithEsc = true;
 				OnCancel ();
 			} 
 			else 
@@ -208,10 +206,6 @@ namespace MonoBrickFirmware.Display.Dialogs.UserInput
 		private Font resultFont = Font.MediumFont;
 		private bool useSmallFont = false;
 		private bool showLine = false;
-		private const int characterSize = 14;
-		private Rectangle container;
-		private const int characterEdge = 1;
-		private Point start;
 
 		public TextButton(string startText, Position position, Position size, Rectangle container): base (startText, position, size, container, "Text",true, ExitType.Center)
 		{
@@ -221,7 +215,7 @@ namespace MonoBrickFirmware.Display.Dialogs.UserInput
 		}   
 
 		public string SelectedCharacter{ get; set;}
-		public string Text
+		public string CompleteText
 		{
 			get
 			{
