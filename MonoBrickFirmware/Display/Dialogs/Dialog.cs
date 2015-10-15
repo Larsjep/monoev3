@@ -21,16 +21,14 @@ namespace MonoBrickFirmware.Display.Dialogs
 		private const int buttonTextOffset = 2;
 		private const int boxMiddleOffset = 8;
 		private CancellationTokenSource cancelSource = new CancellationTokenSource();
-		private bool drawTitle;
 		private bool useSmallTitle = false;
 		protected Font font;
 		protected Rectangle outherWindow; 
 		protected Rectangle innerWindow;
 		protected List<Rectangle> lines;
-		protected bool OnShowCalled = false;
+		protected bool drawTitle;
 
 		internal string title;
-
 
 		public Action OnShow = delegate {};
 		public Action OnExit = delegate {};
@@ -147,16 +145,12 @@ namespace MonoBrickFirmware.Display.Dialogs
 
 		internal virtual void Draw ()
 		{
-			if (!OnShowCalled) 
+			OnShow ();
+			Lcd.DrawRectangle(outherWindow, true, true);
+			Lcd.DrawRectangle(innerWindow, false, true);
+			if (drawTitle)
 			{
-				OnShow ();
-				Lcd.DrawRectangle(outherWindow, true, true);
-				Lcd.DrawRectangle(innerWindow, false, true);
-				if (drawTitle)
-				{
-					WriteTitle ();
-				}
-				OnShowCalled = true;
+				WriteTitle ();
 			}
 			OnDrawContent();
 			Lcd.Update();

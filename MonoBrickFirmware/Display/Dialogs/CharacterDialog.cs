@@ -11,11 +11,12 @@ namespace MonoBrickFirmware.Display.Dialogs
     {
 		private Keyboard keyBoard;
 		private bool okWithEsc = false;
+		private bool frameHasBeenDrawn = false;
 		public CharacterDialog(string title, bool disableNumbersAndSymbols, bool disableEnter) : base(Font.MediumFont, title, Lcd.Width, Lcd.Height-14) 
         {
 			keyBoard = new Keyboard(this.innerWindow, disableEnter,disableNumbersAndSymbols);
-			keyBoard.OnOk += () => this.OnExit();
-			keyBoard.OnCancel += () => {okWithEsc = true; OnExit();};
+			keyBoard.OnOk += () => {this.OnExit(); frameHasBeenDrawn = false;};
+			keyBoard.OnCancel += () => {okWithEsc = true; OnExit();frameHasBeenDrawn = false;};
         }
         
 		public string GetUserInput ()
@@ -57,6 +58,23 @@ namespace MonoBrickFirmware.Display.Dialogs
 		{
 			keyBoard.Draw ();
         }
+
+		internal override void Draw ()
+		{
+			OnShow ();
+			if (!frameHasBeenDrawn)
+			{
+				Lcd.DrawRectangle(outherWindow, true, true);
+				Lcd.DrawRectangle(innerWindow, false, true);
+				if (drawTitle)
+				{
+					WriteTitle ();
+				}
+				frameHasBeenDrawn = true;
+			}
+			OnDrawContent();
+			Lcd.Update();
+		}
     }
 }
 
