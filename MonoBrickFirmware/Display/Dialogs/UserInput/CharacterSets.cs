@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MonoBrickFirmware
+namespace MonoBrickFirmware.Display.Dialogs.UserInput
 {
 	public interface ICharacters
 	{
