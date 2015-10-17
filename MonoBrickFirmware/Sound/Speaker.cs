@@ -54,7 +54,6 @@ namespace MonoBrickFirmware.Sound
 		/// <summary>
 		/// Play a tone.
 		/// </summary>
-		/// <param name="volume">Volume.</param>
 		/// <param name="frequency">Frequency of the tone</param>
 		/// <param name="durationMs">Duration in ms.</param>
 		public void PlayTone(UInt16 frequency, UInt16 durationMs){
