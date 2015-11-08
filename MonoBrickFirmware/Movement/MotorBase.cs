@@ -8,7 +8,8 @@ namespace MonoBrickFirmware.Movement
 	/// <summary>
 	/// Base class for EV3 motors 
 	/// </summary>
-	public class MotorBase{
+	public class MotorBase : IMotorBase
+	{
 		
 		private System.Timers.Timer timer;
 		private const double pollRate = 50;

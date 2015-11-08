@@ -1,0 +1,19 @@
+C:\Users\simo\Documents\Visual Studio 2012\Projects\Mindstorms\RoboDog\RoboDog\bin\Debug\RoboDog.dll
+C:\Users\simo\Documents\Visual Studio 2012\Projects\Mindstorms\RoboDog\RoboDog\bin\Debug\RoboDog.pdb
+C:\Users\simo\Documents\Visual Studio 2012\Projects\Mindstorms\RoboDog\RoboDog\obj\Debug\RoboDog.csprojResolveAssemblyReference.cache
+C:\Users\simo\Documents\Visual Studio 2012\Projects\Mindstorms\RoboDog\RoboDog\obj\Debug\RoboDog.dll
+C:\Users\simo\Documents\Visual Studio 2012\Projects\Mindstorms\RoboDog\RoboDog\obj\Debug\RoboDog.pdb
+C:\Users\simo\Documents\Visual Studio 2012\Projects\Mindstorms\RoboDog\RoboDog\bin\Debug\Newtonsoft.Json.dll
+C:\Users\simo\Desktop\RoboDog\RoboDog\obj\Debug\RoboDog.csprojResolveAssemblyReference.cache
+C:\Users\simo\Desktop\RoboDog\RoboDog\obj\Debug\RoboDog.dll
+C:\Users\simo\Desktop\RoboDog\RoboDog\bin\Debug\RoboDog.dll
+C:\Users\simo\Desktop\RoboDog\RoboDog\bin\Debug\RoboDog.pdb
+C:\Users\simo\Desktop\RoboDog\RoboDog\bin\Debug\MonoBrickFirmware.dll
+C:\Users\simo\Desktop\RoboDog\RoboDog\obj\Debug\RoboDog.pdb
+C:\Users\simo\Desktop\In progress\Mindstorms Hund\RoboDog\RoboDog\bin\Debug\RoboDog.dll
+C:\Users\simo\Desktop\In progress\Mindstorms Hund\RoboDog\RoboDog\bin\Debug\RoboDog.pdb
+C:\Users\simo\Desktop\In progress\Mindstorms Hund\RoboDog\RoboDog\bin\Debug\MonoBrickFirmware.dll
+C:\Users\simo\Desktop\In progress\Mindstorms Hund\RoboDog\RoboDog\obj\Debug\RoboDog.dll
+C:\Users\simo\Desktop\In progress\Mindstorms Hund\RoboDog\RoboDog\obj\Debug\RoboDog.pdb
+C:\Users\simo\Desktop\In progress\Mindstorms Hund\RoboDog\RoboDog\obj\Debug\RoboDog.csprojResolveAssemblyReference.cache
+C:\Users\simo\Desktop\In progress\Mindstorms Hund\RoboDog\RoboDog\bin\Debug\MonoBrickFirmware.pdb
