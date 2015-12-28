@@ -9,7 +9,7 @@ namespace MonoBrickFirmware.UserInput
 	{
 		EventWaitHandle stopPolling = new ManualResetEvent (false);
 		private int pollTime = 50;
-		QueueThread queue = new QueueThread ();
+		QueueThread queue = QueueThread.Instance;
 		Thread pollThread = null;
 
 		public ButtonEvents (int pollInterval = 50)
