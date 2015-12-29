@@ -5,31 +5,30 @@ using System.IO;
 namespace MonoBrickFirmware.Sensors
 {
 	public class EV3ColorSensor : UartSensor{
-		
-		/// <summary>
-		/// Initializes a new instance of the NXTColorSensor class in color mode
-		/// </summary>
-		public EV3ColorSensor (SensorPort port) : this(port, ColorMode.Color)
-		{
-			
-		}
-		
-		/// <summary>
-		/// Initializes a new instance of the NXTColorSensor class.
-		/// </summary>
-		/// <param name="mode">Mode.</param>
-		public EV3ColorSensor (SensorPort port, ColorMode mode) :  base(port)
-		{
-			base.Initialise(base.uartMode);
-			Mode = mode;
-						
-		}
-		
-		/// <summary>
-		/// Gets or sets the color mode.
-		/// </summary>
-		/// <value>The color mode.</value>
-		public ColorMode Mode {
+        /// <summary>
+        /// Initializes a new instance of the EV3ColorSensor class in color mode
+        /// </summary>
+        /// <param name="pollInteval">refresh rate for pollThread</param>
+        public EV3ColorSensor(SensorPort port, int pollInterval = 50) : this(port, ColorMode.Color, pollInterval)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the EV3ColorSensor class.
+        /// </summary>
+        /// <param name="mode">Mode.</param>
+        /// <param name="pollInteval">refresh rate for pollThread</param>
+        public EV3ColorSensor(SensorPort port, ColorMode mode, int pollInterval = 50) : base(port, pollInterval)
+        {
+            base.Initialise(base.uartMode);
+            Mode = mode;
+        }
+
+        /// <summary>
+        /// Gets or sets the color mode.
+        /// </summary>
+        /// <value>The color mode.</value>
+        public ColorMode Mode {
 			get{return SensorModeToColorMode(base.uartMode);}
 			set{
 				base.SetMode(ColorModeToSensorMode(value));
@@ -80,7 +79,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <summary>
 		/// Read the intensity of the reflected or ambient light in percent. In color mode the color index is returned
 		/// </summary>
-		public int Read()
+		public override int Read()
 		{
 			int value = 0;
 			switch (Mode)

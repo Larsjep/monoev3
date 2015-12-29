@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using MonoBrickFirmware.Native;
 using MonoBrickFirmware.Tools;
+using System.Threading;
+using System.ComponentModel;
 
 namespace MonoBrickFirmware.Sensors
 {
@@ -51,17 +53,56 @@ namespace MonoBrickFirmware.Sensors
 		protected const int NumberOfSensorPorts = SensorManager.NumberOfSensorPorts;
 		protected SensorPort port;
 		protected UARTMode uartMode{get; private set;}
-		
-		public UartSensor (SensorPort port)
-		{
-			this.port = port;
-			uartMemory = SensorManager.Instance.UartMemory;
-			UartDevice = SensorManager.Instance.UartDevice;
-		}
-		
-		public abstract string ReadAsString ();
-    	
-		public abstract void SelectNextMode();
+
+        private int pollTime = 50;
+        private EventWaitHandle stopPolling = new ManualResetEvent(false);
+        private QueueThread queue = QueueThread.Instance;
+        private Thread pollThread = null;
+        public UartSensor(SensorPort port, int pollTime = 50)
+        {
+            this.port = port;
+            this.pollTime = pollTime;
+            uartMemory = SensorManager.Instance.UartMemory;
+            UartDevice = SensorManager.Instance.UartDevice;
+            pollThread = new Thread(sensorPollThread);
+            pollThread.Start();
+        }
+
+        /// <summary>
+        /// Stop polling this instance
+        /// </summary>
+        public void Kill()
+        {
+            stopPolling.Set();
+            pollThread.Join();
+        }
+
+
+        /// <summary>
+        /// thread that checks the sensor' state, and raises the propertyChanged event in queue when it is changed.
+        /// </summary>
+        private void sensorPollThread()
+        {
+            Thread.CurrentThread.IsBackground = true;
+            int lastState = Read();
+            while (!stopPolling.WaitOne(pollTime))
+            {
+                int currenState = Read();
+                if (currenState != lastState)
+                {
+                    queue.Enqueue(propertyChangedEvent, this, new PropertyChangedEventArgs(GetSensorName()));
+                    lastState = currenState;
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler propertyChangedEvent;
+
+        public abstract string ReadAsString();
+
+        public abstract int Read();
+
+        public abstract void SelectNextMode();
 		
 		public abstract string GetSensorName();
 		
