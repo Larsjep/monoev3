@@ -158,6 +158,11 @@ namespace MonoBrickFirmware.Sensors
 		{
 			return "";
 		}
+
+        public override int Read()
+        {
+            return 0;
+        }
         
         /// <summary>
         /// Gets the name of the sensor.

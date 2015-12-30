@@ -68,26 +68,25 @@ namespace MonoBrickFirmware.Sensors
 	/// </summary>
 	public class EV3IRSensor : UartSensor{
 		
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.EV3IRSensor"/> class.
-		/// </summary>
-		/// <param name="port">Port.</param>
-		public EV3IRSensor (SensorPort port) : this(port, IRMode.Proximity)
-		{
-				
-		}
-		
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.EV3IRSensor"/> class.
-		/// </summary>
-		/// <param name="port">Senosr port.</param>
-		/// <param name="mode">IR Mode.</param>
-		public EV3IRSensor (SensorPort port, IRMode mode) :  base(port)
-		{
-			base.Initialise(base.uartMode);
-			Mode = mode;
-			Channel = IRChannel.One;
-		}
+		 /// <summary>
+        /// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.EV3IRSensor"/> class.
+        /// </summary>
+        /// <param name="port">Port.</param>
+        public EV3IRSensor(SensorPort port, int pollInterval = 50) : this(port, IRMode.Proximity, pollInterval)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MonoBrickFirmware.Sensors.EV3IRSensor"/> class.
+        /// </summary>
+        /// <param name="port">Senosr port.</param>
+        /// <param name="mode">IR Mode.</param>
+        public EV3IRSensor(SensorPort port, IRMode mode, int pollInterval = 50) : base(port, pollInterval)
+        {
+            base.Initialise(base.uartMode);
+            Mode = mode;
+            Channel = IRChannel.One;
+        }
 		
 		/// <summary>
 		/// Gets or sets the IR mode. 
@@ -125,7 +124,7 @@ namespace MonoBrickFirmware.Sensors
 		/// Read the sensor value. The returned value depends on the mode. Distance in proximity mode. 
 		/// Remote command number in remote mode. Beacon location in seek mode. 
 		/// </summary>
-		public int Read(){
+		public override int Read(){
 			int value = 0;
 			switch ((IRMode)base.uartMode)
 			{

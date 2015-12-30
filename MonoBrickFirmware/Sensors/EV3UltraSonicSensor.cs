@@ -7,29 +7,28 @@ namespace MonoBrickFirmware.Sensors
 	/// Class for the EV3 ultrasonic sensor
 	/// </summary>
 	public class EV3UltrasonicSensor : UartSensor{
-		/// <summary>
-		/// Initializes a new instance of the EV3 Ultrasonic Sensor.
-		/// </summary>
-		public EV3UltrasonicSensor (SensorPort port) : this(port, UltraSonicMode.Centimeter)
-		{
-			
-		}
-		
-		/// <summary>
-		/// Initializes a new instance of the EV3 Ultrasonic Sensor.
-		/// </summary>
-		/// <param name="mode">Mode.</param>
-		public EV3UltrasonicSensor (SensorPort port, UltraSonicMode mode) :  base(port)
-		{
-			base.Initialise(base.uartMode);
-			Mode = mode;
-		}
-		
-		/// <summary>
-		/// Gets or sets the Gyro mode. 
-		/// </summary>
-		/// <value>The mode.</value>
-		public UltraSonicMode Mode {
+        /// <summary>
+        /// Initializes a new instance of the EV3 Ultrasonic Sensor.
+        /// </summary>
+        public EV3UltrasonicSensor(SensorPort port, int pollInterval = 50) : this(port, UltraSonicMode.Centimeter, pollInterval)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the EV3 Ultrasonic Sensor.
+        /// </summary>
+        /// <param name="mode">Mode.</param>
+        public EV3UltrasonicSensor(SensorPort port, UltraSonicMode mode, int pollInterval = 50) : base(port, pollInterval)
+        {
+            base.Initialise(base.uartMode);
+            Mode = mode;
+        }
+
+        /// <summary>
+        /// Gets or sets the Gyro mode. 
+        /// </summary>
+        /// <value>The mode.</value>
+        public UltraSonicMode Mode {
 			get{return (UltraSonicMode) base.uartMode;}
 			set{SetMode((UARTMode) value);}
 		}
@@ -59,7 +58,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <summary>
 		/// Read the sensor value. Result depends on the mode
 		/// </summary>
-		public int Read ()
+		public override int Read ()
 		{
 			if (Mode == UltraSonicMode.Listen) 
 			{

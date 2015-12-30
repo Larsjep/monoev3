@@ -25,30 +25,29 @@ namespace MonoBrickFirmware.Sensors
 	/// Class for the EV3 Gyro sensor
 	/// </summary>
 	public class EV3GyroSensor :UartSensor{
-		
-		/// <summary>
-		/// Initializes a new instance of the Gyro sensor.
-		/// </summary>
-		public EV3GyroSensor (SensorPort port) : this(port, GyroMode.Angle)
-		{
-				
-		}
-		
-		/// <summary>
-		/// Initializes a new instance of the Gyro sensor.
-		/// </summary>
-		/// <param name="mode">Mode.</param>
-		public EV3GyroSensor (SensorPort port, GyroMode mode) :  base(port)
-		{
-			base.Initialise(base.uartMode);
-			Mode = mode;
-		}
-		
-		/// <summary>
-		/// Gets or sets the Gyro mode. 
-		/// </summary>
-		/// <value>The mode.</value>
-		public GyroMode Mode {
+
+        /// <summary>
+        /// Initializes a new instance of the Gyro sensor.
+        /// </summary>
+        public EV3GyroSensor(SensorPort port, int pollInterval = 50) : this(port, GyroMode.Angle, pollInterval)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the Gyro sensor.
+        /// </summary>
+        /// <param name="mode">Mode.</param>
+        public EV3GyroSensor(SensorPort port, GyroMode mode, int pollInterval = 50) : base(port, pollInterval)
+        {
+            base.Initialise(base.uartMode);
+            Mode = mode;
+        }
+
+        /// <summary>
+        /// Gets or sets the Gyro mode. 
+        /// </summary>
+        /// <value>The mode.</value>
+        public GyroMode Mode {
 			get{return (GyroMode) base.uartMode;}
 			set{SetMode((UARTMode) value);}
 		}
@@ -106,7 +105,7 @@ namespace MonoBrickFirmware.Sensors
 		/// <summary>
 		/// Read the gyro sensor value. The returned value depends on the mode. 
 		/// </summary>
-		public int Read ()
+		public override int Read ()
 		{
 			if (Mode == GyroMode.Angle) {
 				return BitConverter.ToInt16(ReadBytes(2),0)%360;

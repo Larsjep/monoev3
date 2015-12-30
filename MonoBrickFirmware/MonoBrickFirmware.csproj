@@ -35,6 +35,7 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="Native\Libc.cs" />
+    <Compile Include="Tools\EventNode.cs" />
     <Compile Include="Tools\QueueThread.cs" />
     <Compile Include="Display\Console.cs" />
     <Compile Include="Display\Basics.cs" />
@@ -172,11 +173,5 @@
       <LogicalName>font.profont_7</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="FileSystem\" />
-    <Folder Include="Settings\" />
-    <Folder Include="FirmwareUpdate\" />
-    <Folder Include="Device\" />
-    <Folder Include="Display\Dialogs\UserInput\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
