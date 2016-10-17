@@ -3,6 +3,6 @@ C# library for Lego Mindstorms EV3
 This is a fork from the Larsjep/monoev3.
 The purpose of this fork is correct the malfunctioning Speaker.PlaySoundFile(..) which prevented to play wav files.
 The bug in the function has been found and removed by the user "Rasep Retrep" with the code posted on the Monobrick firmware library forum. Rasep Retrep stated that he was not a Git Hub user, so I created the fork and the correspondent pull request to the main library.
-To him goes all the credit to solve this annoying issue!
+To him goes all the credit for the solution this annoying issue!
 
 Riccardo.
