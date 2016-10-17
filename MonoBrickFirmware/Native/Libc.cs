@@ -68,17 +68,26 @@ namespace MonoBrickFirmware.Native
 				throw new InvalidOperationException("MMap operation failed");
 			return new MemoryArea(ptr, size);
 		}
-		
-		public void Write (byte[] data)
+
+        /// <summary>
+        /// Writes the supplied array to the correspondent Unix Device
+        /// Modified by Oreste Riccardo Natale in answer to the int PlaySoundFile(string name, int volume)
+        /// which needs the number of bytes written to the brick speaker
+        /// Original hint from user Rasep Retrep on the Monobrick firmware library forum
+        /// </summary>
+        /// <param name="data">Array to be written on the Unix Device</param>
+        /// <returns>Number of bytes succesfully written, -1 on error</returns>
+        public int Write (byte[] data)
 		{
 			IntPtr pnt = IntPtr.Zero;
 			bool hasError = false;
 			Exception inner = null;
+            int bytesWritten = 0;
 			try {
 				int size = Marshal.SizeOf (data [0]) * data.Length;
 				pnt = Marshal.AllocHGlobal (size);
 				Marshal.Copy (data, 0, pnt, data.Length);
-				int bytesWritten = Libc.write (fd, pnt,(uint) size);
+				bytesWritten = Libc.write (fd, pnt,(uint) size);
 				if (bytesWritten == -1)
 					hasError = true;
 			} 
@@ -98,7 +107,8 @@ namespace MonoBrickFirmware.Native
 				{
 					throw new InvalidOperationException("Failed to write to Unix device");
 				}
-			}		
+			}
+            return bytesWritten;
 		}
 		
 		public byte[] Read (int length)
